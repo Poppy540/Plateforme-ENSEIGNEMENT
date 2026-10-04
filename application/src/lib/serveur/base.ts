@@ -13,11 +13,13 @@ function pool(): Pool {
   return globalPourPool.poolBase;
 }
 
+type RoleAgent = "agent_professeur" | "agent_scenariste";
+
 async function enTransaction<T>(
-  role: "anon" | "authenticated" | "agent_professeur",
+  role: "anon" | "authenticated" | RoleAgent,
   utilisateur: string | null,
   traitement: (client: PoolClient) => Promise<T>,
-  contexteAgent: { eleveId: string; uniteId: string } | null = null,
+  contexteAgent: { eleveId: string | null; uniteId: string } | null = null,
 ): Promise<T> {
   const client = await pool().connect();
   try {
@@ -27,7 +29,7 @@ async function enTransaction<T>(
     if (contexteAgent) {
       await client.query(
         "select set_config('app.eleve_id', $1, true), set_config('app.unite_id', $2, true)",
-        [contexteAgent.eleveId, contexteAgent.uniteId],
+        [contexteAgent.eleveId ?? "", contexteAgent.uniteId],
       );
     }
     const resultat = await traitement(client);
@@ -60,6 +62,14 @@ export function avecAgentProfesseur<T>(
   traitement: (client: PoolClient) => Promise<T>,
 ) {
   return enTransaction("agent_professeur", null, traitement, contexte);
+}
+
+/** Requêtes de l'agent Scénariste : unité fixée par le serveur ; aucun élève. */
+export function avecAgentScenariste<T>(
+  uniteId: string,
+  traitement: (client: PoolClient) => Promise<T>,
+) {
+  return enTransaction("agent_scenariste", null, traitement, { eleveId: null, uniteId });
 }
 
 /** Réservé à l'authentification simulée (développement et test) : crée le compte d'authentification. */

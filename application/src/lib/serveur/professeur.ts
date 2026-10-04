@@ -29,7 +29,8 @@ function entier(nom: string, defaut: number): number {
   return Number.isInteger(v) && v > 0 ? v : defaut;
 }
 
-export function modeleProfesseur(): Modele {
+/** Modèle de langage des agents : réel (API Claude) ou simulé (développement et test uniquement). */
+export function modeleDesAgents(): Modele {
   const mode = process.env.MODE_MODELE ?? "anthropic";
   if (mode === "simulation") {
     if (!simulationAutorisee())
@@ -200,7 +201,7 @@ export async function poserQuestion(
           contexteSession,
           historique,
           question,
-          modele: modeleProfesseur(),
+          modele: modeleDesAgents(),
           parametres: parametresModele(),
           executerOutil,
           emettre: (texte) => controleur.enqueue(encodeur.encode(texte)),

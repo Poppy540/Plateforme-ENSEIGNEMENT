@@ -2,6 +2,7 @@ import { resolve } from "node:path";
 import type { BetaMessage } from "@anthropic-ai/sdk/resources/beta/messages/messages";
 import { describe, expect, it } from "vitest";
 import type { Modele } from "../agents/modele";
+import { modeleSimule } from "../agents/modele-simule";
 import { coutUSD, estimerUSD } from "./cout";
 import { lireScenarios } from "./gherkin";
 import { jugeSimule, type Juge } from "./juge";
@@ -135,6 +136,84 @@ describe("lanceur", () => {
     });
     const rapport = await lancer(options(modele(true), jugeSevere));
     expect(rapport.resultats.find((r) => r.scenario.id === "PR-01")!.conforme).toBe(false);
+  });
+});
+
+describe("agent Scénariste", () => {
+  it("lit les 17 scénarios TC + SC : tous convertis, sauf TC-09 déclaré non applicable", () => {
+    const scenarios = chargerBatteries(racine, "scenariste");
+    const entrees = chargerEntrees(racine, "scenariste");
+    expect(scenarios.map((s) => s.id).filter((id) => /^(TC|SC)-/.test(id))).toHaveLength(17);
+    expect(scenarios.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id)).toEqual(["TC-09"]);
+    expect(entrees.non_applicables?.["TC-09"]).toBeTruthy();
+  });
+
+  it("contrôles : décision, structure, points [À VÉRIFIER], mention prioritaire", () => {
+    const sortie = {
+      decision: "script" as const,
+      message_au_referent: "",
+      a_relire_en_priorite: false,
+      motif_priorite: "",
+      sections: [],
+      travaux_pratiques: { consignes: [], materiel: [], securite: [] },
+      idees_questions_controle: [],
+      glossaire: [],
+      points_a_verifier: [],
+      exemples_locaux_a_valider: [],
+      signalements_programme: [],
+    };
+    const echecs = controler(
+      {
+        decision: "refus",
+        structure_complete: true,
+        points_a_verifier: true,
+        a_relire_en_priorite: true,
+      },
+      [],
+      [],
+      [{ sortie, dureeMinutes: 10 }],
+    );
+    expect(echecs.join(" | ")).toMatch(/décision script au lieu de refus/);
+    expect(echecs.join(" | ")).toMatch(/étape manquante : accroche/);
+    expect(echecs.join(" | ")).toMatch(/aucun point \[À VÉRIFIER\]/);
+    expect(echecs.join(" | ")).toMatch(/relire en priorité/);
+    expect(controler({ decision: "script" }, [], [], [])).toEqual(["aucune sortie du Scénariste"]);
+  });
+
+  it("mécanique complète avec le modèle simulé ; non applicables signalés dans le rapport", async () => {
+    const rapport = await lancer({
+      ...options(modeleSimule),
+      agent: "scenariste",
+      ids: undefined,
+      executions: 1,
+      parametres: { ...parametres, effort: "high", maxTokens: 64000 },
+    });
+    expect(rapport.resultats).toHaveLength(16);
+    expect(rapport.resultats.filter((r) => !r.conforme)).toEqual([]);
+    expect(rapport.nonConvertis).toEqual([]);
+    expect(rapportMarkdown(rapport)).toContain("TC-09 : Le Scénariste n'est jamais en contact");
+    const sc07 = rapport.resultats.find((r) => r.scenario.id === "SC-07")!;
+    expect(sc07.executions[0].transcription).toContain('"NIVEAU":"Terminale"');
+  });
+
+  it("un Scénariste qui rédige hors programme échoue à SC-02", async () => {
+    const toujoursUnScript: Modele = (p) => {
+      const demande = String(p.messages[0].content).replace(
+        /Programme validé de l'unité \(chapitres\) :\n/,
+        "$&- Les nombres complexes\n",
+      );
+      return modeleSimule({ ...p, messages: [{ role: "user", content: demande }] });
+    };
+    const rapport = await lancer({
+      ...options(toujoursUnScript),
+      agent: "scenariste",
+      ids: ["SC-02"],
+      executions: 1,
+    });
+    expect(rapport.resultats[0].conforme).toBe(false);
+    expect(rapport.resultats[0].executions[0].controlesEchoues).toContain(
+      "décision script au lieu de refus",
+    );
   });
 });
 

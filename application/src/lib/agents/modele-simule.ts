@@ -46,9 +46,64 @@ function outil(nom: string, entree: Record<string, unknown>): BetaContentBlock {
   } as unknown as BetaContentBlock;
 }
 
+/** Scénariste simulé : script minimal mais conforme au format, ou refus si le chapitre est hors programme. */
+function scriptSimule(demande: string): BetaMessage {
+  const chapitre = demande.match(/Chapitre demandé : « (.*) »/)?.[1] ?? "";
+  const programme = demande.split("Chapitre demandé")[0];
+  const duree = Number(demande.match(/Durée cible : (\d+) minutes/)?.[1] ?? 10) * 60;
+  const vide = { consignes: [], materiel: [], securite: [] };
+  const commun = {
+    a_relire_en_priorite: /colonisation|religion|politique/i.test(demande),
+    motif_priorite: /colonisation|religion|politique/i.test(demande) ? "Sujet sensible." : "",
+    idees_questions_controle: [],
+    glossaire: [],
+    exemples_locaux_a_valider: [],
+    signalements_programme: [],
+  };
+  if (!chapitre || !programme.includes(`- ${chapitre}`)) {
+    const refus = {
+      decision: "refus",
+      message_au_referent: "(Scénariste simulé) Ce chapitre n'est pas dans le programme validé.",
+      sections: [],
+      travaux_pratiques: vide,
+      points_a_verifier: [],
+      ...commun,
+    };
+    return message([texte(JSON.stringify(refus))], "end_turn");
+  }
+  const types = [
+    "accroche",
+    "objectifs",
+    "prerequis",
+    "explication",
+    "pause",
+    "exemple_resolu",
+    "erreurs_frequentes",
+    "resume",
+  ];
+  const part = Math.floor(duree / types.length);
+  const script = {
+    decision: "script",
+    message_au_referent: "(Scénariste simulé) Brouillon de démonstration, sans contenu réel.",
+    sections: types.map((type, i) => ({
+      type,
+      titre: `${type} (simulé)`,
+      debut_secondes: i * part,
+      duree_secondes: i === types.length - 1 ? duree - part * (types.length - 1) : part,
+      texte_parle: `Texte simulé pour « ${chapitre} », étape ${type}.${type === "exemple_resolu" ? " Une date [À VÉRIFIER]." : ""}`,
+      indications_visuelles: "Titre à l'écran.",
+    })),
+    travaux_pratiques: { consignes: ["Consigne simulée."], materiel: ["Une règle."], securite: [] },
+    points_a_verifier: ["Date citée dans l'exemple résolu (simulation)."],
+    ...commun,
+  };
+  return message([texte(JSON.stringify(script))], "end_turn");
+}
+
 /** Réponse scriptée selon des mots-clés du dernier message de l'élève. */
 export function reponseSimulee(parametres: BetaMessageStreamParams): BetaMessage {
   const messages = parametres.messages;
+  if (parametres.output_config?.format) return scriptSimule(dernierTexteEleve(messages));
   if (dernierBlocEstResultatOutil(messages)) {
     return message([texte("C'est noté. Continuons ensemble.")], "end_turn");
   }

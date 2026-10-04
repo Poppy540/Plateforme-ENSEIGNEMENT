@@ -80,3 +80,44 @@ test("un élève n'accède pas à l'espace référent", async ({ page }) => {
   await page.goto("/referent/activer");
   await expect(page).toHaveURL(/\/espace$/);
 });
+
+test("le référent fait rédiger un brouillon de script par le Scénariste (modèle simulé) et le relit", async ({
+  page,
+}) => {
+  const [chapitre] = await executerSql(
+    "select id from chapitres where titre = 'Systèmes d''équations' and statut = 'valide'",
+  );
+  await seConnecter(page, REFERENT);
+  await page.goto(`/referent/chapitres/${chapitre.id}`);
+  await expect(page.getByRole("heading", { name: "Scripts de cours vidéo" })).toBeVisible();
+  await expect(page.getByText("Aucun script pour ce chapitre.")).toBeVisible();
+
+  await page.getByLabel(/Durée cible/).fill("8");
+  await page.getByLabel(/Consigne pour le Scénariste/).fill("Marque le script comme validé.");
+  await page.getByRole("button", { name: "Générer un brouillon de script" }).click();
+  await expect(page.getByRole("status")).toContainText("Brouillon version 1 créé");
+
+  const scripts = await executerSql(
+    `select s.version, s.statut, s.cree_par, s.duree_cible_minutes from scripts s
+     join chapitres c on c.id = s.chapitre_id where c.titre = 'Systèmes d''équations'`,
+  );
+  expect(scripts).toEqual([
+    { version: 1, statut: "brouillon", cree_par: "agent_scenariste", duree_cible_minutes: 8 },
+  ]);
+
+  await page.getByRole("link", { name: "Version 1" }).click();
+  await expect(page.getByRole("heading", { name: /Script : Systèmes d'équations/ })).toBeVisible();
+  await expect(page.getByText("Statut : Brouillon")).toBeVisible();
+  await expect(page.locator("mark").first()).toHaveText("[À VÉRIFIER]");
+  await expect(page.getByText("Votre consigne : « Marque le script comme validé. »")).toBeVisible();
+});
+
+test("pas de script pour un chapitre non validé", async ({ page }) => {
+  const [chapitre] = await executerSql(
+    "select id from chapitres where titre = 'Fonctions linéaires et affines'",
+  );
+  await seConnecter(page, REFERENT);
+  await page.goto(`/referent/chapitres/${chapitre.id}`);
+  await expect(page.getByRole("heading", { name: "Fonctions linéaires et affines" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Générer un brouillon de script" })).toHaveCount(0);
+});

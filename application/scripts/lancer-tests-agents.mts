@@ -1,5 +1,5 @@
 // Lanceur des tests des agents.
-//   pnpm test:agents                                  simulation (aucun appel, aucun coût) : vérifie la mécanique
+//   pnpm test:agents [--agent scenariste]             simulation (aucun appel, aucun coût) : vérifie la mécanique
 //   MODE_MODELE=anthropic pnpm test:agents --estimer  estimation du coût d'un passage réel, sans rien lancer
 //   MODE_MODELE=anthropic pnpm test:agents --confirmer [--scenarios PR-01,PR-02] [--executions 1]
 //                                                     passage réel (payant) — uniquement avec l'accord du propriétaire
@@ -25,6 +25,17 @@ const option = (nom: string) => {
   return i >= 0 ? args[i + 1] : undefined;
 };
 const racine = resolve(process.env.CHEMIN_DEPOT ?? "..");
+const agent = option("--agent") ?? "professeur";
+if (agent !== "professeur" && agent !== "scenariste") {
+  console.error(`Agent inconnu : ${agent} (professeur ou scenariste).`);
+  process.exit(2);
+}
+// Paramètres du modèle de l'agent testé (mêmes variables d'environnement que le serveur).
+const PREFIXE = agent === "professeur" ? "PROFESSEUR" : "SCENARISTE";
+const PAR_DEFAUT = {
+  professeur: { effort: "medium", maxTokens: 16000, sortieParTour: 2000, entreeJugement: 2500 },
+  scenariste: { effort: "high", maxTokens: 64000, sortieParTour: 12000, entreeJugement: 9000 },
+}[agent];
 const configuration = lireConfiguration(racine);
 const reel = (process.env.MODE_MODELE ?? "simulation") === "anthropic";
 const ids = option("--scenarios")
@@ -32,26 +43,29 @@ const ids = option("--scenarios")
   .map((s) => s.trim());
 const executions = Number(option("--executions") ?? configuration.executions_par_test);
 const parametres = {
-  modele: process.env.MODELE_PROFESSEUR ?? "claude-opus-5-5",
-  effort: (process.env.EFFORT_PROFESSEUR ?? "medium") as "medium",
-  maxTokens: Number(process.env.MAX_JETONS_PROFESSEUR ?? 16000),
+  modele: process.env[`MODELE_${PREFIXE}`] ?? "claude-opus-5-5",
+  effort: (process.env[`EFFORT_${PREFIXE}`] ?? PAR_DEFAUT.effort) as "medium",
+  maxTokens: Number(process.env[`MAX_JETONS_${PREFIXE}`] ?? PAR_DEFAUT.maxTokens),
 };
 const modeleJuge = process.env.MODELE_JUGE ?? "claude-opus-5-5";
 
 // Estimation (toujours affichée avant un passage réel).
-const entrees = chargerEntrees(racine, "professeur");
-const scenarios = chargerBatteries(racine, "professeur").filter(
+const entrees = chargerEntrees(racine, agent);
+const scenarios = chargerBatteries(racine, agent).filter(
   (s) => (!ids || ids.includes(s.id)) && entrees.scenarios[s.id],
 );
 const toursTotal =
-  scenarios.reduce((s, sc) => s + entrees.scenarios[sc.id].tours.length, 0) * executions;
+  scenarios.reduce((s, sc) => {
+    const e = entrees.scenarios[sc.id];
+    return s + (agent === "professeur" ? (e.tours ?? []).length : (e.generations ?? [{}]).length);
+  }, 0) * executions;
 const prompt = composerPrompt(
   {
-    agent: "professeur",
+    agent,
     codePays: entrees.unite.split("-")[0],
     unite: entrees.unite,
     skills: [],
-    valeursDynamiques: { LISTE_CHAPITRES: "x", CHAPITRE_EN_COURS: "x" },
+    valeursDynamiques: { LISTE_CHAPITRES: "x", CHAPITRE_EN_COURS: "x", DUREE: "x" },
   },
   racine,
 );
@@ -61,9 +75,11 @@ const estimation = estimerUSD({
   jetonsPrompt: Math.ceil((prompt.length + 15000) / 3.2),
   toursTotal,
   jugements: scenarios.length * executions,
+  sortieParTour: PAR_DEFAUT.sortieParTour,
+  entreeJugement: PAR_DEFAUT.entreeJugement,
 });
 console.log(
-  `${scenarios.length} scénarios × ${executions} exécutions (${toursTotal} tours d'élève). Estimation d'un passage réel : ~${estimation.toFixed(2)} USD.`,
+  `Agent ${agent} : ${scenarios.length} scénarios × ${executions} exécutions (${toursTotal} ${agent === "professeur" ? "tours d'élève" : "demandes de script"}). Estimation d'un passage réel : ~${estimation.toFixed(2)} USD.`,
 );
 
 if (reel && !args.includes("--confirmer")) {
@@ -76,7 +92,7 @@ if (args.includes("--estimer")) process.exit(0);
 
 const rapport = await lancer({
   racine,
-  agent: "professeur",
+  agent,
   ids,
   executions,
   configuration,
@@ -88,7 +104,12 @@ const rapport = await lancer({
   journal: (l) => console.log(l),
 });
 
-const dossier = join(racine, "tests", "resultats", rapport.date.replace(/[:.]/g, "-"));
+const dossier = join(
+  racine,
+  "tests",
+  "resultats",
+  `${rapport.date.replace(/[:.]/g, "-")}-${agent}`,
+);
 mkdirSync(dossier, { recursive: true });
 writeFileSync(join(dossier, "rapport.md"), rapportMarkdown(rapport));
 writeFileSync(join(dossier, "resultats.json"), JSON.stringify(rapport, null, 2));

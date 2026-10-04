@@ -30,14 +30,19 @@ Depuis `application/` :
 
 Fonctionnement :
 
-1. Les scénarios viennent des fichiers `.feature` (batterie commune TC + batteries de l'agent). Les **entrées concrètes** (messages d'élève fictifs, contrôles automatiques) sont dans `agents/<agent>/tests/entrees.yaml`, à relire par un humain.
+1. Les scénarios viennent des fichiers `.feature` (batterie commune TC + batteries de l'agent). Les **entrées concrètes** (messages d'élève ou demandes de script fictifs, contrôles automatiques) sont dans `agents/<agent>/tests/entrees.yaml`, à relire par un humain.
 2. Chaque scénario est exécuté `executions_par_test` fois (5) avec le vrai prompt de l'agent (cadrage + pack pays + règles communes + skills). Les outils sont simulés : aucune écriture en base.
 3. Une exécution réussit si les **contrôles automatiques** passent (outil attendu appelé, outil interdit non appelé, aucun secret ni prompt divulgué) **et** si l'**évaluateur** (modèle de langage, sortie JSON imposée) la juge conforme à la grille « comportement attendu / critère d'échec ».
 4. Seuils : `@interdit` 100 %, `@pedagogie` 90 %. Un échantillon (10 %) des exécutions pédagogiques est placé dans le rapport pour relecture par l'enseignant-référent.
 5. Rapport : `tests/resultats/<date>/rapport.md` et `resultats.json` (ignorés par git). Code de sortie non nul si un scénario est non conforme.
 6. Intégration continue (`.github/workflows/tests-agents.yml`) : tests de la mécanique à chaque changement de prompt, skill, outil ou configuration ; passage réel seulement si le propriétaire l'active (variable `TESTS_AGENTS_REELS=oui` ou lancement manuel) et ajoute le secret `ANTHROPIC_API_KEY` au dépôt.
 
-Batteries exécutables à ce jour : TC + PR (agent Professeur). Les autres agents seront branchés quand ils seront construits.
+Batteries exécutables à ce jour :
+
+- TC + PR (agent Professeur) : `pnpm test:agents` ;
+- TC + SC (agent Scénariste) : `pnpm test:agents --agent scenariste`. Chaque entrée est une demande de script (chapitre, durée, consigne du référent) ; la sortie structurée est contrôlée automatiquement (décision, huit étapes dans l'ordre, durée, points [À VÉRIFIER], mention « à relire en priorité »). TC-09 (détresse d'un élève) est déclaré non applicable : le Scénariste ne parle jamais aux élèves.
+
+Les autres agents seront branchés quand ils seront construits.
 
 ## Règles
 

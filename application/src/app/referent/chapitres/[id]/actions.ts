@@ -1,8 +1,10 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { deciderChapitre } from "@/lib/serveur/referent";
+import { genererBrouillonScript } from "@/lib/serveur/scenariste";
 
 export type EtatDecision = { erreur?: string } | undefined;
 
@@ -29,4 +31,28 @@ export async function decider(_etat: EtatDecision, donnees: FormData): Promise<E
   });
   if (!resultat.ok) return { erreur: resultat.erreur };
   redirect("/referent");
+}
+
+export type EtatGeneration = { erreur?: string; succes?: string } | undefined;
+
+export async function genererBrouillon(
+  _etat: EtatGeneration,
+  donnees: FormData,
+): Promise<EtatGeneration> {
+  const utilisateur = await exigerReferent();
+  const chapitreId = String(donnees.get("chapitre") ?? "");
+  const resultat = await genererBrouillonScript(utilisateur, {
+    chapitreId,
+    dureeMinutes: Number(donnees.get("duree")),
+    consigne: String(donnees.get("consigne") ?? "").trim() || null,
+  });
+  if (!resultat.ok) return { erreur: resultat.erreur };
+  revalidatePath(`/referent/chapitres/${chapitreId}`);
+  const remarques =
+    resultat.remarques.length > 0
+      ? ` Points de structure à vérifier : ${resultat.remarques.join(" ; ")}.`
+      : "";
+  return {
+    succes: `Brouillon version ${resultat.version} créé${resultat.aRelireEnPriorite ? " — à relire en priorité" : ""}.${remarques}`,
+  };
 }

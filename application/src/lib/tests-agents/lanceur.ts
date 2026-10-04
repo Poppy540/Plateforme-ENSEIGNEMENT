@@ -9,11 +9,13 @@ import { composerPrompt, dossierPack } from "../agents/chargeur-prompt.ts";
 import type { Modele } from "../agents/modele.ts";
 import { repondre, type ParametresModele } from "../agents/professeur/boucle.ts";
 import type { AppelOutil } from "../agents/professeur/outils.ts";
+import { genererScript, messageDemande } from "../agents/scenariste/generation.ts";
+import { scriptEnTexte, type SortieScenariste } from "../agents/scenariste/script.ts";
 import { lirePack } from "../pack-pays/lecture.ts";
 import { coutUSD, type Consommation } from "./cout.ts";
 import { lireScenarios, type ScenarioGherkin } from "./gherkin.ts";
 import type { Juge } from "./juge.ts";
-import { controler, fusionner, type Verifications } from "./verifications.ts";
+import { controler, fusionner, type SortieControlee, type Verifications } from "./verifications.ts";
 
 export interface ConfigurationTests {
   executions_par_test: number;
@@ -25,18 +27,37 @@ export function lireConfiguration(racine: string): ConfigurationTests {
   return parse(readFileSync(join(racine, "tests", "config.yaml"), "utf8")) as ConfigurationTests;
 }
 
+/** Une demande de script (agent Scénariste) ; tout est facultatif, les défauts viennent du fichier. */
+export interface Generation {
+  chapitre?: string;
+  /** Chapitre absent du programme (SC-02) ou ajouté au programme pour le test (titre libre, fictif). */
+  chapitre_hors_programme?: string;
+  chapitre_ajoute?: string;
+  sous_themes?: string[];
+  duree?: number;
+  consigne?: string;
+  /** Valeurs du pack remplacées pour ce test (par exemple un autre niveau pour SC-07). */
+  valeurs?: Record<string, string>;
+}
+
 interface EntreeScenario {
   chapitre?: string;
-  tours: string[];
+  tours?: string[];
+  generations?: Generation[];
   verifications?: Verifications;
 }
 
-interface FichierEntrees {
+export interface FichierEntrees {
   unite: string;
   chapitre_par_defaut: string;
+  duree_par_defaut?: number;
   verifications_communes?: Verifications;
+  /** Scénarios de la batterie commune qui ne concernent pas cet agent, avec la raison. */
+  non_applicables?: Record<string, string>;
   scenarios: Record<string, EntreeScenario>;
 }
+
+export type AgentTeste = "professeur" | "scenariste";
 
 export interface Execution {
   numero: number;
@@ -62,13 +83,14 @@ export interface Rapport {
   date: string;
   resultats: ResultatScenario[];
   nonConvertis: string[];
+  nonApplicables: Record<string, string>;
   echantillon: { scenario: string; numero: number; transcription: string }[];
   coutUSD: number;
 }
 
 export interface OptionsLancement {
   racine: string;
-  agent: "professeur";
+  agent: AgentTeste;
   ids?: string[];
   executions: number;
   configuration: ConfigurationTests;
@@ -100,13 +122,157 @@ export function chargerEntrees(racine: string, agent: string): FichierEntrees {
   return parse(readFileSync(fichier, "utf8")) as FichierEntrees;
 }
 
-const SKILLS = {
+const SKILLS: Record<AgentTeste, string[]> = {
   professeur: [
     "_commun/skills/contenu-non-fiable",
     "professeur/skills/echelle-d-indices",
     "professeur/skills/diagnostic-d-erreur",
   ],
+  scenariste: [
+    "_commun/skills/contenu-non-fiable",
+    "scenariste/skills/script-pense-a-voix-haute",
+    "scenariste/skills/ancrage-local",
+  ],
 };
+
+interface ResultatExecution {
+  transcription: string;
+  reponses: string[];
+  appels: AppelOutil[];
+  sorties: SortieControlee[];
+  consommations: Consommation[];
+}
+
+interface Contexte {
+  options: OptionsLancement;
+  entrees: FichierEntrees;
+  codePays: string;
+  chapitres: { code: string; titre: string; sousThemes: string[] }[];
+}
+
+function promptProfesseur(c: Contexte): string {
+  return composerPrompt(
+    {
+      agent: "professeur",
+      codePays: c.codePays,
+      unite: c.entrees.unite,
+      skills: SKILLS.professeur,
+      // En test, tous les chapitres du programme sont considérés comme validés.
+      valeursDynamiques: {
+        LISTE_CHAPITRES: c.chapitres.map((x) => x.titre).join(" ; "),
+        CHAPITRE_EN_COURS: "en cours (voir le contexte de la session)",
+      },
+    },
+    c.options.racine,
+  );
+}
+
+/** Remplit r au fil de l'exécution : la transcription partielle reste disponible en cas d'erreur. */
+async function executerProfesseur(
+  c: Contexte,
+  entree: EntreeScenario,
+  r: ResultatExecution,
+): Promise<void> {
+  const systeme = promptProfesseur(c);
+  const codeChapitre = entree.chapitre ?? c.entrees.chapitre_par_defaut;
+  const titreChapitre = c.chapitres.find((x) => x.code === codeChapitre)?.titre ?? codeChapitre;
+  const historique: BetaMessageParam[] = [];
+  const lignes: string[] = [];
+  try {
+    for (const tour of entree.tours ?? []) {
+      const sortie = await repondre({
+        systeme,
+        contexteSession: `# CONTEXTE DE LA SESSION\nChapitre en cours : « ${titreChapitre} ».`,
+        historique,
+        question: tour,
+        modele: c.options.modele,
+        parametres: c.options.parametres,
+        // Aucune écriture réelle : les appels d'outils sont seulement enregistrés.
+        executerOutil: async (appel) => {
+          r.appels.push(appel);
+          return appel.nom === "signaler"
+            ? "Signalement transmis à un humain."
+            : "Progression enregistrée.";
+        },
+        emettre: () => undefined,
+      });
+      r.consommations.push(...sortie.consommations);
+      r.reponses.push(sortie.texte);
+      lignes.push(`Élève : ${tour}`);
+      for (const appel of sortie.appels)
+        lignes.push(`[outil ${appel.nom} ${JSON.stringify({ ...appel, nom: undefined })}]`);
+      lignes.push(
+        `Professeur : ${sortie.texte || "(aucun texte)"}${sortie.arret !== "fin" ? ` [arrêt : ${sortie.arret}]` : ""}`,
+      );
+      historique.push({ role: "user", content: tour });
+      if (sortie.texte.trim()) historique.push({ role: "assistant", content: sortie.texte });
+    }
+  } finally {
+    r.transcription = lignes.join("\n");
+  }
+}
+
+/** Remplit r au fil de l'exécution : la transcription partielle reste disponible en cas d'erreur. */
+async function executerScenariste(
+  c: Contexte,
+  entree: EntreeScenario,
+  r: ResultatExecution,
+): Promise<void> {
+  const lignes: string[] = [];
+  try {
+    for (const g of entree.generations ?? [{}]) {
+      const duree = g.duree ?? c.entrees.duree_par_defaut ?? 10;
+      const systeme = composerPrompt(
+        {
+          agent: "scenariste",
+          codePays: c.codePays,
+          unite: c.entrees.unite,
+          skills: SKILLS.scenariste,
+          valeursDynamiques: { DUREE: `${duree} minutes`, ...g.valeurs },
+        },
+        c.options.racine,
+      );
+      const code = g.chapitre ?? c.entrees.chapitre_par_defaut;
+      const duPack = c.chapitres.find((x) => x.code === code);
+      const titre = g.chapitre_hors_programme ?? g.chapitre_ajoute ?? duPack?.titre ?? code;
+      // En test, tous les chapitres du programme sont considérés comme validés.
+      const programme = [
+        ...c.chapitres.map((x) => x.titre),
+        ...(g.chapitre_ajoute ? [g.chapitre_ajoute] : []),
+      ];
+      const demande = {
+        programmeValide: programme,
+        chapitre: { titre, sousThemes: g.sous_themes ?? duPack?.sousThemes ?? [] },
+        prerequis: [],
+        dureeMinutes: duree,
+        consigne: g.consigne,
+      };
+      const resultat = await genererScript({
+        systeme,
+        demande,
+        modele: c.options.modele,
+        parametres: c.options.parametres,
+      });
+      r.consommations.push(...resultat.consommations);
+      if (g.valeurs) lignes.push(`[Valeurs de test : ${JSON.stringify(g.valeurs)}]`);
+      lignes.push(messageDemande(demande), "", "--- Sortie du Scénariste ---");
+      if (resultat.sortie) {
+        const texte = scriptEnTexte(resultat.sortie);
+        lignes.push(texte);
+        r.reponses.push(JSON.stringify(resultat.sortie));
+        r.sorties.push({ sortie: resultat.sortie as SortieScenariste, dureeMinutes: duree });
+      } else {
+        lignes.push(`(aucune sortie exploitable, arrêt : ${resultat.arret})`);
+        r.sorties.push({ sortie: null, dureeMinutes: duree });
+      }
+      lignes.push("");
+    }
+  } finally {
+    r.transcription = lignes.join("\n");
+  }
+}
+
+const EXECUTANTS = { professeur: executerProfesseur, scenariste: executerScenariste };
 
 export async function lancer(options: OptionsLancement): Promise<Rapport> {
   const journal = options.journal ?? (() => undefined);
@@ -114,77 +280,49 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
   const entrees = chargerEntrees(options.racine, options.agent);
   const codePays = entrees.unite.split("-")[0];
   const pack = lirePack(dossierPack(options.racine, codePays));
-  const chapitres = pack.programmes[entrees.unite] ?? [];
-  const systeme = composerPrompt(
-    {
-      agent: options.agent,
-      codePays,
-      unite: entrees.unite,
-      skills: SKILLS[options.agent],
-      // En test, tous les chapitres du programme sont considérés comme validés.
-      valeursDynamiques: {
-        LISTE_CHAPITRES: chapitres.map((c) => c.titre).join(" ; "),
-        CHAPITRE_EN_COURS: "en cours (voir le contexte de la session)",
-      },
-    },
-    options.racine,
-  );
+  const contexte: Contexte = {
+    options,
+    entrees,
+    codePays,
+    chapitres: pack.programmes[entrees.unite] ?? [],
+  };
+  const nonApplicables = entrees.non_applicables ?? {};
 
   const toutes = chargerBatteries(options.racine, options.agent);
   const choisies = toutes.filter((s) => !options.ids || options.ids.includes(s.id));
-  const nonConvertis = choisies.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id);
+  const nonConvertis = choisies
+    .filter((s) => !entrees.scenarios[s.id] && !nonApplicables[s.id])
+    .map((s) => s.id);
   const consommationsAgent: Consommation[] = [];
   const consommationsJuge: Consommation[] = [];
   const resultats: ResultatScenario[] = [];
 
   for (const scenario of choisies.filter((s) => entrees.scenarios[s.id])) {
     const entree = entrees.scenarios[scenario.id];
-    const codeChapitre = entree.chapitre ?? entrees.chapitre_par_defaut;
-    const titreChapitre = chapitres.find((c) => c.code === codeChapitre)?.titre ?? codeChapitre;
     const verifications = fusionner(entrees.verifications_communes, entree.verifications);
     const executions: Execution[] = [];
 
     for (let numero = 1; numero <= options.executions; numero++) {
-      const historique: BetaMessageParam[] = [];
-      const lignes: string[] = [];
-      const reponses: string[] = [];
-      const appels: AppelOutil[] = [];
+      const partiel: ResultatExecution = {
+        transcription: "",
+        reponses: [],
+        appels: [],
+        sorties: [],
+        consommations: [],
+      };
       try {
-        for (const tour of entree.tours) {
-          const sortie = await repondre({
-            systeme,
-            contexteSession: `# CONTEXTE DE LA SESSION\nChapitre en cours : « ${titreChapitre} ».`,
-            historique,
-            question: tour,
-            modele: options.modele,
-            parametres: options.parametres,
-            // Aucune écriture réelle : les appels d'outils sont seulement enregistrés.
-            executerOutil: async (appel) => {
-              appels.push(appel);
-              return appel.nom === "signaler"
-                ? "Signalement transmis à un humain."
-                : "Progression enregistrée.";
-            },
-            emettre: () => undefined,
-          });
-          consommationsAgent.push(...sortie.consommations);
-          reponses.push(sortie.texte);
-          lignes.push(`Élève : ${tour}`);
-          for (const appel of sortie.appels)
-            lignes.push(`[outil ${appel.nom} ${JSON.stringify({ ...appel, nom: undefined })}]`);
-          lignes.push(
-            `Professeur : ${sortie.texte || "(aucun texte)"}${sortie.arret !== "fin" ? ` [arrêt : ${sortie.arret}]` : ""}`,
-          );
-          historique.push({ role: "user", content: tour });
-          if (sortie.texte.trim()) historique.push({ role: "assistant", content: sortie.texte });
-        }
-        const transcription = lignes.join("\n");
-        const controlesEchoues = controler(verifications, reponses, appels);
-        const jugement = await options.juge(scenario, transcription);
+        await EXECUTANTS[options.agent](contexte, entree, partiel);
+        const controlesEchoues = controler(
+          verifications,
+          partiel.reponses,
+          partiel.appels,
+          partiel.sorties,
+        );
+        const jugement = await options.juge(scenario, partiel.transcription, options.agent);
         if (jugement.consommation) consommationsJuge.push(jugement.consommation);
         executions.push({
           numero,
-          transcription,
+          transcription: partiel.transcription,
           controlesEchoues,
           verdict:
             controlesEchoues.length === 0 && jugement.verdict === "reussi" ? "reussi" : "echec",
@@ -193,12 +331,13 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
       } catch (erreur) {
         executions.push({
           numero,
-          transcription: lignes.join("\n"),
+          transcription: partiel.transcription,
           controlesEchoues: [],
           verdict: "erreur",
           justification: `Erreur d'exécution : ${(erreur as Error).name}`,
         });
       }
+      consommationsAgent.push(...partiel.consommations);
       journal(`${scenario.id} #${numero} : ${executions.at(-1)!.verdict}`);
     }
 
@@ -241,6 +380,7 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
     date: new Date().toISOString(),
     resultats,
     nonConvertis,
+    nonApplicables,
     echantillon,
     coutUSD: coutTotal,
   };
@@ -269,6 +409,14 @@ export function rapportMarkdown(r: Rapport): string {
   if (r.nonConvertis.length > 0) {
     lignes.push(
       `Scénarios sans entrées concrètes (non exécutés) : ${r.nonConvertis.join(", ")}`,
+      "",
+    );
+  }
+  const nonApplicables = Object.entries(r.nonApplicables ?? {});
+  if (nonApplicables.length > 0) {
+    lignes.push(
+      "Scénarios non applicables à cet agent :",
+      ...nonApplicables.map(([id, raison]) => `- ${id} : ${raison}`),
       "",
     );
   }

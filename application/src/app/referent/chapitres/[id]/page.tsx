@@ -2,9 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { chapitrePourReferent } from "@/lib/serveur/referent";
+import { scriptsDuChapitre } from "@/lib/serveur/scenariste";
 import { FormulaireDecision } from "./formulaire-decision";
+import { FormulaireScript } from "./formulaire-script";
 
 const LIBELLES = { a_valider: "À valider", valide: "Validé", rejete: "Rejeté" } as const;
+const LIBELLES_SCRIPT = { brouillon: "brouillon", valide: "validé", rejete: "rejeté" } as const;
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "medium", timeStyle: "short" });
 
 export default async function PageChapitreReferent({
@@ -14,6 +17,7 @@ export default async function PageChapitreReferent({
   const { id } = await params;
   const chapitre = await chapitrePourReferent(utilisateur, id);
   if (!chapitre) notFound();
+  const scripts = chapitre.statut === "valide" ? await scriptsDuChapitre(utilisateur, id) : [];
 
   return (
     <main className="conteneur">
@@ -47,6 +51,27 @@ export default async function PageChapitreReferent({
         <FormulaireDecision id={chapitre.id} version={chapitre.version} />
       ) : (
         <p className="note">Ce chapitre n&apos;est pas en attente de validation.</p>
+      )}
+
+      {chapitre.statut === "valide" && (
+        <section>
+          <h2>Scripts de cours vidéo</h2>
+          {scripts.length === 0 ? (
+            <p className="note">Aucun script pour ce chapitre.</p>
+          ) : (
+            <ul>
+              {scripts.map((s) => (
+                <li key={s.id}>
+                  <Link href={`/referent/scripts/${s.id}`}>Version {s.version}</Link> —{" "}
+                  {LIBELLES_SCRIPT[s.statut]}, {s.dureeCibleMinutes} min, créée le{" "}
+                  {formatDate.format(new Date(s.creeLe))}
+                  {s.aRelireEnPriorite && <strong> — à relire en priorité</strong>}
+                </li>
+              ))}
+            </ul>
+          )}
+          <FormulaireScript chapitre={chapitre.id} dureeParDefaut={10} />
+        </section>
       )}
 
       <h2>Historique</h2>

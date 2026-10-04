@@ -27,8 +27,9 @@ export function coutUSD(modele: string, c: Consommation): number {
 
 /**
  * Estimation avant lancement, hypothèses prudentes à remplacer par la mesure du mini-essai :
- * par tour d'élève, prompt lu en cache + 1 500 jetons d'entrée + 2 000 de sortie (raisonnement compris) ;
- * par jugement, 2 500 jetons d'entrée + 800 de sortie ; une écriture du prompt en cache.
+ * par tour (message d'élève ou demande de script), prompt lu en cache + 1 500 jetons d'entrée
+ * + sortieParTour jetons de sortie, raisonnement compris (2 000 par défaut ; un script en demande bien plus) ;
+ * par jugement, entreeJugement jetons d'entrée (2 500 par défaut) + 800 de sortie ; une écriture du prompt en cache.
  */
 export function estimerUSD(options: {
   modeleAgent: string;
@@ -36,15 +37,20 @@ export function estimerUSD(options: {
   jetonsPrompt: number;
   toursTotal: number;
   jugements: number;
+  sortieParTour?: number;
+  entreeJugement?: number;
 }): number {
   const parTour = coutUSD(options.modeleAgent, {
     cache_read_input_tokens: options.jetonsPrompt,
     input_tokens: 1500,
-    output_tokens: 2000,
+    output_tokens: options.sortieParTour ?? 2000,
   });
   const ecritureCache = coutUSD(options.modeleAgent, {
     cache_creation_input_tokens: options.jetonsPrompt,
   });
-  const parJugement = coutUSD(options.modeleJuge, { input_tokens: 2500, output_tokens: 800 });
+  const parJugement = coutUSD(options.modeleJuge, {
+    input_tokens: options.entreeJugement ?? 2500,
+    output_tokens: 800,
+  });
   return options.toursTotal * parTour + ecritureCache + options.jugements * parJugement;
 }
