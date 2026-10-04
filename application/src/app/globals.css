@@ -112,3 +112,55 @@ button:disabled {
   padding: 0;
   word-break: break-word;
 }
+
+.liste-cartes {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.carte {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  border: 1px solid var(--discret);
+  border-radius: 0.75rem;
+  color: var(--texte);
+  text-decoration: none;
+}
+
+.carte.inactive {
+  opacity: 0.6;
+}
+
+.chapitres {
+  padding-left: 1.25rem;
+}
+
+.chapitres li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--discret) 30%, transparent);
+}
+
+.statut {
+  white-space: nowrap;
+  font-size: 0.875rem;
+  align-self: start;
+}
+
+.statut-termine {
+  color: #15803d;
+}
+
+.statut-en_cours {
+  color: var(--accent);
+}
+
+.autres-classes {
+  margin-top: 2rem;
+}

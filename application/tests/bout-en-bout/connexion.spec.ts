@@ -1,15 +1,7 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { seConnecter } from "./outils";
 
 // Numéros fictifs (indicatif +999 inexistant) ; authentification simulée, code 123456.
-async function seConnecter(page: Page, numero: string) {
-  await page.goto("/connexion");
-  await page.getByLabel("Ton numéro de téléphone").fill(numero);
-  await page.getByRole("button", { name: "Recevoir un code" }).click();
-  await expect(page.getByRole("heading", { name: "Entre ton code" })).toBeVisible();
-  await page.getByLabel("Code reçu").fill("123456");
-  await page.getByRole("button", { name: "Valider" }).click();
-}
-
 test("un numéro invalide est refusé", async ({ page }) => {
   await page.goto("/connexion");
   await page.getByLabel("Ton numéro de téléphone").fill("0612");

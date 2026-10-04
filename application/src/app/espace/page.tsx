@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { seDeconnecter } from "../connexion/actions";
 import { profilEleve } from "@/lib/serveur/requetes";
@@ -27,7 +28,16 @@ export default async function PageEspace() {
           qu&apos;il l&apos;ouvre et accepte, ton compte s&apos;active.
         </p>
       )}
-      {profil.statut === "actif" && <p role="status">Ton compte est actif.</p>}
+      {profil.statut === "actif" && (
+        <>
+          <p role="status">Ton compte est actif.</p>
+          <p>
+            <Link href="/catalogue" className="bouton">
+              Mes cours
+            </Link>
+          </p>
+        </>
+      )}
       {profil.statut === "suspendu" && (
         <p role="status">Ton compte est suspendu. Contacte le support.</p>
       )}

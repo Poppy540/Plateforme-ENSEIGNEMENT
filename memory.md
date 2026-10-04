@@ -50,6 +50,8 @@
 
 ## État d'avancement
 
+- 2026-10-04 : Jalon 1, étape 5 faite — catalogue (`/catalogue`, `/catalogue/<unité>`) : matières de la classe et de la série de l'élève, chapitres validés seulement, statut à voir / en cours / terminé, parcours d'une autre classe, accès réservé aux comptes actifs, page 404 en français. 13 tests de bout en bout passent.
+
 - 2026-10-04 : Jalon 1, étape 4 faite — connexion par code (SMS ou email) avec fournisseur Supabase (production) ou simulation (développement/test, code 123456), session signée, inscription minimale, âge de la majorité lu dans le pack (inconnu = mineur), validation parentale par lien à usage unique, accès aux données par le rôle `serveur_application` sans droit propre (ADR 0015). Tests : 21 unitaires, 15 d'accès + 3 d'import en base, 8 de bout en bout.
 
 - 2026-10-04 : Jalon 1, étape 3 faite — lecteur et contrôle des packs (`application/src/lib/pack-pays/`), génération d'un SQL d'import idempotent qui ne valide rien (`pnpm pack:sql`). Tests : pack Gabon = 67 unités, pack fictif « yy » (structure différente) chargé sans modifier le code, pack invalide refusé, garde-fou « aucun nom de pays dans le code », import réel en base (deux fois sans doublon) et repassage « à valider » après modification.
@@ -64,4 +66,4 @@
 
 ## Prochaine étape
 
-Jalon 1, étape 5 : catalogue filtré par classe et série (chapitres validés seulement, statut à voir / en cours / terminé).
+Jalon 1, étape 6 : espace enseignant-référent (chapitres à valider, valider/rejeter avec commentaire, trace dans `approbations`).
