@@ -14,6 +14,7 @@
 | 2026-10-04 | Chapitre en cours fourni par la session ; outils définis à part | ADR 0006 (E6) |
 | 2026-10-04 | Allemand LV2 hors décompte | ADR 0007 (E7) |
 | 2026-10-04 | Création d'un 10e agent, Coordinateur par famille de matières, + configuration partagée par famille | ADR 0008 (E1) |
+| 2026-10-04 | Coordinateur ajouté au routage de l'Orchestrateur (seule modification d'un prompt du cadrage, sur accord du propriétaire) | ADR 0008 |
 | 2026-10-04 | Fichier commun de secrets nommé `secrets/commun.env.example` (et non `.env.example`), car les `.env*` sont interdits en lecture | `secrets/README.md` |
 
 ## Hypothèses à vérifier
@@ -32,7 +33,7 @@
 4. Modèle économique du pilote (gratuit ou abonnement Mobile Money).
 5. Premier enseignant-référent Maths 3e ; accès aux programmes officiels IPN.
 6. **Juriste local (Gabon)** : protection des données, consentement des mineurs, prospection, activité annexe des enseignants du public, contrat de référent, propriété intellectuelle, consentement voix/image. À faire vérifier **avant d'ouvrir à de vrais élèves**.
-7. Validation du prompt, des droits et des tests de l'agent Coordinateur ; faut-il ajouter le Coordinateur au routage de l'Orchestrateur (C7) ?
+7. Validation du prompt, des droits et des tests (CD, OR-09) de l'agent Coordinateur.
 8. Liste des skills tierces à proposer (recherche non faite).
 9. Séries techniques F/G : à définir avec des enseignants techniques.
 

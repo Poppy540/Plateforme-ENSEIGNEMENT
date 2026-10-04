@@ -12,7 +12,7 @@
 | `agents/tuteur/tests/TU.feature` | TU-01 à TU-08 | D4 |
 | `agents/conformite/tests/CO.feature` | CO-01 à CO-07 | D5 |
 | `agents/support/tests/SU.feature` | SU-01 à SU-08 | D5 |
-| `agents/orchestrateur/tests/OR.feature` | OR-01 à OR-08 | D5 |
+| `agents/orchestrateur/tests/OR.feature` | OR-01 à OR-08 (D5), + OR-09 brouillon (routage Coordinateur) | D5 |
 | `agents/recruteur/tests/RC.feature` | RC-01 à RC-18 | Partie E |
 | `agents/coordinateur/tests/CD.feature` | CD-01 à CD-07 (**brouillon**, agent ajouté hors cadrage) | — |
 
