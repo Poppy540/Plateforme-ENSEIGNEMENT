@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
+import { lancerProduction } from "@/lib/serveur/production-video";
 import { deciderScript, genererBrouillonScript } from "@/lib/serveur/scenariste";
 import { lireDecision } from "../../decision";
 import type { EtatFormulaire } from "../../formulaires-contenu";
@@ -37,4 +38,27 @@ export async function demanderRevision(
   if (!resultat.ok) return { erreur: resultat.erreur };
   revalidatePath(`/referent/chapitres/${chapitreId}`);
   redirect(`/referent/chapitres/${chapitreId}?revision=${resultat.version}`);
+}
+
+export async function lancerProductionVideo(
+  _etat: EtatFormulaire,
+  donnees: FormData,
+): Promise<EtatFormulaire> {
+  const utilisateur = await exigerReferent();
+  const scriptId = String(donnees.get("id") ?? "");
+  const resultat = await lancerProduction(utilisateur, {
+    scriptId,
+    version: Number(donnees.get("version")),
+    empreinte: String(donnees.get("empreinte") ?? ""),
+  });
+  if (!resultat.ok) return { erreur: resultat.erreur };
+  revalidatePath(`/referent/scripts/${scriptId}`);
+  const r = resultat.rapport;
+  if (r.resultat === "deposee")
+    return {
+      succes: `Vidéo produite et déposée « à relire » (${Math.round(r.dureeSecondes)} s, ${r.coutUSD.toFixed(2)} USD).`,
+    };
+  return {
+    erreur: `Production ${r.resultat === "refusee" ? "refusée" : "arrêtée"} : ${r.anomalies.at(-1) ?? "voir le journal"}`,
+  };
 }

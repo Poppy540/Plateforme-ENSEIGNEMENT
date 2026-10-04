@@ -13,7 +13,8 @@ function pool(): Pool {
   return globalPourPool.poolBase;
 }
 
-type RoleAgent = "agent_professeur" | "agent_scenariste" | "agent_evaluateur";
+type RoleAgent =
+  "agent_professeur" | "agent_scenariste" | "agent_evaluateur" | "agent_production_video";
 
 async function enTransaction<T>(
   role: "anon" | "authenticated" | RoleAgent,
@@ -78,6 +79,11 @@ export function avecAgentEvaluateur<T>(
   traitement: (client: PoolClient) => Promise<T>,
 ) {
   return enTransaction("agent_evaluateur", null, traitement, contexte);
+}
+
+/** Requêtes de la chaîne de production vidéo : aucun élève, aucune unité (elle ne lit que des scripts validés). */
+export function avecAgentProductionVideo<T>(traitement: (client: PoolClient) => Promise<T>) {
+  return enTransaction("agent_production_video", null, traitement);
 }
 
 /** Réservé à l'authentification simulée (développement et test) : crée le compte d'authentification. */

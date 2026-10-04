@@ -2,9 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Fragment } from "react";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
+import { productionsDuScript } from "@/lib/serveur/production-video";
 import { scriptPourReferent } from "@/lib/serveur/scenariste";
 import { FormulaireDecisionContenu, FormulaireRevisionContenu } from "../../formulaires-contenu";
 import { deciderSurScript, demanderRevision } from "./actions";
+import { FormulaireProduction } from "./formulaire-production";
 
 const LIBELLES = { brouillon: "Brouillon", valide: "Validé", rejete: "Rejeté" } as const;
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "medium", timeStyle: "short" });
@@ -45,6 +47,8 @@ export default async function PageScriptReferent({ params }: PageProps<"/referen
   const script = await scriptPourReferent(utilisateur, id);
   if (!script) notFound();
   const c = script.contenu;
+  const productions = script.statut === "valide" ? await productionsDuScript(utilisateur, id) : [];
+  const RESULTATS = { deposee: "déposée « à relire »", arretee: "arrêtée", refusee: "refusée" };
 
   return (
     <main className="conteneur">
@@ -124,6 +128,30 @@ export default async function PageScriptReferent({ params }: PageProps<"/referen
           {h.commentaire && <> — « {h.commentaire} »</>}
         </p>
       ))}
+
+      {script.statut === "valide" && (
+        <section>
+          <h2>Production vidéo</h2>
+          <FormulaireProduction
+            id={script.id}
+            version={script.version}
+            empreinte={script.empreinte}
+            simulation={process.env.MODE_VIDEO === "simulation"}
+          />
+          {productions.length > 0 && (
+            <ul>
+              {productions.map((p) => (
+                <li key={p.creeLe}>
+                  {formatDate.format(new Date(p.creeLe))} — version {p.scriptVersion} :{" "}
+                  <strong>{RESULTATS[p.resultat]}</strong>, {p.coutUSD.toFixed(2)} USD
+                  {p.resultat === "deposee" && `, ${Math.round(p.dureeSecondes)} s`}
+                  {p.escalades.length > 0 && <> — alerte : {p.escalades.join(" ; ")}</>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
 
       <h2>Demander une révision</h2>
       <FormulaireRevisionContenu

@@ -248,3 +248,65 @@ test("quiz : l'Évaluateur crée un brouillon (modèle simulé), le référent l
   expect(traces).toEqual([{ tentatives: 1, score: 67, contestations: 2, signalements: 1 }]);
   await eleve.close();
 });
+
+test("production vidéo (services simulés) : vidéo déposée « à relire » depuis le script validé ; script altéré refusé", async ({
+  page,
+}) => {
+  const [script] = await executerSql(
+    `select s.id, s.contenu::text as contenu from scripts s join chapitres c on c.id = s.chapitre_id
+     where c.titre = 'Systèmes d''équations' and s.statut = 'valide'`,
+  );
+  await seConnecter(page, REFERENT);
+  await page.goto(`/referent/scripts/${script.id}`);
+  await page
+    .getByRole("button", { name: /Lancer la production de la version 2 \(services simulés\)/ })
+    .click();
+  await expect(page.getByRole("status")).toContainText("Vidéo produite et déposée « à relire »");
+  await expect(page.getByText(/déposée « à relire »,/)).toBeVisible();
+
+  const videos = await executerSql(
+    `select v.statut, v.script_version, v.script_empreinte = s.empreinte as meme_empreinte,
+       v.reference_hebergement like 'simulation://%' as simulee, (v.rapport ->> 'resultat') as resultat
+     from videos v join scripts s on s.id = v.script_id where s.id = '${script.id}'`,
+  );
+  expect(videos).toEqual([
+    {
+      statut: "a_relire",
+      script_version: 2,
+      meme_empreinte: true,
+      simulee: true,
+      resultat: "deposee",
+    },
+  ]);
+
+  // Script altéré après validation (contournement simulé du verrou de la base) : la chaîne refuse.
+  await executerSql(
+    `alter table scripts disable trigger scripts_versionnes;
+     update scripts set contenu = jsonb_set(contenu, '{sections,0,texte_parle}', '"Texte altéré."') where id = '${script.id}';
+     alter table scripts enable trigger scripts_versionnes;`,
+  );
+  await page.reload();
+  await page.getByRole("button", { name: /Lancer la production de la version 2/ }).click();
+  await expect(page.locator(".erreur")).toContainText("Script modifié après sa validation");
+  const journal = await executerSql(
+    `select resultat, cout_usd::float as cout from journal_production_video
+     where script_id = '${script.id}' order by cree_le`,
+  );
+  expect(journal.map((j) => j.resultat)).toEqual(["deposee", "refusee"]);
+  expect(journal[1].cout).toBe(0);
+  const [alerte] = await executerSql(
+    "select count(*)::int as n from signalements where source = 'agent_production_video'",
+  );
+  expect(alerte.n).toBe(1);
+
+  // Remise en état du contenu validé (mêmes données, même empreinte).
+  await executerSql("alter table scripts disable trigger scripts_versionnes");
+  await executerSql(`update scripts set contenu = $1::jsonb where id = '${script.id}'`, [
+    script.contenu,
+  ]);
+  await executerSql("alter table scripts enable trigger scripts_versionnes");
+  const [remis] = await executerSql(
+    `select empreinte_jsonb(contenu) = empreinte as intact from scripts where id = '${script.id}'`,
+  );
+  expect(remis.intact).toBe(true);
+});
