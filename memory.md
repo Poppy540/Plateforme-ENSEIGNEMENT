@@ -21,6 +21,9 @@
 
 ## Hypothèses à vérifier
 
+- Les outils cités par les prompts et les skills (escalade, progression, signalement, tickets) n'existent pas encore : à définir (ADR 0006).
+- La planification d'entretiens par calendrier (Recruteur) n'a pas de skill : à écrire si besoin.
+
 - Tous les programmes du cadrage sont provisoires (base francophone générique ; Histoire-Géo 6e issue des programmes IPN 1993/1996 ; réforme des curricula en cours depuis 2022).
 - Volumes horaires et coefficients : inconnus.
 - Classement des matières en couches universel / adaptable / local : hypothèse de travail.
@@ -41,6 +44,7 @@
 
 ## État d'avancement
 
+- 2026-10-04 : 11 skills tierces adaptées (Professeur 2, Scénariste 2, Évaluateur 1, Conformité 2, Coordinateur 1, Support 1, Recruteur 1, commun 1) ; licences jointes.
 - 2026-10-04 : cadrage v2 intégré (Partie G) ; 16 skills du Coordinateur rédigées.
 - 2026-10-04 : squelette du dépôt créé (docs, CLAUDE.md, memory.md, secrets/ modèles, 10 dossiers d'agents avec prompts, permissions et tests Gherkin, pack Gabon avec 67 unités et le programme pilote Maths 3e, `.claude/settings.json`, `.gitignore`). **Aucun code applicatif.** Lanceur de tests spécifié (`tests/README.md`, `tests/config.yaml`), pas implémenté.
 

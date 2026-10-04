@@ -13,7 +13,9 @@
 | `recruteur/` | Recruteur d'enseignants-référents | Partie E |
 | `coordinateur/` | Coordinateur de famille de matières (une instance par famille) | Partie G |
 
-Chaque dossier contient :
+`_commun/skills/` contient les skills qui s'appliquent à **tous** les agents (par exemple `contenu-non-fiable`).
+
+Chaque dossier d'agent contient :
 
 - `prompt.md` : recopié **tel quel** du cadrage (extrait automatiquement des blocs de code). Toute modification passe par le propriétaire.
 - `permissions.md` : droits tirés du §5.2 du prompt maître, et clés de l'agent.

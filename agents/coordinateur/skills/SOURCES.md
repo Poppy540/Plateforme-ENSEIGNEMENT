@@ -1,6 +1,6 @@
 # Skills — agent Coordinateur de famille
 
-Liste issue de `docs/cadrage.md`, Partie G. Toutes ces skills sont **rédigées pour ce projet** (aucune skill tierce installée).
+Liste issue de `docs/cadrage.md`, Partie G. Les skills du tableau ci-dessous sont **rédigées pour ce projet** ; les skills tierces adaptées figurent dans « Skills retenues ».
 
 | Skill | Rôle | Source | Licence | Statut |
 |---|---|---|---|---|
@@ -24,4 +24,11 @@ Liste issue de `docs/cadrage.md`, Partie G. Toutes ces skills sont **rédigées 
 ## Skill tierce à examiner
 
 - « course-designer » (citée par la Partie G pour `alignement-objectifs-evaluation`) : non trouvée ni lue à ce jour. Elle ne sera reprise qu'après lecture complète, vérification de la licence et accord du propriétaire.
-- Candidats de la recherche du 2026-10-04 (`docs/skills-recherche-2026-10-04.md`) : GarethManning `learning-progression-builder` et `scope-and-sequence-designer` (CC BY-SA 4.0), en attente de décision.
+- `learning-progression-builder` (GarethManning, CC BY-SA 4.0) : adoptée et adaptée en `progression-d-apprentissage` (voir « Skills retenues »).
+- `scope-and-sequence-designer` (GarethManning) : inspiration seulement, non reprise.
+
+## Skills retenues
+
+| Skill | Source (URL, chemin, commit) | Licence | Adaptations | Validée par le propriétaire |
+|---|---|---|---|---|
+| `progression-d-apprentissage` | https://github.com/GarethManning/education-agent-skills, `skills/curriculum-assessment/learning-progression-builder`, commit `6bbbce418f82e11044009c9f3b7373a354de5bd0` | CC BY-SA 4.0 (voir `LICENSE.md` du dossier) | Français, collège-lycée, référentiel du pays ; entrée « profils d'élèves » retirée (aucune donnée individuelle) ; sortie au statut brouillon pour le référent, liens de prérequis au format de `graphe-prerequis` ; exemple de mathématiques ; règles de sécurité et d'escalade | Validée par le propriétaire (liste validée le 2026-10-04) |
