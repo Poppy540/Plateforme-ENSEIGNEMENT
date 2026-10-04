@@ -1,0 +1,7 @@
+# Contexte local pour l'ancrage des exemples (source : docs/cadrage.md). Statut : à valider avec les référents.
+exemples:
+  lieux: [Libreville, "l'Ogooué"]
+  economie: ["le manganèse", "le franc CFA (XAF)", "la CEMAC"]
+  nature: ["l'okoumé", "forêt", "savane", "rivière"]
+  idees_maths_3e: ["prix en francs CFA", "distances entre villes"]   # à choisir avec le prof-référent
+consignes: "Éviter les exemples qui supposent des objets ou des situations absents du quotidien des élèves."

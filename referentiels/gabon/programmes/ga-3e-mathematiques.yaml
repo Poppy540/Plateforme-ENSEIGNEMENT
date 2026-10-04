@@ -1,0 +1,24 @@
+# Programme de l'unité pilote — Mathématiques 3e (Gabon).
+# Source : docs/cadrage.md (« Découpage des cours — Classe de 3e » et Partie B). PROVISOIRE : base francophone générique,
+# à valider par un enseignant-référent gabonais à partir du programme officiel IPN.
+unite: ga-3e-mathematiques
+statut: a_valider
+valide_par: null
+date_validation: null
+examen: bepc
+chapitres:
+  - {ordre: 1, code: thales,               titre: "Théorème de Thalès",                     statut: a_valider}
+  - {ordre: 2, code: trigonometrie,        titre: "Trigonométrie dans le triangle rectangle", statut: a_valider}
+  - {ordre: 3, code: equations-inequations, titre: "Équations et inéquations",              statut: a_valider}
+  - {ordre: 4, code: systemes,             titre: "Systèmes d'équations",                   statut: a_valider}
+  - {ordre: 5, code: fonctions-affines,    titre: "Fonctions linéaires et affines",         statut: a_valider}
+  - {ordre: 6, code: probabilites,         titre: "Probabilités",                           statut: a_valider}
+  - {ordre: 7, code: revisions-bepc,       titre: "Révisions générales du BEPC",            statut: a_valider}
+# Prérequis de l'unité (Partie B). Les liens chapitre par chapitre seront posés dans le graphe de prérequis.
+prerequis:
+  - {notion: "Fractions",                      unite_source: ga-6e-mathematiques}
+  - {notion: "Proportionnalité",               unite_source: ga-6e-mathematiques}
+  - {notion: "Théorème de Pythagore",          unite_source: ga-4e-mathematiques}
+  - {notion: "Calcul littéral",                unite_source: ga-4e-mathematiques}
+  - {notion: "Équations du premier degré",     unite_source: ga-4e-mathematiques}
+# Volumes horaires et coefficients : manquants (à demander au référent / IPN).

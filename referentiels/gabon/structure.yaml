@@ -1,0 +1,27 @@
+# Structure du système éducatif gabonais (source : docs/cadrage.md, « Cadre général »).
+# code_interne = code neutre commun aux pays ; libelle = libellé affiché à l'élève.
+cycles:
+  - code: college
+    libelle: Collège
+    examen_fin: bepc
+  - code: lycee
+    libelle: Lycée
+    examen_fin: bac
+niveaux:
+  - {code: 6e,   libelle: "6e",        cycle: college, ordre: 1, code_interne: secondaire-1}
+  - {code: 5e,   libelle: "5e",        cycle: college, ordre: 2, code_interne: secondaire-2}
+  - {code: 4e,   libelle: "4e",        cycle: college, ordre: 3, code_interne: secondaire-3}
+  - {code: 3e,   libelle: "3e",        cycle: college, ordre: 4, code_interne: secondaire-4-fin-cycle-1}
+  - {code: 2nde, libelle: "Seconde",   cycle: lycee,   ordre: 5, code_interne: secondaire-5}
+  - {code: 1re,  libelle: "Première",  cycle: lycee,   ordre: 6, code_interne: secondaire-6, series_obligatoires: true}
+  - {code: tle,  libelle: "Terminale", cycle: lycee,   ordre: 7, code_interne: secondaire-7-fin-cycle-2, series_obligatoires: true}
+series:
+  - {code: A1, libelle: "Lettres-Langues",                  type: generale, code_interne: litteraire}
+  - {code: A2, libelle: "Lettres",                          type: generale, code_interne: litteraire}
+  - {code: B,  libelle: "Économique et Social",             type: generale, code_interne: economique-social}
+  - {code: C,  libelle: "Mathématiques-Sciences Physiques", type: generale, code_interne: scientifique-maths-physique}
+  - {code: D,  libelle: "Mathématiques-SVT",                type: generale, code_interne: scientifique-maths-svt}
+  # Séries techniques F (industrielles) et G (tertiaires) : hors périmètre, à définir avec des enseignants techniques.
+examens:
+  - {code: bepc, libelle: "BEPC",          niveau: 3e}
+  - {code: bac,  libelle: "Baccalauréat",  niveau: tle}
