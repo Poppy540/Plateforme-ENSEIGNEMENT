@@ -20,6 +20,16 @@ referentiels/<code-pays>/
   SOURCES.md              origine et statut (validé / à valider / manquant) de chaque donnée
 ```
 
+## Importer un pack dans la base
+
+```
+cd application
+pnpm pack:sql ../referentiels/<pays> > import.sql   # contrôle le pack puis génère le SQL
+psql "<connexion à la base>" -f import.sql          # base de développement ; production seulement avec accord
+```
+
+Le contrôle refuse un pack incohérent (niveau, série ou matière inconnus, doublons, séries manquantes) en listant toutes les erreurs. L'import est relançable sans doublon et **ne valide jamais rien** : les chapitres arrivent « à valider », et un chapitre validé dont le contenu change dans le pack repasse « à valider ».
+
 ## Ajouter un pays
 
 1. Copier `referentiels/_modele/` vers `referentiels/<code-pays>/`.

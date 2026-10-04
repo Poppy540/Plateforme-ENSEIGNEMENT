@@ -1,0 +1,9 @@
+unite: yy-g7-algebre
+chapitres:
+  - {
+      ordre: 1,
+      code: expressions,
+      titre: "Expressions",
+      sous_themes: ["Variables", "L'ordre des opérations"],
+    }
+  - { ordre: 2, code: equations, titre: "Équations simples", volume_horaire: 6, coefficient: 2 }

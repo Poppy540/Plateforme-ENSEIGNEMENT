@@ -1,0 +1,10 @@
+# Pack FICTIF de test : prouve qu'un nouveau pays se charge sans modifier le code.
+code: yy
+nom: Pays fictif
+langue_enseignement: fr
+fuseau_horaire: UTC
+monnaie: null
+statut_pack: en_preparation
+referentiel:
+  code: yy-general
+  version: "0.1"

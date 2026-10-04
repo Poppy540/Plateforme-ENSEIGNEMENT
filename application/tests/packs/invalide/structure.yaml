@@ -1,0 +1,11 @@
+niveaux:
+  - { code: n1, libelle: "N1", cycle: c, ordre: 1, code_interne: s1 }
+  - {
+      code: n1,
+      libelle: "Doublon",
+      cycle: c,
+      ordre: 2,
+      code_interne: s2,
+      series_obligatoires: true,
+    }
+series: []

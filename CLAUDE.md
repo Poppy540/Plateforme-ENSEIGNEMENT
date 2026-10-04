@@ -53,7 +53,8 @@ pnpm lint             # ESLint
 pnpm format:verifier  # Prettier
 pnpm typecheck        # types Next.js + TypeScript
 pnpm test             # tests unitaires (Vitest)
-pnpm test:base        # migrations Supabase + règles d'accès sur un Postgres local jetable
+pnpm test:base        # migrations Supabase, règles d'accès et import des packs sur un Postgres local jetable
+pnpm pack:sql ../referentiels/<pays>   # contrôle un pack pays et génère son SQL d'import
 CHEMIN_CHROMIUM=/opt/pw-browsers/chromium-1194/chrome-linux/chrome pnpm test:e2e   # bout en bout (Playwright)
 ```
 

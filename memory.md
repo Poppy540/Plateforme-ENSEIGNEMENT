@@ -47,6 +47,8 @@
 
 ## État d'avancement
 
+- 2026-10-04 : Jalon 1, étape 3 faite — lecteur et contrôle des packs (`application/src/lib/pack-pays/`), génération d'un SQL d'import idempotent qui ne valide rien (`pnpm pack:sql`). Tests : pack Gabon = 67 unités, pack fictif « yy » (structure différente) chargé sans modifier le code, pack invalide refusé, garde-fou « aucun nom de pays dans le code », import réel en base (deux fois sans doublon) et repassage « à valider » après modification.
+
 - 2026-10-04 : Jalon 1, étape 2 faite — 4 migrations Supabase (`application/supabase/migrations/`) : référentiels multi-pays, comptes minimaux, consentements, progression, approbations, signalements, règles d'accès, rôle `agent_professeur` (ADR 0014). 14 tests d'accès passent sur Postgres 16 local (`pnpm test:base`) ; deux règles volontairement affaiblies font bien échouer les tests.
 
 - 2026-10-04 : Jalon 1, étape 1 faite — `application/` (Next.js 16 + TypeScript, PWA : manifeste et icône, français, sans police téléchargée), ESLint, Prettier, Vitest, Playwright ; lint, types, test unitaire et 2 tests de bout en bout passent.
@@ -57,4 +59,4 @@
 
 ## Prochaine étape
 
-Jalon 1, étape 3 : import du pack pays (`referentiels/<pays>/*.yaml`) dans la base ; test : 67 unités pour le Gabon, pack fictif chargé sans modifier le code.
+Jalon 1, étape 4 : connexion (téléphone + code SMS via Supabase Auth, numéros de test, lien magique email), inscription minimale, compte mineur en attente de validation parentale.

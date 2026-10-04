@@ -27,3 +27,19 @@ for migration in "$racine"/supabase/migrations/*.sql; do
 done
 psql_test -f "$racine/supabase/tests/10_donnees_fictives.sql"
 psql_test -f "$racine/supabase/tests/20_tests_acces.sql"
+
+# Import des packs pays : pack pilote deux fois (idempotence), puis pack fictif.
+pack_sql() { node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/pack-en-sql.mts" "$1"; }
+pack_sql "$racine/../referentiels/gabon" > "$dossier/pilote.sql"
+pack_sql "$racine/tests/packs/yy-fictif" > "$dossier/fictif.sql"
+psql_test -f "$dossier/pilote.sql" -o /dev/null
+psql_test -f "$dossier/pilote.sql" -o /dev/null
+psql_test -f "$dossier/fictif.sql" -o /dev/null
+psql_test -f "$racine/supabase/tests/30_tests_import.sql"
+
+# Réimport après modification, dans le pack, d'un chapitre déjà validé.
+psql_test -f "$racine/supabase/tests/31_chapitre_valide_puis_reimporte.sql"
+sed "s/des opérations'/des opérations (révisé)'/" "$dossier/fictif.sql" > "$dossier/fictif-modifie.sql"
+psql_test -f "$dossier/fictif-modifie.sql" -o /dev/null
+psql_test -f "$racine/supabase/tests/32_tests_reimport.sql"
+echo "TOUS LES TESTS DE BASE SONT PASSÉS"

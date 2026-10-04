@@ -1,0 +1,3 @@
+unites:
+  - { code: u1, niveau: inexistant, series: [], matiere: m1 }
+  - { code: u2, niveau: n1, series: [X], matiere: absente }

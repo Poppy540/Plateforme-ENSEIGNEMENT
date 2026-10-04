@@ -1,0 +1,10 @@
+unites:
+  - { code: yy-g7-algebre, niveau: grade-7, series: [], matiere: algebre }
+  - { code: yy-g12-algebre, niveau: grade-12, series: [SCI, LIT], matiere: algebre }
+  - {
+      code: yy-g12-civisme,
+      niveau: grade-12,
+      series: [LIT],
+      matiere: civisme,
+      libelle_local: "Civisme d'aujourd'hui",
+    }
