@@ -17,6 +17,7 @@
 | 2026-10-04 | Cadrage mis à jour par le propriétaire : Partie G (Coordinateur de famille : prompt, compétences, 16 skills, droits, tests CM) ; prompt maître à dix agents. Prompt, droits et tests du Coordinateur alignés dessus (CD remplacés par CM) | ADR 0008 |
 | 2026-10-04 | Coordinateurs de famille mis en service après le Jalon 3, dès qu'une famille compte plusieurs unités (prompt maître §7) | prompt maître |
 | 2026-10-04 | Licence CC BY-SA 4.0 acceptée pour les skills dérivées de Gareth Manning ; liste des skills (docs/skills-recherche-2026-10-04.md) validée | docs/decisions/0009-skills-tierces.md |
+| 2026-10-04 | Recrutement : le Recruteur prépare et transmet, le propriétaire décide et finalise ({{RESPONSABLE}} = propriétaire) | ADR 0010 |
 | 2026-10-04 | Fichier commun de secrets nommé `secrets/commun.env.example` (et non `.env.example`), car les `.env*` sont interdits en lecture | `secrets/README.md` |
 
 ## Hypothèses à vérifier
@@ -40,7 +41,8 @@
 5. Premier enseignant-référent Maths 3e ; accès aux programmes officiels IPN.
 6. **Juriste local (Gabon)** : protection des données, consentement des mineurs, prospection, activité annexe des enseignants du public, contrat de référent, propriété intellectuelle, consentement voix/image. À faire vérifier **avant d'ouvrir à de vrais élèves**.
 7. Skills propres au projet encore à écrire (rien d'existant) : français et mineurs, accueil WhatsApp, files d'approbation, pipeline voix/avatar, faible débit, lecture de PDF, sourcing éthique.
-8. Séries techniques F/G : à définir avec des enseignants techniques.
+8. Recruteur : envoi des messages approuvés et des invitations par l'agent, ou par le propriétaire lui-même ? (ADR 0010)
+9. Séries techniques F/G : à définir avec des enseignants techniques.
 
 ## État d'avancement
 
