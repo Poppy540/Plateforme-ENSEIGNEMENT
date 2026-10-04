@@ -20,6 +20,10 @@ Variables : `WEB_SEARCH_API_KEY`, `MAIL_API_KEY`, `CALENDAR_API_TOKEN`, `DATABAS
 
 Aucune clé de paiement ni de signature électronique. La clé de la base est propre à cet agent et limitée à son rôle.
 
+## Envoi (ADR 0010)
+
+Le Recruteur envoie les messages et les invitations d'agenda **uniquement après validation du propriétaire**, enregistrée dans le système. L'outil d'envoi vérifie l'approbation (valideur, date, empreinte du texte), la liste d'opposition et la limite d'une relance ; sans approbation, l'envoi est refusé.
+
 ## Mise en œuvre (à faire)
 
 Ces droits seront appliqués techniquement (rôle de base de données dédié, politiques d'accès au niveau des lignes, outils exposés à l'agent), pas seulement par le prompt.
