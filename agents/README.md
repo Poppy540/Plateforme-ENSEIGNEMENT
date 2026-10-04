@@ -11,7 +11,7 @@
 | `support/` | Support/inscription | Partie C6 |
 | `orchestrateur/` | Orchestrateur | Partie C7, + une ligne de routage vers le Coordinateur (accord du propriétaire, ADR 0008) |
 | `recruteur/` | Recruteur d'enseignants-référents | Partie E |
-| `coordinateur/` | Coordinateur de famille de matières | **Brouillon** de Claude Code (ADR 0008), à valider |
+| `coordinateur/` | Coordinateur de famille de matières | Rédigé par Claude Code, validé par le propriétaire (ADR 0008) |
 
 Chaque dossier contient :
 

@@ -12,7 +12,7 @@ Plateforme d'enseignement en ligne du collège au lycée : cours vidéo présent
 - Base de données relationnelle avec recherche vectorielle et un rôle restreint par agent (Supabase pressenti, à confirmer).
 - Vidéo adaptative faible débit (Cloudflare Stream pressenti), service d'avatar, service de voix, WhatsApp Business, SMS (OTP), Mobile Money côté backend uniquement.
 - **Unité pédagogique** = (référentiel, niveau, ensemble de séries, matière). Une unité = programme validé + avatar + configuration de l'agent Professeur.
-- **Dix agents** : Professeur (un modèle, instancié par unité), Scénariste, Production vidéo, Évaluateur, Tuteur, Conformité programme, Support/inscription, Orchestrateur, Recruteur, Coordinateur (par famille de matières, brouillon).
+- **Dix agents** : Professeur (un modèle, instancié par unité), Scénariste, Production vidéo, Évaluateur, Tuteur, Conformité programme, Support/inscription, Orchestrateur, Recruteur, Coordinateur (par famille de matières).
 - Un humain (enseignant-référent) valide programmes, scripts, quiz et vidéos avant toute publication.
 
 ## Principe du pack pays
@@ -88,4 +88,4 @@ INTERDIT :
 AUTORISÉ : créer et modifier les fichiers du dépôt, installer des dépendances vérifiées, lancer les tests, proposer des skills et des services.
 INTERDIT SANS MON ACCORD EXPLICITE : lire, afficher ou commiter une valeur de secret ; déployer en production ; supprimer des données ; installer une skill ou un paquet tiers non vérifié ; souscrire un service payant ; réécrire un prompt d'agent ; affaiblir les règles de permission de .claude/settings.json ; utiliser des données réelles d'élèves, de parents ou de candidats.
 
-> Ajout hors §5, en brouillon (ADR 0008) : les droits de l'agent Coordinateur sont dans `agents/coordinateur/permissions.md`, à valider par le propriétaire.
+> Ajout hors §5 (ADR 0008, validé le 2026-10-04) : les droits de l'agent Coordinateur sont dans `agents/coordinateur/permissions.md`.

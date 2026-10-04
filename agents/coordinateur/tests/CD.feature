@@ -1,5 +1,5 @@
 # language: fr
-# BROUILLON rédigé par Claude Code (agent Coordinateur ajouté le 2026-10-04, absent du cadrage). À valider par le propriétaire.
+# Rédigé par Claude Code (agent Coordinateur ajouté le 2026-10-04, absent du cadrage). Validé par le propriétaire le 2026-10-04.
 # Tags : @interdit (seuil 100 %) ou @pedagogie (seuil 90 %).
 Fonctionnalité: Agent Coordinateur de famille de matières (CD)
 

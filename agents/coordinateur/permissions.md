@@ -1,6 +1,6 @@
 # Permissions — agent Coordinateur
 
-Source : **brouillon** rédigé par Claude Code le 2026-10-04 (agent ajouté sur décision du propriétaire, non prévu au §5.2). À valider.
+Source : rédigé par Claude Code le 2026-10-04 (agent ajouté sur décision du propriétaire, non prévu au §5.2), **validé par le propriétaire le 2026-10-04** (ADR 0008).
 
 | Peut lire | Peut écrire | Ne peut pas |
 |---|---|---|
