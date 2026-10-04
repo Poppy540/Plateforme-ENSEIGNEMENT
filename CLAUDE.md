@@ -6,11 +6,11 @@ Plateforme d'enseignement en ligne du collège au lycée : cours vidéo présent
 
 **Au début de chaque session : lire `memory.md`. À la fin : le mettre à jour.**
 
-## Architecture (cible, stack non figée)
+## Architecture (stack validée, ADR 0011)
 
-- Application web mobile-first (PWA), conçue pour les connexions lentes et les smartphones.
-- Base de données relationnelle avec recherche vectorielle et un rôle restreint par agent (Supabase pressenti, à confirmer).
-- Vidéo adaptative faible débit (Cloudflare Stream pressenti), service d'avatar, service de voix, WhatsApp Business, SMS (OTP), Mobile Money côté backend uniquement.
+- Application web mobile-first en PWA : Next.js + TypeScript, conçue pour les connexions lentes et les smartphones.
+- Supabase : authentification (téléphone + code SMS, lien magique email), Postgres, pgvector, sécurité au niveau des lignes, un rôle restreint par agent.
+- Cloudflare Stream (vidéo adaptative faible débit). Avatar, voix, SMS, WhatsApp Business, hébergement : fournisseurs à choisir. Pilote gratuit : pas de paiement (ADR 0013).
 - **Unité pédagogique** = (référentiel, niveau, ensemble de séries, matière). Une unité = programme validé + avatar + configuration de l'agent Professeur.
 - **Dix agents** : Professeur (un modèle, instancié par unité), Scénariste, Production vidéo, Évaluateur, Tuteur, Conformité programme, Support/inscription, Orchestrateur, Recruteur, Coordinateur de famille de matières (un modèle, instancié par famille ; ne parle jamais aux élèves).
 - Un humain (enseignant-référent) valide programmes, scripts, quiz et vidéos avant toute publication.
@@ -33,7 +33,7 @@ tests/                    batterie commune TC, config.yaml du lanceur, README
 
 ## Conventions
 
-- Français pour la documentation, les données et les noms du domaine (`unites`, `chapitres`, `progression`). Langue du code : à confirmer (proposition : anglais).
+- **Tout en français** (ADR 0012) : documentation, données, tables, identifiants, fichiers, commentaires, interface. Identifiants sans accents (`chapitreEnCours`). Seules exceptions : mots-clés du langage, API des bibliothèques, noms imposés par les outils (`page.tsx`, `package.json`).
 - Codes d'unité : `<pays>-<niveau>[-<groupe de séries>]-<matière>`, par exemple `ga-3e-mathematiques`, `ga-tle-c-physique-chimie`, `ga-1re-a-francais`.
 - Les prompts d'agents ne sont jamais réécrits sans accord du propriétaire. Les valeurs propres à une unité ou un pays vont dans le pack pays (ADR 0005).
 - Chaque donnée d'un pack a une origine et un statut dans `SOURCES.md`.

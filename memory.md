@@ -19,6 +19,9 @@
 | 2026-10-04 | Licence CC BY-SA 4.0 acceptée pour les skills dérivées de Gareth Manning ; liste des skills (docs/skills-recherche-2026-10-04.md) validée | docs/decisions/0009-skills-tierces.md |
 | 2026-10-04 | Recrutement : le Recruteur prépare et transmet, le propriétaire décide et finalise ({{RESPONSABLE}} = propriétaire) | ADR 0010 |
 | 2026-10-04 | Le Recruteur envoie messages et invitations lui-même, uniquement après validation enregistrée du propriétaire (envoi bloqué techniquement sinon) | ADR 0010 |
+| 2026-10-04 | Stack : Next.js PWA + TypeScript, Supabase, Cloudflare Stream | ADR 0011 |
+| 2026-10-04 | Code en français (identifiants sans accents) | ADR 0012 |
+| 2026-10-04 | Pilote gratuit, pas de paiement | ADR 0013 |
 | 2026-10-04 | Fichier commun de secrets nommé `secrets/commun.env.example` (et non `.env.example`), car les `.env*` sont interdits en lecture | `secrets/README.md` |
 
 ## Hypothèses à vérifier
@@ -35,14 +38,12 @@
 
 ## Questions ouvertes
 
-1. Stack définitive (proposition : Next.js PWA + TypeScript, Supabase, Cloudflare Stream).
-2. Fournisseurs avatar, voix, SMS, WhatsApp ; budget par vidéo.
-3. Langue du code (proposition : anglais ; domaine en français).
-4. Modèle économique du pilote (gratuit ou abonnement Mobile Money).
-5. Premier enseignant-référent Maths 3e ; accès aux programmes officiels IPN.
-6. **Juriste local (Gabon)** : protection des données, consentement des mineurs, prospection, activité annexe des enseignants du public, contrat de référent, propriété intellectuelle, consentement voix/image. À faire vérifier **avant d'ouvrir à de vrais élèves**.
-7. Skills propres au projet encore à écrire (rien d'existant) : français et mineurs, accueil WhatsApp, files d'approbation, pipeline voix/avatar, faible débit, lecture de PDF, sourcing éthique.
-8. Séries techniques F/G : à définir avec des enseignants techniques.
+1. Fournisseurs hébergement, SMS, avatar, voix, WhatsApp ; budget par vidéo (Jalon 2).
+2. Validation du plan du Jalon 1 (`docs/plans/jalon-1.md`).
+3. Premier enseignant-référent Maths 3e ; accès aux programmes officiels IPN.
+4. **Juriste local (Gabon)** : protection des données, consentement des mineurs, prospection, activité annexe des enseignants du public, contrat de référent, propriété intellectuelle, consentement voix/image. À faire vérifier **avant d'ouvrir à de vrais élèves**.
+5. Skills propres au projet encore à écrire (rien d'existant) : français et mineurs, accueil WhatsApp, files d'approbation, pipeline voix/avatar, faible débit, lecture de PDF, sourcing éthique.
+6. Séries techniques F/G : à définir avec des enseignants techniques.
 
 ## État d'avancement
 
@@ -52,4 +53,4 @@
 
 ## Prochaine étape
 
-Obtenir les réponses aux questions ouvertes 1 à 4 et 7, puis proposer le plan détaillé du Jalon 1 (connexion téléphone, catalogue filtré, unité Maths 3e, agent Professeur testé TC + PR, validation humaine).
+Faire valider `docs/plans/jalon-1.md`, puis commencer l'étape 1 (initialisation du projet).
