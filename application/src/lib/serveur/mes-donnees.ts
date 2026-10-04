@@ -43,6 +43,9 @@ export function exporterDonnees(utilisateur: string) {
          from echanges_professeur ep left join chapitres c on c.id = ep.chapitre_id left join unites u on u.id = c.unite_id
          where ep.eleve_id = $1 order by ep.id`,
       ),
+      tentatives_quiz: await requete(
+        "select reponses, score, corrige_le from tentatives_quiz where eleve_id = $1 order by corrige_le",
+      ),
     };
   });
 }

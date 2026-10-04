@@ -55,6 +55,8 @@
 
 ## État d'avancement
 
+- 2026-10-04 : Jalon 2, étape 1 faite — tables `scripts`, `quiz` (versions figées, empreinte, brouillon imposé), `videos` (rattachées à la version et l'empreinte exactes d'un script validé, toujours « à relire »), `tentatives_quiz` (score écrit une fois) ; `valider_contenu` et `publier_video` réservées au référent de la famille ; rôles `agent_scenariste`, `agent_production_video`, `agent_evaluateur` (écriture limitée aux chapitres validés de leur unité) ; quiz illisibles par les élèves (réponses) ; tentatives dans l'export. ADR 0020 (chaîne programmée) et 0021. Tests : 7 scénarios C01-C07 en base, 45 unitaires, 27 de bout en bout. Comparatif fournisseurs : `docs/fournisseurs-2026-10.md` (chiffres à revérifier).
+
 - 2026-10-04 : suppression, export et conservation des données (ADR 0019) — page « Mes données » (export JSON, suppression du compte par l'élève avec effacement en cascade), durées de conservation dans le pack pays (provisoires 365/30/730 jours), purge réservée à l'administration (`pnpm donnees:purger`, simulation par défaut). Tests : 45 unitaires, 4 tests de purge en base, 27 de bout en bout.
 
 - 2026-10-04 : Jalon 1, étape 9 préparée — bilan `docs/bilans/jalon-1.md`, 13 captures de démonstration (`docs/demo/jalon-1/`, script `pnpm demo:captures`). Jalon 1 clos quand le passage réel TC + PR aura atteint les seuils. Manque connu avant vrais élèves : suppression/export des données et durée de conservation (§6).
@@ -81,4 +83,6 @@
 
 ## Prochaine étape
 
-Attendre le propriétaire (bilan §6) : clé ANTHROPIC_API_KEY + accord pour le mini-essai (~0,18 USD) puis le passage complet TC + PR (~9 USD) ; validations listées dans le bilan.
+Jalon 2, étape 2 (agent Scénariste, modèle simulé tant que la clé manque). En parallèle, décisions du propriétaire : fournisseurs et budget par vidéo (`docs/fournisseurs-2026-10.md`), relecteur de la vidéo pilote.
+
+Toujours en attente du Jalon 1 : le propriétaire (bilan §6) : clé ANTHROPIC_API_KEY + accord pour le mini-essai (~0,18 USD) puis le passage complet TC + PR (~9 USD) ; validations listées dans le bilan.

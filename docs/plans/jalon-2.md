@@ -2,7 +2,7 @@
 
 **Objectif (prompt maître §7)** : chaîne Scénariste → validation humaine → Production vidéo → Évaluateur, et **une seule vidéo complète** pour mesurer le coût et la qualité.
 
-**Statut** : proposition, à valider par le propriétaire. Le Jalon 1 reste ouvert sur un point (passage réel des tests TC + PR, en attente de la clé API). Les étapes 1 à 4 peuvent avancer sans clé ni fournisseur, avec des modèles et services simulés ; aucune dépense sans accord.
+**Statut** : validé (chaîne programmée, ADR 0020). Étape 1 faite (ADR 0021). Le Jalon 1 reste ouvert sur un point (passage réel des tests TC + PR, en attente de la clé API). Les étapes 1 à 4 peuvent avancer sans clé ni fournisseur, avec des modèles et services simulés ; aucune dépense sans accord.
 
 ## Étapes
 
@@ -21,7 +21,7 @@
 
 1. **Production vidéo : agent ou chaîne programmée ?** Les étapes de production (vérifier, découper, appeler les services, contrôler, déposer) sont mécaniques. Proposition : une **chaîne programmée** (fiable, testable, coût prévisible) qui applique toutes les règles du prompt C2 et ne fait appel à un modèle de langage que pour le rapport d'anomalies. Le prompt C2 reste la référence des règles et la batterie VP s'applique à la chaîne.
 2. **Avatar** : personnage **synthétique** du catalogue du fournisseur (aucune personne réelle, aucun clonage de voix ou de visage) pour le pilote.
-3. **Fournisseurs et budget par vidéo** : comparatif chiffré dans `docs/fournisseurs-2026-10.md` (en préparation).
+3. **Fournisseurs et budget par vidéo** : comparatif chiffré dans `docs/fournisseurs-2026-10.md` (chiffres à revérifier avant tout engagement).
 4. **Vidéo pilote** : relue par un vrai enseignant-référent, ou par le propriétaire à titre exceptionnel pour mesurer le coût ?
 
 ## Hors Jalon 2

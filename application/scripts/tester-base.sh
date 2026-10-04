@@ -44,5 +44,6 @@ sed "s/des opérations'/des opérations (révisé)'/" "$dossier/fictif.sql" > "$
 psql_test -f "$dossier/fictif-modifie.sql" -o /dev/null
 psql_test -f "$racine/supabase/tests/32_tests_reimport.sql"
 psql_test -f "$racine/supabase/tests/40_tests_referents.sql"
+psql_test -f "$racine/supabase/tests/43_tests_contenus.sql"
 psql_test -f "$racine/supabase/tests/42_tests_conservation.sql"
 echo "TOUS LES TESTS DE BASE SONT PASSÉS"
