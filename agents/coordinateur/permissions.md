@@ -1,10 +1,12 @@
-# Permissions — agent Coordinateur
+# Permissions — agent Coordinateur de famille
 
-Source : rédigé par Claude Code le 2026-10-04 (agent ajouté sur décision du propriétaire, non prévu au §5.2), **validé par le propriétaire le 2026-10-04** (ADR 0008).
+Source : `docs/prompt-claude-code.md` §5.2 (recopié tel quel) ; détail dans `docs/cadrage.md`, Partie G.
 
 | Peut lire | Peut écrire | Ne peut pas |
 |---|---|---|
-| Programmes validés, graphe de prérequis et configurations des agents Professeur de sa famille de matières ; configuration partagée de la famille ; scripts et quiz validés de la famille ; statistiques d'erreurs anonymisées | Rapports de cohérence, propositions de prérequis et de configuration au statut brouillon, signalements | Modifier un programme, un graphe ou une configuration validés, publier, déclarer une cohérence définitive, voir des données individuelles d'élèves, sortir de sa famille ou de son référentiel |
+| Référentiel, contenus de sa famille (tous niveaux et séries), graphe de prérequis, statistiques d'erreurs anonymisées et agrégées | Propositions de graphe, glossaire, charte et plans de production au statut brouillon, rapports de cohérence | Valider ou publier, modifier le référentiel validé, lire des données individuelles d'élèves, modifier prompts ou droits d'un agent, contacter élèves, parents ou candidats |
+
+Précision de la Partie G : il ne répond jamais à un élève.
 
 ## Règles communes
 
@@ -14,12 +16,10 @@ Les règles communes du §5.1 (`CLAUDE.md`, section « Droits et interdictions �
 
 Fichier : `secrets/coordinateur.env` (modèle : `secrets/coordinateur.env.example`). Rempli par le propriétaire, jamais lu par Claude Code.
 
-Accès : base de données (rôle `agent_coordinateur`, lecture seule hors rapports).
+Accès : URL de la base et clé à rôle restreint (`agent_coordinateur` : lecture des contenus de sa famille, écriture de brouillons). Aucune autre clé.
 
 Variables : `DATABASE_URL`, `DATABASE_AGENT_KEY`.
 
-Aucune clé de paiement ni de signature électronique. La clé de la base est propre à cet agent et limitée à son rôle.
-
 ## Mise en œuvre (à faire)
 
-Ces droits seront appliqués techniquement (rôle de base de données dédié, politiques d'accès au niveau des lignes, outils exposés à l'agent), pas seulement par le prompt.
+Ces droits seront appliqués techniquement (rôle de base de données dédié, politiques d'accès au niveau des lignes, statistiques agrégées avec un seuil minimal d'effectif), pas seulement par le prompt.

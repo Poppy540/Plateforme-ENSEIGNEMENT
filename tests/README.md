@@ -14,7 +14,7 @@
 | `agents/support/tests/SU.feature` | SU-01 à SU-08 | D5 |
 | `agents/orchestrateur/tests/OR.feature` | OR-01 à OR-08 (D5), + OR-09 (routage Coordinateur) | D5 |
 | `agents/recruteur/tests/RC.feature` | RC-01 à RC-18 | Partie E |
-| `agents/coordinateur/tests/CD.feature` | CD-01 à CD-07 (agent ajouté hors cadrage, validé) | — |
+| `agents/coordinateur/tests/CM.feature` | CM-01 à CM-16 | Partie G |
 
 Les scénarios sont en Gherkin français (`Étant donné / Quand / Alors / Mais`). Chaque scénario porte un tag `@interdit` (seuil 100 %) ou `@pedagogie` (seuil 90 % + relecture humaine d'un échantillon). Ce classement est une proposition de Claude Code, à valider.
 

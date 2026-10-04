@@ -14,8 +14,8 @@
 | 2026-10-04 | Chapitre en cours fourni par la session ; outils définis à part | ADR 0006 (E6) |
 | 2026-10-04 | Allemand LV2 hors décompte | ADR 0007 (E7) |
 | 2026-10-04 | Création d'un 10e agent, Coordinateur par famille de matières, + configuration partagée par famille | ADR 0008 (E1) |
-| 2026-10-04 | Coordinateur ajouté au routage de l'Orchestrateur (seule modification d'un prompt du cadrage, sur accord du propriétaire) | ADR 0008 |
-| 2026-10-04 | Prompt, droits et tests (CD, OR-09) du Coordinateur validés | ADR 0008 |
+| 2026-10-04 | Cadrage mis à jour par le propriétaire : Partie G (Coordinateur de famille : prompt, compétences, 16 skills, droits, tests CM) ; prompt maître à dix agents. Prompt, droits et tests du Coordinateur alignés dessus (CD remplacés par CM) | ADR 0008 |
+| 2026-10-04 | Coordinateurs de famille mis en service après le Jalon 3, dès qu'une famille compte plusieurs unités (prompt maître §7) | prompt maître |
 | 2026-10-04 | Fichier commun de secrets nommé `secrets/commun.env.example` (et non `.env.example`), car les `.env*` sont interdits en lecture | `secrets/README.md` |
 
 ## Hypothèses à vérifier
@@ -24,6 +24,7 @@
 - Volumes horaires et coefficients : inconnus.
 - Classement des matières en couches universel / adaptable / local : hypothèse de travail.
 - Classement des tests en `@interdit` / `@pedagogie` : proposition de Claude Code.
+- Les 16 skills du Coordinateur sont rédigées par Claude Code à partir de la Partie G : à relire par le propriétaire et les référents.
 - Interprétation de « E1 oui » + « crée l'agent COORDINATEUR » : agent créé **et** configuration partagée par famille conservée.
 
 ## Questions ouvertes
@@ -39,6 +40,7 @@
 
 ## État d'avancement
 
+- 2026-10-04 : cadrage v2 intégré (Partie G) ; 16 skills du Coordinateur rédigées.
 - 2026-10-04 : squelette du dépôt créé (docs, CLAUDE.md, memory.md, secrets/ modèles, 10 dossiers d'agents avec prompts, permissions et tests Gherkin, pack Gabon avec 67 unités et le programme pilote Maths 3e, `.claude/settings.json`, `.gitignore`). **Aucun code applicatif.** Lanceur de tests spécifié (`tests/README.md`, `tests/config.yaml`), pas implémenté.
 
 ## Prochaine étape

@@ -9,9 +9,9 @@
 | `tuteur/` | Tuteur | Partie C4 |
 | `conformite/` | Conformité programme | Partie C5 |
 | `support/` | Support/inscription | Partie C6 |
-| `orchestrateur/` | Orchestrateur | Partie C7, + une ligne de routage vers le Coordinateur (accord du propriétaire, ADR 0008) |
+| `orchestrateur/` | Orchestrateur | Partie C7 |
 | `recruteur/` | Recruteur d'enseignants-référents | Partie E |
-| `coordinateur/` | Coordinateur de famille de matières | Rédigé par Claude Code, validé par le propriétaire (ADR 0008) |
+| `coordinateur/` | Coordinateur de famille de matières (une instance par famille) | Partie G |
 
 Chaque dossier contient :
 
