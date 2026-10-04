@@ -27,7 +27,9 @@ export default async function PageUnite({ params }: PageProps<"/catalogue/[unite
         {page.chapitres.map((c) => (
           <li key={c.code}>
             <div>
-              <strong>{c.titre}</strong>
+              <Link href={`/catalogue/${page.code}/${c.code}`}>
+                <strong>{c.titre}</strong>
+              </Link>
               {c.sousThemes.length > 0 && <p className="note">{c.sousThemes.join(" · ")}</p>}
             </div>
             <span className={`statut statut-${c.statut}`}>{LIBELLES_STATUT[c.statut]}</span>

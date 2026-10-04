@@ -17,6 +17,7 @@
     "referent:invitation": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/invitation-referent.mts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.131.0",
     "@supabase/supabase-js": "^2.117.2",
     "next": "16.3.8",
     "pg": "^8.23.1",

@@ -27,6 +27,7 @@ for migration in "$racine"/supabase/migrations/*.sql; do
 done
 psql_test -f "$racine/supabase/tests/10_donnees_fictives.sql"
 psql_test -f "$racine/supabase/tests/20_tests_acces.sql"
+psql_test -f "$racine/supabase/tests/41_tests_echanges.sql"
 
 # Import des packs pays : pack pilote deux fois (idempotence), puis pack fictif.
 pack_sql() { node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/pack-en-sql.mts" "$1"; }

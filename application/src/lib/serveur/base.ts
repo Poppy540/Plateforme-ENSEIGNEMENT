@@ -14,15 +14,22 @@ function pool(): Pool {
 }
 
 async function enTransaction<T>(
-  role: "anon" | "authenticated",
+  role: "anon" | "authenticated" | "agent_professeur",
   utilisateur: string | null,
   traitement: (client: PoolClient) => Promise<T>,
+  contexteAgent: { eleveId: string; uniteId: string } | null = null,
 ): Promise<T> {
   const client = await pool().connect();
   try {
     await client.query("begin");
     await client.query(`set local role ${role}`);
     await client.query("select set_config('request.jwt.claim.sub', $1, true)", [utilisateur ?? ""]);
+    if (contexteAgent) {
+      await client.query(
+        "select set_config('app.eleve_id', $1, true), set_config('app.unite_id', $2, true)",
+        [contexteAgent.eleveId, contexteAgent.uniteId],
+      );
+    }
     const resultat = await traitement(client);
     await client.query("commit");
     return resultat;
@@ -45,6 +52,14 @@ export function avecUtilisateur<T>(
 /** Requêtes au nom d'un visiteur non connecté (règles d'accès « anon »). */
 export function avecVisiteur<T>(traitement: (client: PoolClient) => Promise<T>) {
   return enTransaction("anon", null, traitement);
+}
+
+/** Requêtes de l'agent Professeur : élève connecté et unité fixés par le serveur, jamais par le modèle. */
+export function avecAgentProfesseur<T>(
+  contexte: { eleveId: string; uniteId: string },
+  traitement: (client: PoolClient) => Promise<T>,
+) {
+  return enTransaction("agent_professeur", null, traitement, contexte);
 }
 
 /** Réservé à l'authentification simulée (développement et test) : crée le compte d'authentification. */

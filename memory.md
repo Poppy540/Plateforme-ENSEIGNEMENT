@@ -27,6 +27,8 @@
 
 ## Hypothèses à vérifier
 
+- Valeurs provisoires du Professeur Maths 3e (nom affiché, persona, référent) proposées par Claude Code : à valider par le propriétaire.
+
 - Email : code à 6 chiffres au lieu d'un lien magique (écart avec l'ADR 0003, à confirmer par le propriétaire).
 - Âge de la majorité au Gabon inconnu : tout élève est traité comme mineur jusqu'à confirmation par un juriste.
 
@@ -50,6 +52,8 @@
 
 ## État d'avancement
 
+- 2026-10-04 : Jalon 1, étape 7 faite (sans clé API) — agent Professeur : chargeur de prompt (cadrage + pack + §5.1 + 3 skills), boucle avec outils `enregistrer_progression` et `signaler`, rôle `agent_professeur`, échanges conservés, quota, page de chapitre avec conversation en flux, modèle simulé pour les tests (ADR 0017). Tests : 37 unitaires, base (accès, échanges, import, référents), 23 de bout en bout. Correction : secret de session de développement identique pour toutes les parties du serveur.
+
 - 2026-10-04 : Jalon 1, étape 6 faite — accès référent par invitation à usage unique (`pnpm referent:invitation`), espace `/referent` (chapitres à valider de ses familles, détail, valider/rejeter avec commentaire, historique), validation liée à la version relue (faille « version nulle » corrigée), saisies conservées après une erreur de formulaire, indicatif +241 retiré du code (garde-fou renforcé). ADR 0016. Tests : 25 unitaires, 19 en base + 4 référents, 17 de bout en bout.
 
 - 2026-10-04 : Jalon 1, étape 5 faite — catalogue (`/catalogue`, `/catalogue/<unité>`) : matières de la classe et de la série de l'élève, chapitres validés seulement, statut à voir / en cours / terminé, parcours d'une autre classe, accès réservé aux comptes actifs, page 404 en français. 13 tests de bout en bout passent.
@@ -68,4 +72,4 @@
 
 ## Prochaine étape
 
-Jalon 1, étape 7 : agent Professeur (chargeur de prompt + variables du pack, conversation dans un chapitre, outils progression et signalement). Nécessite la clé ANTHROPIC_API_KEY définie par le propriétaire.
+Jalon 1, étape 8 : lanceur de tests des agents (TC + PR, 5 exécutions, évaluateur LLM, seuils). Nécessite ANTHROPIC_API_KEY (définie par le propriétaire dans l'environnement) et son accord sur le coût estimé avant tout lancement réel.

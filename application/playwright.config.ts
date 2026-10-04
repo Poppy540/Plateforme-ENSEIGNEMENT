@@ -22,6 +22,7 @@ export default defineConfig({
     env: {
       ENVIRONNEMENT: "test",
       MODE_AUTH: "simulation",
+      MODE_MODELE: "simulation",
       URL_BASE_DONNEES: "postgresql://serveur_application@127.0.0.1:54330/postgres",
     },
   },

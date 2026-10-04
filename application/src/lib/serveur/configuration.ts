@@ -1,5 +1,4 @@
 import "server-only";
-import { randomBytes } from "node:crypto";
 
 // Configuration lue dans l'environnement. Aucune valeur secrète dans le dépôt (secrets/README.md).
 export type ModeAuthentification = "simulation" | "supabase";
@@ -37,9 +36,11 @@ export function urlBaseDeDonnees(): string {
   return url;
 }
 
-let secretDeDeveloppement: string | undefined;
+// Développement et test uniquement (jamais accepté en production, voir plus bas) : un secret fixe, pour que
+// toutes les parties du serveur (pages, routes d'API) vérifient les mêmes sessions.
+const SECRET_DE_DEVELOPPEMENT = "secret-de-developpement-uniquement-jamais-en-production";
 
-/** Secret de signature des sessions. En développement seulement, un secret aléatoire par processus suffit. */
+/** Secret de signature des sessions. Obligatoire (32 caractères au moins) hors développement et test. */
 export function secretSession(): string {
   const secret = lire("SECRET_SESSION");
   if (secret) {
@@ -47,8 +48,7 @@ export function secretSession(): string {
     return secret;
   }
   if (!simulationAutorisee()) throw new Error("SECRET_SESSION manquant.");
-  secretDeDeveloppement ??= randomBytes(32).toString("hex");
-  return secretDeDeveloppement;
+  return SECRET_DE_DEVELOPPEMENT;
 }
 
 export function configurationSupabase(): { url: string; clePublique: string } {

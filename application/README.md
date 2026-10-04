@@ -22,6 +22,8 @@ ENVIRONNEMENT=developpement MODE_AUTH=simulation \
 URL_BASE_DONNEES=postgresql://serveur_application@127.0.0.1:54330/postgres pnpm dev
 ```
 
+Professeur simulé (`MODE_MODELE=simulation`) : réponses scriptées, aucun appel à l'API. Avec `MODE_MODELE=anthropic`, il faut `ANTHROPIC_API_KEY` dans l'environnement (jamais dans un fichier du dépôt) ; chaque question est facturée.
+
 Connexion simulée : n'importe quel numéro au format international (par exemple `+999 000 000 01`), code `123456`. Les messages qui seraient envoyés (lien de validation du parent) s'affichent sur `/developpement/messages`. `bash scripts/base-locale.sh arreter` arrête la base ; `reinitialiser` la recrée.
 
 Dans l'environnement cloud, Chromium est déjà installé : `CHEMIN_CHROMIUM=/opt/pw-browsers/chromium-1194/chrome-linux/chrome pnpm test:e2e`.
