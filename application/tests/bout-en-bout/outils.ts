@@ -39,7 +39,8 @@ export async function seConnecter(page: Page, numero: string) {
   await expect(page.getByRole("heading", { name: "Entre ton code" })).toBeVisible();
   await page.getByLabel("Code reçu").fill("123456");
   await page.getByRole("button", { name: "Valider" }).click();
-  await expect(page).toHaveURL(/\/(espace|inscription)$/);
+  // Un référent passe par /espace puis est redirigé vers /referent : les deux sont acceptés.
+  await expect(page).toHaveURL(/\/(espace|inscription|referent)$/);
 }
 
 /** Connexion, inscription et accord du parent (par la boîte de messages simulée). */

@@ -2,12 +2,14 @@ import Link from "next/link";
 import { seDeconnecter } from "../connexion/actions";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { tableauReferent } from "@/lib/serveur/referent";
+import { scriptsARelire } from "@/lib/serveur/scenariste";
 
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "medium", timeStyle: "short" });
 
 export default async function PageReferent() {
   const utilisateur = await exigerReferent();
   const tableau = await tableauReferent(utilisateur);
+  const scripts = await scriptsARelire(utilisateur);
 
   return (
     <main className="conteneur">
@@ -33,6 +35,22 @@ export default async function PageReferent() {
                 {c.version}
               </span>
               <strong>{c.titre}</strong>
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      <h2>Scripts à relire ({scripts.length})</h2>
+      {scripts.length === 0 && <p>Aucun script en attente.</p>}
+      <ul className="liste-cartes">
+        {scripts.map((s) => (
+          <li key={s.id}>
+            <Link href={`/referent/scripts/${s.id}`} className="carte">
+              <span className="note">
+                {s.unite} · version {s.version}
+                {s.aRelireEnPriorite && " · à relire en priorité"}
+              </span>
+              <strong>Script : {s.chapitreTitre}</strong>
             </Link>
           </li>
         ))}

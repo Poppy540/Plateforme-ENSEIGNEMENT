@@ -155,6 +155,19 @@ describe("agent Scénariste", () => {
     expect(m).toContain("« brouillon »");
   });
 
+  it("révision : la version précédente est transmise comme donnée, avec les corrections", () => {
+    const m = messageDemande({
+      ...demande,
+      consigne: "Raccourcis l'accroche.",
+      scriptPrecedent: "1. [accroche] Ancienne accroche",
+    });
+    expect(m).toMatch(
+      /RÉVISION[\s\S]*<script_precedent>\n1\. \[accroche\] Ancienne accroche\n<\/script_precedent>/,
+    );
+    expect(m.indexOf("<script_precedent>")).toBeLessThan(m.indexOf("<consigne>"));
+    expect(messageDemande(demande)).not.toContain("RÉVISION");
+  });
+
   it("modèle simulé : script conforme pour un chapitre du programme, refus sinon", async () => {
     const ok = await genererScript({ systeme: "P", demande, modele: modeleSimule, parametres });
     expect(ok.sortie && controlerStructure(ok.sortie, 10)).toEqual([]);

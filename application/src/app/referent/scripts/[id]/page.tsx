@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import { Fragment } from "react";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { scriptPourReferent } from "@/lib/serveur/scenariste";
+import { FormulaireDecisionScript, FormulaireRevision } from "./formulaires";
 
 const LIBELLES = { brouillon: "Brouillon", valide: "Validé", rejete: "Rejeté" } as const;
+const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "medium", timeStyle: "short" });
 const mmss = (t: number) => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
 
 /** Met en évidence les points [À VÉRIFIER] dans le texte. */
@@ -67,6 +69,7 @@ export default async function PageScriptReferent({ params }: PageProps<"/referen
       )}
       {c.message_au_referent && <p>Message du Scénariste : {c.message_au_referent}</p>}
       {c.consigne && <p className="note">Votre consigne : « {c.consigne} »</p>}
+      {c.revision_de && <p className="note">Révision d&apos;une version précédente.</p>}
 
       {c.sections.map((s, i) => (
         <section key={i}>
@@ -92,6 +95,41 @@ export default async function PageScriptReferent({ params }: PageProps<"/referen
       <Liste titre="Points [À VÉRIFIER]" elements={c.points_a_verifier} />
       <Liste titre="Exemples locaux à valider" elements={c.exemples_locaux_a_valider} />
       <Liste titre="Signalements sur le programme" elements={c.signalements_programme} />
+
+      <h2>Décision</h2>
+      {script.statut === "brouillon" ? (
+        <FormulaireDecisionScript
+          id={script.id}
+          version={script.version}
+          pointsSignales={
+            c.points_a_verifier.length > 0 ||
+            c.exemples_locaux_a_valider.length > 0 ||
+            c.a_relire_en_priorite
+          }
+        />
+      ) : (
+        <p className="note">
+          {script.statut === "valide"
+            ? "Version validée : elle peut être envoyée en production vidéo. Toute correction passe par une nouvelle version."
+            : "Version rejetée. Demandez une révision ci-dessous."}
+        </p>
+      )}
+      {script.historique.map((h) => (
+        <p key={h.decideLe}>
+          Version {script.version}{" "}
+          <strong>{h.decision === "valide" ? "validée" : "rejetée"}</strong> par {h.valideur ?? "?"}{" "}
+          le {formatDate.format(new Date(h.decideLe))}
+          {h.commentaire && <> — « {h.commentaire} »</>}
+        </p>
+      ))}
+
+      <h2>Demander une révision</h2>
+      <FormulaireRevision
+        id={script.id}
+        chapitre={script.chapitreId}
+        duree={script.dureeCibleMinutes}
+        corrections={script.historique.find((h) => h.decision === "rejete")?.commentaire ?? ""}
+      />
     </main>
   );
 }

@@ -12,11 +12,13 @@ const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "medium", timeStyl
 
 export default async function PageChapitreReferent({
   params,
+  searchParams,
 }: PageProps<"/referent/chapitres/[id]">) {
   const utilisateur = await exigerReferent();
   const { id } = await params;
   const chapitre = await chapitrePourReferent(utilisateur, id);
   if (!chapitre) notFound();
+  const revision = Number((await searchParams).revision);
   const scripts = chapitre.statut === "valide" ? await scriptsDuChapitre(utilisateur, id) : [];
 
   return (
@@ -56,6 +58,9 @@ export default async function PageChapitreReferent({
       {chapitre.statut === "valide" && (
         <section>
           <h2>Scripts de cours vidéo</h2>
+          {Number.isInteger(revision) && revision > 0 && (
+            <p role="status">Version {revision} créée par révision : à relire.</p>
+          )}
           {scripts.length === 0 ? (
             <p className="note">Aucun script pour ce chapitre.</p>
           ) : (

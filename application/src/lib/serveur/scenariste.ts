@@ -6,6 +6,7 @@ import { genererScript } from "@/lib/agents/scenariste/generation";
 import {
   controlerStructure,
   lireSortie,
+  scriptEnTexte,
   type SortieScenariste,
 } from "@/lib/agents/scenariste/script";
 import { avecAgentScenariste, avecUtilisateur } from "./base";
@@ -44,8 +45,18 @@ export type ResultatBrouillon =
 
 export async function genererBrouillonScript(
   referent: string,
-  demande: { chapitreId: string; dureeMinutes: number; consigne: string | null },
+  demande: {
+    chapitreId: string;
+    dureeMinutes: number;
+    consigne: string | null;
+    /** Révision d'un script existant du même chapitre : la consigne (corrections) est alors obligatoire. */
+    revisionDe?: string;
+  },
 ): Promise<ResultatBrouillon> {
+  if (demande.revisionDe !== undefined && !/^[0-9a-f-]{36}$/.test(demande.revisionDe))
+    return { ok: false, erreur: "Script inconnu." };
+  if (demande.revisionDe && !demande.consigne)
+    return { ok: false, erreur: "Indiquez les corrections attendues." };
   if (!/^[0-9a-f-]{36}$/.test(demande.chapitreId))
     return { ok: false, erreur: "Chapitre inconnu." };
   if (
@@ -103,8 +114,18 @@ export async function genererBrouillonScript(
         )
       ).rows[0].count,
     );
-    return { programme, chapitre: rows[0], prerequis, aujourdhui };
+    let precedent: string | null = null;
+    if (demande.revisionDe) {
+      const { rows: anciens } = await client.query(
+        "select contenu from scripts where id = $1 and chapitre_id = $2",
+        [demande.revisionDe, chapitre.id],
+      );
+      const sortie = anciens[0] && lireSortie(JSON.stringify(anciens[0].contenu));
+      precedent = sortie ? scriptEnTexte(sortie) : null;
+    }
+    return { programme, chapitre: rows[0], prerequis, aujourdhui, precedent };
   });
+  if (demande.revisionDe && !contexte.precedent) return { ok: false, erreur: "Script inconnu." };
   if (!contexte.chapitre) return { ok: false, erreur: "Chapitre inconnu." };
   if (contexte.aujourdhui >= limite)
     return {
@@ -129,6 +150,7 @@ export async function genererBrouillonScript(
       prerequis: contexte.prerequis,
       dureeMinutes: demande.dureeMinutes,
       consigne: demande.consigne ?? undefined,
+      scriptPrecedent: contexte.precedent ?? undefined,
     },
     modele: modeleDesAgents(),
     parametres,
@@ -158,6 +180,7 @@ export async function genererBrouillonScript(
           genere_le: new Date().toISOString(),
         },
         consigne: demande.consigne,
+        revision_de: demande.revisionDe ?? null,
         ...sortie,
       };
       const { rows } = await client.query(
@@ -207,7 +230,13 @@ export interface ScriptDetaille extends ScriptResume {
   chapitreTitre: string;
   unite: string;
   empreinte: string;
-  contenu: SortieScenariste & { consigne?: string | null };
+  contenu: SortieScenariste & { consigne?: string | null; revision_de?: string | null };
+  historique: {
+    decision: "valide" | "rejete";
+    commentaire: string | null;
+    valideur: string | null;
+    decideLe: string;
+  }[];
 }
 
 /** Script de la famille du référent (null s'il n'y a pas accès). */
@@ -224,6 +253,75 @@ export function scriptPourReferent(referent: string, id: string): Promise<Script
     );
     const ligne = rows[0];
     if (!ligne || !lireSortie(JSON.stringify(ligne.contenu))) return null;
-    return ligne as ScriptDetaille;
+    const historique = (
+      await client.query(
+        `select a.decision, a.commentaire, p.prenom_ou_pseudo as valideur, a.decide_le as "decideLe"
+         from approbations a left join profils p on p.id = a.valideur_id
+         where a.objet_type = 'script' and a.objet_id = $1 order by a.decide_le desc`,
+        [id],
+      )
+    ).rows;
+    return { ...ligne, historique } as ScriptDetaille;
   });
+}
+
+export interface ScriptARelire {
+  id: string;
+  version: number;
+  chapitreTitre: string;
+  unite: string;
+  creeLe: string;
+  aRelireEnPriorite: boolean;
+}
+
+/** Brouillons de scripts des familles du référent, les sujets sensibles d'abord. */
+export function scriptsARelire(referent: string): Promise<ScriptARelire[]> {
+  return avecUtilisateur(referent, async (client) => {
+    const { rows } = await client.query(
+      `select s.id, s.version, c.titre as "chapitreTitre", u.code as unite, s.cree_le as "creeLe",
+         coalesce((s.contenu ->> 'a_relire_en_priorite')::boolean, false) as "aRelireEnPriorite"
+       from scripts s join chapitres c on c.id = s.chapitre_id join unites u on u.id = c.unite_id
+       where s.statut = 'brouillon'
+       order by "aRelireEnPriorite" desc, s.cree_le`,
+    );
+    return rows as ScriptARelire[];
+  });
+}
+
+export type ResultatDecisionScript = { ok: true } | { ok: false; erreur: string };
+
+/** Décision du référent sur la version lue (la base vérifie la famille, la version et le statut). */
+export async function deciderScript(
+  referent: string,
+  decision: {
+    id: string;
+    decision: "valide" | "rejete";
+    version: number;
+    commentaire: string | null;
+  },
+): Promise<ResultatDecisionScript> {
+  if (!/^[0-9a-f-]{36}$/.test(decision.id)) return { ok: false, erreur: "Script inconnu." };
+  try {
+    await avecUtilisateur(referent, (client) =>
+      client.query("select valider_contenu('script', $1, $2, $3, $4)", [
+        decision.id,
+        decision.decision,
+        decision.version,
+        decision.commentaire,
+      ]),
+    );
+    return { ok: true };
+  } catch (erreur) {
+    if (erreur instanceof DatabaseError) {
+      if (erreur.code === "40001")
+        return {
+          ok: false,
+          erreur: "Ce n'est pas la version que vous avez lue. Rechargez la page.",
+        };
+      if (erreur.code === "42501")
+        return { ok: false, erreur: "Vous ne pouvez pas valider ce script." };
+      if (erreur.code === "22023") return { ok: false, erreur: erreur.message };
+    }
+    throw erreur;
+  }
 }

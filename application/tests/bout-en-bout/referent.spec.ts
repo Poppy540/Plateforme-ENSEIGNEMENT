@@ -121,3 +121,64 @@ test("pas de script pour un chapitre non validé", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Fonctions linéaires et affines" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Générer un brouillon de script" })).toHaveCount(0);
 });
+
+test("le référent rejette un script, le fait réviser, puis valide la nouvelle version", async ({
+  page,
+}) => {
+  await seConnecter(page, REFERENT);
+  await expect(page.getByRole("heading", { name: "Scripts à relire (1)" })).toBeVisible();
+  await page.getByRole("link", { name: /Script : Systèmes d'équations/ }).click();
+  await expect(page.getByText("Statut : Brouillon")).toBeVisible();
+
+  // Rejet sans commentaire refusé ; validation impossible sans confirmer les points signalés.
+  await page.getByRole("button", { name: "Rejeter" }).click();
+  await expect(page.locator(".erreur")).toContainText("Expliquez");
+  await page.getByRole("button", { name: "Valider la version 1" }).click();
+  await expect(page.locator(".erreur")).toContainText("Cochez la case");
+
+  await page.getByLabel(/Commentaire/).fill("Accroche trop longue, raccourcir.");
+  await page.getByRole("button", { name: "Rejeter" }).click();
+  await expect(page.getByText("Statut : Rejeté")).toBeVisible();
+  await expect(page.getByText(/rejetée par Prof fictif/)).toBeVisible();
+
+  // Révision : les corrections sont reprises du rejet ; une version 2 est créée.
+  await expect(page.getByLabel("Corrections attendues")).toHaveValue(
+    "Accroche trop longue, raccourcir.",
+  );
+  await page.getByRole("button", { name: "Faire réviser par le Scénariste" }).click();
+  await expect(page.getByText("Version 2 créée par révision : à relire.")).toBeVisible();
+  await page.getByRole("link", { name: "Version 2" }).click();
+  await expect(page.getByText("Révision d'une version précédente.")).toBeVisible();
+
+  await page.getByLabel(/J'ai vérifié les points/).check();
+  await page.getByRole("button", { name: "Valider la version 2" }).click();
+  await expect(page.getByText("Statut : Validé")).toBeVisible();
+  await expect(
+    page.getByText(/Version validée : elle peut être envoyée en production vidéo/),
+  ).toBeVisible();
+
+  const etat = await executerSql(
+    `select s.version, s.statut, a.decision, a.version as version_approuvee, a.empreinte = s.empreinte as meme_empreinte
+     from scripts s join chapitres c on c.id = s.chapitre_id
+     left join approbations a on a.objet_type = 'script' and a.objet_id = s.id
+     where c.titre = 'Systèmes d''équations' order by s.version`,
+  );
+  expect(etat).toEqual([
+    {
+      version: 1,
+      statut: "rejete",
+      decision: "rejete",
+      version_approuvee: 1,
+      meme_empreinte: true,
+    },
+    {
+      version: 2,
+      statut: "valide",
+      decision: "valide",
+      version_approuvee: 2,
+      meme_empreinte: true,
+    },
+  ]);
+  await page.goto("/referent");
+  await expect(page.getByRole("heading", { name: "Scripts à relire (0)" })).toBeVisible();
+});
