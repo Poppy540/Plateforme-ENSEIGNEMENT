@@ -18,7 +18,14 @@ export function FormulaireInscription({ options }: { options: OptionsInscription
   return (
     <form action={action} className="formulaire">
       <label htmlFor="prenom">Ton prénom ou un pseudonyme</label>
-      <input id="prenom" name="prenom" maxLength={40} autoComplete="given-name" required />
+      <input
+        id="prenom"
+        name="prenom"
+        maxLength={40}
+        autoComplete="given-name"
+        defaultValue={etat?.valeurs?.prenom}
+        required
+      />
 
       {options.referentiels.length > 1 ? (
         <>
@@ -93,7 +100,7 @@ export function FormulaireInscription({ options }: { options: OptionsInscription
             id="contact_parent"
             name="contact_parent"
             inputMode="tel"
-            placeholder="+241 …"
+            placeholder="+ indicatif du pays, puis le numéro"
             required
           />
           <p className="note">
@@ -104,7 +111,12 @@ export function FormulaireInscription({ options }: { options: OptionsInscription
       )}
 
       <label htmlFor="etablissement">Ton établissement (facultatif)</label>
-      <input id="etablissement" name="etablissement" maxLength={120} />
+      <input
+        id="etablissement"
+        name="etablissement"
+        maxLength={120}
+        defaultValue={etat?.valeurs?.etablissement}
+      />
 
       {etat?.erreur && (
         <p role="alert" className="erreur">

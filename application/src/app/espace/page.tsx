@@ -2,11 +2,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { seDeconnecter } from "../connexion/actions";
 import { profilEleve } from "@/lib/serveur/requetes";
+import { roleCompte } from "@/lib/serveur/referent";
 import { utilisateurConnecte } from "@/lib/serveur/session";
 
 export default async function PageEspace() {
   const utilisateur = await utilisateurConnecte();
   if (!utilisateur) redirect("/connexion");
+  if ((await roleCompte(utilisateur)) === "referent") redirect("/referent");
   const profil = await profilEleve(utilisateur);
   if (!profil) redirect("/inscription");
 

@@ -8,7 +8,9 @@ import { envoyerMessage } from "@/lib/serveur/messagerie";
 import { aUnProfil, inscrire, messageErreurMetier } from "@/lib/serveur/requetes";
 import { utilisateurConnecte } from "@/lib/serveur/session";
 
-export type EtatInscription = { erreur?: string } | undefined;
+export type EtatInscription =
+  | { erreur?: string; valeurs?: { prenom: string; contactParent: string; etablissement: string } }
+  | undefined;
 
 function champ(donnees: FormData, nom: string): string | null {
   const valeur = String(donnees.get(nom) ?? "").trim();
@@ -37,7 +39,10 @@ export async function sInscrire(
     ? (normaliserTelephone(saisieParent) ?? normaliserEmail(saisieParent))
     : null;
   if (estMineur && !contactParent) {
-    return { erreur: "Indique le numéro (format international) ou l'email d'un parent ou tuteur." };
+    return {
+      erreur:
+        "Indique le numéro (format international, avec l’indicatif du pays) ou l'email d'un parent ou tuteur.",
+    };
   }
 
   let jeton: string | null;

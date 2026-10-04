@@ -50,6 +50,8 @@
 
 ## État d'avancement
 
+- 2026-10-04 : Jalon 1, étape 6 faite — accès référent par invitation à usage unique (`pnpm referent:invitation`), espace `/referent` (chapitres à valider de ses familles, détail, valider/rejeter avec commentaire, historique), validation liée à la version relue (faille « version nulle » corrigée), saisies conservées après une erreur de formulaire, indicatif +241 retiré du code (garde-fou renforcé). ADR 0016. Tests : 25 unitaires, 19 en base + 4 référents, 17 de bout en bout.
+
 - 2026-10-04 : Jalon 1, étape 5 faite — catalogue (`/catalogue`, `/catalogue/<unité>`) : matières de la classe et de la série de l'élève, chapitres validés seulement, statut à voir / en cours / terminé, parcours d'une autre classe, accès réservé aux comptes actifs, page 404 en français. 13 tests de bout en bout passent.
 
 - 2026-10-04 : Jalon 1, étape 4 faite — connexion par code (SMS ou email) avec fournisseur Supabase (production) ou simulation (développement/test, code 123456), session signée, inscription minimale, âge de la majorité lu dans le pack (inconnu = mineur), validation parentale par lien à usage unique, accès aux données par le rôle `serveur_application` sans droit propre (ADR 0015). Tests : 21 unitaires, 15 d'accès + 3 d'import en base, 8 de bout en bout.
@@ -66,4 +68,4 @@
 
 ## Prochaine étape
 
-Jalon 1, étape 6 : espace enseignant-référent (chapitres à valider, valider/rejeter avec commentaire, trace dans `approbations`).
+Jalon 1, étape 7 : agent Professeur (chargeur de prompt + variables du pack, conversation dans un chapitre, outils progression et signalement). Nécessite la clé ANTHROPIC_API_KEY définie par le propriétaire.

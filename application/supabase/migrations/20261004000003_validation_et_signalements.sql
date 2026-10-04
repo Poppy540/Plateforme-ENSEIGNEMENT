@@ -108,7 +108,10 @@ begin
   select * into v_chapitre from chapitres where id = p_chapitre_id for update;
 
   -- Le référent valide la version qu'il a relue : si le chapitre a changé depuis, il doit relire.
-  if v_chapitre.version <> p_version then
+  if v_chapitre.id is null then
+    raise exception 'Chapitre introuvable.' using errcode = '22023';
+  end if;
+  if p_version is null or v_chapitre.version <> p_version then
     raise exception 'Le chapitre a été modifié (version % au lieu de %) : relecture nécessaire.',
       v_chapitre.version, p_version
       using errcode = '40001';

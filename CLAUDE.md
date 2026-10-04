@@ -55,6 +55,7 @@ pnpm typecheck        # types Next.js + TypeScript
 pnpm test             # tests unitaires (Vitest)
 pnpm test:base        # migrations Supabase, règles d'accès et import des packs sur un Postgres local jetable
 pnpm pack:sql ../referentiels/<pays>   # contrôle un pack pays et génère son SQL d'import
+pnpm referent:invitation <référentiel> <famille[,famille]> [jours] > invitation.sql   # invitation de référent (le propriétaire seul)
 bash scripts/base-locale.sh demarrer   # base locale (données fictives) pour pnpm dev ; voir application/README.md
 CHEMIN_CHROMIUM=/opt/pw-browsers/chromium-1194/chrome-linux/chrome pnpm test:e2e   # bout en bout (Playwright, base locale réinitialisée)
 ```

@@ -70,3 +70,14 @@ export async function inscrireEleveActif(
   await page.getByRole("button", { name: "J'accepte l'inscription" }).click();
   await expect(page.getByRole("status")).toContainText("inscription est acceptée");
 }
+
+/** Invitation de référent fictive avec un code connu (le script réel génère un code aléatoire). */
+export async function creerInvitationFictive(code: string, familles: string[]) {
+  await executerSql(
+    `insert into invitations_referents (empreinte_code, referentiel_id, familles, expire_le)
+     select encode(sha256(convert_to($1, 'UTF8')), 'hex'), id, $2::text[], now() + interval '1 day'
+     from referentiels where code = 'ga-general'
+     on conflict (empreinte_code) do nothing`,
+    [code, familles],
+  );
+}

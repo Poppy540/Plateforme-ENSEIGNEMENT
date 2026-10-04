@@ -19,7 +19,8 @@ export async function demanderCode(
   const identifiant = lireIdentifiant(String(donnees.get("identifiant") ?? ""));
   if (!identifiant) {
     return {
-      erreur: "Entre un numéro au format international (par exemple +241…) ou une adresse email.",
+      erreur:
+        "Entre un numéro au format international (commençant par + et l’indicatif du pays) ou une adresse email.",
     };
   }
   try {

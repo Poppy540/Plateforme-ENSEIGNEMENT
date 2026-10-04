@@ -72,7 +72,15 @@ describe("génération du SQL d'import", () => {
 
 describe("aucune donnée de pays dans le code (ADR 0001)", () => {
   // Noms propres à des packs : ils ne doivent apparaître que dans referentiels/ et les tests.
-  const interdits = [/gabon/i, /\bBEPC\b/, /\bga-[a-z0-9]/, /\bA1\b|\bA2\b/, /Libreville/i];
+  const interdits = [
+    /gabon/i,
+    /\bBEPC\b/,
+    /\bga-[a-z0-9]/,
+    /\bA1\b|\bA2\b/,
+    /Libreville/i,
+    /\+241/,
+    /\bXAF\b|franc CFA/i,
+  ];
 
   function fichiers(dossier: string): string[] {
     return readdirSync(dossier).flatMap((nom) => {

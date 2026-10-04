@@ -14,7 +14,7 @@ export function FormulaireConnexion() {
         type="text"
         inputMode="tel"
         autoComplete="tel"
-        placeholder="+241 …"
+        placeholder="+ indicatif du pays, puis le numéro"
         required
       />
       {etat?.erreur && (

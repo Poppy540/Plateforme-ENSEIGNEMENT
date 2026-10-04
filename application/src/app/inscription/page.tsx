@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { aUnProfil, optionsInscription } from "@/lib/serveur/requetes";
 import { utilisateurConnecte } from "@/lib/serveur/session";
@@ -12,6 +13,10 @@ export default async function PageInscription() {
       <h1>Inscription</h1>
       <p>Nous demandons le minimum : pas de nom de famille, pas d&apos;adresse.</p>
       <FormulaireInscription options={await optionsInscription()} />
+      <p className="note">
+        Vous êtes enseignant-référent ?{" "}
+        <Link href="/referent/activer">Activer votre accès avec votre code</Link>
+      </p>
     </main>
   );
 }

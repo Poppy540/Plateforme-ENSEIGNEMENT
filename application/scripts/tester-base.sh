@@ -42,4 +42,5 @@ psql_test -f "$racine/supabase/tests/31_chapitre_valide_puis_reimporte.sql"
 sed "s/des opérations'/des opérations (révisé)'/" "$dossier/fictif.sql" > "$dossier/fictif-modifie.sql"
 psql_test -f "$dossier/fictif-modifie.sql" -o /dev/null
 psql_test -f "$racine/supabase/tests/32_tests_reimport.sql"
+psql_test -f "$racine/supabase/tests/40_tests_referents.sql"
 echo "TOUS LES TESTS DE BASE SONT PASSÉS"
