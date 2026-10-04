@@ -58,6 +58,13 @@ export function configurationSupabase(): { url: string; clePublique: string } {
   return { url, clePublique };
 }
 
+/** Clé de service Supabase (administration des comptes : suppression). Serveur uniquement, jamais aux agents. */
+export function cleServiceSupabase(): string {
+  const cle = lire("CLE_SERVICE_SUPABASE");
+  if (!cle) throw new Error("CLE_SERVICE_SUPABASE manquante.");
+  return cle;
+}
+
 /** Adresse publique de l'application (liens envoyés par message). Obligatoire hors développement. */
 export function urlPublique(origineRequete: string | null): string {
   const url = lire("URL_PUBLIQUE");

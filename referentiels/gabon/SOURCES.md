@@ -7,6 +7,7 @@ Statuts : **validé** (confirmé par un enseignant-référent sur le programme o
 | Fichier | Donnée | Origine | Statut |
 |---|---|---|---|
 | `pays.yaml` | Langue, monnaie, fuseau, moyens de paiement | Cadrage (connaissances générales) | à valider |
+| `pays.yaml` | Durées de conservation (365 / 30 / 730 jours) | Proposition de Claude Code (ADR 0019) | à valider par un juriste |
 | `pays.yaml` | Âge de la majorité | — (inconnu : tout élève traité comme mineur) | manquant, à vérifier par un juriste |
 | `structure.yaml` | Cycles, niveaux, examens (BEPC, Bac) | Cadrage, « Cadre général » | à valider |
 | `structure.yaml` | Séries A1, A2, B, C, D | Cadrage, « Filières du lycée » | à valider |

@@ -1,9 +1,15 @@
 import Link from "next/link";
 import { identite } from "@/lib/identite";
 
-export default function Accueil() {
+export default async function Accueil({ searchParams }: PageProps<"/">) {
+  const { compte } = await searchParams;
   return (
     <main className="conteneur">
+      {compte === "supprime" && (
+        <p role="status" className="attente">
+          Ton compte et toutes tes données ont été supprimés.
+        </p>
+      )}
       <h1>{identite.nom}</h1>
       <p>{identite.description}</p>
       <p>

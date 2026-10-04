@@ -16,7 +16,8 @@
     "pack:sql": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/pack-en-sql.mts",
     "referent:invitation": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/invitation-referent.mts",
     "test:agents": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/lancer-tests-agents.mts",
-    "demo:captures": "playwright test --config playwright.demo.config.ts"
+    "demo:captures": "playwright test --config playwright.demo.config.ts",
+    "donnees:purger": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/purger-donnees.mts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",

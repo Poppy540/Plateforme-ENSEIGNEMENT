@@ -15,6 +15,12 @@ export interface Pays {
   statutPack: "en_preparation" | "pilote" | "ouvert";
   /** Âge de la majorité ; null = inconnu, tout élève est alors traité comme mineur. */
   ageMajorite: number | null;
+  /** Durées de conservation en jours (cadre légal du pays) ; null = pas de purge. */
+  conservation: {
+    echanges_jours: number | null;
+    inscription_non_confirmee_jours: number | null;
+    compte_inactif_jours: number | null;
+  };
 }
 
 export interface Referentiel {
@@ -139,6 +145,14 @@ export function lirePack(dossier: string): PackPays {
     monnaie: texteOuNul(brutPays.monnaie),
     statutPack: statutPack as Pays["statutPack"],
     ageMajorite: nombreOuNul(((brutPays.cadre_legal ?? {}) as Brut).age_majorite),
+    conservation: (() => {
+      const c = (((brutPays.cadre_legal ?? {}) as Brut).conservation ?? {}) as Brut;
+      return {
+        echanges_jours: nombreOuNul(c.echanges_jours),
+        inscription_non_confirmee_jours: nombreOuNul(c.inscription_non_confirmee_jours),
+        compte_inactif_jours: nombreOuNul(c.compte_inactif_jours),
+      };
+    })(),
   };
   if (!pays.code) erreurs.push("pays.yaml : code du pays manquant");
   if (!pays.nom) erreurs.push("pays.yaml : nom du pays manquant");
@@ -154,6 +168,11 @@ export function lirePack(dossier: string): PackPays {
     dateValidation: texteOuNul(brutReferentiel.date_validation),
     sourceOfficielle: texteOuNul(brutReferentiel.source_officielle),
   };
+  for (const [cle, valeur] of Object.entries(pays.conservation)) {
+    if (valeur !== null && (!Number.isInteger(valeur) || valeur < 1)) {
+      erreurs.push(`pays.yaml : durée de conservation invalide (${cle})`);
+    }
+  }
   if (!referentiel.code) erreurs.push("pays.yaml : code du référentiel manquant");
   if (!referentiel.version) erreurs.push("pays.yaml : version du référentiel manquante");
 

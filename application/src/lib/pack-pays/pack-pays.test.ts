@@ -31,6 +31,15 @@ describe("lecture d'un pack pays", () => {
     expect(pack.programmes["yy-g7-algebre"][1]).toMatchObject({ volumeHoraire: 6, coefficient: 2 });
   });
 
+  it("lit les durées de conservation du cadre légal (provisoires pour le pilote)", () => {
+    expect(lirePack(packGabon).pays.conservation).toEqual({
+      echanges_jours: 365,
+      inscription_non_confirmee_jours: 30,
+      compte_inactif_jours: 730,
+    });
+    expect(lirePack(packFictif).pays.conservation.inscription_non_confirmee_jours).toBe(7);
+  });
+
   it("refuse un pack incohérent en listant toutes les erreurs", () => {
     let erreurs: string[] = [];
     try {

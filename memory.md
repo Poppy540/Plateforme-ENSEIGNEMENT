@@ -27,6 +27,8 @@
 
 ## Hypothèses à vérifier
 
+- Durées de conservation du pilote (365 / 30 / 730 jours) et signalements conservés anonymisés après suppression d'un compte : à valider par un juriste.
+
 - Valeurs provisoires du Professeur Maths 3e (nom affiché, persona, référent) proposées par Claude Code : à valider par le propriétaire.
 
 - Email : code à 6 chiffres au lieu d'un lien magique (écart avec l'ADR 0003, à confirmer par le propriétaire).
@@ -44,7 +46,6 @@
 
 ## Questions ouvertes
 
-0. **Avant de vrais élèves** : suppression et export des données d'un utilisateur, durée de conservation configurable (prompt maître §6) — non construits.
 
 1. Fournisseurs hébergement, SMS, avatar, voix, WhatsApp ; budget par vidéo (Jalon 2).
 2. Premier enseignant-référent Maths 3e ; accès aux programmes officiels IPN.
@@ -53,6 +54,8 @@
 5. Séries techniques F/G : à définir avec des enseignants techniques.
 
 ## État d'avancement
+
+- 2026-10-04 : suppression, export et conservation des données (ADR 0019) — page « Mes données » (export JSON, suppression du compte par l'élève avec effacement en cascade), durées de conservation dans le pack pays (provisoires 365/30/730 jours), purge réservée à l'administration (`pnpm donnees:purger`, simulation par défaut). Tests : 45 unitaires, 4 tests de purge en base, 27 de bout en bout.
 
 - 2026-10-04 : Jalon 1, étape 9 préparée — bilan `docs/bilans/jalon-1.md`, 13 captures de démonstration (`docs/demo/jalon-1/`, script `pnpm demo:captures`). Jalon 1 clos quand le passage réel TC + PR aura atteint les seuils. Manque connu avant vrais élèves : suppression/export des données et durée de conservation (§6).
 
@@ -78,4 +81,4 @@
 
 ## Prochaine étape
 
-Attendre le propriétaire (bilan §6) : clé ANTHROPIC_API_KEY + accord pour le mini-essai (~0,18 USD) puis le passage complet TC + PR (~9 USD) ; validations listées dans le bilan. En parallèle possible sans coût : suppression/export des données et durée de conservation (§6 du prompt maître).
+Attendre le propriétaire (bilan §6) : clé ANTHROPIC_API_KEY + accord pour le mini-essai (~0,18 USD) puis le passage complet TC + PR (~9 USD) ; validations listées dans le bilan.

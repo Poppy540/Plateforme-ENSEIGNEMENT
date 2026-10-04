@@ -1,7 +1,7 @@
 import "server-only";
 import { createHash } from "node:crypto";
 import type { Identifiant } from "@/lib/identifiants";
-import { creerCompteSimule } from "../base";
+import { creerCompteSimule, supprimerCompteSimule } from "../base";
 import { simulationAutorisee } from "../configuration";
 import type { FournisseurAuthentification } from "./fournisseur";
 
@@ -24,5 +24,9 @@ export const fournisseurSimule: FournisseurAuthentification = {
     const utilisateur = utilisateurSimule(identifiant);
     await creerCompteSimule(utilisateur);
     return utilisateur;
+  },
+  async supprimerCompte(utilisateur) {
+    if (!simulationAutorisee()) throw new Error("Authentification simulée interdite.");
+    await supprimerCompteSimule(utilisateur);
   },
 };

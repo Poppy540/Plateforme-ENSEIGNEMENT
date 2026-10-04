@@ -216,3 +216,8 @@ code {
   font-size: 0.75rem;
   color: var(--discret);
 }
+
+button.danger {
+  background: #b91c1c;
+  color: #ffffff;
+}

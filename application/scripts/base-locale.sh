@@ -30,7 +30,7 @@ demarrer() {
     for migration in "$racine"/supabase/migrations/*.sql; do psql_admin -f "$migration"; done
     node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/pack-en-sql.mts" "$racine/../referentiels/gabon" | psql_admin -o /dev/null
     # Développement seulement : le serveur se connecte sans mot de passe et crée les comptes simulés.
-    psql_admin -c "alter role serveur_application login; grant usage on schema auth to serveur_application; grant select, insert on auth.users to serveur_application;"
+    psql_admin -c "alter role serveur_application login; grant usage on schema auth to serveur_application; grant select, insert, delete on auth.users to serveur_application;"
   fi
   echo "Base locale prête : postgresql://serveur_application@127.0.0.1:$port/postgres"
 }

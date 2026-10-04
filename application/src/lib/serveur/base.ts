@@ -68,3 +68,8 @@ export async function creerCompteSimule(utilisateur: string): Promise<void> {
     utilisateur,
   ]);
 }
+
+/** Réservé à l'authentification simulée (développement et test) : supprime le compte d'authentification. */
+export async function supprimerCompteSimule(utilisateur: string): Promise<void> {
+  await pool().query("delete from auth.users where id = $1", [utilisateur]);
+}

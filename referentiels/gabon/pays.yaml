@@ -18,6 +18,12 @@ connectivite: "souvent faible, usage surtout sur smartphone"
 cadre_legal:
   statut: a_verifier_par_juriste_local
   age_majorite: null   # à confirmer par un juriste local ; inconnu = tout élève traité comme mineur
+  # Durées de conservation en jours (null = pas de purge). PROVISOIRES, proposées par Claude Code,
+  # à faire valider par un juriste local avant d'ouvrir à de vrais élèves.
+  conservation:
+    echanges_jours: 365                  # échanges avec le professeur IA
+    inscription_non_confirmee_jours: 30  # inscription jamais acceptée par un parent : compte effacé
+    compte_inactif_jours: 730            # compte sans activité : effacé
   points: [protection_des_donnees, consentement_des_mineurs, prospection, activite_annexe_des_enseignants_publics, propriete_intellectuelle]
 calendrier_scolaire: a_definir
 equipe_locale:

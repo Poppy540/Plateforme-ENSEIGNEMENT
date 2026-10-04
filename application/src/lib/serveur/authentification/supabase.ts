@@ -1,7 +1,7 @@
 import "server-only";
 import { createClient } from "@supabase/supabase-js";
 import type { FournisseurAuthentification } from "./fournisseur";
-import { configurationSupabase } from "../configuration";
+import { cleServiceSupabase, configurationSupabase } from "../configuration";
 
 // Production : Supabase Auth envoie le code (SMS via le fournisseur configuré dans Supabase, ou email)
 // et le vérifie. Les limites d'essais et d'envois sont appliquées par Supabase.
@@ -27,5 +27,13 @@ export const fournisseurSupabase: FournisseurAuthentification = {
         : await client().auth.verifyOtp({ email: identifiant.valeur, token: code, type: "email" });
     if (error || !data.user) return null;
     return data.user.id;
+  },
+  async supprimerCompte(utilisateur) {
+    const { url } = configurationSupabase();
+    const admin = createClient(url, cleServiceSupabase(), {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { error } = await admin.auth.admin.deleteUser(utilisateur);
+    if (error) throw new Error(`Suppression du compte impossible (${error.status ?? "?"}).`);
   },
 };

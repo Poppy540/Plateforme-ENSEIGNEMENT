@@ -10,3 +10,7 @@ referentiel:
   version: "0.1"
 cadre_legal:
   age_majorite: 18
+  conservation:
+    echanges_jours: 90
+    inscription_non_confirmee_jours: 7
+    compte_inactif_jours: 365

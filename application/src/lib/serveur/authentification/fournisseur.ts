@@ -7,6 +7,8 @@ export interface FournisseurAuthentification {
   envoyerCode(identifiant: Identifiant): Promise<void>;
   /** Renvoie l'identifiant du compte si le code est bon, sinon null. */
   verifierCode(identifiant: Identifiant, code: string): Promise<string | null>;
+  /** Supprime le compte d'authentification ; toutes les données de l'élève sont effacées en cascade. */
+  supprimerCompte(utilisateur: string): Promise<void>;
 }
 
 export async function fournisseurAuthentification(): Promise<FournisseurAuthentification> {

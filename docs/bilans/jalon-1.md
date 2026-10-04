@@ -58,7 +58,7 @@ Garde-fous vérifiés automatiquement, entre autres : un élève ne voit que ses
 
 ## 5. Limites connues avant d'ouvrir à de vrais élèves
 
-1. **Suppression et export des données d'un utilisateur, durée de conservation** (prompt maître §6) : **pas encore construits**. À faire avant tout pilote réel, avec l'avis du juriste.
+1. **Suppression et export des données, durée de conservation** (prompt maître §6) : **construits** après le bilan initial (ADR 0019). Restent à faire valider par le juriste : les durées provisoires du pack (365 / 30 / 730 jours) et le traitement des signalements (conservés anonymisés). La purge devra être planifiée lors de l'hébergement.
 2. **Juriste local** : majorité, consentement des mineurs, conservation des échanges, prospection, contrats. Tant que l'âge de la majorité est inconnu, tout élève est traité comme mineur.
 3. **Supabase réel non testé** : les migrations ont été testées sur Postgres avec une simulation de la partie authentification de Supabase. Un premier essai sur un projet Supabase (gratuit, de développement) sera nécessaire.
 4. **Envoi réel de SMS et des liens aux parents** : fournisseur à choisir ; en développement les messages s'affichent à l'écran.
