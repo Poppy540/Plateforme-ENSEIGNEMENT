@@ -23,6 +23,7 @@ Tout ce qui dépend d'un système éducatif vit dans `referentiels/<pays>/`, **j
 
 ```
 CLAUDE.md, memory.md      résumé du projet / mémoire de travail
+application/              application web Next.js (PWA)
 docs/                     cadrage.md, prompt-claude-code.md, decisions/ (ADR), recrutement/
 agents/<agent>/           prompt.md (recopié du cadrage), permissions.md, skills/, tests/*.feature
 referentiels/<pays>/      pack pays (gabon/ = pilote) ; _modele/ pour un nouveau pays
@@ -43,7 +44,19 @@ tests/                    batterie commune TC, config.yaml du lanceur, README
 
 ## Commandes
 
-À compléter quand la stack sera validée (build, lint, tests unitaires, lanceur de tests des agents).
+Application dans `application/` (voir `application/README.md`) :
+
+```
+cd application
+pnpm install          # dépendances
+pnpm lint             # ESLint
+pnpm format:verifier  # Prettier
+pnpm typecheck        # types Next.js + TypeScript
+pnpm test             # tests unitaires (Vitest)
+CHEMIN_CHROMIUM=/opt/pw-browsers/chromium-1194/chrome-linux/chrome pnpm test:e2e   # bout en bout (Playwright)
+```
+
+Lanceur de tests des agents : à venir (étape 8 du Jalon 1).
 
 # 5. DROITS ET INTERDICTIONS
 

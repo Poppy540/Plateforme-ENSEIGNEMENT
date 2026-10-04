@@ -1,0 +1,35 @@
+# Vérifications de l'application à chaque envoi et demande de fusion. Aucun secret utilisé.
+name: Application
+
+on:
+  push:
+    paths: ["application/**", ".github/workflows/application.yml"]
+  pull_request:
+    paths: ["application/**", ".github/workflows/application.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  verifications:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: application
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: application/package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: application/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:verifier
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e

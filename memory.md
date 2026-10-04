@@ -22,6 +22,7 @@
 | 2026-10-04 | Stack : Next.js PWA + TypeScript, Supabase, Cloudflare Stream | ADR 0011 |
 | 2026-10-04 | Code en français (identifiants sans accents) | ADR 0012 |
 | 2026-10-04 | Pilote gratuit, pas de paiement | ADR 0013 |
+| 2026-10-04 | Plan du Jalon 1 validé | docs/plans/jalon-1.md |
 | 2026-10-04 | Fichier commun de secrets nommé `secrets/commun.env.example` (et non `.env.example`), car les `.env*` sont interdits en lecture | `secrets/README.md` |
 
 ## Hypothèses à vérifier
@@ -39,13 +40,14 @@
 ## Questions ouvertes
 
 1. Fournisseurs hébergement, SMS, avatar, voix, WhatsApp ; budget par vidéo (Jalon 2).
-2. Validation du plan du Jalon 1 (`docs/plans/jalon-1.md`).
-3. Premier enseignant-référent Maths 3e ; accès aux programmes officiels IPN.
-4. **Juriste local (Gabon)** : protection des données, consentement des mineurs, prospection, activité annexe des enseignants du public, contrat de référent, propriété intellectuelle, consentement voix/image. À faire vérifier **avant d'ouvrir à de vrais élèves**.
-5. Skills propres au projet encore à écrire (rien d'existant) : français et mineurs, accueil WhatsApp, files d'approbation, pipeline voix/avatar, faible débit, lecture de PDF, sourcing éthique.
-6. Séries techniques F/G : à définir avec des enseignants techniques.
+2. Premier enseignant-référent Maths 3e ; accès aux programmes officiels IPN.
+3. **Juriste local (Gabon)** : protection des données, consentement des mineurs, prospection, activité annexe des enseignants du public, contrat de référent, propriété intellectuelle, consentement voix/image. À faire vérifier **avant d'ouvrir à de vrais élèves**.
+4. Skills propres au projet encore à écrire (rien d'existant) : français et mineurs, accueil WhatsApp, files d'approbation, pipeline voix/avatar, faible débit, lecture de PDF, sourcing éthique.
+5. Séries techniques F/G : à définir avec des enseignants techniques.
 
 ## État d'avancement
+
+- 2026-10-04 : Jalon 1, étape 1 faite — `application/` (Next.js 16 + TypeScript, PWA : manifeste et icône, français, sans police téléchargée), ESLint, Prettier, Vitest, Playwright ; lint, types, test unitaire et 2 tests de bout en bout passent.
 
 - 2026-10-04 : 11 skills tierces adaptées (Professeur 2, Scénariste 2, Évaluateur 1, Conformité 2, Coordinateur 1, Support 1, Recruteur 1, commun 1) ; licences jointes.
 - 2026-10-04 : cadrage v2 intégré (Partie G) ; 16 skills du Coordinateur rédigées.
@@ -53,4 +55,4 @@
 
 ## Prochaine étape
 
-Faire valider `docs/plans/jalon-1.md`, puis commencer l'étape 1 (initialisation du projet).
+Jalon 1, étape 2 : schéma de données (migrations SQL multi-pays, sécurité au niveau des lignes) testé sur Postgres 16 local.
