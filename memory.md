@@ -34,7 +34,7 @@
 4. Modèle économique du pilote (gratuit ou abonnement Mobile Money).
 5. Premier enseignant-référent Maths 3e ; accès aux programmes officiels IPN.
 6. **Juriste local (Gabon)** : protection des données, consentement des mineurs, prospection, activité annexe des enseignants du public, contrat de référent, propriété intellectuelle, consentement voix/image. À faire vérifier **avant d'ouvrir à de vrais élèves**.
-7. Liste des skills tierces à proposer (recherche en cours).
+7. Skills : recherche faite (`docs/skills-recherche-2026-10-04.md`) ; en attente de validation de la liste et de la licence CC BY-SA 4.0 (GarethManning).
 8. Séries techniques F/G : à définir avec des enseignants techniques.
 
 ## État d'avancement
