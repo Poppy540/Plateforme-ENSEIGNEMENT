@@ -31,5 +31,7 @@ jobs:
       - run: pnpm format:verifier
       - run: pnpm typecheck
       - run: pnpm test
+      - name: Migrations et règles d'accès (Postgres local)
+        run: pnpm test:base
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e

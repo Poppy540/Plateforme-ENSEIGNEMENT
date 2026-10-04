@@ -11,7 +11,8 @@
     "format:verifier": "prettier --check .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:base": "bash scripts/tester-base.sh"
   },
   "dependencies": {
     "next": "16.3.8",

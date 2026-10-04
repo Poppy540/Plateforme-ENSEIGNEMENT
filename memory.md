@@ -47,6 +47,8 @@
 
 ## État d'avancement
 
+- 2026-10-04 : Jalon 1, étape 2 faite — 4 migrations Supabase (`application/supabase/migrations/`) : référentiels multi-pays, comptes minimaux, consentements, progression, approbations, signalements, règles d'accès, rôle `agent_professeur` (ADR 0014). 14 tests d'accès passent sur Postgres 16 local (`pnpm test:base`) ; deux règles volontairement affaiblies font bien échouer les tests.
+
 - 2026-10-04 : Jalon 1, étape 1 faite — `application/` (Next.js 16 + TypeScript, PWA : manifeste et icône, français, sans police téléchargée), ESLint, Prettier, Vitest, Playwright ; lint, types, test unitaire et 2 tests de bout en bout passent.
 
 - 2026-10-04 : 11 skills tierces adaptées (Professeur 2, Scénariste 2, Évaluateur 1, Conformité 2, Coordinateur 1, Support 1, Recruteur 1, commun 1) ; licences jointes.
@@ -55,4 +57,4 @@
 
 ## Prochaine étape
 
-Jalon 1, étape 2 : schéma de données (migrations SQL multi-pays, sécurité au niveau des lignes) testé sur Postgres 16 local.
+Jalon 1, étape 3 : import du pack pays (`referentiels/<pays>/*.yaml`) dans la base ; test : 67 unités pour le Gabon, pack fictif chargé sans modifier le code.
