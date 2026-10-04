@@ -1,6 +1,6 @@
 # Skills — agent tuteur
 
-Statut : skills tierces adaptées après validation du propriétaire (ADR 0009) ; voir le tableau « Skills retenues ». Aucun plugin ni script installé.
+Statut : aucune skill propre adoptée ; le Tuteur utilise la progression et le graphe de prérequis validés produits par le Coordinateur (voir « Skills retenues »). Aucun plugin ni script installé.
 
 Pistes : parcours adaptatif, usage du graphe de prérequis.
 
