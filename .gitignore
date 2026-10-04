@@ -1,0 +1,33 @@
+# --- Secrets (voir secrets/README.md) ---
+secrets/*.env
+!secrets/*.env.example
+.env*
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+
+# --- Données réelles : élèves, parents, candidats (jamais dans git) ---
+donnees/
+data/
+exports/
+**/eleves*.csv
+**/parents*.csv
+**/candidats*.csv
+**/*.donnees-reelles.*
+
+# --- Sorties de tests (peuvent contenir des conversations) ---
+tests/resultats/
+tests/**/resultats/
+agents/*/tests/resultats/
+
+# --- Outils ---
+node_modules/
+.next/
+dist/
+build/
+coverage/
+.DS_Store
+.claude/settings.local.json

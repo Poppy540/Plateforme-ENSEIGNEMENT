@@ -1,0 +1,24 @@
+# Fiche pays — Gabon (pays pilote)
+code: ga
+nom: Gabon
+langue_enseignement: fr
+langues_vivantes: [en, es]
+fuseau_horaire: Africa/Libreville
+monnaie: XAF            # franc CFA (CEMAC)
+statut_pack: en_preparation   # en_preparation | pilote | ouvert
+referentiel:
+  code: ga-general
+  version: "0.1-provisoire"
+  date_validation: null
+  source_officielle: "Ministère de l'Éducation Nationale / IPN (Institut Pédagogique National) — documents à obtenir"
+paiement:
+  moyens: [mobile_money]        # opérateurs à confirmer
+  operateurs_otp: a_confirmer
+connectivite: "souvent faible, usage surtout sur smartphone"
+cadre_legal:
+  statut: a_verifier_par_juriste_local
+  points: [protection_des_donnees, consentement_des_mineurs, prospection, activite_annexe_des_enseignants_publics, propriete_intellectuelle]
+calendrier_scolaire: a_definir
+equipe_locale:
+  referents: []          # aucun recruté à ce jour
+  contact_institutionnel: null

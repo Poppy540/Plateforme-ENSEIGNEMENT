@@ -1,0 +1,46 @@
+# Matières du pack Gabon. famille = famille de matières (agent Coordinateur) ; couche = universel / adaptable / local (hypothèse de travail, cadrage).
+matieres:
+  - code: francais
+    libelle: "Français"
+    famille: francais
+    couche: local
+  - code: mathematiques
+    libelle: "Mathématiques"
+    famille: mathematiques
+    couche: adaptable
+  - code: anglais
+    libelle: "Anglais (LV1)"
+    famille: langues
+    couche: universel
+  - code: espagnol
+    libelle: "Espagnol (LV2)"
+    famille: langues
+    couche: universel
+  - code: langues-vivantes
+    libelle: "Langues vivantes (Anglais / Espagnol)"
+    famille: langues
+    couche: universel
+  - code: histoire-geographie
+    libelle: "Histoire-Géographie"
+    famille: histoire-geo-ses
+    couche: local
+  - code: svt
+    libelle: "Sciences de la Vie et de la Terre"
+    famille: sciences
+    couche: adaptable
+  - code: sciences-techno
+    libelle: "Sciences physiques / Technologie (introduction)"
+    famille: sciences
+    couche: adaptable
+  - code: physique-chimie
+    libelle: "Physique-Chimie"
+    famille: sciences
+    couche: adaptable
+  - code: philosophie
+    libelle: "Philosophie"
+    famille: philosophie
+    couche: adaptable
+  - code: ses
+    libelle: "Sciences Économiques et Sociales"
+    famille: histoire-geo-ses
+    couche: local

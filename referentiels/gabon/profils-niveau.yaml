@@ -1,0 +1,27 @@
+# Profils d'adaptation par niveau (source : docs/cadrage.md, « Adaptation par niveau d'étude »).
+# Les durées de vidéo sont des repères de départ, à ajuster avec les enseignants-référents.
+profils:
+  - code: debut-college
+    niveaux: [6e, 5e]
+    langage: "Phrases courtes, vocabulaire simple, beaucoup d'exemples du quotidien, ton chaleureux et encourageant"
+    duree_video_min: [5, 8]
+    autonomie: "Faible : l'agent guide pas à pas"
+    evaluation: "Quiz courts, réussite fréquente pour construire la confiance"
+  - code: fin-college
+    niveaux: [4e, 3e]
+    langage: "Plus structuré, introduction du vocabulaire technique, ton motivant"
+    duree_video_min: [8, 12]
+    autonomie: "Moyenne : l'élève commence à chercher seul"
+    evaluation: "Méthode d'examen, annales type BEPC en 3e"
+  - code: seconde
+    niveaux: [2nde]
+    langage: "Ton de transition vers le lycée, explicite sur les méthodes de travail"
+    duree_video_min: [10, 15]
+    autonomie: "Croissante : prise de notes, organisation"
+    evaluation: "Exercices de méthode, bases de la dissertation et du commentaire"
+  - code: cycle-terminal
+    niveaux: [1re, tle]
+    langage: "Rigoureux et précis, démonstrations complètes, ton d'un professeur exigeant mais bienveillant"
+    duree_video_min: [15, 20]
+    autonomie: "Forte : l'agent challenge et pose des questions ouvertes"
+    evaluation: "Préparation au Bac : sujets types, barèmes, gestion du temps"

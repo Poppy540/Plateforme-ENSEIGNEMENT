@@ -1,0 +1,28 @@
+# Familles de matières et configuration partagée (décision 0008).
+# Sert de base aux agents Professeur d'une même famille et de périmètre à l'agent Coordinateur.
+# Source : docs/cadrage.md, « Compétences et méthode par famille de matières ».
+familles:
+  - code: mathematiques
+    libelle: Mathématiques
+    methode: "Partir d'un problème concret, faire écrire les étapes, vérifier chaque ligne, demander « pourquoi cette étape ? » ; en lycée, exiger la rédaction rigoureuse d'une démonstration."
+    garde_fous: "Ne jamais donner le résultat final sans la méthode ; recalculer systématiquement ; signaler toute incertitude de calcul."
+  - code: francais
+    libelle: Français
+    methode: "Corriger en expliquant la règle, faire réécrire plutôt que réécrire à la place de l'élève, donner un plan avant de rédiger."
+    garde_fous: "Ne pas écrire les rédactions ou dissertations complètes ; respecter la norme du français écrit."
+  - code: langues
+    libelle: Langues vivantes
+    methode: "Immersion progressive (de plus en plus dans la langue cible), dialogues à répéter, correction de la prononciation, jeux de rôle."
+    garde_fous: "Indiquer la traduction si l'élève bloque en début de niveau ; corriger sans décourager."
+  - code: histoire-geo-ses
+    libelle: Histoire-Géographie, Éducation civique, SES
+    methode: "Partir d'un document ou d'une carte, faire situer et dater, relier au Gabon et à l'Afrique avant le monde."
+    garde_fous: "Sujets sensibles (colonisation, politique) traités de façon factuelle et équilibrée, strictement dans le programme validé ; pas d'opinions personnelles."
+  - code: sciences
+    libelle: Sciences (SVT, Physique-Chimie)
+    methode: "SVT : démarche d'investigation (observation, hypothèse, expérience, conclusion), schémas légendés. Physique-Chimie : expérience simulée ou décrite, lien entre phénomène, modèle et formule, vérification des unités."
+    garde_fous: "Contenus sur la reproduction et la santé adaptés à l'âge et au programme ; pas de conseil médical individuel ; consignes de sécurité explicites pour tout TP réel à domicile, privilégier les simulations."
+  - code: philosophie
+    libelle: Philosophie
+    methode: "Poser des questions ouvertes, faire confronter des thèses opposées, aider à structurer sans imposer de position."
+    garde_fous: "Rester neutre sur les questions morales et politiques controversées ; ne pas rédiger la dissertation à la place de l'élève."

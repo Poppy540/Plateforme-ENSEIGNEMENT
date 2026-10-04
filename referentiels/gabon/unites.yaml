@@ -1,0 +1,343 @@
+# Unités pédagogiques du pack Gabon (source : docs/cadrage.md, « Matrice des unités »).
+# Code : <pays>-<niveau>[-<groupe de séries>]-<matière>. Une unité peut couvrir plusieurs séries (décision 0002).
+# Statut de toutes les unités : a_valider (programmes provisoires).
+# Total : 67 unités (calculé, pas codé en dur ailleurs).
+unites:
+  - code: ga-6e-francais
+    niveau: 6e
+    series: []
+    matiere: francais
+    statut: a_valider
+  - code: ga-6e-mathematiques
+    niveau: 6e
+    series: []
+    matiere: mathematiques
+    statut: a_valider
+  - code: ga-6e-anglais
+    niveau: 6e
+    series: []
+    matiere: anglais
+    statut: a_valider
+  - code: ga-6e-histoire-geographie
+    niveau: 6e
+    series: []
+    matiere: histoire-geographie
+    statut: a_valider
+  - code: ga-6e-svt
+    niveau: 6e
+    series: []
+    matiere: svt
+    statut: a_valider
+  - code: ga-6e-sciences-techno
+    niveau: 6e
+    series: []
+    matiere: sciences-techno
+    statut: a_valider
+  - code: ga-5e-francais
+    niveau: 5e
+    series: []
+    matiere: francais
+    statut: a_valider
+  - code: ga-5e-mathematiques
+    niveau: 5e
+    series: []
+    matiere: mathematiques
+    statut: a_valider
+  - code: ga-5e-anglais
+    niveau: 5e
+    series: []
+    matiere: anglais
+    statut: a_valider
+  - code: ga-5e-espagnol
+    niveau: 5e
+    series: []
+    matiere: espagnol
+    statut: a_valider
+  - code: ga-5e-histoire-geographie
+    niveau: 5e
+    series: []
+    matiere: histoire-geographie
+    statut: a_valider
+  - code: ga-5e-svt
+    niveau: 5e
+    series: []
+    matiere: svt
+    statut: a_valider
+  - code: ga-5e-physique-chimie
+    niveau: 5e
+    series: []
+    matiere: physique-chimie
+    libelle_local: "Physique-Chimie / Technologie"
+    statut: a_valider
+  - code: ga-4e-francais
+    niveau: 4e
+    series: []
+    matiere: francais
+    statut: a_valider
+  - code: ga-4e-mathematiques
+    niveau: 4e
+    series: []
+    matiere: mathematiques
+    statut: a_valider
+  - code: ga-4e-anglais
+    niveau: 4e
+    series: []
+    matiere: anglais
+    statut: a_valider
+  - code: ga-4e-espagnol
+    niveau: 4e
+    series: []
+    matiere: espagnol
+    statut: a_valider
+  - code: ga-4e-histoire-geographie
+    niveau: 4e
+    series: []
+    matiere: histoire-geographie
+    statut: a_valider
+  - code: ga-4e-svt
+    niveau: 4e
+    series: []
+    matiere: svt
+    statut: a_valider
+  - code: ga-4e-physique-chimie
+    niveau: 4e
+    series: []
+    matiere: physique-chimie
+    statut: a_valider
+  - code: ga-3e-francais
+    niveau: 3e
+    series: []
+    matiere: francais
+    statut: a_valider
+  - code: ga-3e-mathematiques
+    niveau: 3e
+    series: []
+    matiere: mathematiques
+    statut: a_valider
+  - code: ga-3e-anglais
+    niveau: 3e
+    series: []
+    matiere: anglais
+    statut: a_valider
+  - code: ga-3e-espagnol
+    niveau: 3e
+    series: []
+    matiere: espagnol
+    statut: a_valider
+  - code: ga-3e-histoire-geographie
+    niveau: 3e
+    series: []
+    matiere: histoire-geographie
+    statut: a_valider
+  - code: ga-3e-svt
+    niveau: 3e
+    series: []
+    matiere: svt
+    statut: a_valider
+  - code: ga-3e-physique-chimie
+    niveau: 3e
+    series: []
+    matiere: physique-chimie
+    statut: a_valider
+  - code: ga-2nde-francais
+    niveau: 2nde
+    series: []
+    matiere: francais
+    statut: a_valider
+  - code: ga-2nde-mathematiques
+    niveau: 2nde
+    series: []
+    matiere: mathematiques
+    statut: a_valider
+  - code: ga-2nde-anglais
+    niveau: 2nde
+    series: []
+    matiere: anglais
+    statut: a_valider
+  - code: ga-2nde-espagnol
+    niveau: 2nde
+    series: []
+    matiere: espagnol
+    statut: a_valider
+  - code: ga-2nde-histoire-geographie
+    niveau: 2nde
+    series: []
+    matiere: histoire-geographie
+    statut: a_valider
+  - code: ga-2nde-svt
+    niveau: 2nde
+    series: []
+    matiere: svt
+    statut: a_valider
+  - code: ga-2nde-physique-chimie
+    niveau: 2nde
+    series: []
+    matiere: physique-chimie
+    statut: a_valider
+  - code: ga-2nde-philosophie
+    niveau: 2nde
+    series: []
+    matiere: philosophie
+    statut: a_valider
+  - code: ga-1re-a-francais
+    niveau: 1re
+    series: [A1, A2]
+    matiere: francais
+    libelle_local: "Français / Littérature"
+    statut: a_valider
+  - code: ga-1re-a-philosophie
+    niveau: 1re
+    series: [A1, A2]
+    matiere: philosophie
+    statut: a_valider
+  - code: ga-1re-a-langues-vivantes
+    niveau: 1re
+    series: [A1, A2]
+    matiere: langues-vivantes
+    statut: a_valider
+  - code: ga-1re-a-histoire-geographie
+    niveau: 1re
+    series: [A1, A2]
+    matiere: histoire-geographie
+    statut: a_valider
+  - code: ga-1re-b-mathematiques
+    niveau: 1re
+    series: [B]
+    matiere: mathematiques
+    statut: a_valider
+  - code: ga-1re-b-ses
+    niveau: 1re
+    series: [B]
+    matiere: ses
+    statut: a_valider
+  - code: ga-1re-b-histoire-geographie
+    niveau: 1re
+    series: [B]
+    matiere: histoire-geographie
+    statut: a_valider
+  - code: ga-1re-b-philosophie
+    niveau: 1re
+    series: [B]
+    matiere: philosophie
+    statut: a_valider
+  - code: ga-1re-c-mathematiques
+    niveau: 1re
+    series: [C]
+    matiere: mathematiques
+    statut: a_valider
+  - code: ga-1re-c-physique-chimie
+    niveau: 1re
+    series: [C]
+    matiere: physique-chimie
+    statut: a_valider
+  - code: ga-1re-c-svt
+    niveau: 1re
+    series: [C]
+    matiere: svt
+    statut: a_valider
+  - code: ga-1re-c-philosophie
+    niveau: 1re
+    series: [C]
+    matiere: philosophie
+    statut: a_valider
+  - code: ga-1re-d-mathematiques
+    niveau: 1re
+    series: [D]
+    matiere: mathematiques
+    statut: a_valider
+  - code: ga-1re-d-svt
+    niveau: 1re
+    series: [D]
+    matiere: svt
+    statut: a_valider
+  - code: ga-1re-d-physique-chimie
+    niveau: 1re
+    series: [D]
+    matiere: physique-chimie
+    statut: a_valider
+  - code: ga-1re-d-philosophie
+    niveau: 1re
+    series: [D]
+    matiere: philosophie
+    statut: a_valider
+  - code: ga-tle-a-francais
+    niveau: tle
+    series: [A1, A2]
+    matiere: francais
+    libelle_local: "Français / Littérature"
+    statut: a_valider
+  - code: ga-tle-a-philosophie
+    niveau: tle
+    series: [A1, A2]
+    matiere: philosophie
+    statut: a_valider
+  - code: ga-tle-a-langues-vivantes
+    niveau: tle
+    series: [A1, A2]
+    matiere: langues-vivantes
+    statut: a_valider
+  - code: ga-tle-a-histoire-geographie
+    niveau: tle
+    series: [A1, A2]
+    matiere: histoire-geographie
+    statut: a_valider
+  - code: ga-tle-b-mathematiques
+    niveau: tle
+    series: [B]
+    matiere: mathematiques
+    statut: a_valider
+  - code: ga-tle-b-ses
+    niveau: tle
+    series: [B]
+    matiere: ses
+    statut: a_valider
+  - code: ga-tle-b-histoire-geographie
+    niveau: tle
+    series: [B]
+    matiere: histoire-geographie
+    statut: a_valider
+  - code: ga-tle-b-philosophie
+    niveau: tle
+    series: [B]
+    matiere: philosophie
+    statut: a_valider
+  - code: ga-tle-c-mathematiques
+    niveau: tle
+    series: [C]
+    matiere: mathematiques
+    statut: a_valider
+  - code: ga-tle-c-physique-chimie
+    niveau: tle
+    series: [C]
+    matiere: physique-chimie
+    statut: a_valider
+  - code: ga-tle-c-svt
+    niveau: tle
+    series: [C]
+    matiere: svt
+    statut: a_valider
+  - code: ga-tle-c-philosophie
+    niveau: tle
+    series: [C]
+    matiere: philosophie
+    statut: a_valider
+  - code: ga-tle-d-mathematiques
+    niveau: tle
+    series: [D]
+    matiere: mathematiques
+    statut: a_valider
+  - code: ga-tle-d-svt
+    niveau: tle
+    series: [D]
+    matiere: svt
+    statut: a_valider
+  - code: ga-tle-d-physique-chimie
+    niveau: tle
+    series: [D]
+    matiere: physique-chimie
+    statut: a_valider
+  - code: ga-tle-d-philosophie
+    niveau: tle
+    series: [D]
+    matiere: philosophie
+    statut: a_valider
