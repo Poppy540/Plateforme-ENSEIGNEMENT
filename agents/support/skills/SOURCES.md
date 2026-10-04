@@ -1,6 +1,6 @@
 # Skills — agent support
 
-Statut : **aucune skill installée.** Recherche à faire, puis liste présentée au propriétaire avant toute adoption.
+Statut : skills tierces adaptées après validation du propriétaire (ADR 0009) ; voir le tableau « Skills retenues ». Aucun plugin ni script installé.
 
 Pistes : FAQ et accueil WhatsApp, tri des demandes.
 
