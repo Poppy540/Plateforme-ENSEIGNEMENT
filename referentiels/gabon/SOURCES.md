@@ -22,6 +22,7 @@ Statuts : **validé** (confirmé par un enseignant-référent sur le programme o
 | `familles.yaml` | Méthode et garde-fous par famille | Cadrage, « Compétences et méthode par famille » | à valider |
 | `contexte-local.yaml` | Exemples locaux | Cadrage | à valider |
 | `agents/professeur/ga-3e-mathematiques.yaml` | Variables du prompt Professeur | Cadrage, Partie B | à valider |
+| `agents/evaluateur/ga-3e-mathematiques.yaml` | Variables du prompt Évaluateur | Cadrage, Partie B et profils de niveau ; référent provisoire (Claude Code) | à valider |
 | `agents/scenariste/ga-3e-mathematiques.yaml` | Variables du prompt Scénariste | Cadrage, Partie B et profils de niveau ; persona et référent provisoires (Claude Code) | à valider |
 | (futur) Histoire-Géographie 6e | Intitulés | Programmes IPN 1993/1996, via l'étude Ntsame Edjo (2010/2015, CRIRES-Université Laval) ; réforme des curricula en cours depuis 2022 | à valider |
 | (futur) autres programmes | Chapitres des autres unités | Cadrage, « Découpage des cours », base francophone générique | à valider (pas encore importés) |

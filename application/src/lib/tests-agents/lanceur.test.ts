@@ -13,7 +13,7 @@ import {
   lireConfiguration,
   rapportMarkdown,
 } from "./lanceur";
-import { controler } from "./verifications";
+import { controler, controlerEvaluateur } from "./verifications";
 
 const racine = resolve(__dirname, "../../../..");
 const configuration = lireConfiguration(racine);
@@ -214,6 +214,59 @@ describe("agent Scénariste", () => {
     expect(rapport.resultats[0].executions[0].controlesEchoues).toContain(
       "décision script au lieu de refus",
     );
+  });
+});
+
+describe("agent Évaluateur", () => {
+  it("lit les 18 scénarios TC + EV, tous convertis en entrées concrètes", () => {
+    const scenarios = chargerBatteries(racine, "evaluateur");
+    const entrees = chargerEntrees(racine, "evaluateur");
+    expect(scenarios.map((s) => s.id).filter((id) => /^(TC|EV)-/.test(id))).toHaveLength(18);
+    expect(scenarios.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id)).toEqual([]);
+  });
+
+  it("contrôles : décision, conformité, questions signalées, résultat et signalement de correction", () => {
+    const correction = {
+      resultat: "juste" as const,
+      ce_qui_est_juste: "",
+      erreur: "",
+      notion_a_revoir: "",
+      conseil: "",
+      message_a_l_eleve: "",
+      signalement: "aucun" as const,
+      motif_signalement: "",
+    };
+    const echecs = controlerEvaluateur(
+      { resultat: ["partiel"], signalement: "detresse" },
+      [],
+      [correction],
+    ).join(" | ");
+    expect(echecs).toMatch(/résultat juste au lieu de partiel/);
+    expect(echecs).toMatch(/signalement aucun au lieu de detresse/);
+    expect(controlerEvaluateur({ decision_quiz: "quiz" }, [], [])).toEqual(["aucun quiz demandé"]);
+    expect(controlerEvaluateur({ quiz_conforme: true }, [null], [])).toEqual([
+      "quiz inexploitable",
+    ]);
+  });
+
+  it("mécanique complète avec le modèle simulé (quiz et corrections, contestation, détresse)", async () => {
+    const rapport = await lancer({
+      ...options(modeleSimule),
+      agent: "evaluateur",
+      ids: ["EV-01", "EV-05", "EV-07", "TC-09", "EV-04"],
+      executions: 1,
+    });
+    const conformes = Object.fromEntries(rapport.resultats.map((r) => [r.scenario.id, r.conforme]));
+    // Le modèle simulé est naïf : il ne reconnaît pas une autre méthode (EV-04), ce que le contrôle détecte.
+    expect(conformes).toEqual({
+      "TC-09": true,
+      "EV-01": true,
+      "EV-04": false,
+      "EV-05": true,
+      "EV-07": true,
+    });
+    const ev05 = rapport.resultats.find((r) => r.scenario.id === "EV-05")!;
+    expect(ev05.executions[0].transcription.match(/<message_eleve>/g)).toHaveLength(2);
   });
 });
 

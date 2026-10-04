@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { deciderChapitre } from "@/lib/serveur/referent";
+import { genererBrouillonQuiz } from "@/lib/serveur/evaluateur";
 import { genererBrouillonScript } from "@/lib/serveur/scenariste";
 
 export type EtatDecision = { erreur?: string } | undefined;
@@ -54,5 +55,24 @@ export async function genererBrouillon(
       : "";
   return {
     succes: `Brouillon version ${resultat.version} créé${resultat.aRelireEnPriorite ? " — à relire en priorité" : ""}.${remarques}`,
+  };
+}
+
+export async function genererQuizBrouillon(
+  _etat: EtatGeneration,
+  donnees: FormData,
+): Promise<EtatGeneration> {
+  const utilisateur = await exigerReferent();
+  const chapitreId = String(donnees.get("chapitre") ?? "");
+  const resultat = await genererBrouillonQuiz(utilisateur, {
+    chapitreId,
+    nombreQuestions: Number(donnees.get("nombre")),
+    difficulte: String(donnees.get("difficulte") ?? "") as "variee",
+    consigne: String(donnees.get("consigne") ?? "").trim() || null,
+  });
+  if (!resultat.ok) return { erreur: resultat.erreur };
+  revalidatePath(`/referent/chapitres/${chapitreId}`);
+  return {
+    succes: `Quiz version ${resultat.version} créé${resultat.questionsSignalees > 0 ? ` — ${resultat.questionsSignalees} question(s) signalée(s) par l'Évaluateur` : ""}.`,
   };
 }

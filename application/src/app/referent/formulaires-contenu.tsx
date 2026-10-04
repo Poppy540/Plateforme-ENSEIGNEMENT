@@ -1,9 +1,14 @@
 "use client";
 
-import { useActionState } from "react";
-import { deciderSurScript, demanderRevision } from "./actions";
+import { useActionState, type ReactNode } from "react";
 
-function Messages({ etat }: { etat: { erreur?: string; succes?: string } | undefined }) {
+// Formulaires communs aux contenus versionnés (scripts, quiz) : décision sur la version lue, révision par
+// l'agent qui l'a rédigée (nouvelle version).
+
+export type EtatFormulaire = { erreur?: string; succes?: string } | undefined;
+type Action = (etat: EtatFormulaire, donnees: FormData) => Promise<EtatFormulaire>;
+
+function Messages({ etat }: { etat: EtatFormulaire }) {
   return (
     <>
       {etat?.erreur && (
@@ -16,17 +21,19 @@ function Messages({ etat }: { etat: { erreur?: string; succes?: string } | undef
   );
 }
 
-export function FormulaireDecisionScript({
+export function FormulaireDecisionContenu({
   id,
   version,
   pointsSignales,
+  action: agir,
 }: {
   id: string;
   version: number;
-  /** Points [À VÉRIFIER], exemples locaux ou sujet sensible : confirmation exigée avant validation. */
+  /** Points à vérifier, questions signalées ou sujet sensible : confirmation exigée avant validation. */
   pointsSignales: boolean;
+  action: Action;
 }) {
-  const [etat, action, enCours] = useActionState(deciderSurScript, undefined);
+  const [etat, action, enCours] = useActionState(agir, undefined);
   return (
     <form action={action} className="formulaire">
       <input type="hidden" name="id" value={id} />
@@ -34,8 +41,8 @@ export function FormulaireDecisionScript({
       <input type="hidden" name="a_verifier" value={pointsSignales ? "oui" : "non"} />
       {pointsSignales && (
         <label>
-          <input type="checkbox" name="verifie" value="oui" /> J&apos;ai vérifié les points [À
-          VÉRIFIER], les exemples locaux et, le cas échéant, le traitement du sujet sensible.
+          <input type="checkbox" name="verifie" value="oui" /> J&apos;ai vérifié les points signalés
+          (points à vérifier, exemples locaux, questions signalées, sujet sensible).
         </label>
       )}
       <label htmlFor="commentaire">Commentaire (obligatoire en cas de rejet)</label>
@@ -59,32 +66,29 @@ export function FormulaireDecisionScript({
   );
 }
 
-export function FormulaireRevision({
+export function FormulaireRevisionContenu({
   id,
   chapitre,
-  duree,
   corrections,
+  action: agir,
+  agent,
+  children,
 }: {
   id: string;
   chapitre: string;
-  duree: number;
   corrections: string;
+  action: Action;
+  /** Nom de l'agent qui révise (« le Scénariste », « l'Évaluateur »). */
+  agent: string;
+  /** Champs propres au contenu (durée, nombre de questions…). */
+  children?: ReactNode;
 }) {
-  const [etat, action, enCours] = useActionState(demanderRevision, undefined);
+  const [etat, action, enCours] = useActionState(agir, undefined);
   return (
     <form action={action} className="formulaire">
       <input type="hidden" name="id" value={id} />
       <input type="hidden" name="chapitre" value={chapitre} />
-      <label htmlFor="duree-revision">Durée cible (minutes)</label>
-      <input
-        id="duree-revision"
-        name="duree"
-        type="number"
-        min={2}
-        max={30}
-        defaultValue={duree}
-        required
-      />
+      {children}
       <label htmlFor="corrections">Corrections attendues</label>
       <textarea
         id="corrections"
@@ -97,7 +101,7 @@ export function FormulaireRevision({
       <Messages etat={etat} />
       <div className="actions">
         <button type="submit" className="secondaire" disabled={enCours}>
-          {enCours ? "Révision en cours (1 à 3 minutes)…" : "Faire réviser par le Scénariste"}
+          {enCours ? "Révision en cours (1 à 3 minutes)…" : `Faire réviser par ${agent}`}
         </button>
       </div>
       <p className="note">La révision crée une nouvelle version, à relire et valider à son tour.</p>

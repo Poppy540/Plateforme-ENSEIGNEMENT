@@ -182,3 +182,69 @@ test("le référent rejette un script, le fait réviser, puis valide la nouvelle
   await page.goto("/referent");
   await expect(page.getByRole("heading", { name: "Scripts à relire (0)" })).toBeVisible();
 });
+
+test("quiz : l'Évaluateur crée un brouillon (modèle simulé), le référent le valide, l'élève le passe une fois", async ({
+  page,
+}) => {
+  const [chapitre] = await executerSql(
+    "select id from chapitres where titre = 'Systèmes d''équations' and statut = 'valide'",
+  );
+  await seConnecter(page, REFERENT);
+  await page.goto(`/referent/chapitres/${chapitre.id}`);
+  await page.getByLabel("Nombre de questions").fill("3");
+  await page.getByRole("button", { name: "Générer un quiz brouillon" }).click();
+  await expect(page.getByRole("status")).toContainText("Quiz version 1 créé");
+
+  // Avant validation, l'élève ne voit pas le quiz.
+  const eleve = await page.context().browser()!.newPage();
+  await seConnecter(eleve, "+999 000 001 01");
+  await eleve.goto("/catalogue/ga-3e-mathematiques/systemes");
+  await expect(eleve.getByRole("heading", { name: "Systèmes d'équations" })).toBeVisible();
+  await expect(eleve.getByRole("link", { name: "Faire le quiz du chapitre" })).toHaveCount(0);
+
+  await page.goto("/referent");
+  await page.getByRole("link", { name: /Quiz : Systèmes d'équations/ }).click();
+  await expect(page.getByText("(bonne réponse)").first()).toBeVisible();
+  await page.getByRole("button", { name: "Valider la version 1" }).click();
+  await expect(page.locator(".erreur")).toContainText("Cochez la case");
+  await page.getByLabel(/J'ai vérifié les points/).check();
+  await page.getByRole("button", { name: "Valider la version 1" }).click();
+  await expect(page.getByText("Statut : Validé")).toBeVisible();
+  await expect(page.getByText(/Pas encore de statistiques/)).toBeVisible();
+
+  // L'élève passe le quiz : questions sans les réponses, une seule tentative.
+  await eleve.reload();
+  await eleve.getByRole("link", { name: "Faire le quiz du chapitre" }).click();
+  await expect(eleve.getByText("Question 1 : Combien font 2 + 2 ? (simulé)")).toBeVisible();
+  await expect(eleve.getByText("2 + 2 = 4.")).toHaveCount(0);
+  await eleve.getByLabel("4", { exact: true }).check();
+  await eleve.getByLabel("Faux").check();
+  await eleve.getByLabel("Ta réponse à la question 3").fill("3 × 4 = 12");
+  await eleve.getByRole("button", { name: "Envoyer mes réponses" }).click();
+  await expect(eleve.getByText("Ton score : 67 / 100 (enregistré).")).toBeVisible();
+  await expect(eleve.getByText("Explication : 2 + 2 = 4.")).toBeVisible();
+  await expect(eleve.getByRole("button", { name: "Envoyer mes réponses" })).toHaveCount(0);
+
+  // Contestation de la question 2, deux fois : réexamen, puis transmission à un enseignant.
+  const question2 = eleve.locator("section").filter({ hasText: "Question 2" });
+  await question2.getByText("Je conteste cette correction").click();
+  await question2.getByLabel("Explique pourquoi").fill("Je pense que c'est faux car…");
+  await question2.getByRole("button", { name: "Envoyer ma contestation" }).click();
+  await expect(question2.getByText("J'ai réexaminé ta réponse (simulé)").first()).toBeVisible();
+  // Le panneau de contestation reste ouvert après le premier envoi.
+  await question2.getByLabel("Explique pourquoi").fill("Je maintiens.");
+  await question2.getByRole("button", { name: "Envoyer ma contestation" }).click();
+  await expect(
+    question2.getByText("Ta contestation a été transmise à un enseignant."),
+  ).toBeVisible();
+  await expect(eleve.getByText("Ton score : 67 / 100 (enregistré).")).toBeVisible();
+
+  const traces = await executerSql(
+    `select (select count(*)::int from tentatives_quiz) as tentatives,
+       (select score::int from tentatives_quiz limit 1) as score,
+       (select count(*)::int from contestations_quiz) as contestations,
+       (select count(*)::int from signalements where source = 'agent_evaluateur' and motif = 'erreur_contenu') as signalements`,
+  );
+  expect(traces).toEqual([{ tentatives: 1, score: 67, contestations: 2, signalements: 1 }]);
+  await eleve.close();
+});

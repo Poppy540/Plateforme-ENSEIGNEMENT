@@ -46,6 +46,10 @@ export function exporterDonnees(utilisateur: string) {
       tentatives_quiz: await requete(
         "select reponses, score, corrige_le from tentatives_quiz where eleve_id = $1 order by corrige_le",
       ),
+      contestations_quiz: await requete(
+        `select c.question, c.message, c.reexamen, c.cree_le from contestations_quiz c
+         join tentatives_quiz t on t.id = c.tentative_id where t.eleve_id = $1 order by c.cree_le`,
+      ),
     };
   });
 }

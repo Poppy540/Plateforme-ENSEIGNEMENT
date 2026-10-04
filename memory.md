@@ -55,6 +55,8 @@
 
 ## État d'avancement
 
+- 2026-10-04 : Jalon 2, étape 4 faite (sans clé, modèle simulé) — agent Évaluateur (ADR 0024) : quiz brouillon structuré (QCM, vrai/faux, réponse courte ; guide de lecture des options ; questions signalées) lancé par le référent, contrôles mécaniques, validation (case « j'ai vérifié »), révision ; élève : questions sans réponses, une seule tentative notée (contrainte en base), choix corrigés sans modèle, réponses courtes corrigées par l'Évaluateur, contestation (2 au plus, score inchangé, signalement humain), statistiques anonymisées dès 5 tentatives. Migration 0010 (notes du quiz, tentative unique, contestations, signalements de l'Évaluateur, `statistiques_quiz`). Formulaires de décision et de révision communs aux scripts et quiz. Lanceur étendu (`--agent evaluateur`, 18 scénarios TC + EV, ~15 USD le passage réel). Tests : 71 unitaires, base V01-V04, 31 de bout en bout. Message serveur intermittent « destination stream closed early » en bout en bout : déjà présent avant, sans échec.
+
 - 2026-10-04 : Jalon 2, étape 3 faite — validation des scripts (ADR 0023) : liste « scripts à relire » (sensibles d'abord), valider ou rejeter la version lue (commentaire obligatoire au rejet), case « j'ai vérifié » exigée s'il y a des [À VÉRIFIER], des exemples locaux ou un sujet sensible, historique des décisions, révision par le Scénariste (corrections reprises du rejet, nouvelle version à revalider). Correction d'une attente fragile dans les tests de bout en bout (redirection du référent). Tests : 58 unitaires, 30 de bout en bout.
 
 - 2026-10-04 : Jalon 2, étape 2 faite (sans clé, modèle simulé) — agent Scénariste (ADR 0022) : un appel au modèle par script, sortie imposée par schéma JSON et vérifiée (huit étapes, minutage, [À VÉRIFIER], « à relire en priorité »), lancé par le référent depuis un chapitre validé (durée, consigne), brouillon enregistré sous le rôle `agent_scenariste` (statut imposé par la base), page de lecture du script, limite 3 brouillons par chapitre et par jour. Lanceur de tests étendu (`pnpm test:agents --agent scenariste`, 16 scénarios TC + SC, TC-09 non applicable, entrées à relire ; passage réel estimé ~25 USD). Valeurs du pack `agents/scenariste/ga-3e-mathematiques.yaml` provisoires. Tests : 57 unitaires, 29 de bout en bout.
@@ -87,6 +89,6 @@
 
 ## Prochaine étape
 
-Jalon 2, étape 4 (agent Évaluateur : quiz brouillon, validation, passage par l'élève, score unique, modèle simulé tant que la clé manque). En parallèle, décisions du propriétaire : fournisseurs et budget par vidéo (`docs/fournisseurs-2026-10.md`), relecteur de la vidéo pilote.
+Jalon 2, étape 5 (production vidéo, chaîne programmée) : bloquée sur le choix des fournisseurs et du budget par vidéo ; possible de construire la chaîne avec des services simulés en attendant. Étape 6 (revue et publication de la vidéo, lecteur faible débit) possible avec des vidéos fictives. En parallèle, décisions du propriétaire : fournisseurs et budget par vidéo (`docs/fournisseurs-2026-10.md`), relecteur de la vidéo pilote.
 
 Toujours en attente du Jalon 1 : le propriétaire (bilan §6) : clé ANTHROPIC_API_KEY + accord pour le mini-essai (~0,18 USD) puis le passage complet TC + PR (~9 USD) ; validations listées dans le bilan.

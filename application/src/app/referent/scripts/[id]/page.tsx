@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { Fragment } from "react";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { scriptPourReferent } from "@/lib/serveur/scenariste";
-import { FormulaireDecisionScript, FormulaireRevision } from "./formulaires";
+import { FormulaireDecisionContenu, FormulaireRevisionContenu } from "../../formulaires-contenu";
+import { deciderSurScript, demanderRevision } from "./actions";
 
 const LIBELLES = { brouillon: "Brouillon", valide: "Validé", rejete: "Rejeté" } as const;
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "medium", timeStyle: "short" });
@@ -98,9 +99,10 @@ export default async function PageScriptReferent({ params }: PageProps<"/referen
 
       <h2>Décision</h2>
       {script.statut === "brouillon" ? (
-        <FormulaireDecisionScript
+        <FormulaireDecisionContenu
           id={script.id}
           version={script.version}
+          action={deciderSurScript}
           pointsSignales={
             c.points_a_verifier.length > 0 ||
             c.exemples_locaux_a_valider.length > 0 ||
@@ -124,12 +126,24 @@ export default async function PageScriptReferent({ params }: PageProps<"/referen
       ))}
 
       <h2>Demander une révision</h2>
-      <FormulaireRevision
+      <FormulaireRevisionContenu
         id={script.id}
         chapitre={script.chapitreId}
-        duree={script.dureeCibleMinutes}
+        action={demanderRevision}
+        agent="le Scénariste"
         corrections={script.historique.find((h) => h.decision === "rejete")?.commentaire ?? ""}
-      />
+      >
+        <label htmlFor="duree-revision">Durée cible (minutes)</label>
+        <input
+          id="duree-revision"
+          name="duree"
+          type="number"
+          min={2}
+          max={30}
+          defaultValue={script.dureeCibleMinutes}
+          required
+        />
+      </FormulaireRevisionContenu>
     </main>
   );
 }

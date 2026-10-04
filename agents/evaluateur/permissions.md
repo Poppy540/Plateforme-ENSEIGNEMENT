@@ -20,6 +20,10 @@ Variables : `DATABASE_URL`, `DATABASE_AGENT_KEY`.
 
 Aucune clé de paiement ni de signature électronique. La clé de la base est propre à cet agent et limitée à son rôle.
 
-## Mise en œuvre (à faire)
+## Mise en œuvre (ADR 0021, 0024)
 
-Ces droits seront appliqués techniquement (rôle de base de données dédié, politiques d'accès au niveau des lignes, outils exposés à l'agent), pas seulement par le prompt.
+- Rôle de base `agent_evaluateur` : lit les chapitres validés de son unité ; écrit des quiz **seulement** pour les chapitres validés de son unité ; la base impose le statut « brouillon », calcule version et empreinte et refuse toute modification d'un quiz existant.
+- Scores : une tentative par élève et par quiz, pour l'élève fixé par le serveur (`app.eleve_id`), sur un quiz validé ; aucun droit de modification ni de suppression d'un score.
+- Contestations et signalements : seulement pour l'élève du contexte ; source « agent_evaluateur » imposée.
+- Statistiques d'erreurs : agrégées et anonymisées (fonction `statistiques_quiz`, réservée aux référents de la famille, rien en dessous de 5 tentatives). L'agent ne lit aucun résultat d'un autre élève.
+- Aucune fonction de validation ni de publication n'est accessible au rôle. Les élèves ne lisent jamais la table des quiz (les réponses y figurent) : le serveur leur sert les questions sans réponses.

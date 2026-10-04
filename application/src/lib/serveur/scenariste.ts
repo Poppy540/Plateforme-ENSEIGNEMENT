@@ -11,6 +11,7 @@ import {
 } from "@/lib/agents/scenariste/script";
 import { avecAgentScenariste, avecUtilisateur } from "./base";
 import { modeleDesAgents } from "./professeur";
+import { deciderContenu } from "./validation";
 
 // Agent Scénariste côté serveur (ADR 0022) : lancé par un enseignant-référent pour un chapitre validé de
 // sa famille ; lectures et écriture sous le rôle agent_scenariste (unité fixée par le serveur) ; le brouillon
@@ -288,10 +289,8 @@ export function scriptsARelire(referent: string): Promise<ScriptARelire[]> {
   });
 }
 
-export type ResultatDecisionScript = { ok: true } | { ok: false; erreur: string };
-
-/** Décision du référent sur la version lue (la base vérifie la famille, la version et le statut). */
-export async function deciderScript(
+/** Décision du référent sur la version lue d'un script. */
+export function deciderScript(
   referent: string,
   decision: {
     id: string;
@@ -299,29 +298,6 @@ export async function deciderScript(
     version: number;
     commentaire: string | null;
   },
-): Promise<ResultatDecisionScript> {
-  if (!/^[0-9a-f-]{36}$/.test(decision.id)) return { ok: false, erreur: "Script inconnu." };
-  try {
-    await avecUtilisateur(referent, (client) =>
-      client.query("select valider_contenu('script', $1, $2, $3, $4)", [
-        decision.id,
-        decision.decision,
-        decision.version,
-        decision.commentaire,
-      ]),
-    );
-    return { ok: true };
-  } catch (erreur) {
-    if (erreur instanceof DatabaseError) {
-      if (erreur.code === "40001")
-        return {
-          ok: false,
-          erreur: "Ce n'est pas la version que vous avez lue. Rechargez la page.",
-        };
-      if (erreur.code === "42501")
-        return { ok: false, erreur: "Vous ne pouvez pas valider ce script." };
-      if (erreur.code === "22023") return { ok: false, erreur: erreur.message };
-    }
-    throw erreur;
-  }
+) {
+  return deciderContenu(referent, "script", decision);
 }

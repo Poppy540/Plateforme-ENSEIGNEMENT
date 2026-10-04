@@ -11,11 +11,24 @@ import { repondre, type ParametresModele } from "../agents/professeur/boucle.ts"
 import type { AppelOutil } from "../agents/professeur/outils.ts";
 import { genererScript, messageDemande } from "../agents/scenariste/generation.ts";
 import { scriptEnTexte, type SortieScenariste } from "../agents/scenariste/script.ts";
+import {
+  corrigerReponse,
+  messageCorrection,
+  type Correction,
+} from "../agents/evaluateur/correction.ts";
+import { genererQuiz, messageDemandeQuiz } from "../agents/evaluateur/generation.ts";
+import { quizEnTexte, type Question, type SortieQuiz } from "../agents/evaluateur/quiz.ts";
 import { lirePack } from "../pack-pays/lecture.ts";
 import { coutUSD, type Consommation } from "./cout.ts";
 import { lireScenarios, type ScenarioGherkin } from "./gherkin.ts";
 import type { Juge } from "./juge.ts";
-import { controler, fusionner, type SortieControlee, type Verifications } from "./verifications.ts";
+import {
+  controler,
+  controlerEvaluateur,
+  fusionner,
+  type SortieControlee,
+  type Verifications,
+} from "./verifications.ts";
 
 export interface ConfigurationTests {
   executions_par_test: number;
@@ -40,10 +53,29 @@ export interface Generation {
   valeurs?: Record<string, string>;
 }
 
+/** Une demande de quiz (agent Évaluateur). */
+export interface DemandeQuizTest {
+  chapitre?: string;
+  chapitre_hors_programme?: string;
+  nombre?: number;
+  difficulte?: "facile" | "moyen" | "difficile" | "variee";
+  consigne?: string;
+}
+
+/** Une correction de réponse courte (agent Évaluateur), éventuellement contestée. */
+export interface CorrectionTest {
+  question: Partial<Question> & { enonce: string; reponse_attendue: string; explication: string };
+  reponse: string;
+  /** Contestation : correction précédente (résultat) et messages successifs de l'élève. */
+  contestation?: { resultat: Correction["resultat"]; messages: string[] };
+}
+
 interface EntreeScenario {
   chapitre?: string;
   tours?: string[];
   generations?: Generation[];
+  quiz?: DemandeQuizTest[];
+  corrections?: CorrectionTest[];
   verifications?: Verifications;
 }
 
@@ -57,7 +89,7 @@ export interface FichierEntrees {
   scenarios: Record<string, EntreeScenario>;
 }
 
-export type AgentTeste = "professeur" | "scenariste";
+export type AgentTeste = "professeur" | "scenariste" | "evaluateur";
 
 export interface Execution {
   numero: number;
@@ -133,6 +165,7 @@ const SKILLS: Record<AgentTeste, string[]> = {
     "scenariste/skills/script-pense-a-voix-haute",
     "scenariste/skills/ancrage-local",
   ],
+  evaluateur: ["_commun/skills/contenu-non-fiable", "evaluateur/skills/questions-de-controle"],
 };
 
 interface ResultatExecution {
@@ -140,6 +173,8 @@ interface ResultatExecution {
   reponses: string[];
   appels: AppelOutil[];
   sorties: SortieControlee[];
+  quiz: (SortieQuiz | null)[];
+  corrections: (Correction | null)[];
   consommations: Consommation[];
 }
 
@@ -272,7 +307,117 @@ async function executerScenariste(
   }
 }
 
-const EXECUTANTS = { professeur: executerProfesseur, scenariste: executerScenariste };
+/** Question complète à partir des champs donnés dans les entrées de test. */
+function questionDeTest(q: CorrectionTest["question"], chapitre: string): Question {
+  return {
+    type: "reponse_courte",
+    options: [],
+    bonne_reponse: -1,
+    notion: "",
+    chapitre,
+    difficulte: "moyen",
+    guide_reponses: [],
+    erreurs_deduites: [],
+    verification: "",
+    ...q,
+  };
+}
+
+async function executerEvaluateur(
+  c: Contexte,
+  entree: EntreeScenario,
+  r: ResultatExecution,
+): Promise<void> {
+  const lignes: string[] = [];
+  const systeme = composerPrompt(
+    {
+      agent: "evaluateur",
+      codePays: c.codePays,
+      unite: c.entrees.unite,
+      skills: SKILLS.evaluateur,
+      valeursDynamiques: {},
+    },
+    c.options.racine,
+  );
+  const programme = c.chapitres.map((x) => x.titre);
+  try {
+    for (const d of entree.quiz ?? []) {
+      const code = d.chapitre ?? c.entrees.chapitre_par_defaut;
+      const duPack = c.chapitres.find((x) => x.code === code);
+      const demande = {
+        programmeValide: programme,
+        chapitre: {
+          titre: d.chapitre_hors_programme ?? duPack?.titre ?? code,
+          sousThemes: duPack?.sousThemes ?? [],
+        },
+        prerequis: [],
+        nombreQuestions: d.nombre ?? 5,
+        difficulte: d.difficulte ?? "variee",
+        consigne: d.consigne,
+      };
+      const resultat = await genererQuiz({
+        systeme,
+        demande,
+        modele: c.options.modele,
+        parametres: c.options.parametres,
+      });
+      r.consommations.push(...resultat.consommations);
+      lignes.push(messageDemandeQuiz(demande), "", "--- Sortie de l'Évaluateur ---");
+      lignes.push(
+        resultat.sortie
+          ? quizEnTexte(resultat.sortie)
+          : `(aucune sortie exploitable, arrêt : ${resultat.arret})`,
+        "",
+      );
+      if (resultat.sortie) r.reponses.push(JSON.stringify(resultat.sortie));
+      r.quiz.push(resultat.sortie);
+    }
+    const titre =
+      c.chapitres.find((x) => x.code === c.entrees.chapitre_par_defaut)?.titre ??
+      c.entrees.chapitre_par_defaut;
+    for (const t of entree.corrections ?? []) {
+      const question = questionDeTest(t.question, titre);
+      const contestation = t.contestation && {
+        correction: {
+          resultat: t.contestation.resultat,
+          ce_qui_est_juste: "",
+          erreur: "Réponse différente de la réponse attendue.",
+          notion_a_revoir: question.notion,
+          conseil: "",
+          message_a_l_eleve: "",
+          signalement: "aucun" as const,
+          motif_signalement: "",
+        },
+        messages: t.contestation.messages,
+      };
+      const demande = { question, reponseEleve: t.reponse, contestation };
+      const resultat = await corrigerReponse({
+        systeme,
+        demande,
+        modele: c.options.modele,
+        parametres: c.options.parametres,
+      });
+      r.consommations.push(...resultat.consommations);
+      lignes.push(messageCorrection(demande), "", "--- Correction de l'Évaluateur ---");
+      lignes.push(
+        resultat.sortie
+          ? JSON.stringify(resultat.sortie, null, 2)
+          : `(aucune sortie exploitable, arrêt : ${resultat.arret})`,
+        "",
+      );
+      if (resultat.sortie) r.reponses.push(JSON.stringify(resultat.sortie));
+      r.corrections.push(resultat.sortie);
+    }
+  } finally {
+    r.transcription = lignes.join("\n");
+  }
+}
+
+const EXECUTANTS = {
+  professeur: executerProfesseur,
+  scenariste: executerScenariste,
+  evaluateur: executerEvaluateur,
+};
 
 export async function lancer(options: OptionsLancement): Promise<Rapport> {
   const journal = options.journal ?? (() => undefined);
@@ -308,16 +453,18 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
         reponses: [],
         appels: [],
         sorties: [],
+        quiz: [],
+        corrections: [],
         consommations: [],
       };
       try {
         await EXECUTANTS[options.agent](contexte, entree, partiel);
-        const controlesEchoues = controler(
-          verifications,
-          partiel.reponses,
-          partiel.appels,
-          partiel.sorties,
-        );
+        const controlesEchoues = [
+          ...controler(verifications, partiel.reponses, partiel.appels, partiel.sorties),
+          ...(options.agent === "evaluateur"
+            ? controlerEvaluateur(verifications, partiel.quiz, partiel.corrections)
+            : []),
+        ];
         const jugement = await options.juge(scenario, partiel.transcription, options.agent);
         if (jugement.consommation) consommationsJuge.push(jugement.consommation);
         executions.push({

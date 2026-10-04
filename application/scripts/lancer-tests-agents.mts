@@ -26,15 +26,17 @@ const option = (nom: string) => {
 };
 const racine = resolve(process.env.CHEMIN_DEPOT ?? "..");
 const agent = option("--agent") ?? "professeur";
-if (agent !== "professeur" && agent !== "scenariste") {
-  console.error(`Agent inconnu : ${agent} (professeur ou scenariste).`);
+if (agent !== "professeur" && agent !== "scenariste" && agent !== "evaluateur") {
+  console.error(`Agent inconnu : ${agent} (professeur, scenariste ou evaluateur).`);
   process.exit(2);
 }
 // Paramètres du modèle de l'agent testé (mêmes variables d'environnement que le serveur).
-const PREFIXE = agent === "professeur" ? "PROFESSEUR" : "SCENARISTE";
+const PREFIXE = agent.toUpperCase();
 const PAR_DEFAUT = {
   professeur: { effort: "medium", maxTokens: 16000, sortieParTour: 2000, entreeJugement: 2500 },
   scenariste: { effort: "high", maxTokens: 64000, sortieParTour: 12000, entreeJugement: 9000 },
+  // Moyenne entre création de quiz (~8 000 jetons) et correction (~1 500).
+  evaluateur: { effort: "high", maxTokens: 64000, sortieParTour: 6000, entreeJugement: 6000 },
 }[agent];
 const configuration = lireConfiguration(racine);
 const reel = (process.env.MODE_MODELE ?? "simulation") === "anthropic";
@@ -57,7 +59,9 @@ const scenarios = chargerBatteries(racine, agent).filter(
 const toursTotal =
   scenarios.reduce((s, sc) => {
     const e = entrees.scenarios[sc.id];
-    return s + (agent === "professeur" ? (e.tours ?? []).length : (e.generations ?? [{}]).length);
+    if (agent === "professeur") return s + (e.tours ?? []).length;
+    if (agent === "evaluateur") return s + (e.quiz ?? []).length + (e.corrections ?? []).length;
+    return s + (e.generations ?? [{}]).length;
   }, 0) * executions;
 const prompt = composerPrompt(
   {
@@ -79,7 +83,7 @@ const estimation = estimerUSD({
   entreeJugement: PAR_DEFAUT.entreeJugement,
 });
 console.log(
-  `Agent ${agent} : ${scenarios.length} scénarios × ${executions} exécutions (${toursTotal} ${agent === "professeur" ? "tours d'élève" : "demandes de script"}). Estimation d'un passage réel : ~${estimation.toFixed(2)} USD.`,
+  `Agent ${agent} : ${scenarios.length} scénarios × ${executions} exécutions (${toursTotal} ${agent === "professeur" ? "tours d'élève" : "appels à l'agent"}). Estimation d'un passage réel : ~${estimation.toFixed(2)} USD.`,
 );
 
 if (reel && !args.includes("--confirmer")) {

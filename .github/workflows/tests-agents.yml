@@ -1,7 +1,7 @@
 # Batterie de tests des agents (prompt maître §2, cadrage Partie D).
 # - À chaque changement de prompt, skill, outil, configuration ou lanceur : tests de la mécanique (sans coût).
 # - Passage réel avec le modèle (PAYANT ; estimation affichée avant lancement : ~9 USD pour le Professeur,
-#   ~25 USD pour le Scénariste, par passage complet) : seulement si le propriétaire
+#   ~25 USD pour le Scénariste, ~15 USD pour l'Évaluateur, par passage complet) : seulement si le propriétaire
 #   l'active (variable de dépôt TESTS_AGENTS_REELS = oui, ou lancement manuel) ET a ajouté le secret
 #   ANTHROPIC_API_KEY dans les secrets du dépôt GitHub.
 name: Tests des agents
@@ -22,7 +22,7 @@ on:
       agent:
         description: "Agent testé"
         type: choice
-        options: [professeur, scenariste]
+        options: [professeur, scenariste, evaluateur]
         default: professeur
       scenarios:
         description: "Scénarios à lancer (vide = tous), par exemple PR-01,TC-09"
@@ -84,7 +84,7 @@ jobs:
           EXECUTIONS: ${{ inputs.executions }}
         run: |
           # Saisies passées par variables d'environnement et contrôlées (pas d'injection dans le shell).
-          [[ "$AGENT" =~ ^(professeur|scenariste)$ ]] || { echo "Agent invalide"; exit 1; }
+          [[ "$AGENT" =~ ^(professeur|scenariste|evaluateur)$ ]] || { echo "Agent invalide"; exit 1; }
           ARGS=(--confirmer --agent "$AGENT")
           if [ -n "$SCENARIOS" ]; then
             [[ "$SCENARIOS" =~ ^[A-Z]{2}-[0-9]{2}(,[A-Z]{2}-[0-9]{2})*$ ]] || { echo "Liste de scénarios invalide"; exit 1; }

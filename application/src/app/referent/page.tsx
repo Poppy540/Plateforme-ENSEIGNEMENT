@@ -2,6 +2,7 @@ import Link from "next/link";
 import { seDeconnecter } from "../connexion/actions";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { tableauReferent } from "@/lib/serveur/referent";
+import { quizARelire } from "@/lib/serveur/evaluateur";
 import { scriptsARelire } from "@/lib/serveur/scenariste";
 
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "medium", timeStyle: "short" });
@@ -10,6 +11,7 @@ export default async function PageReferent() {
   const utilisateur = await exigerReferent();
   const tableau = await tableauReferent(utilisateur);
   const scripts = await scriptsARelire(utilisateur);
+  const quiz = await quizARelire(utilisateur);
 
   return (
     <main className="conteneur">
@@ -51,6 +53,22 @@ export default async function PageReferent() {
                 {s.aRelireEnPriorite && " · à relire en priorité"}
               </span>
               <strong>Script : {s.chapitreTitre}</strong>
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      <h2>Quiz à relire ({quiz.length})</h2>
+      {quiz.length === 0 && <p>Aucun quiz en attente.</p>}
+      <ul className="liste-cartes">
+        {quiz.map((q) => (
+          <li key={q.id}>
+            <Link href={`/referent/quiz/${q.id}`} className="carte">
+              <span className="note">
+                {q.unite} · version {q.version}
+                {q.questionsSignalees > 0 && ` · ${q.questionsSignalees} question(s) signalée(s)`}
+              </span>
+              <strong>Quiz : {q.chapitreTitre}</strong>
             </Link>
           </li>
         ))}

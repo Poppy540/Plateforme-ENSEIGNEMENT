@@ -2,8 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { chapitrePourReferent } from "@/lib/serveur/referent";
+import { quizDuChapitre } from "@/lib/serveur/evaluateur";
 import { scriptsDuChapitre } from "@/lib/serveur/scenariste";
 import { FormulaireDecision } from "./formulaire-decision";
+import { FormulaireQuiz } from "./formulaire-quiz";
 import { FormulaireScript } from "./formulaire-script";
 
 const LIBELLES = { a_valider: "À valider", valide: "Validé", rejete: "Rejeté" } as const;
@@ -18,8 +20,11 @@ export default async function PageChapitreReferent({
   const { id } = await params;
   const chapitre = await chapitrePourReferent(utilisateur, id);
   if (!chapitre) notFound();
-  const revision = Number((await searchParams).revision);
+  const recherche = await searchParams;
+  const revision = Number(recherche.revision);
+  const revisionQuiz = Number(recherche.quiz);
   const scripts = chapitre.statut === "valide" ? await scriptsDuChapitre(utilisateur, id) : [];
+  const quiz = chapitre.statut === "valide" ? await quizDuChapitre(utilisateur, id) : [];
 
   return (
     <main className="conteneur">
@@ -76,6 +81,32 @@ export default async function PageChapitreReferent({
             </ul>
           )}
           <FormulaireScript chapitre={chapitre.id} dureeParDefaut={10} />
+        </section>
+      )}
+
+      {chapitre.statut === "valide" && (
+        <section>
+          <h2>Quiz</h2>
+          {Number.isInteger(revisionQuiz) && revisionQuiz > 0 && (
+            <p role="status">Quiz version {revisionQuiz} créé par révision : à relire.</p>
+          )}
+          {quiz.length === 0 ? (
+            <p className="note">Aucun quiz pour ce chapitre.</p>
+          ) : (
+            <ul>
+              {quiz.map((q) => (
+                <li key={q.id}>
+                  <Link href={`/referent/quiz/${q.id}`}>Quiz version {q.version}</Link> —{" "}
+                  {LIBELLES_SCRIPT[q.statut]}, {q.nombreQuestions} questions, créé le{" "}
+                  {formatDate.format(new Date(q.creeLe))}
+                  {q.questionsSignalees > 0 && (
+                    <strong> — {q.questionsSignalees} question(s) signalée(s)</strong>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+          <FormulaireQuiz chapitre={chapitre.id} />
         </section>
       )}
 

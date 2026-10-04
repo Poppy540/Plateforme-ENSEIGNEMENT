@@ -13,7 +13,7 @@ function pool(): Pool {
   return globalPourPool.poolBase;
 }
 
-type RoleAgent = "agent_professeur" | "agent_scenariste";
+type RoleAgent = "agent_professeur" | "agent_scenariste" | "agent_evaluateur";
 
 async function enTransaction<T>(
   role: "anon" | "authenticated" | RoleAgent,
@@ -70,6 +70,14 @@ export function avecAgentScenariste<T>(
   traitement: (client: PoolClient) => Promise<T>,
 ) {
   return enTransaction("agent_scenariste", null, traitement, { eleveId: null, uniteId });
+}
+
+/** Requêtes de l'agent Évaluateur : unité et, pendant un quiz, élève connecté, fixés par le serveur. */
+export function avecAgentEvaluateur<T>(
+  contexte: { eleveId: string | null; uniteId: string },
+  traitement: (client: PoolClient) => Promise<T>,
+) {
+  return enTransaction("agent_evaluateur", null, traitement, contexte);
 }
 
 /** Réservé à l'authentification simulée (développement et test) : crée le compte d'authentification. */

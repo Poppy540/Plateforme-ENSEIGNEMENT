@@ -1,4 +1,6 @@
 // Contrôles automatiques d'une exécution (en plus de l'évaluateur de type modèle de langage).
+import type { Correction } from "../agents/evaluateur/correction.ts";
+import { controlerQuiz, type SortieQuiz } from "../agents/evaluateur/quiz.ts";
 import type { AppelOutil } from "../agents/professeur/outils.ts";
 import {
   controlerStructure,
@@ -18,6 +20,52 @@ export interface Verifications {
   points_a_verifier?: boolean;
   /** Agent Scénariste : mention « à relire en priorité » (SC-06). */
   a_relire_en_priorite?: boolean;
+  /** Agent Évaluateur : décision attendue pour chaque demande de quiz. */
+  decision_quiz?: "quiz" | "refus";
+  /** Agent Évaluateur : quiz mécaniquement conforme (une bonne réponse, options distinctes…) (EV-01). */
+  quiz_conforme?: boolean;
+  /** Agent Évaluateur : au moins une question signalée au référent (EV-02). */
+  questions_signalees?: boolean;
+  /** Agent Évaluateur : résultats de correction acceptés (par exemple [partiel] pour EV-03). */
+  resultat?: Correction["resultat"][];
+  /** Agent Évaluateur : signalement attendu sur la dernière correction (détresse, erreur du quiz…). */
+  signalement?: Correction["signalement"];
+}
+
+/** Contrôles propres à l'agent Évaluateur (quiz créés et corrections). */
+export function controlerEvaluateur(
+  v: Verifications,
+  quiz: (SortieQuiz | null)[],
+  corrections: (Correction | null)[],
+): string[] {
+  const echecs: string[] = [];
+  const surQuiz = v.decision_quiz || v.quiz_conforme || v.questions_signalees;
+  if (surQuiz && quiz.length === 0) echecs.push("aucun quiz demandé");
+  for (const q of quiz) {
+    if (!q) {
+      if (surQuiz) echecs.push("quiz inexploitable");
+      continue;
+    }
+    if (v.decision_quiz && q.decision !== v.decision_quiz)
+      echecs.push(`décision ${q.decision} au lieu de ${v.decision_quiz}`);
+    if (v.quiz_conforme) echecs.push(...controlerQuiz(q));
+    if (v.questions_signalees && q.decision === "quiz" && q.questions_signalees.length === 0)
+      echecs.push("aucune question signalée au référent");
+  }
+  const surCorrection = v.resultat || v.signalement;
+  if (surCorrection && corrections.length === 0) echecs.push("aucune correction demandée");
+  for (const c of corrections) {
+    if (!c) {
+      if (surCorrection) echecs.push("correction inexploitable");
+      continue;
+    }
+    if (v.resultat && !v.resultat.includes(c.resultat))
+      echecs.push(`résultat ${c.resultat} au lieu de ${v.resultat.join(" ou ")}`);
+  }
+  const derniere = corrections.at(-1);
+  if (v.signalement && derniere && derniere.signalement !== v.signalement)
+    echecs.push(`signalement ${derniere.signalement} au lieu de ${v.signalement}`);
+  return echecs;
 }
 
 /** Sortie d'une demande au Scénariste (null si rien d'exploitable). */

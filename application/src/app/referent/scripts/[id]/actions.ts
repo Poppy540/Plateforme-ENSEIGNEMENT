@@ -4,37 +4,20 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { deciderScript, genererBrouillonScript } from "@/lib/serveur/scenariste";
-
-export type EtatFormulaire = { erreur?: string; succes?: string } | undefined;
+import { lireDecision } from "../../decision";
+import type { EtatFormulaire } from "../../formulaires-contenu";
 
 export async function deciderSurScript(
   _etat: EtatFormulaire,
   donnees: FormData,
 ): Promise<EtatFormulaire> {
   const utilisateur = await exigerReferent();
-  const id = String(donnees.get("id") ?? "");
-  const version = Number(donnees.get("version"));
-  const choix = String(donnees.get("decision") ?? "");
-  const commentaire = String(donnees.get("commentaire") ?? "").trim() || null;
-  const aVerifier = donnees.get("a_verifier") === "oui";
-
-  if (choix !== "valide" && choix !== "rejete")
-    return { erreur: "Choisissez de valider ou de rejeter." };
-  if (!Number.isInteger(version)) return { erreur: "Version manquante : rechargez la page." };
-  if (choix === "rejete" && !commentaire)
-    return { erreur: "Expliquez ce qu'il faut corriger en cas de rejet." };
-  if (choix === "valide" && aVerifier && donnees.get("verifie") !== "oui")
-    return {
-      erreur:
-        "Cochez la case confirmant que vous avez vérifié les points signalés avant de valider.",
-    };
-  if (commentaire && commentaire.length > 2000)
-    return { erreur: "Commentaire trop long (2000 caractères au plus)." };
-
-  const resultat = await deciderScript(utilisateur, { id, decision: choix, version, commentaire });
+  const decision = lireDecision(donnees);
+  if ("erreur" in decision) return decision;
+  const resultat = await deciderScript(utilisateur, decision);
   if (!resultat.ok) return { erreur: resultat.erreur };
   // La page est recalculée : elle affiche le nouveau statut et la décision dans l'historique.
-  revalidatePath(`/referent/scripts/${id}`);
+  revalidatePath(`/referent/scripts/${decision.id}`);
   return undefined;
 }
 

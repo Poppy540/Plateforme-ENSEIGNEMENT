@@ -100,10 +100,134 @@ function scriptSimule(demande: string): BetaMessage {
   return message([texte(JSON.stringify(script))], "end_turn");
 }
 
+/** Évaluateur simulé : trois questions conformes au format, ou refus (hors programme, classement d'élèves). */
+function quizSimule(demande: string): BetaMessage {
+  const chapitre = demande.match(/Chapitre : « (.*) »/)?.[1] ?? "";
+  const programme = demande.split("Chapitre : «")[0];
+  const vide = { composante: "", questions: [], questions_signalees: [], points_a_valider: [] };
+  if (
+    !chapitre ||
+    !programme.includes(`- ${chapitre}`) ||
+    /classe(r)? les élèves|classement/i.test(demande)
+  ) {
+    return message(
+      [
+        texte(
+          JSON.stringify({
+            decision: "refus",
+            message_au_referent: "(Évaluateur simulé) Demande hors de mon périmètre.",
+            ...vide,
+          }),
+        ),
+      ],
+      "end_turn",
+    );
+  }
+  const lecture = (reponse: string, nature: string) => ({
+    reponse,
+    ce_que_fait_l_eleve: `Lecture simulée de « ${reponse} ».`,
+    nature,
+    etape_suivante: nature === "correcte" ? "Continuer le chapitre." : "Revoir le cours (simulé).",
+  });
+  const commun = {
+    notion: "Notion simulée",
+    chapitre,
+    difficulte: "facile",
+    erreurs_deduites: ["Erreur déduite (simulation)."],
+    verification: "Vérifiée (simulation).",
+  };
+  const quiz = {
+    decision: "quiz",
+    message_au_referent: "(Évaluateur simulé) Quiz de démonstration, sans contenu réel.",
+    composante: `Composante simulée de « ${chapitre} »`,
+    questions: [
+      {
+        type: "qcm",
+        enonce: "Combien font 2 + 2 ? (simulé)",
+        options: ["3", "4", "5"],
+        bonne_reponse: 1,
+        reponse_attendue: "4",
+        explication: "2 + 2 = 4.",
+        guide_reponses: [
+          lecture("3", "prerequis"),
+          lecture("4", "correcte"),
+          lecture("5", "confusion_chapitre"),
+        ],
+        ...commun,
+      },
+      {
+        type: "vrai_faux",
+        enonce: "Un carré a quatre côtés égaux. (simulé)",
+        options: ["Vrai", "Faux"],
+        bonne_reponse: 0,
+        reponse_attendue: "Vrai",
+        explication: "C'est la définition du carré.",
+        guide_reponses: [lecture("Vrai", "correcte"), lecture("Faux", "prerequis")],
+        ...commun,
+      },
+      {
+        type: "reponse_courte",
+        enonce: "Écris le résultat de 3 × 4. (simulé)",
+        options: [],
+        bonne_reponse: -1,
+        reponse_attendue: "12",
+        explication: "3 × 4 = 12.",
+        guide_reponses: [],
+        ...commun,
+      },
+    ],
+    questions_signalees: /ambigu/i.test(demande)
+      ? [{ numero: 1, motif: "Question ambiguë (simulé)." }]
+      : [],
+    points_a_valider: ["Erreurs déduites à confirmer (simulation)."],
+  };
+  return message([texte(JSON.stringify(quiz))], "end_turn");
+}
+
+/** Correction simulée d'une réponse courte. */
+function correctionSimulee(demande: string): BetaMessage {
+  const attendue = demande.match(/Réponse attendue : (.*)/)?.[1]?.trim() ?? "";
+  const reponse =
+    demande.match(/<reponse_eleve>\n([\s\S]*?)\n<\/reponse_eleve>/)?.[1]?.trim() ?? "";
+  const contestations = (demande.match(/<message_eleve>/g) ?? []).length;
+  const detresse = /disparaître|n'en peux plus/i.test(demande);
+  const nonTente = !reponse || /corrigé|réponse avant/i.test(reponse);
+  const juste =
+    !nonTente &&
+    attendue !== "" &&
+    reponse.replace(/\s/g, "").includes(attendue.replace(/\s/g, ""));
+  const correction = {
+    resultat: nonTente ? "non_tente" : juste ? "juste" : "faux",
+    ce_qui_est_juste: juste ? "Ta réponse est juste (simulé)." : "",
+    erreur: juste || nonTente ? "" : "Le résultat ne correspond pas (simulé).",
+    notion_a_revoir: juste ? "" : "Notion simulée",
+    conseil: nonTente
+      ? "Essaie d'abord, même une tentative incomplète m'aide."
+      : "Revois l'exemple du cours.",
+    message_a_l_eleve:
+      contestations > 0 ? "J'ai réexaminé ta réponse (simulé). Ton score ne change pas ici." : "",
+    signalement: detresse ? "detresse" : contestations >= 2 ? "erreur_possible_du_quiz" : "aucun",
+    motif_signalement: detresse
+      ? "Détresse exprimée (simulé)."
+      : contestations >= 2
+        ? "Contestée deux fois."
+        : "",
+  };
+  return message([texte(JSON.stringify(correction))], "end_turn");
+}
+
 /** Réponse scriptée selon des mots-clés du dernier message de l'élève. */
 export function reponseSimulee(parametres: BetaMessageStreamParams): BetaMessage {
   const messages = parametres.messages;
-  if (parametres.output_config?.format) return scriptSimule(dernierTexteEleve(messages));
+  const format = parametres.output_config?.format as
+    { schema?: { properties?: Record<string, unknown> } } | undefined;
+  if (format) {
+    const champs = format.schema?.properties ?? {};
+    const demande = dernierTexteEleve(messages);
+    if ("questions" in champs) return quizSimule(demande);
+    if ("resultat" in champs) return correctionSimulee(demande);
+    return scriptSimule(demande);
+  }
   if (dernierBlocEstResultatOutil(messages)) {
     return message([texte("C'est noté. Continuons ensemble.")], "end_turn");
   }
