@@ -1,0 +1,14 @@
+import { redirect } from "next/navigation";
+import { utilisateurConnecte } from "@/lib/serveur/session";
+import { FormulaireConnexion } from "./formulaire-connexion";
+
+export default async function PageConnexion() {
+  if (await utilisateurConnecte()) redirect("/espace");
+  return (
+    <main className="conteneur">
+      <h1>Connexion</h1>
+      <p>Tu reçois un code par SMS. Pas de mot de passe à retenir.</p>
+      <FormulaireConnexion />
+    </main>
+  );
+}

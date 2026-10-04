@@ -43,3 +43,6 @@ next-env.d.ts
 # tests
 /tests/resultats
 /playwright-report
+
+# base locale de développement
+/.base-locale

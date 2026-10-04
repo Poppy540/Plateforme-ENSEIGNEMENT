@@ -27,6 +27,9 @@
 
 ## Hypothèses à vérifier
 
+- Email : code à 6 chiffres au lieu d'un lien magique (écart avec l'ADR 0003, à confirmer par le propriétaire).
+- Âge de la majorité au Gabon inconnu : tout élève est traité comme mineur jusqu'à confirmation par un juriste.
+
 - Les outils cités par les prompts et les skills (escalade, progression, signalement, tickets) n'existent pas encore : à définir (ADR 0006).
 - La planification d'entretiens par calendrier (Recruteur) n'a pas de skill : à écrire si besoin.
 
@@ -47,6 +50,8 @@
 
 ## État d'avancement
 
+- 2026-10-04 : Jalon 1, étape 4 faite — connexion par code (SMS ou email) avec fournisseur Supabase (production) ou simulation (développement/test, code 123456), session signée, inscription minimale, âge de la majorité lu dans le pack (inconnu = mineur), validation parentale par lien à usage unique, accès aux données par le rôle `serveur_application` sans droit propre (ADR 0015). Tests : 21 unitaires, 15 d'accès + 3 d'import en base, 8 de bout en bout.
+
 - 2026-10-04 : Jalon 1, étape 3 faite — lecteur et contrôle des packs (`application/src/lib/pack-pays/`), génération d'un SQL d'import idempotent qui ne valide rien (`pnpm pack:sql`). Tests : pack Gabon = 67 unités, pack fictif « yy » (structure différente) chargé sans modifier le code, pack invalide refusé, garde-fou « aucun nom de pays dans le code », import réel en base (deux fois sans doublon) et repassage « à valider » après modification.
 
 - 2026-10-04 : Jalon 1, étape 2 faite — 4 migrations Supabase (`application/supabase/migrations/`) : référentiels multi-pays, comptes minimaux, consentements, progression, approbations, signalements, règles d'accès, rôle `agent_professeur` (ADR 0014). 14 tests d'accès passent sur Postgres 16 local (`pnpm test:base`) ; deux règles volontairement affaiblies font bien échouer les tests.
@@ -59,4 +64,4 @@
 
 ## Prochaine étape
 
-Jalon 1, étape 4 : connexion (téléphone + code SMS via Supabase Auth, numéros de test, lien magique email), inscription minimale, compte mineur en attente de validation parentale.
+Jalon 1, étape 5 : catalogue filtré par classe et série (chapitres validés seulement, statut à voir / en cours / terminé).

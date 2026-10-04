@@ -27,10 +27,11 @@ export function packEnSql(pack: PackPays): string {
     `-- Import du pack pays « ${pays.code} » (référentiel ${referentiel.code}, version ${referentiel.version}).`,
     "-- Généré automatiquement depuis referentiels/ : ne pas modifier à la main.",
     "begin;",
-    `insert into pays (code, nom, langue_enseignement, fuseau_horaire, monnaie, statut_pack)
-values (${texteSql(pays.code)}, ${texteSql(pays.nom)}, ${texteSql(pays.langueEnseignement)}, ${texteSql(pays.fuseauHoraire)}, ${texteSql(pays.monnaie)}, ${texteSql(pays.statutPack)})
+    `insert into pays (code, nom, langue_enseignement, fuseau_horaire, monnaie, statut_pack, age_majorite)
+values (${texteSql(pays.code)}, ${texteSql(pays.nom)}, ${texteSql(pays.langueEnseignement)}, ${texteSql(pays.fuseauHoraire)}, ${texteSql(pays.monnaie)}, ${texteSql(pays.statutPack)}, ${nombreSql(pays.ageMajorite)})
 on conflict (code) do update set nom = excluded.nom, langue_enseignement = excluded.langue_enseignement,
-  fuseau_horaire = excluded.fuseau_horaire, monnaie = excluded.monnaie, statut_pack = excluded.statut_pack;`,
+  fuseau_horaire = excluded.fuseau_horaire, monnaie = excluded.monnaie, statut_pack = excluded.statut_pack,
+  age_majorite = excluded.age_majorite;`,
     `insert into referentiels (code, pays_code, version, date_validation, source_officielle)
 values (${texteSql(referentiel.code)}, ${texteSql(pays.code)}, ${texteSql(referentiel.version)}, ${texteSql(referentiel.dateValidation)}, ${texteSql(referentiel.sourceOfficielle)})
 on conflict (code) do update set version = excluded.version, date_validation = excluded.date_validation,

@@ -13,6 +13,8 @@ export interface Pays {
   fuseauHoraire: string;
   monnaie: string | null;
   statutPack: "en_preparation" | "pilote" | "ouvert";
+  /** Âge de la majorité ; null = inconnu, tout élève est alors traité comme mineur. */
+  ageMajorite: number | null;
 }
 
 export interface Referentiel {
@@ -136,6 +138,7 @@ export function lirePack(dossier: string): PackPays {
     fuseauHoraire: texte(brutPays.fuseau_horaire),
     monnaie: texteOuNul(brutPays.monnaie),
     statutPack: statutPack as Pays["statutPack"],
+    ageMajorite: nombreOuNul(((brutPays.cadre_legal ?? {}) as Brut).age_majorite),
   };
   if (!pays.code) erreurs.push("pays.yaml : code du pays manquant");
   if (!pays.nom) erreurs.push("pays.yaml : nom du pays manquant");

@@ -52,3 +52,63 @@ a {
   color: var(--discret);
   font-size: 0.875rem;
 }
+
+.formulaire {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+input,
+select,
+button,
+.bouton {
+  font: inherit;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--discret);
+  background: var(--fond);
+  color: var(--texte);
+}
+
+button,
+.bouton {
+  background: var(--accent);
+  color: var(--fond);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+button.secondaire {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+button:disabled {
+  opacity: 0.6;
+}
+
+.case {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.erreur {
+  color: #b91c1c;
+}
+
+.attente {
+  border-left: 4px solid var(--accent);
+  padding-left: 0.75rem;
+}
+
+.messages {
+  list-style: none;
+  padding: 0;
+  word-break: break-word;
+}

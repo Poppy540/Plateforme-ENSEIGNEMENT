@@ -8,3 +8,5 @@ statut_pack: en_preparation
 referentiel:
   code: yy-general
   version: "0.1"
+cadre_legal:
+  age_majorite: 18

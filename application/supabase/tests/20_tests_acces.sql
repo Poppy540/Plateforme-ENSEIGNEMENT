@@ -261,4 +261,18 @@ end $$;
   select 1/0;
 \endif
 
+
+-- T15 Le rôle de connexion du serveur n'a aucun droit propre : il doit prendre le rôle de l'utilisateur.
+set role serveur_application;
+do $$ begin
+  begin
+    perform 1 from eleves;
+    raise exception 'T15 : le rôle serveur lit les élèves sans prendre le rôle d''un utilisateur';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+set role authenticated;
+reset role;
+\echo OK T15 rôle serveur sans droit propre
+
 \echo TOUS LES TESTS D’ACCÈS SONT PASSÉS
