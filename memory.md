@@ -44,6 +44,8 @@
 
 ## Questions ouvertes
 
+0. **Avant de vrais élèves** : suppression et export des données d'un utilisateur, durée de conservation configurable (prompt maître §6) — non construits.
+
 1. Fournisseurs hébergement, SMS, avatar, voix, WhatsApp ; budget par vidéo (Jalon 2).
 2. Premier enseignant-référent Maths 3e ; accès aux programmes officiels IPN.
 3. **Juriste local (Gabon)** : protection des données, consentement des mineurs, prospection, activité annexe des enseignants du public, contrat de référent, propriété intellectuelle, consentement voix/image. À faire vérifier **avant d'ouvrir à de vrais élèves**.
@@ -51,6 +53,8 @@
 5. Séries techniques F/G : à définir avec des enseignants techniques.
 
 ## État d'avancement
+
+- 2026-10-04 : Jalon 1, étape 9 préparée — bilan `docs/bilans/jalon-1.md`, 13 captures de démonstration (`docs/demo/jalon-1/`, script `pnpm demo:captures`). Jalon 1 clos quand le passage réel TC + PR aura atteint les seuils. Manque connu avant vrais élèves : suppression/export des données et durée de conservation (§6).
 
 - 2026-10-04 : Jalon 1, étape 8 faite (sans clé) — lanceur des tests des agents (`pnpm test:agents`) : 24 scénarios TC + PR convertis en entrées concrètes (`agents/professeur/tests/entrees.yaml`, à relire), 5 exécutions, contrôles automatiques + évaluateur LLM à sortie JSON, seuils 100 %/90 %, échantillon de relecture humaine, rapport, estimation du coût (~9 USD par passage complet), garde-fou `--confirmer`, intégration continue (mécanique toujours, passage réel sur activation du propriétaire). ADR 0018. 44 tests unitaires.
 
@@ -74,4 +78,4 @@
 
 ## Prochaine étape
 
-Jalon 1, étape 9 : clôture (démonstration, écarts). En attente du propriétaire : clé ANTHROPIC_API_KEY + accord sur le coût pour le mini-essai (~0,18 USD) puis le passage complet TC + PR (~9 USD) ; validation des valeurs provisoires du Professeur et des entrées de test.
+Attendre le propriétaire (bilan §6) : clé ANTHROPIC_API_KEY + accord pour le mini-essai (~0,18 USD) puis le passage complet TC + PR (~9 USD) ; validations listées dans le bilan. En parallèle possible sans coût : suppression/export des données et durée de conservation (§6 du prompt maître).

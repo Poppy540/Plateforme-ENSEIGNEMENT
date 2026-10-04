@@ -15,7 +15,8 @@
     "test:base": "bash scripts/tester-base.sh",
     "pack:sql": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/pack-en-sql.mts",
     "referent:invitation": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/invitation-referent.mts",
-    "test:agents": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/lancer-tests-agents.mts"
+    "test:agents": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/lancer-tests-agents.mts",
+    "demo:captures": "playwright test --config playwright.demo.config.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",
