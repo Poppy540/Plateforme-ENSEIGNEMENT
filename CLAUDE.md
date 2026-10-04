@@ -60,7 +60,7 @@ bash scripts/base-locale.sh demarrer   # base locale (données fictives) pour pn
 CHEMIN_CHROMIUM=/opt/pw-browsers/chromium-1194/chrome-linux/chrome pnpm test:e2e   # bout en bout (Playwright, base locale réinitialisée)
 ```
 
-Lanceur de tests des agents : à venir (étape 8 du Jalon 1).
+pnpm test:agents      # tests des agents, simulés (sans coût) ; passage réel : voir tests/README.md (payant, accord du propriétaire)
 
 # 5. DROITS ET INTERDICTIONS
 

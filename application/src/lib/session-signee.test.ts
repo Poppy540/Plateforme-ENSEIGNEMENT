@@ -18,7 +18,8 @@ describe("session signée", () => {
       JSON.stringify({ ...contenu, utilisateur: "22222222-2222-2222-2222-222222222222" }),
     ).toString("base64url");
     expect(verifierSession(`${autre}.${signature}`, secret)).toBeNull();
-    expect(verifierSession(`${donnees}.x${signature.slice(1)}`, secret)).toBeNull();
+    const autreCaractere = signature[0] === "A" ? "B" : "A"; // toujours différent de l'original
+    expect(verifierSession(`${donnees}.${autreCaractere}${signature.slice(1)}`, secret)).toBeNull();
   });
 
   it("refuse une session signée avec un autre secret ou expirée", () => {

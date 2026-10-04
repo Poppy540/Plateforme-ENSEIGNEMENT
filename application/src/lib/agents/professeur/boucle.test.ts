@@ -42,7 +42,7 @@ describe("boucle de l'agent Professeur", () => {
       { contenu: [{ type: "text", text: "Salut" }], arret: "end_turn" },
     ]);
     const sortie = await repondre(entree(modele));
-    expect(sortie).toEqual({ texte: "Salut", arret: "fin", appels: [] });
+    expect(sortie).toMatchObject({ texte: "Salut", arret: "fin", appels: [] });
     const systeme = requetes[0].system as { text: string; cache_control?: unknown }[];
     expect(systeme[0]).toMatchObject({ text: "PROMPT", cache_control: { type: "ephemeral" } });
     expect(systeme[1].cache_control).toBeUndefined();

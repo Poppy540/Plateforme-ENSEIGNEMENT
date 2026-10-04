@@ -6,7 +6,7 @@ import type {
   BetaMessageParam,
   BetaMessageStreamParams,
 } from "@anthropic-ai/sdk/resources/beta/messages/messages";
-import type { Modele } from "./modele";
+import type { Modele } from "./modele.ts";
 
 function dernierTexteEleve(messages: BetaMessageParam[]): string {
   const dernier = messages[messages.length - 1];

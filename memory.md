@@ -52,6 +52,8 @@
 
 ## État d'avancement
 
+- 2026-10-04 : Jalon 1, étape 8 faite (sans clé) — lanceur des tests des agents (`pnpm test:agents`) : 24 scénarios TC + PR convertis en entrées concrètes (`agents/professeur/tests/entrees.yaml`, à relire), 5 exécutions, contrôles automatiques + évaluateur LLM à sortie JSON, seuils 100 %/90 %, échantillon de relecture humaine, rapport, estimation du coût (~9 USD par passage complet), garde-fou `--confirmer`, intégration continue (mécanique toujours, passage réel sur activation du propriétaire). ADR 0018. 44 tests unitaires.
+
 - 2026-10-04 : Jalon 1, étape 7 faite (sans clé API) — agent Professeur : chargeur de prompt (cadrage + pack + §5.1 + 3 skills), boucle avec outils `enregistrer_progression` et `signaler`, rôle `agent_professeur`, échanges conservés, quota, page de chapitre avec conversation en flux, modèle simulé pour les tests (ADR 0017). Tests : 37 unitaires, base (accès, échanges, import, référents), 23 de bout en bout. Correction : secret de session de développement identique pour toutes les parties du serveur.
 
 - 2026-10-04 : Jalon 1, étape 6 faite — accès référent par invitation à usage unique (`pnpm referent:invitation`), espace `/referent` (chapitres à valider de ses familles, détail, valider/rejeter avec commentaire, historique), validation liée à la version relue (faille « version nulle » corrigée), saisies conservées après une erreur de formulaire, indicatif +241 retiré du code (garde-fou renforcé). ADR 0016. Tests : 25 unitaires, 19 en base + 4 référents, 17 de bout en bout.
@@ -72,4 +74,4 @@
 
 ## Prochaine étape
 
-Jalon 1, étape 8 : lanceur de tests des agents (TC + PR, 5 exécutions, évaluateur LLM, seuils). Nécessite ANTHROPIC_API_KEY (définie par le propriétaire dans l'environnement) et son accord sur le coût estimé avant tout lancement réel.
+Jalon 1, étape 9 : clôture (démonstration, écarts). En attente du propriétaire : clé ANTHROPIC_API_KEY + accord sur le coût pour le mini-essai (~0,18 USD) puis le passage complet TC + PR (~9 USD) ; validation des valeurs provisoires du Professeur et des entrées de test.

@@ -6,8 +6,8 @@ import type {
   BetaToolResultBlockParam,
   BetaToolUseBlock,
 } from "@anthropic-ai/sdk/resources/beta/messages/messages";
-import type { Modele } from "../modele";
-import { OUTILS_PROFESSEUR, validerAppel, type AppelOutil } from "./outils";
+import type { Modele } from "../modele.ts";
+import { OUTILS_PROFESSEUR, validerAppel, type AppelOutil } from "./outils.ts";
 
 export interface ParametresModele {
   modele: string;
@@ -32,6 +32,8 @@ export interface SortieBoucle {
   texte: string;
   arret: "fin" | "refus" | "limite" | "tronque";
   appels: AppelOutil[];
+  /** Consommation de chaque appel au modèle (pour le suivi du coût). */
+  consommations: BetaMessage["usage"][];
 }
 
 const MESSAGE_REFUS = "Je ne peux pas répondre à cette demande. Revenons au chapitre en cours.";
@@ -42,6 +44,7 @@ export async function repondre(entree: EntreeBoucle): Promise<SortieBoucle> {
     { role: "user", content: entree.question },
   ];
   const appels: AppelOutil[] = [];
+  const consommations: BetaMessage["usage"][] = [];
   let texte = "";
   let erreursJson = 0;
   const maxIterations = entree.maxIterations ?? 4;
@@ -71,6 +74,7 @@ export async function repondre(entree: EntreeBoucle): Promise<SortieBoucle> {
       }
       message = await flux.message;
       erreursJson = 0;
+      if (message.usage) consommations.push(message.usage);
     } catch (erreur) {
       // Seule une entrée d'outil illisible est relancée ; les erreurs de l'API remontent.
       if (erreur instanceof Anthropic.APIError || erreursJson++ >= 2) throw erreur;
@@ -79,7 +83,7 @@ export async function repondre(entree: EntreeBoucle): Promise<SortieBoucle> {
 
     if (message.stop_reason === "refusal") {
       if (!texte) entree.emettre(MESSAGE_REFUS);
-      return { texte: texte || MESSAGE_REFUS, arret: "refus", appels };
+      return { texte: texte || MESSAGE_REFUS, arret: "refus", appels, consommations };
     }
     if (message.stop_reason === "pause_turn") {
       messages.push({ role: "assistant", content: message.content });
@@ -88,10 +92,16 @@ export async function repondre(entree: EntreeBoucle): Promise<SortieBoucle> {
 
     const blocsOutils = message.content.filter((b): b is BetaToolUseBlock => b.type === "tool_use");
     if (blocsOutils.length === 0) {
-      return { texte, arret: message.stop_reason === "max_tokens" ? "tronque" : "fin", appels };
+      return {
+        texte,
+        arret: message.stop_reason === "max_tokens" ? "tronque" : "fin",
+        appels,
+        consommations,
+      };
     }
     // Une entrée d'outil coupée par max_tokens peut sembler valide : on ne l'exécute pas.
-    if (message.stop_reason === "max_tokens") return { texte, arret: "tronque", appels };
+    if (message.stop_reason === "max_tokens")
+      return { texte, arret: "tronque", appels, consommations };
 
     messages.push({ role: "assistant", content: message.content });
     const resultats: BetaToolResultBlockParam[] = [];
@@ -128,5 +138,5 @@ export async function repondre(entree: EntreeBoucle): Promise<SortieBoucle> {
       entree.emettre("\n\n");
     }
   }
-  return { texte, arret: "limite", appels };
+  return { texte, arret: "limite", appels, consommations };
 }

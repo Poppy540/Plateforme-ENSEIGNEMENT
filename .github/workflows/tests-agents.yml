@@ -1,0 +1,95 @@
+# Batterie de tests des agents (prompt maître §2, cadrage Partie D).
+# - À chaque changement de prompt, skill, outil, configuration ou lanceur : tests de la mécanique (sans coût).
+# - Passage réel avec le modèle (PAYANT, ~6-12 USD par passage complet estimé) : seulement si le propriétaire
+#   l'active (variable de dépôt TESTS_AGENTS_REELS = oui, ou lancement manuel) ET a ajouté le secret
+#   ANTHROPIC_API_KEY dans les secrets du dépôt GitHub.
+name: Tests des agents
+
+on:
+  push:
+    paths:
+      - "agents/**"
+      - "referentiels/*/agents/**"
+      - "tests/**"
+      - "docs/prompt-claude-code.md"
+      - "application/src/lib/agents/**"
+      - "application/src/lib/tests-agents/**"
+      - "application/scripts/lancer-tests-agents.mts"
+      - ".github/workflows/tests-agents.yml"
+  workflow_dispatch:
+    inputs:
+      scenarios:
+        description: "Scénarios à lancer (vide = tous), par exemple PR-01,TC-09"
+        required: false
+      executions:
+        description: "Exécutions par scénario (vide = config.yaml)"
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  mecanique:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: application
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: application/package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: application/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test src/lib/agents src/lib/tests-agents
+
+  passage-reel:
+    needs: mecanique
+    if: vars.TESTS_AGENTS_REELS == 'oui' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: application
+    env:
+      MODE_MODELE: anthropic
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: application/package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: application/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Vérifier la présence de la clé (sans l'afficher)
+        run: |
+          test -n "$ANTHROPIC_API_KEY" || { echo "Secret ANTHROPIC_API_KEY absent, passage réel impossible."; exit 1; }
+      - name: Passage réel
+        env:
+          SCENARIOS: ${{ inputs.scenarios }}
+          EXECUTIONS: ${{ inputs.executions }}
+        run: |
+          # Saisies passées par variables d'environnement et contrôlées (pas d'injection dans le shell).
+          ARGS=(--confirmer)
+          if [ -n "$SCENARIOS" ]; then
+            [[ "$SCENARIOS" =~ ^[A-Z]{2}-[0-9]{2}(,[A-Z]{2}-[0-9]{2})*$ ]] || { echo "Liste de scénarios invalide"; exit 1; }
+            ARGS+=(--scenarios "$SCENARIOS")
+          fi
+          if [ -n "$EXECUTIONS" ]; then
+            [[ "$EXECUTIONS" =~ ^[1-9][0-9]?$ ]] || { echo "Nombre d'exécutions invalide"; exit 1; }
+            ARGS+=(--executions "$EXECUTIONS")
+          fi
+          pnpm test:agents "${ARGS[@]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rapport-tests-agents
+          path: tests/resultats/
+          retention-days: 30
