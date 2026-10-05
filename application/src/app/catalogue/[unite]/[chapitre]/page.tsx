@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { exigerEleveActif } from "@/lib/serveur/acces-eleve";
+import { estSimulee, sourcesLecture } from "@/lib/production-video/lecture";
 import { quizPourEleve } from "@/lib/serveur/evaluateur";
+import { videoDuChapitre } from "@/lib/serveur/videos";
+import { LecteurVideo } from "../../../composants/lecteur-video";
 import { contexteChapitre, echangesDuChapitre, nomProfesseur } from "@/lib/serveur/professeur";
 import { Conversation } from "./conversation";
 
@@ -12,6 +15,7 @@ export default async function PageChapitre({ params }: PageProps<"/catalogue/[un
   if (!contexte) notFound();
   const echanges = await echangesDuChapitre(utilisateur, contexte.chapitreId);
   const quiz = await quizPourEleve(contexte);
+  const video = await videoDuChapitre(contexte);
 
   return (
     <main className="conteneur">
@@ -19,9 +23,20 @@ export default async function PageChapitre({ params }: PageProps<"/catalogue/[un
         <Link href={`/catalogue/${unite}`}>← Chapitres</Link>
       </p>
       <h1>{contexte.chapitreTitre}</h1>
-      <p className="note">
-        La vidéo du cours arrivera au Jalon 2. En attendant, pose tes questions au professeur.
-      </p>
+      {video ? (
+        <LecteurVideo
+          videoId={video.id}
+          sources={sourcesLecture(video.reference, video.versions)}
+          dureeSecondes={video.dureeSecondes}
+          sousTitres={video.aDesSousTitres}
+          simulation={estSimulee(video.reference)}
+        />
+      ) : (
+        <p className="note">
+          La vidéo de ce chapitre n&apos;est pas encore publiée. En attendant, pose tes questions au
+          professeur.
+        </p>
+      )}
       {quiz && (
         <p>
           <Link href={`/catalogue/${unite}/${chapitre}/quiz`}>

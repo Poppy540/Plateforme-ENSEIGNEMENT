@@ -310,3 +310,66 @@ test("production vidéo (services simulés) : vidéo déposée « à relire » d
   );
   expect(remis.intact).toBe(true);
 });
+
+test("vidéo : le référent la regarde, la valide, puis la publie ; l'élève la voit en faible débit avec sous-titres", async ({
+  page,
+}) => {
+  await seConnecter(page, REFERENT);
+  await page.goto("/referent");
+  await expect(
+    page.getByRole("heading", { name: "Vidéos à relire ou à publier (1)" }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: /Vidéo : Systèmes d'équations/ }).click();
+  await expect(page.getByText("Statut : À relire")).toBeVisible();
+
+  // Lecteur : rien n'est chargé avant la lecture, version la plus légère par défaut.
+  const lecteur = page.locator("video");
+  await expect(lecteur).toHaveAttribute("preload", "none");
+  await expect(page.getByLabel("Qualité de la vidéo")).toHaveValue("0");
+  await expect(page.getByLabel("Qualité de la vidéo").locator("option").first()).toHaveText(/240p/);
+
+  // Validation : il faut confirmer avoir regardé toute la vidéo.
+  await page.getByRole("button", { name: /Valider la version 2/ }).click();
+  await expect(page.locator(".erreur")).toContainText("Cochez la case");
+  await page.getByLabel(/J'ai regardé toute la vidéo/).check();
+  await page.getByRole("button", { name: /Valider la version 2/ }).click();
+  await expect(page.getByText("Statut : Validée (non publiée)")).toBeVisible();
+
+  // Avant publication, l'élève ne voit pas la vidéo.
+  const eleve = await page.context().browser()!.newPage();
+  await seConnecter(eleve, "+999 000 001 01");
+  await eleve.goto("/catalogue/ga-3e-mathematiques/systemes");
+  await expect(eleve.getByText("La vidéo de ce chapitre n'est pas encore publiée.")).toBeVisible();
+
+  // Publication : acte distinct, confirmé.
+  await page.getByRole("button", { name: "Publier la vidéo pour les élèves" }).click();
+  await expect(page.locator(".erreur")).toContainText("confirmer la publication");
+  await page.getByLabel(/Je confirme la publication/).check();
+  await page.getByRole("button", { name: "Publier la vidéo pour les élèves" }).click();
+  await expect(page.getByText("Statut : Publiée")).toBeVisible();
+  await expect(page.getByText(/Publiée par Prof fictif/)).toBeVisible();
+
+  // L'élève regarde : la vidéo se lit vraiment, avec les sous-titres du texte validé.
+  await eleve.reload();
+  const video = eleve.locator("video");
+  await expect(video).toBeVisible();
+  await expect(eleve.getByText(/Vidéo simulée/)).toBeVisible();
+  const lecture = await video.evaluate(async (v: HTMLVideoElement) => {
+    v.muted = true;
+    await v.play();
+    await new Promise((fin) => setTimeout(fin, 700));
+    return { temps: v.currentTime, pistes: v.textTracks.length };
+  });
+  expect(lecture.temps).toBeGreaterThan(0);
+  expect(lecture.pistes).toBe(1);
+  const piste = await eleve.locator("track").getAttribute("src");
+  const reponse = await eleve.request.get(piste!);
+  expect(reponse.status()).toBe(200);
+  expect(await reponse.text()).toMatch(/^WEBVTT\n\n1\n00:00:00\.000 --> /);
+
+  // Sans connexion, pas de sous-titres.
+  const anonyme = await page.context().browser()!.newContext();
+  expect((await anonyme.request.get(`http://localhost:3100${piste}`)).status()).toBe(401);
+  await anonyme.close();
+  await eleve.close();
+});

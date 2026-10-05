@@ -221,3 +221,14 @@ button.danger {
   background: #b91c1c;
   color: #ffffff;
 }
+
+/* Lecteur vidéo (faible débit) : largeur fluide, proportions 16:9. */
+.lecteur {
+  margin: 1rem 0;
+}
+.lecteur video {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}

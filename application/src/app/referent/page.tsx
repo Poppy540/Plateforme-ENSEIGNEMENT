@@ -4,6 +4,7 @@ import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { tableauReferent } from "@/lib/serveur/referent";
 import { quizARelire } from "@/lib/serveur/evaluateur";
 import { scriptsARelire } from "@/lib/serveur/scenariste";
+import { videosPourTableau } from "@/lib/serveur/videos";
 
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "medium", timeStyle: "short" });
 
@@ -12,6 +13,7 @@ export default async function PageReferent() {
   const tableau = await tableauReferent(utilisateur);
   const scripts = await scriptsARelire(utilisateur);
   const quiz = await quizARelire(utilisateur);
+  const videos = await videosPourTableau(utilisateur);
 
   return (
     <main className="conteneur">
@@ -53,6 +55,22 @@ export default async function PageReferent() {
                 {s.aRelireEnPriorite && " · à relire en priorité"}
               </span>
               <strong>Script : {s.chapitreTitre}</strong>
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      <h2>Vidéos à relire ou à publier ({videos.length})</h2>
+      {videos.length === 0 && <p>Aucune vidéo en attente.</p>}
+      <ul className="liste-cartes">
+        {videos.map((v) => (
+          <li key={v.id}>
+            <Link href={`/referent/videos/${v.id}`} className="carte">
+              <span className="note">
+                {v.unite} · script version {v.scriptVersion} ·{" "}
+                {v.statut === "a_relire" ? "à relire" : "validée, à publier"}
+              </span>
+              <strong>Vidéo : {v.chapitreTitre}</strong>
             </Link>
           </li>
         ))}

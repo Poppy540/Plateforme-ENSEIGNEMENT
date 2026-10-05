@@ -26,12 +26,14 @@ export function FormulaireDecisionContenu({
   version,
   pointsSignales,
   action: agir,
+  libelleVerification = "J'ai vérifié les points signalés (points à vérifier, exemples locaux, questions signalées, sujet sensible).",
 }: {
   id: string;
   version: number;
   /** Points à vérifier, questions signalées ou sujet sensible : confirmation exigée avant validation. */
   pointsSignales: boolean;
   action: Action;
+  libelleVerification?: string;
 }) {
   const [etat, action, enCours] = useActionState(agir, undefined);
   return (
@@ -41,8 +43,7 @@ export function FormulaireDecisionContenu({
       <input type="hidden" name="a_verifier" value={pointsSignales ? "oui" : "non"} />
       {pointsSignales && (
         <label>
-          <input type="checkbox" name="verifie" value="oui" /> J&apos;ai vérifié les points signalés
-          (points à vérifier, exemples locaux, questions signalées, sujet sensible).
+          <input type="checkbox" name="verifie" value="oui" /> {libelleVerification}
         </label>
       )}
       <label htmlFor="commentaire">Commentaire (obligatoire en cas de rejet)</label>

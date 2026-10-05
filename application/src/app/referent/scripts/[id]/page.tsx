@@ -145,6 +145,12 @@ export default async function PageScriptReferent({ params }: PageProps<"/referen
                   {formatDate.format(new Date(p.creeLe))} — version {p.scriptVersion} :{" "}
                   <strong>{RESULTATS[p.resultat]}</strong>, {p.coutUSD.toFixed(2)} USD
                   {p.resultat === "deposee" && `, ${Math.round(p.dureeSecondes)} s`}
+                  {p.videoId && (
+                    <>
+                      {" "}
+                      — <Link href={`/referent/videos/${p.videoId}`}>voir la vidéo</Link>
+                    </>
+                  )}
                   {p.escalades.length > 0 && <> — alerte : {p.escalades.join(" ; ")}</>}
                 </li>
               ))}

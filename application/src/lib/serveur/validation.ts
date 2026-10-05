@@ -2,14 +2,14 @@ import "server-only";
 import { DatabaseError } from "pg";
 import { avecUtilisateur } from "./base";
 
-// Décision d'un enseignant-référent sur un contenu versionné (script, quiz) : la base vérifie la famille,
+// Décision d'un enseignant-référent sur un contenu versionné (script, quiz, vidéo) : la base vérifie la famille,
 // la version relue et qu'aucune décision n'a encore été prise (valider_contenu, ADR 0021).
 
 export type ResultatDecisionContenu = { ok: true } | { ok: false; erreur: string };
 
 export async function deciderContenu(
   referent: string,
-  type: "script" | "quiz",
+  type: "script" | "quiz" | "video",
   decision: {
     id: string;
     decision: "valide" | "rejete";
