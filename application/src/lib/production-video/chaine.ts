@@ -258,14 +258,14 @@ export async function produireVideo(d: DemandeProduction): Promise<RapportProduc
       rapport.controles.push({
         controle,
         resultat: "non_verifiable",
-        detail: `à vérifier à la relecture (services ${d.services.nom})`,
+        detail: `à vérifier à la relecture (non mesuré ${d.services.nom === "simulation" ? "en simulation" : `par le service ${d.services.nom}`})`,
       });
     etape("controle_technique", dureeOk ? "ok" : "echec", dureeOk ? "" : "durée hors cible");
     const pire = Math.max(...rapport.segments.map((x) => x.ecart));
     rapport.controles.push({
       controle: "fidelite",
       resultat: "ok",
-      detail: `écart maximal ${(pire * 100).toFixed(1)} % (seuil ${SEUIL_ECART * 100} %)`,
+      detail: `écart maximal ${(pire * 100).toFixed(1).replace(".", ",")} % (seuil ${SEUIL_ECART * 100} %)`,
     });
     etape("controle_fidelite", "ok");
 

@@ -2,7 +2,7 @@
 
 **Objectif (prompt maître §7)** : chaîne Scénariste → validation humaine → Production vidéo → Évaluateur, et **une seule vidéo complète** pour mesurer le coût et la qualité.
 
-**Statut** : validé (chaîne programmée, ADR 0020). Étape 1 faite (ADR 0021). Étape 2 faite sans clé, modèle simulé (ADR 0022). Étape 3 faite (ADR 0023). Étape 4 faite sans clé, modèle simulé (ADR 0024). Étape 5 faite avec services simulés (ADR 0025) : il reste à brancher les fournisseurs. Étape 6 faite avec des vidéos simulées (ADR 0026). Le Jalon 1 reste ouvert sur un point (passage réel des tests TC + PR, en attente de la clé API). Les étapes 1 à 4 peuvent avancer sans clé ni fournisseur, avec des modèles et services simulés ; aucune dépense sans accord.
+**Statut** : validé (chaîne programmée, ADR 0020). Étape 1 faite (ADR 0021). Étape 2 faite sans clé, modèle simulé (ADR 0022). Étape 3 faite (ADR 0023). Étape 4 faite sans clé, modèle simulé (ADR 0024). Étape 5 faite avec services simulés (ADR 0025) : il reste à brancher les fournisseurs. Étape 6 faite avec des vidéos simulées (ADR 0026). Étape 8 préparée : bilan `docs/bilans/jalon-2.md`, 11 captures (`docs/demo/jalon-2/`). Restent les passages réels et l'étape 7. Le Jalon 1 reste ouvert sur un point (passage réel des tests TC + PR, en attente de la clé API). Les étapes 1 à 4 peuvent avancer sans clé ni fournisseur, avec des modèles et services simulés ; aucune dépense sans accord.
 
 ## Étapes
 

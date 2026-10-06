@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Fragment } from "react";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
+import { formaterDuree, formaterUSD } from "@/lib/format";
 import { productionsDuScript } from "@/lib/serveur/production-video";
 import { scriptPourReferent } from "@/lib/serveur/scenariste";
 import { FormulaireDecisionContenu, FormulaireRevisionContenu } from "../../formulaires-contenu";
@@ -143,8 +144,8 @@ export default async function PageScriptReferent({ params }: PageProps<"/referen
               {productions.map((p) => (
                 <li key={p.creeLe}>
                   {formatDate.format(new Date(p.creeLe))} — version {p.scriptVersion} :{" "}
-                  <strong>{RESULTATS[p.resultat]}</strong>, {p.coutUSD.toFixed(2)} USD
-                  {p.resultat === "deposee" && `, ${Math.round(p.dureeSecondes)} s`}
+                  <strong>{RESULTATS[p.resultat]}</strong>, {formaterUSD(p.coutUSD)}
+                  {p.resultat === "deposee" && `, ${formaterDuree(p.dureeSecondes)}`}
                   {p.videoId && (
                     <>
                       {" "}

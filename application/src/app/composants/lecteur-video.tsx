@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { formaterDuree } from "@/lib/format";
 import { megaOctetsParMinute, type SourceLecture } from "@/lib/production-video/lecture";
 
 // Lecteur adapté aux connexions lentes (ADR 0026) : rien n'est téléchargé avant « lecture » (preload="none"),
@@ -82,8 +83,7 @@ export function LecteurVideo({
           </select>
         </label>{" "}
         <span className="note">
-          Durée {Math.floor(dureeSecondes / 60)} min {String(dureeSecondes % 60).padStart(2, "0")} s
-          · la vidéo ne se charge qu&apos;au lancement.
+          Durée : {formaterDuree(dureeSecondes)}· la vidéo ne se charge qu&apos;au lancement.
           {simulation && " Vidéo simulée (aucun fournisseur vidéo choisi)."}
         </span>
       </figcaption>

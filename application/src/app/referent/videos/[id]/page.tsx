@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { estSimulee, sourcesLecture } from "@/lib/production-video/lecture";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
+import { formaterDuree, formaterUSD } from "@/lib/format";
 import { videoPourReferent } from "@/lib/serveur/videos";
 import { LecteurVideo } from "../../../composants/lecteur-video";
 import { FormulaireDecisionContenu } from "../../formulaires-contenu";
@@ -15,6 +16,13 @@ const LIBELLES = {
   publiee: "Publiée",
 } as const;
 const RESULTATS_CONTROLE = { ok: "conforme", anomalie: "anomalie", non_verifiable: "à vérifier" };
+const CONTROLES: Record<string, string> = {
+  duree: "Durée",
+  synchronisation: "Synchronisation",
+  volume: "Volume",
+  lisibilite_ecran: "Lisibilité à l'écran",
+  fidelite: "Fidélité au script",
+};
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "medium", timeStyle: "short" });
 
 export default async function PageVideoReferent({ params }: PageProps<"/referent/videos/[id]">) {
@@ -35,11 +43,12 @@ export default async function PageVideoReferent({ params }: PageProps<"/referent
       </p>
       <h1>Vidéo : {v.chapitreTitre}</h1>
       <p>
-        Statut : <strong>{LIBELLES[v.statut]}</strong> · {v.dureeSecondes} s ·{" "}
-        {v.coutUSD.toFixed(2)} USD
+        Statut : <strong>{LIBELLES[v.statut]}</strong> · {formaterDuree(v.dureeSecondes)} ·{" "}
+        {formaterUSD(v.coutUSD)}
       </p>
       <p className="note">
-        Produite par la chaîne de production (services {r.services}) à partir du script validé, sans
+        Produite par la chaîne de production (services{" "}
+        {r.services === "simulation" ? "simulés" : r.services}) à partir du script validé, sans
         modification du texte. Aucun élève ne la voit avant votre publication.
       </p>
 
@@ -55,7 +64,8 @@ export default async function PageVideoReferent({ params }: PageProps<"/referent
       <ul>
         {r.controles.map((c) => (
           <li key={c.controle}>
-            {c.controle} : <strong>{RESULTATS_CONTROLE[c.resultat]}</strong> — {c.detail}
+            {CONTROLES[c.controle] ?? c.controle} :{" "}
+            <strong>{RESULTATS_CONTROLE[c.resultat]}</strong> — {c.detail}
           </li>
         ))}
       </ul>

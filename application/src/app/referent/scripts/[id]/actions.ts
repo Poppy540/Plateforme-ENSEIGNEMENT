@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
+import { formaterDuree, formaterUSD } from "@/lib/format";
 import { lancerProduction } from "@/lib/serveur/production-video";
 import { deciderScript, genererBrouillonScript } from "@/lib/serveur/scenariste";
 import { lireDecision } from "../../decision";
@@ -56,7 +57,7 @@ export async function lancerProductionVideo(
   const r = resultat.rapport;
   if (r.resultat === "deposee")
     return {
-      succes: `Vidéo produite et déposée « à relire » (${Math.round(r.dureeSecondes)} s, ${r.coutUSD.toFixed(2)} USD).`,
+      succes: `Vidéo produite et déposée « à relire » (${formaterDuree(r.dureeSecondes)}, ${formaterUSD(r.coutUSD)}).`,
     };
   return {
     erreur: `Production ${r.resultat === "refusee" ? "refusée" : "arrêtée"} : ${r.anomalies.at(-1) ?? "voir le journal"}`,
