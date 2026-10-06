@@ -257,6 +257,33 @@ export function reponseSimulee(parametres: BetaMessageStreamParams): BetaMessage
     const demande = dernierTexteEleve(messages);
     if ("questions" in champs) return quizSimule(demande);
     if ("priorites" in champs) return planSimule(demande);
+    if ("points_forts" in champs)
+      return message(
+        [
+          texte(
+            JSON.stringify({
+              progression: "(Tuteur simulé) Travail régulier cette semaine.",
+              points_forts: ["Régularité (simulé)."],
+              points_a_renforcer: ["Revoir un chapitre (simulé)."],
+              suggestions: ["Courtes séances avec des pauses (simulé)."],
+            }),
+          ),
+        ],
+        "end_turn",
+      );
+    if ("refus" in champs) {
+      const accord = /Accord aux rapports enregistré et actif : oui/.test(demande);
+      const comparer = /autres|plus faible|classement|meilleur/i.test(demande);
+      const reponse = !accord
+        ? "(Tuteur simulé) Je ne peux rien vous dire sans votre accord enregistré : votre enfant peut le demander depuis son espace, puis vous l'acceptez par le lien reçu."
+        : comparer
+          ? "(Tuteur simulé) Je ne compare pas les élèves entre eux. Je peux vous dire où en est votre enfant et ses points forts."
+          : "(Tuteur simulé) Votre enfant progresse régulièrement.";
+      return message(
+        [texte(JSON.stringify({ reponse, refus: !accord || comparer, a_transmettre: false }))],
+        "end_turn",
+      );
+    }
     if ("resultat" in champs) return correctionSimulee(demande);
     return scriptSimule(demande);
   }

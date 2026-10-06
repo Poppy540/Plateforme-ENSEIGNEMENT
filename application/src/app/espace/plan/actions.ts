@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { exigerEleveActif } from "@/lib/serveur/acces-eleve";
+import { adresseDuSite } from "@/lib/serveur/origine";
+import { demanderAccordRapports, retirerAccordRapports } from "@/lib/serveur/rapports-parents";
 import { enregistrerPreferences, mettreAJourPlan } from "@/lib/serveur/tuteur";
 
 export type EtatPlan = { erreur?: string; succes?: string } | undefined;
@@ -30,4 +32,19 @@ export async function actualiser(_etat: EtatPlan, donnees: FormData): Promise<Et
   if (!resultat.ok) return { erreur: resultat.erreur };
   revalidatePath("/espace/plan");
   return undefined;
+}
+
+export async function proposerRapports(_etat: EtatPlan, donnees: FormData): Promise<EtatPlan> {
+  const eleve = await exigerEleveActif();
+  const contact = String(donnees.get("contact") ?? "").trim() || null;
+  const erreur = await demanderAccordRapports(eleve, contact, await adresseDuSite());
+  if (erreur) return { erreur };
+  revalidatePath("/espace/plan");
+  return { succes: "Demande envoyée à ton parent ou tuteur." };
+}
+
+export async function retirerRapports(): Promise<void> {
+  const eleve = await exigerEleveActif();
+  await retirerAccordRapports(eleve);
+  revalidatePath("/espace/plan");
 }

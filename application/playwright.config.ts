@@ -25,6 +25,9 @@ export default defineConfig({
       MODE_MODELE: "simulation",
       MODE_VIDEO: "simulation",
       MODE_FILE: "immediat",
+      // Valeurs de TEST uniquement (aucun secret réel) : exécuteur planifié et liens envoyés.
+      JETON_EXECUTEUR: "jeton-de-test-uniquement-pas-un-secret-0000",
+      URL_PUBLIQUE: "http://localhost:3100",
       URL_BASE_DONNEES: "postgresql://serveur_application@127.0.0.1:54330/postgres",
     },
   },

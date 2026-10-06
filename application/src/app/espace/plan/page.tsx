@@ -1,13 +1,16 @@
 import Link from "next/link";
 import { exigerEleveActif } from "@/lib/serveur/acces-eleve";
+import { etatAccordRapports } from "@/lib/serveur/rapports-parents";
 import { planDeLEleve } from "@/lib/serveur/tuteur";
-import { FormulairePlan, FormulairePreferences } from "./formulaires";
+import { retirerRapports } from "./actions";
+import { FormulairePlan, FormulairePreferences, FormulaireRapports } from "./formulaires";
 
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "medium", timeStyle: "short" });
 
 export default async function PagePlan() {
   const eleve = await exigerEleveActif();
   const { preferences, dernier } = await planDeLEleve(eleve);
+  const accord = await etatAccordRapports(eleve);
 
   return (
     <main className="conteneur">
@@ -46,6 +49,28 @@ export default async function PagePlan() {
       )}
 
       <FormulairePlan />
+
+      <h2>Rapports à mes parents</h2>
+      <p className="note">
+        Si ton parent ou tuteur l&apos;accepte, il reçoit chaque semaine un court rapport sur ta
+        progression (jamais de comparaison avec d&apos;autres élèves). Toi comme lui pouvez arrêter
+        à tout moment.
+      </p>
+      {accord === "aucun" && <FormulaireRapports />}
+      {accord !== "aucun" && (
+        <>
+          <p role="status">
+            {accord === "actif"
+              ? "Ton parent reçoit les rapports."
+              : "Demande envoyée : en attente de l'accord de ton parent."}
+          </p>
+          <form action={retirerRapports}>
+            <button type="submit" className="secondaire">
+              {accord === "actif" ? "Arrêter les rapports" : "Annuler la demande"}
+            </button>
+          </form>
+        </>
+      )}
 
       <h2>Mes préférences</h2>
       <FormulairePreferences

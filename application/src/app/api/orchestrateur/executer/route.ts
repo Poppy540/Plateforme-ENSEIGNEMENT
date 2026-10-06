@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
-import { jetonExecuteur } from "@/lib/serveur/configuration";
 import { executerFile } from "@/lib/serveur/orchestrateur";
+import { jetonExecuteur, urlPublique } from "@/lib/serveur/configuration";
+import { envoyerRapportsHebdomadaires } from "@/lib/serveur/rapports-parents";
 import { detecterDecrochages } from "@/lib/serveur/tuteur";
 
 // Exécuteur de la file de tâches, appelé régulièrement par un planificateur (ADR 0029).
@@ -15,8 +16,10 @@ export async function POST(requete: Request): Promise<Response> {
     return Response.json({ erreur: "Non autorisé." }, { status: 401 });
   const traitees = await executerFile(5);
   const decrochages = await detecterDecrochages();
+  // Rapports hebdomadaires aux parents (adresse publique obligatoire pour les liens).
+  const rapports = await envoyerRapportsHebdomadaires(urlPublique(null));
   return Response.json(
-    { traitees: traitees.length, decrochages },
+    { traitees: traitees.length, decrochages, rapports },
     { headers: { "cache-control": "no-store" } },
   );
 }

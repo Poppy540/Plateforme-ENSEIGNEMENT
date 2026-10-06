@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { actualiser, enregistrer, type EtatPlan } from "./actions";
+import { actualiser, enregistrer, proposerRapports, type EtatPlan } from "./actions";
 
 function Messages({ etat }: { etat: EtatPlan }) {
   return (
@@ -81,6 +81,24 @@ export function FormulairePlan() {
       <div className="actions">
         <button type="submit" disabled={enCours}>
           {enCours ? "Préparation…" : "Mettre à jour mon plan"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+export function FormulaireRapports() {
+  const [etat, action, enCours] = useActionState(proposerRapports, undefined);
+  return (
+    <form action={action} className="formulaire">
+      <label htmlFor="contact">
+        Contact du parent (seulement si tu n&apos;en as pas donné à l&apos;inscription)
+      </label>
+      <input id="contact" name="contact" type="text" maxLength={120} autoComplete="off" />
+      <Messages etat={etat} />
+      <div className="actions">
+        <button type="submit" className="secondaire" disabled={enCours}>
+          Proposer les rapports à mon parent
         </button>
       </div>
     </form>

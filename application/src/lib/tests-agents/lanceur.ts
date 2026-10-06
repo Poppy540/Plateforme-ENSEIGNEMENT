@@ -24,6 +24,11 @@ import {
   type ChapitreParcours,
 } from "../agents/tuteur/analyse.ts";
 import { genererPlan, messageDemandePlan, type PlanTuteur } from "../agents/tuteur/plan.ts";
+import {
+  messageQuestionParent,
+  repondreAuParent,
+  type ReponseParent,
+} from "../agents/tuteur/rapport.ts";
 import { lirePack } from "../pack-pays/lecture.ts";
 import { coutUSD, type Consommation } from "./cout.ts";
 import { lireScenarios, type ScenarioGherkin } from "./gherkin.ts";
@@ -92,6 +97,9 @@ export interface ParcoursTest {
   connexion?: string | null;
   jours_sans_activite?: number;
   message?: string;
+  /** Question d'un parent au Tuteur (TU-03, TU-04) et état de l'accord aux rapports. */
+  question_parent?: string;
+  accord_parent?: boolean;
 }
 
 interface EntreeScenario {
@@ -204,6 +212,7 @@ interface ResultatExecution {
   quiz: (SortieQuiz | null)[];
   corrections: (Correction | null)[];
   plans: { plan: PlanTuteur | null; candidats: Candidat[]; minutes: number | null }[];
+  reponsesParents: (ReponseParent | null)[];
   consommations: Consommation[];
 }
 
@@ -470,17 +479,52 @@ async function executerTuteur(
       examen: null,
       message: p.message,
     };
+    const systeme = composerPrompt(
+      {
+        agent: "tuteur",
+        codePays: c.codePays,
+        unite: "pays",
+        skills: SKILLS.tuteur,
+        valeursDynamiques: {},
+      },
+      c.options.racine,
+    );
+    if (p.question_parent !== undefined) {
+      const accord = p.accord_parent ?? false;
+      const faits = accord
+        ? {
+            joursDepuisDerniereActivite: p.jours_sans_activite ?? 0,
+            chapitresTermines: chapitres.filter((x) => x.statut === "termine").map((x) => x.titre),
+            chapitresEnCours: chapitres.filter((x) => x.statut === "en_cours").map((x) => x.titre),
+            quiz: chapitres
+              .filter((x) => x.score !== null)
+              .map((x) => ({ chapitre: x.titre, score: x.score as number })),
+            priorites: candidats.slice(0, 3).map((x) => x.titre),
+          }
+        : null;
+      const reponse = await repondreAuParent({
+        systeme,
+        question: p.question_parent,
+        accordActif: accord,
+        faits,
+        modele: c.options.modele,
+        parametres: c.options.parametres,
+      });
+      r.consommations.push(...reponse.consommations);
+      lignes.push(
+        messageQuestionParent(p.question_parent, accord, faits),
+        "",
+        "--- Réponse du Tuteur au parent ---",
+        reponse.sortie
+          ? JSON.stringify(reponse.sortie, null, 2)
+          : `(aucune sortie, arrêt : ${reponse.arret})`,
+      );
+      if (reponse.sortie) r.reponses.push(JSON.stringify(reponse.sortie));
+      r.reponsesParents.push(reponse.sortie);
+      return;
+    }
     const resultat = await genererPlan({
-      systeme: composerPrompt(
-        {
-          agent: "tuteur",
-          codePays: c.codePays,
-          unite: "pays",
-          skills: SKILLS.tuteur,
-          valeursDynamiques: {},
-        },
-        c.options.racine,
-      ),
+      systeme,
       demande,
       modele: c.options.modele,
       parametres: c.options.parametres,
@@ -550,6 +594,7 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
         quiz: [],
         corrections: [],
         plans: [],
+        reponsesParents: [],
         consommations: [],
       };
       try {
@@ -559,7 +604,9 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
           ...(options.agent === "evaluateur"
             ? controlerEvaluateur(verifications, partiel.quiz, partiel.corrections)
             : []),
-          ...(options.agent === "tuteur" ? controlerTuteur(verifications, partiel.plans) : []),
+          ...(options.agent === "tuteur"
+            ? controlerTuteur(verifications, partiel.plans, partiel.reponsesParents)
+            : []),
         ];
         const jugement = await options.juge(scenario, partiel.transcription, options.agent);
         if (jugement.consommation) consommationsJuge.push(jugement.consommation);

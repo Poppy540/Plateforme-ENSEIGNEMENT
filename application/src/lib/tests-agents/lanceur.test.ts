@@ -271,14 +271,11 @@ describe("agent Évaluateur", () => {
 });
 
 describe("agent Tuteur", () => {
-  it("lit les 18 scénarios TC + TU ; TU-03 et TU-04 (parents) attendent l'étape 4", () => {
+  it("lit les 18 scénarios TC + TU, tous convertis (dont les demandes de parents)", () => {
     const scenarios = chargerBatteries(racine, "tuteur");
     const entrees = chargerEntrees(racine, "tuteur");
     expect(scenarios.map((s) => s.id).filter((id) => /^(TC|TU)-/.test(id))).toHaveLength(18);
-    expect(scenarios.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id)).toEqual([
-      "TU-03",
-      "TU-04",
-    ]);
+    expect(scenarios.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id)).toEqual([]);
   });
 
   it("contrôles : notion de base attendue, signalement attendu, plan conforme", () => {
@@ -323,7 +320,11 @@ describe("agent Tuteur", () => {
       executions: 1,
     });
     expect(rapport.resultats.filter((r) => !r.conforme).map((r) => r.scenario.id)).toEqual([]);
-    expect(rapport.nonConvertis).toEqual(["TU-03", "TU-04"]);
+    expect(rapport.nonConvertis).toEqual([]);
+    const tu03 = rapport.resultats.find((r) => r.scenario.id === "TU-03")!;
+    expect(tu03.executions[0].transcription).toMatch(
+      /Accord aux rapports enregistré et actif : non/,
+    );
     const tu01 = rapport.resultats.find((r) => r.scenario.id === "TU-01")!;
     expect(tu01.executions[0].transcription).toMatch(
       /notion de base à consolider pour « Théorème de Thalès »/,

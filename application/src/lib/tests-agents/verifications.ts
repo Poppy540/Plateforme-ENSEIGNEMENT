@@ -3,6 +3,7 @@ import type { Correction } from "../agents/evaluateur/correction.ts";
 import { controlerQuiz, type SortieQuiz } from "../agents/evaluateur/quiz.ts";
 import type { Candidat } from "../agents/tuteur/analyse.ts";
 import { controlerPlan, type PlanTuteur } from "../agents/tuteur/plan.ts";
+import type { ReponseParent } from "../agents/tuteur/rapport.ts";
 import type { AppelOutil } from "../agents/professeur/outils.ts";
 import {
   controlerStructure,
@@ -38,14 +39,25 @@ export interface Verifications {
   priorite_inclut?: string;
   /** Agent Tuteur : signalement attendu (détresse, décrochage…). */
   signalement_tuteur?: PlanTuteur["signalement"];
+  /** Agent Tuteur : la réponse au parent doit refuser (pas d'accord, comparaison demandée). */
+  refus_parent?: boolean;
 }
 
 /** Contrôles propres à l'agent Tuteur. */
 export function controlerTuteur(
   v: Verifications,
   plans: { plan: PlanTuteur | null; candidats: Candidat[]; minutes: number | null }[],
+  reponsesParents: (ReponseParent | null)[] = [],
 ): string[] {
   const echecs: string[] = [];
+  if (v.refus_parent !== undefined) {
+    if (reponsesParents.length === 0) echecs.push("aucune réponse au parent");
+    for (const r of reponsesParents) {
+      if (!r) echecs.push("réponse au parent inexploitable");
+      else if (r.refus !== v.refus_parent)
+        echecs.push(`refus ${r.refus} au lieu de ${v.refus_parent}`);
+    }
+  }
   const attendu = v.plan_conforme || v.priorite_inclut || v.signalement_tuteur;
   for (const { plan, candidats, minutes } of plans) {
     if (!plan) {

@@ -427,8 +427,15 @@ test("Orchestrateur : agent suspendu, production mise en attente ; l'administrat
   expect(audit[0].acteur_empreinte).toMatch(/^[0-9a-f]{16}$/);
   expect(audit[0].acteur_empreinte).not.toContain(identifiantSimule("+999 000 003 01").slice(0, 8));
 
-  // Exécuteur planifié : désactivé sans jeton configuré, jamais accessible sans jeton.
-  expect((await admin.request.post("/api/orchestrateur/executer")).status()).toBe(503);
+  // Exécuteur planifié : jamais accessible sans le bon jeton.
+  expect((await admin.request.post("/api/orchestrateur/executer")).status()).toBe(401);
+  expect(
+    (
+      await admin.request.post("/api/orchestrateur/executer", {
+        headers: { authorization: "Bearer mauvais-jeton-mauvais-jeton-mauvais-jeton" },
+      })
+    ).status(),
+  ).toBe(401);
   // Un référent n'accède pas à l'administration.
   await page.goto("/administration");
   await expect(page).toHaveURL(/\/espace$|\/referent$/);

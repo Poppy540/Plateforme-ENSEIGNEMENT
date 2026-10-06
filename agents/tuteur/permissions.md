@@ -24,4 +24,5 @@ Aucune clé de paiement ni de signature électronique. La clé de la base est pr
 
 - Rôle de base `agent_tuteur` : lit le catalogue validé, le graphe de prérequis validé, la progression, les scores (sans le contenu des quiz), les préférences et l'inactivité **de l'élève fixé par le serveur** ; écrit des recommandations (≤ 3 priorités, non modifiables), des signalements et, avec consentement actif seulement, des rapports aux parents ; ne lit jamais le contact du parent.
 - Les chapitres candidats sont calculés sans modèle (remontée du graphe de prérequis) ; le Tuteur ne peut choisir que parmi eux.
+- Rapports aux parents (ADR 0031) : accord séparé vérifié par la base ; envoi par le service de messagerie, seul à obtenir le contact du parent ; lien propre à chaque rapport.
 - Détection planifiée du décrochage (`eleves_inactifs`) : identifiants seulement, sans doublon de signalement.

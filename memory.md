@@ -55,6 +55,8 @@
 
 ## État d'avancement
 
+- 2026-10-06 : Jalon 3, étape 4 faite (modèle et messagerie simulés) — rapports aux parents (ADR 0031) : accord séparé demandé par l'élève, accepté par lien à usage unique, révocable (élève ou parent) ; rapport hebdomadaire (exécuteur planifié) et à la demande (1/jour) ; envoi par `service_messagerie` (seul à voir le contact) avec un lien par rapport ; page du parent (rapport, question au Tuteur, nouveau rapport, arrêt). Migration 0016, tests RP01-RP04 ; TU-03/04 convertis (18 scénarios Tuteur, ~7,7 USD réel). Environnement de test : jeton d'exécuteur et URL publique de TEST dans `playwright.config.ts`. Tests : 107 unitaires, 36 de bout en bout.
+
 - 2026-10-06 : Jalon 3, étape 3 faite (modèle simulé) — agent Tuteur (ADR 0030) : analyse déterministe (remontée complète du graphe de prérequis jusqu'à la notion de base, ≤ 8 candidats), plan du Tuteur ≤ 3 priorités parmi les candidats, page « Mon plan de révision » (préférences, rappels désactivés par défaut, mot au Tuteur), détection planifiée du décrochage (signalement + message d'accueil). Migration 0015, test T301. Lanceur `--agent tuteur` (16 scénarios convertis, TU-03/04 à l'étape 4, ~7 USD réel). Tests : 105 unitaires, 35 de bout en bout.
 
 - 2026-10-06 : Jalon 3, étape 2 faite — Orchestrateur programmé (ADR 0029) : routage par règles depuis des demandes structurées (texte utilisateur rangé comme donnée non fiable), approbations vérifiées en base à la demande et à l'exécution, file par priorité (détresse d'abord), 3 tentatives, profondeur de chaîne ≤ 3, suspension au coût anormal, alertes dans la file humaine, journal d'audit pseudonymisé ; exécuteur planifié (`/api/orchestrateur/executer`, jeton) ou immédiat en dev/test ; la production vidéo passe par la file ; page `/administration` (agents, réactivation, file humaine, tâches). Migration 0014, tests O01-O02, batterie OR déterministe. Tests : 95 unitaires, 34 de bout en bout.
@@ -101,6 +103,6 @@
 
 ## Prochaine étape
 
-Jalon 3, étape 4 : rapports aux parents (consentement séparé demandé par lien, révocable ; rapport hebdomadaire et à la demande ; messagerie simulée ; TU-03/04). Puis Support (5).
+Jalon 3, étape 5 : agent Support/inscription sur le site (FAQ validée dans le pack pays, tickets, jamais de code ni de mot de passe, escalades), batterie SU, en simulation.
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV) ; fournisseurs vidéo et budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).
