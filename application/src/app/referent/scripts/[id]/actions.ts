@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { formaterDuree, formaterUSD } from "@/lib/format";
-import { lancerProduction } from "@/lib/serveur/production-video";
+import { etatTache, soumettre } from "@/lib/serveur/orchestrateur";
+import { scriptAProduire } from "@/lib/serveur/production-video";
 import { deciderScript, genererBrouillonScript } from "@/lib/serveur/scenariste";
 import { lireDecision } from "../../decision";
 import type { EtatFormulaire } from "../../formulaires-contenu";
@@ -41,25 +42,52 @@ export async function demanderRevision(
   redirect(`/referent/chapitres/${chapitreId}?revision=${resultat.version}`);
 }
 
+/** Demande de production : passe par l'Orchestrateur (approbation vérifiée en base, file de tâches). */
 export async function lancerProductionVideo(
   _etat: EtatFormulaire,
   donnees: FormData,
 ): Promise<EtatFormulaire> {
   const utilisateur = await exigerReferent();
-  const scriptId = String(donnees.get("id") ?? "");
-  const resultat = await lancerProduction(utilisateur, {
-    scriptId,
+  const demande = {
+    scriptId: String(donnees.get("id") ?? ""),
     version: Number(donnees.get("version")),
     empreinte: String(donnees.get("empreinte") ?? ""),
-  });
-  if (!resultat.ok) return { erreur: resultat.erreur };
-  revalidatePath(`/referent/scripts/${scriptId}`);
-  const r = resultat.rapport;
-  if (r.resultat === "deposee")
-    return {
-      succes: `Vidéo produite et déposée « à relire » (${formaterDuree(r.dureeSecondes)}, ${formaterUSD(r.coutUSD)}).`,
+  };
+  const script = await scriptAProduire(utilisateur, demande);
+  if (!script) return { erreur: "Script inconnu." };
+  const soumission = await soumettre(
+    { nature: "production_video", ...demande },
+    {
+      acteur: { role: "referent", id: utilisateur },
+      codePays: script.codePays,
+      demandeePar: utilisateur,
+      entreesServeur: { ...script },
+    },
+  );
+  if (soumission.statut === "refusee") return { erreur: soumission.motif };
+  if (soumission.statut === "question") return { erreur: soumission.question };
+  if (soumission.statut !== "en_attente")
+    return { erreur: `Production en attente : ${soumission.motif ?? soumission.statut}` };
+  revalidatePath(`/referent/scripts/${demande.scriptId}`);
+
+  const tache = await etatTache(soumission.tacheId);
+  if (tache?.statut === "terminee") {
+    const r = tache.resultat as {
+      resultat: string;
+      dureeSecondes: number;
+      coutUSD: number;
+      derniereAnomalie: string | null;
     };
+    if (r.resultat === "deposee")
+      return {
+        succes: `Vidéo produite et déposée « à relire » (${formaterDuree(r.dureeSecondes)}, ${formaterUSD(r.coutUSD)}).`,
+      };
+    return {
+      erreur: `Production ${r.resultat === "refusee" ? "refusée" : "arrêtée"} : ${r.derniereAnomalie ?? "voir le journal"}`,
+    };
+  }
+  if (tache?.statut === "echouee") return { erreur: `Production en échec : ${tache.motif ?? ""}` };
   return {
-    erreur: `Production ${r.resultat === "refusee" ? "refusée" : "arrêtée"} : ${r.anomalies.at(-1) ?? "voir le journal"}`,
+    succes: "Production demandée : elle sera traitée par la file de tâches. Revenez plus tard.",
   };
 }

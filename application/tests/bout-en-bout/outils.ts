@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { expect, type Page } from "@playwright/test";
 import { Client } from "pg";
 
@@ -39,8 +40,8 @@ export async function seConnecter(page: Page, numero: string) {
   await expect(page.getByRole("heading", { name: "Entre ton code" })).toBeVisible();
   await page.getByLabel("Code reçu").fill("123456");
   await page.getByRole("button", { name: "Valider" }).click();
-  // Un référent passe par /espace puis est redirigé vers /referent : les deux sont acceptés.
-  await expect(page).toHaveURL(/\/(espace|inscription|referent)$/);
+  // Un référent ou un administrateur passe par /espace puis est redirigé : toutes ces adresses sont acceptées.
+  await expect(page).toHaveURL(/\/(espace|inscription|referent|administration)$/);
 }
 
 /** Connexion, inscription et accord du parent (par la boîte de messages simulée). */
@@ -80,5 +81,22 @@ export async function creerInvitationFictive(code: string, familles: string[]) {
      from referentiels where code = 'ga-general'
      on conflict (empreinte_code) do nothing`,
     [code, familles],
+  );
+}
+
+/** Identifiant du compte créé par la connexion simulée pour ce numéro (même calcul que le serveur). */
+export function identifiantSimule(numero: string): string {
+  const valeur = numero.replace(/[\s.\-()]/g, "").replace(/^00/, "+");
+  const h = createHash("sha256").update(`telephone:${valeur}`).digest("hex");
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-4${h.slice(13, 16)}-8${h.slice(17, 20)}-${h.slice(20, 32)}`;
+}
+
+/** Compte d'administration fictif (en production, créé par le propriétaire). */
+export async function creerAdministrateurFictif(numero: string) {
+  const id = identifiantSimule(numero);
+  await executerSql("insert into auth.users (id) values ($1) on conflict do nothing", [id]);
+  await executerSql(
+    "insert into profils (id, role, prenom_ou_pseudo) values ($1, 'administrateur', 'Admin fictif') on conflict do nothing",
+    [id],
   );
 }

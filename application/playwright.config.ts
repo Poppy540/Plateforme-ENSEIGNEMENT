@@ -24,6 +24,7 @@ export default defineConfig({
       MODE_AUTH: "simulation",
       MODE_MODELE: "simulation",
       MODE_VIDEO: "simulation",
+      MODE_FILE: "immediat",
       URL_BASE_DONNEES: "postgresql://serveur_application@127.0.0.1:54330/postgres",
     },
   },

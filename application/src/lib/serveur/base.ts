@@ -14,7 +14,11 @@ function pool(): Pool {
 }
 
 type RoleAgent =
-  "agent_professeur" | "agent_scenariste" | "agent_evaluateur" | "agent_production_video";
+  | "agent_professeur"
+  | "agent_scenariste"
+  | "agent_evaluateur"
+  | "agent_production_video"
+  | "agent_orchestrateur";
 
 async function enTransaction<T>(
   role: "anon" | "authenticated" | RoleAgent,
@@ -84,6 +88,11 @@ export function avecAgentEvaluateur<T>(
 /** Requêtes de la chaîne de production vidéo : aucun élève, aucune unité (elle ne lit que des scripts validés). */
 export function avecAgentProductionVideo<T>(traitement: (client: PoolClient) => Promise<T>) {
   return enTransaction("agent_production_video", null, traitement);
+}
+
+/** Requêtes de l'Orchestrateur : file de tâches, état des agents, audit, approbations (aucun élève). */
+export function avecAgentOrchestrateur<T>(traitement: (client: PoolClient) => Promise<T>) {
+  return enTransaction("agent_orchestrateur", null, traitement);
 }
 
 /** Réservé à l'authentification simulée (développement et test) : crée le compte d'authentification. */

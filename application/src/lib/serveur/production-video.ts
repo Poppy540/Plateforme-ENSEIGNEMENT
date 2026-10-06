@@ -46,14 +46,21 @@ export function ficheAvatar(codePays: string, unite: string): FicheAvatar {
   }
 }
 
-export type ResultatLancement =
-  { ok: true; rapport: RapportProduction } | { ok: false; erreur: string };
+export interface ScriptAProduire {
+  scriptId: string;
+  version: number;
+  empreinte: string;
+  chapitreId: string;
+  unite: string;
+  codePays: string;
+}
 
-export async function lancerProduction(
+/** Script de la famille du référent, avec ce qu'il faut pour le produire (null s'il n'y a pas accès). */
+export async function scriptAProduire(
   referent: string,
   demande: { scriptId: string; version: number; empreinte: string },
-): Promise<ResultatLancement> {
-  if (!UUID.test(demande.scriptId)) return { ok: false, erreur: "Script inconnu." };
+): Promise<ScriptAProduire | null> {
+  if (!UUID.test(demande.scriptId)) return null;
   const script = await avecUtilisateur(referent, async (client) => {
     const { rows } = await client.query(
       `select s.id, s.chapitre_id, u.code as unite, r.pays_code
@@ -65,27 +72,49 @@ export async function lancerProduction(
     return rows[0] as
       { id: string; chapitre_id: string; unite: string; pays_code: string } | undefined;
   });
-  if (!script) return { ok: false, erreur: "Script inconnu." };
+  return script
+    ? {
+        scriptId: script.id,
+        version: demande.version,
+        empreinte: demande.empreinte,
+        chapitreId: script.chapitre_id,
+        unite: script.unite,
+        codePays: script.pays_code,
+      }
+    : null;
+}
 
+export type ResultatProductionVideo =
+  { ok: true; rapport: RapportProduction } | { ok: false; erreur: string };
+
+/**
+ * Exécute la chaîne de production pour une tâche vérifiée par l'Orchestrateur, puis enregistre la vidéo
+ * « à relire », le journal des coûts et les alertes. Appelée par la file de tâches, jamais directement.
+ */
+export async function executerProduction(
+  script: ScriptAProduire,
+): Promise<ResultatProductionVideo> {
   let services: ServicesVideo, budget: number, fiche: FicheAvatar;
   try {
     services = servicesVideo();
     budget = budgetVideo();
-    fiche = ficheAvatar(script.pays_code, script.unite);
+    fiche = ficheAvatar(script.codePays, script.unite);
   } catch (erreur) {
     if (erreur instanceof ErreurProduction) return { ok: false, erreur: erreur.message };
     throw erreur;
   }
 
   const etat = await avecAgentProductionVideo((client) =>
-    client.query("select * from script_pour_production($1)", [script.id]).then((r) => r.rows[0]),
+    client
+      .query("select * from script_pour_production($1)", [script.scriptId])
+      .then((r) => r.rows[0]),
   );
   const contenu = etat && lireSortie(JSON.stringify(etat.contenu));
   if (!etat || !contenu) return { ok: false, erreur: "Script illisible." };
 
   const rapport = await produireVideo({
     script: {
-      id: script.id,
+      id: script.scriptId,
       statut: etat.statut,
       version: etat.version,
       empreinte: etat.empreinte,
@@ -95,8 +124,8 @@ export async function lancerProduction(
       dureeCibleMinutes: etat.duree_cible_minutes,
       contenu,
     },
-    versionDemandee: demande.version,
-    empreinteDemandee: demande.empreinte,
+    versionDemandee: script.version,
+    empreinteDemandee: script.empreinte,
     fiche,
     budgetUSD: budget,
     services,
@@ -117,7 +146,7 @@ export async function lancerProduction(
            duree_secondes, cout_usd, rapport)
          values ($1, $2, $3, $4, $5, $6, $7) returning id`,
         [
-          script.id,
+          script.scriptId,
           rapport.script.version,
           rapport.script.empreinte,
           rapport.fichiers.reference,
@@ -132,13 +161,20 @@ export async function lancerProduction(
     await client.query(
       `insert into journal_production_video (script_id, script_version, resultat, video_id, cout_usd, rapport)
        values ($1, $2, $3, $4, $5, $6)`,
-      [script.id, rapport.script.version, rapport.resultat, videoId, rapport.coutUSD, rapport],
+      [
+        script.scriptId,
+        rapport.script.version,
+        rapport.resultat,
+        videoId,
+        rapport.coutUSD,
+        rapport,
+      ],
     );
     for (const escalade of rapport.escalades) {
       await client.query(
         `insert into signalements (source, motif, priorite, chapitre_id, resume)
          values ('agent_production_video', 'autre', 2, $1, $2)`,
-        [script.chapitre_id, `Production vidéo : ${escalade}`.slice(0, 2000)],
+        [script.chapitreId, `Production vidéo : ${escalade}`.slice(0, 2000)],
       );
     }
   });

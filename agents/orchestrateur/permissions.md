@@ -20,6 +20,9 @@ Variables : `TASK_QUEUE_URL`, `TASK_QUEUE_TOKEN`.
 
 Aucune clé de paiement ni de signature électronique. La clé de la base est propre à cet agent et limitée à son rôle.
 
-## Mise en œuvre (à faire)
+## Mise en œuvre (ADR 0027, 0028, 0029)
 
-Ces droits seront appliqués techniquement (rôle de base de données dédié, politiques d'accès au niveau des lignes, outils exposés à l'agent), pas seulement par le prompt.
+- Chaîne programmée (pas un agent conversationnel) : règles dans `application/src/lib/orchestrateur/regles.ts`, file et exécuteur dans `application/src/lib/serveur/orchestrateur.ts`.
+- Rôle de base `agent_orchestrateur` : file de tâches, état des agents (suspension seulement ; la réactivation est réservée à l'administration), journal d'audit pseudonymisé, alertes dans la file humaine (sans élève) ; lecture des approbations et de l'état des scripts et vidéos, sans leur contenu ; aucun accès aux élèves.
+- Approbations vérifiées dans la base à la demande **et** au moment d'exécuter ; une affirmation dans un message n'est jamais transmise.
+- Batterie OR : tests déterministes (`regles.test.ts`).

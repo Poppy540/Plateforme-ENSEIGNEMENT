@@ -1,5 +1,11 @@
 import { expect, test } from "@playwright/test";
-import { creerInvitationFictive, executerSql, seConnecter } from "./outils";
+import {
+  creerAdministrateurFictif,
+  creerInvitationFictive,
+  executerSql,
+  identifiantSimule,
+  seConnecter,
+} from "./outils";
 
 const REFERENT = "+999 000 002 01";
 
@@ -372,4 +378,59 @@ test("vidéo : le référent la regarde, la valide, puis la publie ; l'élève l
   expect((await anonyme.request.get(`http://localhost:3100${piste}`)).status()).toBe(401);
   await anonyme.close();
   await eleve.close();
+});
+
+test("Orchestrateur : agent suspendu, production mise en attente ; l'administration réactive et la tâche repart", async ({
+  page,
+}) => {
+  await creerAdministrateurFictif("+999 000 003 01");
+  await executerSql(
+    "update etat_agents set suspendu = true, motif = 'Coût anormal (test)' where agent = 'production_video'",
+  );
+  const [script] = await executerSql(
+    `select s.id from scripts s join chapitres c on c.id = s.chapitre_id
+     where c.titre = 'Systèmes d''équations' and s.statut = 'valide'`,
+  );
+  await seConnecter(page, REFERENT);
+  await page.goto(`/referent/scripts/${script.id}`);
+  await page.getByRole("button", { name: /Lancer la production de la version 2/ }).click();
+  await expect(page.locator(".erreur")).toContainText("Production en attente : Agent suspendu");
+
+  // L'administration voit l'agent suspendu, la tâche en attente et la file humaine, puis réactive.
+  const admin = await page.context().browser()!.newPage();
+  await seConnecter(admin, "+999 000 003 01");
+  await expect(admin).toHaveURL(/\/administration$/);
+  await expect(
+    admin.getByRole("listitem").filter({ hasText: /^production_video : suspendu —/ }),
+  ).toBeVisible();
+  await expect(
+    admin.getByText(/production_video → production_video : suspendue \(agent\)/),
+  ).toBeVisible();
+  await expect(admin.getByRole("heading", { name: /File humaine/ })).toBeVisible();
+  await admin.getByRole("button", { name: "Réactiver production_video" }).click();
+  await expect(admin.getByText("production_video : actif")).toBeVisible();
+  await expect(
+    admin.getByText(/production_video → production_video : terminée/).first(),
+  ).toBeVisible();
+
+  const taches = await executerSql(
+    `select statut, approbation_id is not null as approuvee from taches
+     where type = 'production_video' order by cree_le desc limit 1`,
+  );
+  expect(taches).toEqual([{ statut: "terminee", approuvee: true }]);
+  // Journal d'audit pseudonymisé : aucune trace de l'identifiant en clair.
+  const audit = await executerSql(
+    "select acteur, acteur_empreinte from journal_audit where action = 'reactivation_agent'",
+  );
+  expect(audit).toHaveLength(1);
+  expect(audit[0].acteur).toBe("administrateur");
+  expect(audit[0].acteur_empreinte).toMatch(/^[0-9a-f]{16}$/);
+  expect(audit[0].acteur_empreinte).not.toContain(identifiantSimule("+999 000 003 01").slice(0, 8));
+
+  // Exécuteur planifié : désactivé sans jeton configuré, jamais accessible sans jeton.
+  expect((await admin.request.post("/api/orchestrateur/executer")).status()).toBe(503);
+  // Un référent n'accède pas à l'administration.
+  await page.goto("/administration");
+  await expect(page).toHaveURL(/\/espace$|\/referent$/);
+  await admin.close();
 });

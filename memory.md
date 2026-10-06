@@ -55,6 +55,8 @@
 
 ## État d'avancement
 
+- 2026-10-06 : Jalon 3, étape 2 faite — Orchestrateur programmé (ADR 0029) : routage par règles depuis des demandes structurées (texte utilisateur rangé comme donnée non fiable), approbations vérifiées en base à la demande et à l'exécution, file par priorité (détresse d'abord), 3 tentatives, profondeur de chaîne ≤ 3, suspension au coût anormal, alertes dans la file humaine, journal d'audit pseudonymisé ; exécuteur planifié (`/api/orchestrateur/executer`, jeton) ou immédiat en dev/test ; la production vidéo passe par la file ; page `/administration` (agents, réactivation, file humaine, tâches). Migration 0014, tests O01-O02, batterie OR déterministe. Tests : 95 unitaires, 34 de bout en bout.
+
 - 2026-10-06 : Jalon 3 lancé — plan `docs/plans/jalon-3.md` validé (ADR 0027 : Orchestrateur en chaîne programmée, Support sur le site d'abord, rapports aux parents hebdomadaires et à la demande avec consentement séparé, rappels désactivés par défaut). Étape 1 faite (ADR 0028) : migration 0013 (préférences, recommandations, rapports aux parents, tickets, file de tâches, état des agents, audit ; rôles `agent_tuteur`, `agent_support`, `agent_orchestrateur`), tests J01-J05, export « Mes données » étendu. Tests : 86 unitaires, base passée, 33 de bout en bout.
 
 - 2026-10-06 : Jalon 2, étape 8 préparée — bilan `docs/bilans/jalon-2.md` et 11 captures du parcours complet (`docs/demo/jalon-2/`, `pnpm demo:captures tests/demo/jalon-2.spec.ts` puis `scripts/compresser-captures.sh`). Affichage : durées et montants au format français, libellés lisibles des contrôles de production. Jalon 2 clos après les passages réels (SC, EV, TC + PR) et la vidéo pilote réelle. Tests : 86 unitaires, 44 scénarios en base, 33 de bout en bout.
@@ -97,6 +99,6 @@
 
 ## Prochaine étape
 
-Jalon 3, étape 2 : Orchestrateur programmé et file de tâches (routage, vérification des approbations en base, priorités, limites de boucles et de coût, suspension, exécuteur des productions longues), batterie OR en tests déterministes. Puis Tuteur (3), rapports aux parents (4), Support (5), en simulation.
+Jalon 3, étape 3 : agent Tuteur (plan de révision ≤ 3 priorités par le graphe de prérequis, préférences, inactivité → signalement), en simulation. Puis rapports aux parents (4), Support (5).
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV) ; fournisseurs vidéo et budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).

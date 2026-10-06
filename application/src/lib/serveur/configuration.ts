@@ -72,3 +72,37 @@ export function urlPublique(origineRequete: string | null): string {
   if (simulationAutorisee() && origineRequete) return origineRequete;
   throw new Error("URL_PUBLIQUE manquante.");
 }
+
+/** Sel de pseudonymisation du journal d'audit. Obligatoire hors développement et test. */
+export function selAudit(): string {
+  const sel = lire("SEL_AUDIT");
+  if (sel) return sel;
+  if (!simulationAutorisee()) throw new Error("SEL_AUDIT manquant.");
+  return "sel-d-audit-de-developpement-uniquement";
+}
+
+/**
+ * Exécution de la file de tâches : « immediat » (développement et test : traitée juste après la demande)
+ * ou « file » (production : par l'exécuteur appelé régulièrement, voir /api/orchestrateur/executer).
+ */
+export function modeFile(): "immediat" | "file" {
+  const mode = lire("MODE_FILE") ?? "file";
+  if (mode === "immediat") {
+    if (!simulationAutorisee())
+      throw new Error("MODE_FILE=immediat est interdit hors développement et test.");
+    return "immediat";
+  }
+  return "file";
+}
+
+/** Jeton de l'exécuteur de la file (appel planifié) ; absent = exécuteur désactivé. Jamais journalisé. */
+export function jetonExecuteur(): string | null {
+  const jeton = lire("JETON_EXECUTEUR");
+  return jeton && jeton.length >= 32 ? jeton : null;
+}
+
+/** Seuil de coût quotidien d'un agent avant suspension automatique (USD). */
+export function coutJourMaxUSD(): number {
+  const v = Number(lire("COUT_JOUR_MAX_AGENT_USD"));
+  return Number.isFinite(v) && v > 0 ? v : 50;
+}

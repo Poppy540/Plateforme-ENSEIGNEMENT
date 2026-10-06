@@ -9,7 +9,9 @@ import { utilisateurConnecte } from "@/lib/serveur/session";
 export default async function PageEspace() {
   const utilisateur = await utilisateurConnecte();
   if (!utilisateur) redirect("/connexion");
-  if ((await roleCompte(utilisateur)) === "referent") redirect("/referent");
+  const role = await roleCompte(utilisateur);
+  if (role === "referent") redirect("/referent");
+  if (role === "administrateur") redirect("/administration");
   const profil = await profilEleve(utilisateur);
   if (!profil) redirect("/inscription");
   await noterActivite(utilisateur);
