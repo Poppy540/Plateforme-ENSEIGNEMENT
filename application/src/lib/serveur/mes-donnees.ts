@@ -50,6 +50,18 @@ export function exporterDonnees(utilisateur: string) {
         `select c.question, c.message, c.reexamen, c.cree_le from contestations_quiz c
          join tentatives_quiz t on t.id = c.tentative_id where t.eleve_id = $1 order by c.cree_le`,
       ),
+      preferences: await requete(
+        "select minutes_par_jour, connexion, rappels_actifs, frequence_rappels, maj_le from preferences_eleves where eleve_id = $1",
+      ),
+      recommandations_tuteur: await requete(
+        "select priorites, message, cree_le from recommandations_tuteur where eleve_id = $1 order by cree_le",
+      ),
+      rapports_parents: await requete(
+        "select periode, contenu, statut, cree_le, envoye_le from rapports_parents where eleve_id = $1 order by cree_le",
+      ),
+      tickets_support: await requete(
+        "select categorie, resume, statut, cree_le, traite_le from tickets_support where demandeur_id = $1 order by cree_le",
+      ),
     };
   });
 }

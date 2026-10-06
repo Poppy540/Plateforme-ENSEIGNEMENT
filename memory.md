@@ -55,6 +55,8 @@
 
 ## État d'avancement
 
+- 2026-10-06 : Jalon 3 lancé — plan `docs/plans/jalon-3.md` validé (ADR 0027 : Orchestrateur en chaîne programmée, Support sur le site d'abord, rapports aux parents hebdomadaires et à la demande avec consentement séparé, rappels désactivés par défaut). Étape 1 faite (ADR 0028) : migration 0013 (préférences, recommandations, rapports aux parents, tickets, file de tâches, état des agents, audit ; rôles `agent_tuteur`, `agent_support`, `agent_orchestrateur`), tests J01-J05, export « Mes données » étendu. Tests : 86 unitaires, base passée, 33 de bout en bout.
+
 - 2026-10-06 : Jalon 2, étape 8 préparée — bilan `docs/bilans/jalon-2.md` et 11 captures du parcours complet (`docs/demo/jalon-2/`, `pnpm demo:captures tests/demo/jalon-2.spec.ts` puis `scripts/compresser-captures.sh`). Affichage : durées et montants au format français, libellés lisibles des contrôles de production. Jalon 2 clos après les passages réels (SC, EV, TC + PR) et la vidéo pilote réelle. Tests : 86 unitaires, 44 scénarios en base, 33 de bout en bout.
 
 - 2026-10-05 : Jalon 2, étape 6 faite avec des vidéos simulées — revue, publication et lecture (ADR 0026) : page vidéo du référent (lecteur, rapport de production, validation avec confirmation « j'ai regardé toute la vidéo », rejet commenté), publication distincte et confirmée, tableau « vidéos à relire ou à publier » ; élève : lecteur faible débit (rien avant lecture, 240p par défaut, Mo/min affichés, sous-titres WebVTT réservés aux connectés), vidéo de démonstration générée (WebM + MP4, < 10 Ko). Migration 0012 (`videos_publiees_du_chapitre`), tests L01-L02. Tests : 85 unitaires, 33 de bout en bout (lecture réelle de la vidéo vérifiée).
@@ -95,6 +97,6 @@
 
 ## Prochaine étape
 
-Jalon 2 : étapes 1 à 6 faites (agents et vidéo simulés). Restent, sur décision du propriétaire : clé API (passages réels des tests TC + PR, SC, EV), fournisseurs et budget par vidéo (étape 5 réelle), vidéo pilote « Théorème de Thalès » et son relecteur (étape 7), bilan du Jalon 2 préparé (`docs/bilans/jalon-2.md`). Sans décision du propriétaire, prochain travail possible : Jalon 3 (Tuteur, Support/inscription, Orchestrateur avec file de tâches) en simulation, ou corrections cosmétiques (libellés des familles). En parallèle, décisions du propriétaire : fournisseurs et budget par vidéo (`docs/fournisseurs-2026-10.md`), relecteur de la vidéo pilote.
+Jalon 3, étape 2 : Orchestrateur programmé et file de tâches (routage, vérification des approbations en base, priorités, limites de boucles et de coût, suspension, exécuteur des productions longues), batterie OR en tests déterministes. Puis Tuteur (3), rapports aux parents (4), Support (5), en simulation.
 
-Toujours en attente du Jalon 1 : le propriétaire (bilan §6) : clé ANTHROPIC_API_KEY + accord pour le mini-essai (~0,18 USD) puis le passage complet TC + PR (~9 USD) ; validations listées dans le bilan.
+Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV) ; fournisseurs vidéo et budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).
