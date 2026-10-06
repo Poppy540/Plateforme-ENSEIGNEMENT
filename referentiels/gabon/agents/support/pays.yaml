@@ -1,0 +1,8 @@
+# Valeurs injectées dans agents/support/prompt.md (un Support par pays, décision 0005). Provisoire.
+unite: pays
+variables:
+  PAYS: "Gabon"
+  # Valeurs PROVISOIRES proposées par Claude Code, à valider par le propriétaire.
+  REFERENT: "équipe de la plateforme (responsable du support à désigner)"
+  DATE: "non relu"
+  VERSION: "0.1-provisoire"

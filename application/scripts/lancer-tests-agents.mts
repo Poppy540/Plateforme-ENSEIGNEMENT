@@ -26,7 +26,7 @@ const option = (nom: string) => {
   return i >= 0 ? args[i + 1] : undefined;
 };
 const racine = resolve(process.env.CHEMIN_DEPOT ?? "..");
-const AGENTS: AgentTeste[] = ["professeur", "scenariste", "evaluateur", "tuteur"];
+const AGENTS: AgentTeste[] = ["professeur", "scenariste", "evaluateur", "tuteur", "support"];
 const saisi = option("--agent") ?? "professeur";
 if (!(AGENTS as string[]).includes(saisi)) {
   console.error(`Agent inconnu : ${saisi} (${AGENTS.join(", ")}).`);
@@ -44,6 +44,7 @@ const PAR_DEFAUT_PAR_AGENT: Record<
   // Moyenne entre création de quiz (~8 000 jetons) et correction (~1 500).
   evaluateur: { effort: "high", maxTokens: 64000, sortieParTour: 6000, entreeJugement: 6000 },
   tuteur: { effort: "medium", maxTokens: 8000, sortieParTour: 2500, entreeJugement: 3000 },
+  support: { effort: "low", maxTokens: 4000, sortieParTour: 800, entreeJugement: 2000 },
 };
 const PAR_DEFAUT = PAR_DEFAUT_PAR_AGENT[agent];
 const configuration = lireConfiguration(racine);
@@ -70,14 +71,15 @@ const toursTotal =
     if (agent === "professeur") return s + (e.tours ?? []).length;
     if (agent === "evaluateur") return s + (e.quiz ?? []).length + (e.corrections ?? []).length;
     if (agent === "tuteur") return s + 1;
+    if (agent === "support") return s + (e.support?.messages ?? []).length;
     return s + (e.generations ?? [{}]).length;
   }, 0) * executions;
 const prompt = composerPrompt(
   {
     agent,
     codePays: entrees.unite.split("-")[0],
-    // Le Tuteur est configuré par pays, pas par unité.
-    unite: agent === "tuteur" ? "pays" : entrees.unite,
+    // Le Tuteur et le Support sont configurés par pays, pas par unité.
+    unite: agent === "tuteur" || agent === "support" ? "pays" : entrees.unite,
     skills: [],
     valeursDynamiques: { LISTE_CHAPITRES: "x", CHAPITRE_EN_COURS: "x", DUREE: "x" },
   },

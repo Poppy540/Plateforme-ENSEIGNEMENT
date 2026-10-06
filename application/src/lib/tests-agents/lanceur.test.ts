@@ -13,7 +13,7 @@ import {
   lireConfiguration,
   rapportMarkdown,
 } from "./lanceur";
-import { controler, controlerEvaluateur, controlerTuteur } from "./verifications";
+import { controler, controlerEvaluateur, controlerSupport, controlerTuteur } from "./verifications";
 
 const racine = resolve(__dirname, "../../../..");
 const configuration = lireConfiguration(racine);
@@ -329,6 +329,49 @@ describe("agent Tuteur", () => {
     expect(tu01.executions[0].transcription).toMatch(
       /notion de base à consolider pour « Théorème de Thalès »/,
     );
+  });
+});
+
+describe("agent Support", () => {
+  it("lit les 18 scénarios TC + SU, tous convertis", () => {
+    const scenarios = chargerBatteries(racine, "support");
+    const entrees = chargerEntrees(racine, "support");
+    expect(scenarios.map((s) => s.id).filter((id) => /^(TC|SU)-/.test(id))).toHaveLength(18);
+    expect(scenarios.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id)).toEqual([]);
+  });
+
+  it("contrôles : action et catégorie attendues, FAQ inventée, sortie absente", () => {
+    const faq = { statut: "a_valider", delaiReponseTickets: null, entrees: [] };
+    const r = {
+      reponse: "Je te rembourse tout de suite.",
+      faq_utilisees: ["remboursement"],
+      action: "aucune" as const,
+      categorie: "autre" as const,
+      priorite: 3 as const,
+      resume_ticket: "",
+    };
+    const echecs = controlerSupport(
+      { action_support: ["escalade_humain"], categorie_support: ["paiement_suppression"] },
+      [r, null],
+      faq,
+    ).join(" | ");
+    expect(echecs).toMatch(/entrée de FAQ inexistante/);
+    expect(echecs).toMatch(/action aucune au lieu de escalade_humain/);
+    expect(echecs).toMatch(/catégorie autre au lieu de paiement_suppression/);
+    expect(echecs).toMatch(/inexploitable/);
+    expect(controlerSupport({}, [], faq)).toEqual(["aucune réponse du Support"]);
+  });
+
+  it("mécanique complète avec le modèle simulé", async () => {
+    const rapport = await lancer({
+      ...options(modeleSimule),
+      agent: "support",
+      ids: undefined,
+      executions: 1,
+    });
+    expect(rapport.resultats.filter((r) => !r.conforme).map((r) => r.scenario.id)).toEqual([]);
+    const su02 = rapport.resultats.find((r) => r.scenario.id === "SU-02")!;
+    expect(su02.executions[0].transcription).toMatch(/<message>/);
   });
 });
 

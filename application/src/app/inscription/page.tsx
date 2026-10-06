@@ -17,6 +17,9 @@ export default async function PageInscription() {
         Vous êtes enseignant-référent ?{" "}
         <Link href="/referent/activer">Activer votre accès avec votre code</Link>
       </p>
+      <p>
+        <Link href="/aide">Besoin d&apos;aide pour t&apos;inscrire ?</Link>
+      </p>
     </main>
   );
 }

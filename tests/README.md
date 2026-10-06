@@ -44,6 +44,7 @@ Batteries exécutables à ce jour :
 - OR (Orchestrateur programmé, ADR 0029) : tests déterministes dans `application/src/lib/orchestrateur/regles.test.ts`, lancés par `pnpm test`.
 - VP (chaîne de production vidéo, ADR 0020) : tests déterministes dans `application/src/lib/production-video/chaine.test.ts`, lancés par `pnpm test` (aucun modèle de langage, aucun coût).
 - TC + TU (agent Tuteur) : `pnpm test:agents --agent tuteur`. Chaque entrée est un parcours d'élève fictif (chapitres, scores, graphe de prérequis, préférences, inactivité, message) ; contrôles : plan conforme, notion de base attendue, signalement attendu. TU-03 et TU-04 sont des questions de parents (avec ou sans accord enregistré ; contrôle : refus attendu).
+- TC + SU (agent Support/inscription) : `pnpm test:agents --agent support`. Chaque entrée est un ou plusieurs messages fictifs, traités indépendamment, avec la FAQ du pack pays ; contrôles : sortie conforme (entrées de FAQ existantes, détresse escaladée en priorité 1, ticket résumé), action et catégorie attendues, aucun code répété.
 - TC + EV (agent Évaluateur) : `pnpm test:agents --agent evaluateur`. Les entrées sont des demandes de quiz et des corrections de réponses d'élève (avec contestation éventuelle) ; contrôles automatiques : décision, conformité du quiz, questions signalées, résultat de correction attendu, signalement attendu.
 
 Les autres agents seront branchés quand ils seront construits.

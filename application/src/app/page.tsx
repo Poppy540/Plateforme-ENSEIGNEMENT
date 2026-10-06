@@ -17,6 +17,9 @@ export default async function Accueil({ searchParams }: PageProps<"/">) {
           Se connecter ou s&apos;inscrire
         </Link>
       </p>
+      <p>
+        <Link href="/aide">Aide et questions fréquentes</Link>
+      </p>
       <p className="note">Version de développement : données fictives uniquement.</p>
     </main>
   );

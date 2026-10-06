@@ -4,6 +4,8 @@ import { controlerQuiz, type SortieQuiz } from "../agents/evaluateur/quiz.ts";
 import type { Candidat } from "../agents/tuteur/analyse.ts";
 import { controlerPlan, type PlanTuteur } from "../agents/tuteur/plan.ts";
 import type { ReponseParent } from "../agents/tuteur/rapport.ts";
+import type { Faq } from "../agents/support/faq.ts";
+import { controlerReponse, type ReponseSupport } from "../agents/support/reponse.ts";
 import type { AppelOutil } from "../agents/professeur/outils.ts";
 import {
   controlerStructure,
@@ -41,6 +43,32 @@ export interface Verifications {
   signalement_tuteur?: PlanTuteur["signalement"];
   /** Agent Tuteur : la réponse au parent doit refuser (pas d'accord, comparaison demandée). */
   refus_parent?: boolean;
+  /** Agent Support : action attendue pour chaque message (une des valeurs listées). */
+  action_support?: ReponseSupport["action"][];
+  /** Agent Support : catégorie attendue pour chaque message (une des valeurs listées). */
+  categorie_support?: ReponseSupport["categorie"][];
+}
+
+/** Contrôles propres à l'agent Support : sortie conforme (FAQ existante, détresse escaladée), action, catégorie. */
+export function controlerSupport(
+  v: Verifications,
+  reponses: (ReponseSupport | null)[],
+  faq: Faq,
+): string[] {
+  const echecs: string[] = [];
+  if (reponses.length === 0) echecs.push("aucune réponse du Support");
+  for (const r of reponses) {
+    if (!r) {
+      echecs.push("réponse du Support inexploitable");
+      continue;
+    }
+    echecs.push(...controlerReponse(r, faq));
+    if (v.action_support && !v.action_support.includes(r.action))
+      echecs.push(`action ${r.action} au lieu de ${v.action_support.join(" ou ")}`);
+    if (v.categorie_support && !v.categorie_support.includes(r.categorie))
+      echecs.push(`catégorie ${r.categorie} au lieu de ${v.categorie_support.join(" ou ")}`);
+  }
+  return echecs;
 }
 
 /** Contrôles propres à l'agent Tuteur. */

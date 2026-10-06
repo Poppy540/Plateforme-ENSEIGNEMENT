@@ -215,6 +215,108 @@ function planSimule(demande: string): BetaMessage {
   return message([texte(JSON.stringify(plan))], "end_turn");
 }
 
+/** Support simulé : règles par mots-clés, pour exercer la mécanique (tickets, escalades, refus). */
+function supportSimule(demande: string): BetaMessage {
+  const m = (demande.match(/<message>\n([\s\S]*?)\n<\/message>/)?.[1] ?? "").toLowerCase();
+  const r = (
+    reponse: string,
+    action: string,
+    categorie: string,
+    priorite = 3,
+    faq: string[] = [],
+    resume = "",
+  ) =>
+    message(
+      [
+        texte(
+          JSON.stringify({
+            reponse,
+            faq_utilisees: faq,
+            action,
+            categorie,
+            priorite,
+            resume_ticket: resume,
+          }),
+        ),
+      ],
+      "end_turn",
+    );
+  if (/disparaître|n'en peux plus|me frappe|danger/.test(m))
+    return r(
+      "(Support simulé) Tu n'es pas seul : je préviens tout de suite une personne de l'équipe. Parles-en aussi à un adulte de confiance.",
+      "escalade_humain",
+      "detresse",
+      1,
+      [],
+      "Message de détresse (simulé).",
+    );
+  if (/code|mot de passe/.test(m))
+    return r(
+      "(Support simulé) Ne partage jamais ton code avec personne, même avec nous : saisis-le seulement dans l'application.",
+      "aucune",
+      "connexion",
+      3,
+      ["code-non-recu"],
+    );
+  if (/rembours|payer|paiement/.test(m))
+    return r(
+      "(Support simulé) Je ne peux rien promettre sur un paiement : j'ouvre une demande pour un humain. La plateforme est gratuite pendant le pilote.",
+      "escalade_humain",
+      "paiement_suppression",
+      2,
+      ["gratuit"],
+      "Demande de remboursement (simulé).",
+    );
+  if (/supprim/.test(m))
+    return r(
+      "(Support simulé) Une suppression demandée par un tiers doit être vérifiée par un humain : je transmets votre demande.",
+      "escalade_humain",
+      "paiement_suppression",
+      2,
+      ["mes-donnees"],
+      "Demande de suppression par un tiers (simulé).",
+    );
+  if (/mère|père|historique|parent de/.test(m))
+    return r(
+      "(Support simulé) Je ne peux pas donner d'informations sur un élève sans vérification. Votre enfant peut vous proposer les rapports depuis son espace.",
+      "aucune",
+      "fraude_plainte",
+      3,
+      ["rapports-parents"],
+    );
+  if (/promotion|publicité|tous les parents/.test(m))
+    return r(
+      "(Support simulé) Je ne peux envoyer que les messages approuvés : pas de message promotionnel.",
+      "aucune",
+      "autre",
+      3,
+    );
+  if (/thalès|théorème|exercice|équation/.test(m))
+    return r(
+      "(Support simulé) Pour une question de cours, ouvre le chapitre et pose-la au professeur de la matière.",
+      "orienter_professeur",
+      "question_cours",
+      3,
+      ["question-de-cours"],
+    );
+  if (/inscri|parent|mineur/.test(m))
+    return r(
+      "(Support simulé) Pour un élève mineur, un parent ou tuteur doit accepter l'inscription par le lien qu'il reçoit.",
+      "aucune",
+      "inscription",
+      3,
+      ["inscription", "accord-parent"],
+    );
+  return r(
+    "(Support simulé) Je n'ai pas cette réponse dans la FAQ : j'ouvre une demande pour l'équipe.",
+    "ouvrir_ticket",
+    "autre",
+    3,
+    [],
+    "Question hors FAQ (simulé).",
+  );
+}
+
 /** Correction simulée d'une réponse courte. */
 function correctionSimulee(demande: string): BetaMessage {
   const attendue = demande.match(/Réponse attendue : (.*)/)?.[1]?.trim() ?? "";
@@ -256,6 +358,7 @@ export function reponseSimulee(parametres: BetaMessageStreamParams): BetaMessage
     const champs = format.schema?.properties ?? {};
     const demande = dernierTexteEleve(messages);
     if ("questions" in champs) return quizSimule(demande);
+    if ("faq_utilisees" in champs) return supportSimule(demande);
     if ("priorites" in champs) return planSimule(demande);
     if ("points_forts" in champs)
       return message(

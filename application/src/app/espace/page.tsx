@@ -48,10 +48,13 @@ export default async function PageEspace() {
         </>
       )}
       {profil.statut === "suspendu" && (
-        <p role="status">Ton compte est suspendu. Contacte le support.</p>
+        <p role="status">Ton compte est suspendu. Contacte le support depuis la page Aide.</p>
       )}
       <p>
         <Link href="/espace/mes-donnees">Mes données (télécharger, supprimer mon compte)</Link>
+      </p>
+      <p>
+        <Link href="/aide">Aide</Link>
       </p>
       <form action={seDeconnecter}>
         <button type="submit" className="secondaire">

@@ -20,7 +20,8 @@ type RoleAgent =
   | "agent_production_video"
   | "agent_orchestrateur"
   | "agent_tuteur"
-  | "service_messagerie";
+  | "service_messagerie"
+  | "agent_support";
 
 async function enTransaction<T>(
   role: "anon" | "authenticated" | RoleAgent,
@@ -108,6 +109,14 @@ export function avecAgentTuteur<T>(
 /** Service d'envoi des messages : obtient le contact d'un parent seulement pour un envoi autorisé. */
 export function avecServiceMessagerie<T>(traitement: (client: PoolClient) => Promise<T>) {
   return enTransaction("service_messagerie", null, traitement);
+}
+
+/** Requêtes de l'agent Support : seulement l'utilisateur qui lui écrit (fixé par le serveur). */
+export function avecAgentSupport<T>(
+  utilisateur: string,
+  traitement: (client: PoolClient) => Promise<T>,
+) {
+  return enTransaction("agent_support", null, traitement, { eleveId: utilisateur, uniteId: "" });
 }
 
 /** Réservé à l'authentification simulée (développement et test) : crée le compte d'authentification. */

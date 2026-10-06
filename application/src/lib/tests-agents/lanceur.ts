@@ -29,13 +29,21 @@ import {
   repondreAuParent,
   type ReponseParent,
 } from "../agents/tuteur/rapport.ts";
-import { lirePack } from "../pack-pays/lecture.ts";
+import { lireFaq, type Faq } from "../agents/support/faq.ts";
+import {
+  messageDemandeSupport,
+  repondreSupport,
+  type DemandeSupport,
+  type ReponseSupport,
+} from "../agents/support/reponse.ts";
+import { lirePack, type PackPays } from "../pack-pays/lecture.ts";
 import { coutUSD, type Consommation } from "./cout.ts";
 import { lireScenarios, type ScenarioGherkin } from "./gherkin.ts";
 import type { Juge } from "./juge.ts";
 import {
   controler,
   controlerEvaluateur,
+  controlerSupport,
   controlerTuteur,
   fusionner,
   type SortieControlee,
@@ -102,8 +110,15 @@ export interface ParcoursTest {
   accord_parent?: boolean;
 }
 
+/** Messages successifs reçus par le Support (agent Support/inscription), indépendants les uns des autres. */
+export interface DemandeSupportTest {
+  messages: string[];
+  statut_compte?: DemandeSupport["statutCompte"];
+}
+
 interface EntreeScenario {
   chapitre?: string;
+  support?: DemandeSupportTest;
   tours?: string[];
   generations?: Generation[];
   quiz?: DemandeQuizTest[];
@@ -124,7 +139,7 @@ export interface FichierEntrees {
   scenarios: Record<string, EntreeScenario>;
 }
 
-export type AgentTeste = "professeur" | "scenariste" | "evaluateur" | "tuteur";
+export type AgentTeste = "professeur" | "scenariste" | "evaluateur" | "tuteur" | "support";
 
 export interface Execution {
   numero: number;
@@ -202,6 +217,7 @@ const SKILLS: Record<AgentTeste, string[]> = {
   ],
   evaluateur: ["_commun/skills/contenu-non-fiable", "evaluateur/skills/questions-de-controle"],
   tuteur: ["_commun/skills/contenu-non-fiable"],
+  support: ["_commun/skills/contenu-non-fiable", "support/skills/tri-des-demandes"],
 };
 
 interface ResultatExecution {
@@ -213,6 +229,7 @@ interface ResultatExecution {
   corrections: (Correction | null)[];
   plans: { plan: PlanTuteur | null; candidats: Candidat[]; minutes: number | null }[];
   reponsesParents: (ReponseParent | null)[];
+  reponsesSupport: (ReponseSupport | null)[];
   consommations: Consommation[];
 }
 
@@ -221,6 +238,8 @@ interface Contexte {
   entrees: FichierEntrees;
   codePays: string;
   chapitres: { code: string; titre: string; sousThemes: string[] }[];
+  pack: PackPays;
+  faq: Faq;
 }
 
 function promptProfesseur(c: Contexte): string {
@@ -550,7 +569,57 @@ async function executerTuteur(
   }
 }
 
+async function executerSupport(
+  c: Contexte,
+  entree: EntreeScenario,
+  r: ResultatExecution,
+): Promise<void> {
+  const lignes: string[] = [];
+  try {
+    const systeme = composerPrompt(
+      {
+        agent: "support",
+        codePays: c.codePays,
+        unite: "pays",
+        skills: SKILLS.support,
+        valeursDynamiques: {},
+      },
+      c.options.racine,
+    );
+    // Chaque message est une demande indépendante : le Support ne conserve pas la conversation.
+    for (const message of entree.support?.messages ?? []) {
+      const demande: DemandeSupport = {
+        message,
+        faq: c.faq,
+        statutCompte: entree.support?.statut_compte ?? "non_inscrit",
+        classes: c.pack.niveaux.map((n) => n.libelle),
+        series: c.pack.series.map((x) => x.libelle),
+      };
+      const resultat = await repondreSupport({
+        systeme,
+        demande,
+        modele: c.options.modele,
+        parametres: c.options.parametres,
+      });
+      r.consommations.push(...resultat.consommations);
+      lignes.push(
+        lignes.length === 0 ? messageDemandeSupport(demande) : `Message reçu : ${message}`,
+        "--- Réponse du Support ---",
+        resultat.sortie
+          ? JSON.stringify(resultat.sortie, null, 2)
+          : `(aucune sortie exploitable, arrêt : ${resultat.arret})`,
+        "",
+      );
+      if (resultat.sortie) r.reponses.push(resultat.sortie.reponse, resultat.sortie.resume_ticket);
+      r.reponsesSupport.push(resultat.sortie);
+    }
+  } finally {
+    r.transcription = lignes.join("\n");
+  }
+}
+
 const EXECUTANTS = {
+  support: executerSupport,
   tuteur: executerTuteur,
   professeur: executerProfesseur,
   scenariste: executerScenariste,
@@ -568,6 +637,8 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
     entrees,
     codePays,
     chapitres: pack.programmes[entrees.unite] ?? [],
+    pack,
+    faq: lireFaq(dossierPack(options.racine, codePays)),
   };
   const nonApplicables = entrees.non_applicables ?? {};
 
@@ -595,6 +666,7 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
         corrections: [],
         plans: [],
         reponsesParents: [],
+        reponsesSupport: [],
         consommations: [],
       };
       try {
@@ -606,6 +678,9 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
             : []),
           ...(options.agent === "tuteur"
             ? controlerTuteur(verifications, partiel.plans, partiel.reponsesParents)
+            : []),
+          ...(options.agent === "support"
+            ? controlerSupport(verifications, partiel.reponsesSupport, contexte.faq)
             : []),
         ];
         const jugement = await options.juge(scenario, partiel.transcription, options.agent);
