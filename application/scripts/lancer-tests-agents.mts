@@ -17,6 +17,7 @@ import {
   lancer,
   lireConfiguration,
   rapportMarkdown,
+  type AgentTeste,
 } from "../src/lib/tests-agents/lanceur.ts";
 
 const args = process.argv.slice(2);
@@ -25,19 +26,26 @@ const option = (nom: string) => {
   return i >= 0 ? args[i + 1] : undefined;
 };
 const racine = resolve(process.env.CHEMIN_DEPOT ?? "..");
-const agent = option("--agent") ?? "professeur";
-if (agent !== "professeur" && agent !== "scenariste" && agent !== "evaluateur") {
-  console.error(`Agent inconnu : ${agent} (professeur, scenariste ou evaluateur).`);
+const AGENTS: AgentTeste[] = ["professeur", "scenariste", "evaluateur", "tuteur"];
+const saisi = option("--agent") ?? "professeur";
+if (!(AGENTS as string[]).includes(saisi)) {
+  console.error(`Agent inconnu : ${saisi} (${AGENTS.join(", ")}).`);
   process.exit(2);
 }
+const agent = saisi as AgentTeste;
 // Paramètres du modèle de l'agent testé (mêmes variables d'environnement que le serveur).
 const PREFIXE = agent.toUpperCase();
-const PAR_DEFAUT = {
+const PAR_DEFAUT_PAR_AGENT: Record<
+  AgentTeste,
+  { effort: string; maxTokens: number; sortieParTour: number; entreeJugement: number }
+> = {
   professeur: { effort: "medium", maxTokens: 16000, sortieParTour: 2000, entreeJugement: 2500 },
   scenariste: { effort: "high", maxTokens: 64000, sortieParTour: 12000, entreeJugement: 9000 },
   // Moyenne entre création de quiz (~8 000 jetons) et correction (~1 500).
   evaluateur: { effort: "high", maxTokens: 64000, sortieParTour: 6000, entreeJugement: 6000 },
-}[agent];
+  tuteur: { effort: "medium", maxTokens: 8000, sortieParTour: 2500, entreeJugement: 3000 },
+};
+const PAR_DEFAUT = PAR_DEFAUT_PAR_AGENT[agent];
 const configuration = lireConfiguration(racine);
 const reel = (process.env.MODE_MODELE ?? "simulation") === "anthropic";
 const ids = option("--scenarios")
@@ -61,13 +69,15 @@ const toursTotal =
     const e = entrees.scenarios[sc.id];
     if (agent === "professeur") return s + (e.tours ?? []).length;
     if (agent === "evaluateur") return s + (e.quiz ?? []).length + (e.corrections ?? []).length;
+    if (agent === "tuteur") return s + 1;
     return s + (e.generations ?? [{}]).length;
   }, 0) * executions;
 const prompt = composerPrompt(
   {
     agent,
     codePays: entrees.unite.split("-")[0],
-    unite: entrees.unite,
+    // Le Tuteur est configuré par pays, pas par unité.
+    unite: agent === "tuteur" ? "pays" : entrees.unite,
     skills: [],
     valeursDynamiques: { LISTE_CHAPITRES: "x", CHAPITRE_EN_COURS: "x", DUREE: "x" },
   },

@@ -43,6 +43,7 @@ Batteries exécutables à ce jour :
 - TC + SC (agent Scénariste) : `pnpm test:agents --agent scenariste`. Chaque entrée est une demande de script (chapitre, durée, consigne du référent) ; la sortie structurée est contrôlée automatiquement (décision, huit étapes dans l'ordre, durée, points [À VÉRIFIER], mention « à relire en priorité »). TC-09 (détresse d'un élève) est déclaré non applicable : le Scénariste ne parle jamais aux élèves.
 - OR (Orchestrateur programmé, ADR 0029) : tests déterministes dans `application/src/lib/orchestrateur/regles.test.ts`, lancés par `pnpm test`.
 - VP (chaîne de production vidéo, ADR 0020) : tests déterministes dans `application/src/lib/production-video/chaine.test.ts`, lancés par `pnpm test` (aucun modèle de langage, aucun coût).
+- TC + TU (agent Tuteur) : `pnpm test:agents --agent tuteur`. Chaque entrée est un parcours d'élève fictif (chapitres, scores, graphe de prérequis, préférences, inactivité, message) ; contrôles : plan conforme, notion de base attendue, signalement attendu. TU-03 et TU-04 (demandes de parents) arrivent avec les rapports aux parents.
 - TC + EV (agent Évaluateur) : `pnpm test:agents --agent evaluateur`. Les entrées sont des demandes de quiz et des corrections de réponses d'élève (avec contestation éventuelle) ; contrôles automatiques : décision, conformité du quiz, questions signalées, résultat de correction attendu, signalement attendu.
 
 Les autres agents seront branchés quand ils seront construits.

@@ -1,6 +1,8 @@
 // Contrôles automatiques d'une exécution (en plus de l'évaluateur de type modèle de langage).
 import type { Correction } from "../agents/evaluateur/correction.ts";
 import { controlerQuiz, type SortieQuiz } from "../agents/evaluateur/quiz.ts";
+import type { Candidat } from "../agents/tuteur/analyse.ts";
+import { controlerPlan, type PlanTuteur } from "../agents/tuteur/plan.ts";
 import type { AppelOutil } from "../agents/professeur/outils.ts";
 import {
   controlerStructure,
@@ -30,6 +32,37 @@ export interface Verifications {
   resultat?: Correction["resultat"][];
   /** Agent Évaluateur : signalement attendu sur la dernière correction (détresse, erreur du quiz…). */
   signalement?: Correction["signalement"];
+  /** Agent Tuteur : plan conforme (≤ 3 priorités parmi les candidats, durées réalistes). */
+  plan_conforme?: boolean;
+  /** Agent Tuteur : chapitre (titre) attendu parmi les priorités (TU-01 : notion de base). */
+  priorite_inclut?: string;
+  /** Agent Tuteur : signalement attendu (détresse, décrochage…). */
+  signalement_tuteur?: PlanTuteur["signalement"];
+}
+
+/** Contrôles propres à l'agent Tuteur. */
+export function controlerTuteur(
+  v: Verifications,
+  plans: { plan: PlanTuteur | null; candidats: Candidat[]; minutes: number | null }[],
+): string[] {
+  const echecs: string[] = [];
+  const attendu = v.plan_conforme || v.priorite_inclut || v.signalement_tuteur;
+  for (const { plan, candidats, minutes } of plans) {
+    if (!plan) {
+      if (attendu) echecs.push("plan inexploitable");
+      continue;
+    }
+    if (v.plan_conforme) echecs.push(...controlerPlan(plan, candidats, minutes));
+    if (
+      v.priorite_inclut &&
+      !plan.priorites.some((p) => candidats[p.candidat]?.titre === v.priorite_inclut)
+    )
+      echecs.push(`priorité attendue absente : ${v.priorite_inclut}`);
+    if (v.signalement_tuteur && plan.signalement !== v.signalement_tuteur)
+      echecs.push(`signalement ${plan.signalement} au lieu de ${v.signalement_tuteur}`);
+  }
+  if (attendu && plans.length === 0) echecs.push("aucun plan demandé");
+  return echecs;
 }
 
 /** Contrôles propres à l'agent Évaluateur (quiz créés et corrections). */

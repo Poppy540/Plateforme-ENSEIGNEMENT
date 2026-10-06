@@ -24,6 +24,7 @@ Statuts : **validé** (confirmé par un enseignant-référent sur le programme o
 | `agents/professeur/ga-3e-mathematiques.yaml` | Variables du prompt Professeur | Cadrage, Partie B | à valider |
 | `agents/evaluateur/ga-3e-mathematiques.yaml` | Variables du prompt Évaluateur | Cadrage, Partie B et profils de niveau ; référent provisoire (Claude Code) | à valider |
 | `agents/production-video/ga-3e-mathematiques.yaml` | Fiche de l'avatar (synthétique) | Proposition de Claude Code, fournisseur non choisi | à valider par le propriétaire |
+| `agents/tuteur/pays.yaml` | Variables du prompt Tuteur | Proposition de Claude Code | à valider |
 | `agents/scenariste/ga-3e-mathematiques.yaml` | Variables du prompt Scénariste | Cadrage, Partie B et profils de niveau ; persona et référent provisoires (Claude Code) | à valider |
 | (futur) Histoire-Géographie 6e | Intitulés | Programmes IPN 1993/1996, via l'étude Ntsame Edjo (2010/2015, CRIRES-Université Laval) ; réforme des curricula en cours depuis 2022 | à valider |
 | (futur) autres programmes | Chapitres des autres unités | Cadrage, « Découpage des cours », base francophone générique | à valider (pas encore importés) |

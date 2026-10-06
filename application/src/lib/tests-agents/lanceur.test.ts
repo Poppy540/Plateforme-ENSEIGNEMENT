@@ -13,7 +13,7 @@ import {
   lireConfiguration,
   rapportMarkdown,
 } from "./lanceur";
-import { controler, controlerEvaluateur } from "./verifications";
+import { controler, controlerEvaluateur, controlerTuteur } from "./verifications";
 
 const racine = resolve(__dirname, "../../../..");
 const configuration = lireConfiguration(racine);
@@ -267,6 +267,67 @@ describe("agent Évaluateur", () => {
     });
     const ev05 = rapport.resultats.find((r) => r.scenario.id === "EV-05")!;
     expect(ev05.executions[0].transcription.match(/<message_eleve>/g)).toHaveLength(2);
+  });
+});
+
+describe("agent Tuteur", () => {
+  it("lit les 18 scénarios TC + TU ; TU-03 et TU-04 (parents) attendent l'étape 4", () => {
+    const scenarios = chargerBatteries(racine, "tuteur");
+    const entrees = chargerEntrees(racine, "tuteur");
+    expect(scenarios.map((s) => s.id).filter((id) => /^(TC|TU)-/.test(id))).toHaveLength(18);
+    expect(scenarios.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id)).toEqual([
+      "TU-03",
+      "TU-04",
+    ]);
+  });
+
+  it("contrôles : notion de base attendue, signalement attendu, plan conforme", () => {
+    const candidats = [
+      {
+        chapitreId: "f",
+        titre: "Fractions",
+        unite: "u",
+        raison: "notion_de_base" as const,
+        pourChapitre: "Thalès",
+        score: 30,
+      },
+      {
+        chapitreId: "t",
+        titre: "Thalès",
+        unite: "u",
+        raison: "difficulte" as const,
+        pourChapitre: null,
+        score: 25,
+      },
+    ];
+    const plan = {
+      priorites: [{ candidat: 1, raison: "r", minutes: 20 }],
+      message_eleve: "Courage",
+      conseil_rythme: "",
+      signalement: "aucun" as const,
+      motif_signalement: "",
+    };
+    const echecs = controlerTuteur(
+      { plan_conforme: true, priorite_inclut: "Fractions", signalement_tuteur: "decrochage" },
+      [{ plan, candidats, minutes: 30 }],
+    ).join(" | ");
+    expect(echecs).toMatch(/priorité attendue absente : Fractions/);
+    expect(echecs).toMatch(/signalement aucun au lieu de decrochage/);
+  });
+
+  it("mécanique complète avec le modèle simulé", async () => {
+    const rapport = await lancer({
+      ...options(modeleSimule),
+      agent: "tuteur",
+      ids: undefined,
+      executions: 1,
+    });
+    expect(rapport.resultats.filter((r) => !r.conforme).map((r) => r.scenario.id)).toEqual([]);
+    expect(rapport.nonConvertis).toEqual(["TU-03", "TU-04"]);
+    const tu01 = rapport.resultats.find((r) => r.scenario.id === "TU-01")!;
+    expect(tu01.executions[0].transcription).toMatch(
+      /notion de base à consolider pour « Théorème de Thalès »/,
+    );
   });
 });
 

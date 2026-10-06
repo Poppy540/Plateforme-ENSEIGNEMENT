@@ -184,6 +184,37 @@ function quizSimule(demande: string): BetaMessage {
   return message([texte(JSON.stringify(quiz))], "end_turn");
 }
 
+/** Tuteur simulé : les trois premiers candidats, rythme tenable, signalements selon des mots-clés. */
+function planSimule(demande: string): BetaMessage {
+  const candidats = (demande.match(/^\d+\. « /gm) ?? []).length;
+  const messageEleve = demande.match(/<message_eleve>\n([\s\S]*?)\n<\/message_eleve>/)?.[1] ?? "";
+  const jours = Number(demande.match(/Jours sans activité : (\d+)/)?.[1] ?? 0);
+  const minutes = Number(demande.match(/Temps disponible par jour : (\d+)/)?.[1] ?? 30);
+  const detresse = /disparaître|n'en peux plus|me fait du mal/i.test(messageEleve);
+  const plan = {
+    priorites: Array.from({ length: Math.min(3, candidats) }, (_, i) => ({
+      candidat: i,
+      raison: "Raison simulée.",
+      minutes: Math.max(5, Math.min(20, minutes)),
+    })),
+    message_eleve: /garanti/i.test(messageEleve)
+      ? "(Tuteur simulé) Je ne peux rien promettre : ce qui dépend de toi, c'est un travail régulier."
+      : /trouble/i.test(messageEleve)
+        ? "(Tuteur simulé) Je ne peux pas poser de diagnostic : parles-en à un adulte de confiance."
+        : "(Tuteur simulé) Tu as progressé : continuons pas à pas.",
+    conseil_rythme: /heures|nuit/i.test(messageEleve)
+      ? "Pas plus de deux heures par jour, et dors suffisamment : c'est plus efficace."
+      : "Des séances courtes avec des pauses.",
+    signalement: detresse ? "detresse" : jours >= 14 ? "decrochage" : "aucun",
+    motif_signalement: detresse
+      ? "Détresse exprimée (simulé)."
+      : jours >= 14
+        ? `Inactif depuis ${jours} jours (simulé).`
+        : "",
+  };
+  return message([texte(JSON.stringify(plan))], "end_turn");
+}
+
 /** Correction simulée d'une réponse courte. */
 function correctionSimulee(demande: string): BetaMessage {
   const attendue = demande.match(/Réponse attendue : (.*)/)?.[1]?.trim() ?? "";
@@ -225,6 +256,7 @@ export function reponseSimulee(parametres: BetaMessageStreamParams): BetaMessage
     const champs = format.schema?.properties ?? {};
     const demande = dernierTexteEleve(messages);
     if ("questions" in champs) return quizSimule(demande);
+    if ("priorites" in champs) return planSimule(demande);
     if ("resultat" in champs) return correctionSimulee(demande);
     return scriptSimule(demande);
   }

@@ -18,6 +18,12 @@ import {
 } from "../agents/evaluateur/correction.ts";
 import { genererQuiz, messageDemandeQuiz } from "../agents/evaluateur/generation.ts";
 import { quizEnTexte, type Question, type SortieQuiz } from "../agents/evaluateur/quiz.ts";
+import {
+  candidatsDeRevision,
+  type Candidat,
+  type ChapitreParcours,
+} from "../agents/tuteur/analyse.ts";
+import { genererPlan, messageDemandePlan, type PlanTuteur } from "../agents/tuteur/plan.ts";
 import { lirePack } from "../pack-pays/lecture.ts";
 import { coutUSD, type Consommation } from "./cout.ts";
 import { lireScenarios, type ScenarioGherkin } from "./gherkin.ts";
@@ -25,6 +31,7 @@ import type { Juge } from "./juge.ts";
 import {
   controler,
   controlerEvaluateur,
+  controlerTuteur,
   fusionner,
   type SortieControlee,
   type Verifications,
@@ -70,17 +77,37 @@ export interface CorrectionTest {
   contestation?: { resultat: Correction["resultat"]; messages: string[] };
 }
 
+/** Parcours fictif d'un élève (agent Tuteur). */
+export interface ParcoursTest {
+  chapitres?: {
+    titre: string;
+    unite?: string;
+    classe_inferieure?: boolean;
+    statut?: ChapitreParcours["statut"];
+    score?: number | null;
+  }[];
+  /** Liens [chapitre, prérequis] (titres). */
+  prerequis?: [string, string][];
+  minutes?: number | null;
+  connexion?: string | null;
+  jours_sans_activite?: number;
+  message?: string;
+}
+
 interface EntreeScenario {
   chapitre?: string;
   tours?: string[];
   generations?: Generation[];
   quiz?: DemandeQuizTest[];
   corrections?: CorrectionTest[];
+  parcours?: ParcoursTest;
   verifications?: Verifications;
 }
 
 export interface FichierEntrees {
   unite: string;
+  /** Agent Tuteur : parcours fictif commun, complété ou remplacé par chaque scénario. */
+  parcours_par_defaut?: ParcoursTest;
   chapitre_par_defaut: string;
   duree_par_defaut?: number;
   verifications_communes?: Verifications;
@@ -89,7 +116,7 @@ export interface FichierEntrees {
   scenarios: Record<string, EntreeScenario>;
 }
 
-export type AgentTeste = "professeur" | "scenariste" | "evaluateur";
+export type AgentTeste = "professeur" | "scenariste" | "evaluateur" | "tuteur";
 
 export interface Execution {
   numero: number;
@@ -166,6 +193,7 @@ const SKILLS: Record<AgentTeste, string[]> = {
     "scenariste/skills/ancrage-local",
   ],
   evaluateur: ["_commun/skills/contenu-non-fiable", "evaluateur/skills/questions-de-controle"],
+  tuteur: ["_commun/skills/contenu-non-fiable"],
 };
 
 interface ResultatExecution {
@@ -175,6 +203,7 @@ interface ResultatExecution {
   sorties: SortieControlee[];
   quiz: (SortieQuiz | null)[];
   corrections: (Correction | null)[];
+  plans: { plan: PlanTuteur | null; candidats: Candidat[]; minutes: number | null }[];
   consommations: Consommation[];
 }
 
@@ -413,7 +442,72 @@ async function executerEvaluateur(
   }
 }
 
+async function executerTuteur(
+  c: Contexte,
+  entree: EntreeScenario,
+  r: ResultatExecution,
+): Promise<void> {
+  const lignes: string[] = [];
+  try {
+    const p: ParcoursTest = { ...c.entrees.parcours_par_defaut, ...entree.parcours };
+    const chapitres: ChapitreParcours[] = (p.chapitres ?? []).map((x, i) => ({
+      id: x.titre,
+      titre: x.titre,
+      unite: x.unite ?? c.entrees.unite,
+      ordre: i + 1,
+      deSaClasse: !x.classe_inferieure,
+      statut: x.statut ?? null,
+      score: x.score ?? null,
+    }));
+    const candidats = candidatsDeRevision(
+      chapitres,
+      (p.prerequis ?? []).map(([chapitreId, prerequisId]) => ({ chapitreId, prerequisId })),
+    );
+    const demande = {
+      candidats,
+      preferences: { minutesParJour: p.minutes ?? null, connexion: p.connexion ?? null },
+      joursSansActivite: p.jours_sans_activite ?? 0,
+      examen: null,
+      message: p.message,
+    };
+    const resultat = await genererPlan({
+      systeme: composerPrompt(
+        {
+          agent: "tuteur",
+          codePays: c.codePays,
+          unite: "pays",
+          skills: SKILLS.tuteur,
+          valeursDynamiques: {},
+        },
+        c.options.racine,
+      ),
+      demande,
+      modele: c.options.modele,
+      parametres: c.options.parametres,
+    });
+    r.consommations.push(...resultat.consommations);
+    lignes.push(messageDemandePlan(demande), "", "--- Plan du Tuteur ---");
+    if (resultat.sortie) {
+      const plan = resultat.sortie;
+      lignes.push(
+        ...plan.priorites.map(
+          (x, i) =>
+            `${i + 1}. ${candidats[x.candidat]?.titre ?? `(candidat inconnu ${x.candidat})`} — ${x.minutes} min : ${x.raison}`,
+        ),
+        `Message à l'élève : ${plan.message_eleve}`,
+        `Rythme : ${plan.conseil_rythme}`,
+        `Signalement : ${plan.signalement}${plan.motif_signalement ? ` (${plan.motif_signalement})` : ""}`,
+      );
+      r.reponses.push(JSON.stringify(plan));
+    } else lignes.push(`(aucune sortie exploitable, arrêt : ${resultat.arret})`);
+    r.plans.push({ plan: resultat.sortie, candidats, minutes: p.minutes ?? null });
+  } finally {
+    r.transcription = lignes.join("\n");
+  }
+}
+
 const EXECUTANTS = {
+  tuteur: executerTuteur,
   professeur: executerProfesseur,
   scenariste: executerScenariste,
   evaluateur: executerEvaluateur,
@@ -455,6 +549,7 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
         sorties: [],
         quiz: [],
         corrections: [],
+        plans: [],
         consommations: [],
       };
       try {
@@ -464,6 +559,7 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
           ...(options.agent === "evaluateur"
             ? controlerEvaluateur(verifications, partiel.quiz, partiel.corrections)
             : []),
+          ...(options.agent === "tuteur" ? controlerTuteur(verifications, partiel.plans) : []),
         ];
         const jugement = await options.juge(scenario, partiel.transcription, options.agent);
         if (jugement.consommation) consommationsJuge.push(jugement.consommation);

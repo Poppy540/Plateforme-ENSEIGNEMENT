@@ -42,6 +42,9 @@ export default async function PageEspace() {
               Mes cours
             </Link>
           </p>
+          <p>
+            <Link href="/espace/plan">Mon plan de révision</Link>
+          </p>
         </>
       )}
       {profil.statut === "suspendu" && (
