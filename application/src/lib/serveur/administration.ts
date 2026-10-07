@@ -11,6 +11,8 @@ export interface TableauAdministration {
   fileHumaine: {
     nature: "signalement" | "ticket";
     id: string;
+    /** Ticket : ouvert ou en cours. */
+    statut: string | null;
     priorite: number;
     source: string;
     motif: string;
@@ -41,10 +43,11 @@ export function tableauAdministration(administrateur: string): Promise<TableauAd
     const fileHumaine = (
       await client.query(
         `select * from (
-           select 'signalement' as nature, id, priorite, source, motif::text as motif, resume, cree_le as "creeLe"
+           select 'signalement' as nature, id, null::text as statut, priorite, source, motif::text as motif, resume,
+             cree_le as "creeLe"
            from signalements where traite_le is null
            union all
-           select 'ticket', id, priorite, 'support', categorie::text, resume, cree_le
+           select 'ticket', id, statut::text, priorite, 'support', categorie::text, resume, cree_le
            from tickets_support where statut <> 'resolu'
          ) f order by priorite, "creeLe" limit 50`,
       )
@@ -84,4 +87,36 @@ export async function reactiverAgent(administrateur: string, agent: string): Pro
     if (modeFile() === "immediat") await executerFile();
   }
   return fait;
+}
+
+/**
+ * Traitement d'un élément de la file humaine (ADR 0033) : un signalement est marqué traité ; un ticket est pris
+ * en charge puis résolu. La base vérifie le rôle, le traitant et l'absence de réouverture.
+ */
+export async function traiterFileHumaine(
+  administrateur: string,
+  nature: string,
+  id: string,
+  decision: string,
+): Promise<boolean> {
+  const requetes: Record<string, string> = {
+    "signalement:traite":
+      "update signalements set traite_le = now(), traite_par = $2 where id = $1 and traite_le is null",
+    "ticket:en_cours":
+      "update tickets_support set statut = 'en_cours', traite_par = $2 where id = $1 and statut = 'ouvert'",
+    "ticket:resolu":
+      "update tickets_support set statut = 'resolu', traite_le = now(), traite_par = $2 where id = $1 and statut <> 'resolu'",
+  };
+  const requete = requetes[`${nature}:${decision}`];
+  if (!requete || !/^[0-9a-f-]{36}$/.test(id)) return false;
+  return avecUtilisateur(administrateur, async (client) => {
+    const { rowCount } = await client.query(requete, [id, administrateur]);
+    if (rowCount)
+      await client.query(
+        `insert into journal_audit (acteur, acteur_empreinte, action, objet_type, objet_id, details)
+         values ('administrateur', $1, $2, $3, $4, '{}')`,
+        [empreinteActeur(administrateur), `${nature}_${decision}`, nature, id],
+      );
+    return (rowCount ?? 0) > 0;
+  });
 }

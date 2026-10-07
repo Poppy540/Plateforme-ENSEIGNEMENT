@@ -2,7 +2,7 @@ import { seDeconnecter } from "../connexion/actions";
 import { formaterUSD } from "@/lib/format";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import { tableauAdministration } from "@/lib/serveur/administration";
-import { reactiver } from "./actions";
+import { reactiver, traiter } from "./actions";
 
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "short", timeStyle: "short" });
 const STATUTS: Record<string, string> = {
@@ -23,7 +23,9 @@ export default async function PageAdministration() {
       <h1>Administration</h1>
       <p className="note">
         Suivi de l&apos;Orchestrateur : état des agents, file humaine (la détresse d&apos;abord),
-        tâches récentes. Seule l&apos;administration réactive un agent suspendu.
+        tâches récentes. Seule l&apos;administration réactive un agent suspendu et traite la file
+        humaine ; une détresse appelle d&apos;abord une action humaine hors de la plateforme
+        (procédure du pilote).
       </p>
 
       <h2>Agents</h2>
@@ -52,7 +54,28 @@ export default async function PageAdministration() {
             <strong>
               {f.priorite === 1 ? "IMMÉDIAT" : `priorité ${f.priorite}`} · {f.nature} · {f.motif}
             </strong>{" "}
-            ({f.source}, {formatDate.format(new Date(f.creeLe))}) — {f.resume}
+            ({f.source}, {formatDate.format(new Date(f.creeLe))}
+            {f.statut === "en_cours" && ", pris en charge"}) — {f.resume}
+            <form action={traiter} className="actions">
+              <input type="hidden" name="nature" value={f.nature} />
+              <input type="hidden" name="id" value={f.id} />
+              {f.nature === "signalement" ? (
+                <button type="submit" name="decision" value="traite" className="secondaire">
+                  Marquer comme traité
+                </button>
+              ) : (
+                <>
+                  {f.statut === "ouvert" && (
+                    <button type="submit" name="decision" value="en_cours" className="secondaire">
+                      Prendre en charge
+                    </button>
+                  )}
+                  <button type="submit" name="decision" value="resolu" className="secondaire">
+                    Marquer comme résolu
+                  </button>
+                </>
+              )}
+            </form>
           </li>
         ))}
       </ol>

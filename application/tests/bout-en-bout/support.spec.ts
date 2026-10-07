@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { executerSql, seConnecter } from "./outils";
+import { creerAdministrateurFictif, executerSql, seConnecter } from "./outils";
 
 const ELEVE = "+999 000 001 01"; // élève de 3e inscrit par les tests du catalogue
 const VISITEUR_EN_INSCRIPTION = "+999 000 001 61";
@@ -82,4 +82,32 @@ test("Support pendant l'inscription : réponse de la FAQ, ticket sans rattacheme
     `select categorie, demandeur_id from tickets_support order by cree_le desc limit 1`,
   );
   expect(ticket).toEqual({ categorie: "autre", demandeur_id: null });
+});
+
+test("administration : la détresse en tête de la file humaine, ticket pris en charge puis résolu", async ({
+  page,
+}) => {
+  const ADMIN = "+999 000 001 62";
+  await creerAdministrateurFictif(ADMIN);
+  await seConnecter(page, ADMIN);
+  await page.goto("/administration");
+  const file = page.locator("ol > li");
+  await expect(file.first()).toContainText("IMMÉDIAT");
+  await expect(file.first()).toContainText("detresse");
+
+  const remboursement = file.filter({ hasText: "Demande de remboursement" });
+  await remboursement.getByRole("button", { name: "Prendre en charge" }).click();
+  await expect(remboursement).toContainText("pris en charge");
+  await remboursement.getByRole("button", { name: "Marquer comme résolu" }).click();
+  await expect(file.filter({ hasText: "Demande de remboursement" })).toHaveCount(0);
+
+  const detresse = file.filter({ hasText: "(agent_support" }).filter({ hasText: "détresse" });
+  await detresse.getByRole("button", { name: "Marquer comme traité" }).click();
+  await expect(detresse).toHaveCount(0);
+  const [etat] = await executerSql(
+    `select (select count(*)::int from tickets_support where statut = 'resolu' and traite_par is not null) as resolus,
+            (select count(*)::int from journal_audit where action = 'ticket_resolu') as audit`,
+  );
+  expect(etat.resolus).toBeGreaterThan(0);
+  expect(etat.audit).toBeGreaterThan(0);
 });
