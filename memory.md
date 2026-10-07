@@ -55,6 +55,7 @@
 
 ## État d'avancement
 
+- 2026-10-07 : Jalon 3, étape 6 faite (simulation) — traitement de la file humaine par l'administration (ADR 0033, migration 0017, tests F01-F02 : signalement traité, ticket pris en charge puis résolu, traitant = personne connectée, pas de réouverture, audit) ; libellés français des motifs et sources dans `/administration` ; correctif : la liste « Ta connexion » revenait à « Je ne sais pas » après enregistrement (formulaire remonté par une clé, test ajouté) ; parcours de démonstration `tests/demo/jalon-3.spec.ts`, 9 captures `docs/demo/jalon-3/` (index dans son README). Batteries simulées : Scénariste, Tuteur, Support conformes ; Professeur (TC-02, TC-09, TC-10, PR-03, PR-06) et Évaluateur (EV-02, EV-03, EV-04) non conformes par naïveté du modèle simulé, comme avant. Tests : 121 unitaires, base passée, 40 de bout en bout. Captures des Jalons 1-2 : ne pas les recommiter quand `pnpm demo:captures` les régénère.
 - 2026-10-06 : Jalon 3, étape 5 faite (modèle simulé) — agent Support/inscription sur le site (ADR 0032) : FAQ dans le pack pays (`referentiels/gabon/faq.yaml`, 9 entrées PROVISOIRES `a_valider`, délai de réponse aux tickets non fixé) ; page `/aide` (FAQ pour tous, assistant pour les personnes connectées, même en cours d'inscription ; 20 questions/jour) ; sortie imposée (action, catégorie, priorité), contrôlée par le serveur ; tickets et signalement de détresse (priorité 1) sous `agent_support` ; codes masqués, conversation non enregistrée. Lanceur `--agent support` (18 scénarios TC + SU, ~4,3 USD réel estimé). Pas de migration. Tests : 121 unitaires, 39 de bout en bout.
 - 2026-10-06 : Jalon 3, étape 4 faite (modèle et messagerie simulés) — rapports aux parents (ADR 0031) : accord séparé demandé par l'élève, accepté par lien à usage unique, révocable (élève ou parent) ; rapport hebdomadaire (exécuteur planifié) et à la demande (1/jour) ; envoi par `service_messagerie` (seul à voir le contact) avec un lien par rapport ; page du parent (rapport, question au Tuteur, nouveau rapport, arrêt). Migration 0016, tests RP01-RP04 ; TU-03/04 convertis (18 scénarios Tuteur, ~7,7 USD réel). Environnement de test : jeton d'exécuteur et URL publique de TEST dans `playwright.config.ts`. Tests : 107 unitaires, 36 de bout en bout.
 
@@ -104,6 +105,6 @@
 
 ## Prochaine étape
 
-Jalon 3, étape 6 : tests et démonstration (lanceur étendu aux trois agents, bout en bout, captures du parcours Tuteur, rapports aux parents, Support, administration).
+Jalon 3, étape 7 : préparation du pilote avec une classe partenaire (documents seulement : procédure, consentements des parents, fiche d'information, procédure de détresse, protocole de retour d'expérience, critères d'arrêt).
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU) ; validation de la FAQ du Support et du délai de réponse aux tickets ; fournisseurs vidéo et budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).

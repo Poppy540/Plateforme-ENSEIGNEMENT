@@ -28,8 +28,14 @@ export function FormulairePreferences({
   frequence: string;
 }) {
   const [etat, action, enCours] = useActionState(enregistrer, undefined);
+  // Après l'envoi, React réinitialise le formulaire : une liste déroulante reviendrait à sa première valeur.
+  // La clé remonte le formulaire avec les valeurs enregistrées.
   return (
-    <form action={action} className="formulaire">
+    <form
+      key={`${minutes}-${connexion}-${rappels}-${frequence}`}
+      action={action}
+      className="formulaire"
+    >
       <label htmlFor="minutes">Temps disponible par jour (minutes)</label>
       <input
         id="minutes"

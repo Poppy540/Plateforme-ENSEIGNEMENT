@@ -16,6 +16,8 @@ test("Tuteur (modèle simulé) : préférences, rappels désactivés par défaut
   await page.getByLabel("Ta connexion").selectOption("lente");
   await page.getByRole("button", { name: "Enregistrer mes préférences" }).click();
   await expect(page.getByRole("status")).toContainText("Préférences enregistrées.");
+  // Les valeurs enregistrées restent affichées après l'envoi (pas de retour à la première option).
+  await expect(page.getByLabel("Ta connexion")).toHaveValue("lente");
 
   await page
     .getByLabel("Un mot pour ton tuteur (facultatif)")

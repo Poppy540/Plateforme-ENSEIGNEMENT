@@ -14,6 +14,34 @@ const STATUTS: Record<string, string> = {
   suspendue: "suspendue (agent)",
 };
 
+// Libellés des motifs de signalement, catégories de ticket et sources (le code brut s'affiche à défaut).
+const MOTIFS: Record<string, string> = {
+  detresse: "détresse",
+  hors_programme: "hors programme",
+  erreur_contenu: "erreur de contenu",
+  demande_reponses: "demande des réponses",
+  contenu_inapproprie: "contenu inapproprié",
+  paiement_suppression: "paiement ou suppression",
+  fraude_plainte: "fraude ou plainte",
+  signalement_contenu: "signalement de contenu",
+  inscription: "inscription",
+  connexion: "connexion",
+  choix_classe_serie: "choix de classe ou de série",
+  utilisation: "utilisation",
+  question_cours: "question de cours",
+  autre: "autre",
+};
+const SOURCES: Record<string, string> = {
+  eleve: "élève",
+  support: "Support",
+  agent_professeur: "Professeur",
+  agent_evaluateur: "Évaluateur",
+  agent_tuteur: "Tuteur",
+  agent_support: "Support",
+  agent_production_video: "Production vidéo",
+  agent_orchestrateur: "Orchestrateur",
+};
+
 export default async function PageAdministration() {
   const administrateur = await exigerAdministrateur();
   const t = await tableauAdministration(administrateur);
@@ -52,9 +80,10 @@ export default async function PageAdministration() {
         {t.fileHumaine.map((f) => (
           <li key={f.id}>
             <strong>
-              {f.priorite === 1 ? "IMMÉDIAT" : `priorité ${f.priorite}`} · {f.nature} · {f.motif}
+              {f.priorite === 1 ? "IMMÉDIAT" : `priorité ${f.priorite}`} · {f.nature} ·{" "}
+              {MOTIFS[f.motif] ?? f.motif}
             </strong>{" "}
-            ({f.source}, {formatDate.format(new Date(f.creeLe))}
+            ({SOURCES[f.source] ?? f.source}, {formatDate.format(new Date(f.creeLe))}
             {f.statut === "en_cours" && ", pris en charge"}) — {f.resume}
             <form action={traiter} className="actions">
               <input type="hidden" name="nature" value={f.nature} />
@@ -81,6 +110,7 @@ export default async function PageAdministration() {
       </ol>
 
       <h2>Tâches récentes</h2>
+      {t.taches.length === 0 && <p>Aucune tâche récente.</p>}
       <ul>
         {t.taches.map((x) => (
           <li key={x.id}>

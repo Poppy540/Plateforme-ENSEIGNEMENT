@@ -93,7 +93,7 @@ test("administration : la détresse en tête de la file humaine, ticket pris en 
   await page.goto("/administration");
   const file = page.locator("ol > li");
   await expect(file.first()).toContainText("IMMÉDIAT");
-  await expect(file.first()).toContainText("detresse");
+  await expect(file.first()).toContainText("détresse");
 
   const remboursement = file.filter({ hasText: "Demande de remboursement" });
   await remboursement.getByRole("button", { name: "Prendre en charge" }).click();
@@ -101,7 +101,9 @@ test("administration : la détresse en tête de la file humaine, ticket pris en 
   await remboursement.getByRole("button", { name: "Marquer comme résolu" }).click();
   await expect(file.filter({ hasText: "Demande de remboursement" })).toHaveCount(0);
 
-  const detresse = file.filter({ hasText: "(agent_support" }).filter({ hasText: "détresse" });
+  const detresse = file
+    .filter({ hasText: "signalement · détresse" })
+    .filter({ hasText: "(Support" });
   await detresse.getByRole("button", { name: "Marquer comme traité" }).click();
   await expect(detresse).toHaveCount(0);
   const [etat] = await executerSql(
