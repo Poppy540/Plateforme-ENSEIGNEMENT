@@ -2,7 +2,7 @@
 
 **Objectif (prompt maître §7)** : agents Tuteur, Support/inscription et Orchestrateur ; pilote avec une classe partenaire.
 
-**Statut** : validé par le propriétaire le 2026-10-06 (décisions ci-dessous, ADR 0027). Étape 1 faite (ADR 0028). Étape 2 faite (ADR 0029). Étape 3 faite, modèle simulé (ADR 0030). Étape 4 faite, messagerie simulée (ADR 0031). Étape 5 faite, site seulement, modèle simulé (ADR 0032). Étape 6 faite : traitement de la file humaine (ADR 0033), captures `docs/demo/jalon-3/`. Tout se construit **en simulation** (modèle simulé, messagerie simulée, aucun fournisseur) tant que la clé API et les fournisseurs ne sont pas disponibles. Le pilote avec de vrais élèves n'aura lieu qu'après les conditions de l'étape 7.
+**Statut** : validé par le propriétaire le 2026-10-06 (décisions ci-dessous, ADR 0027). Étape 1 faite (ADR 0028). Étape 2 faite (ADR 0029). Étape 3 faite, modèle simulé (ADR 0030). Étape 4 faite, messagerie simulée (ADR 0031). Étape 5 faite, site seulement, modèle simulé (ADR 0032). Étape 6 faite : traitement de la file humaine (ADR 0033), captures `docs/demo/jalon-3/`. Étape 7 faite (documents seulement) : `docs/pilote/`, 12 conditions préalables, dont 3 à construire (alerte de détresse, suspension effective des agents, interrupteur d'accès). Tout se construit **en simulation** (modèle simulé, messagerie simulée, aucun fournisseur) tant que la clé API et les fournisseurs ne sont pas disponibles. Le pilote avec de vrais élèves n'aura lieu qu'après les conditions de l'étape 7.
 
 ## Étapes
 

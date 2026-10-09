@@ -24,7 +24,7 @@ Tout ce qui dépend d'un système éducatif vit dans `referentiels/<pays>/`, **j
 ```
 CLAUDE.md, memory.md      résumé du projet / mémoire de travail
 application/              application web Next.js (PWA)
-docs/                     cadrage.md, prompt-claude-code.md, decisions/ (ADR), recrutement/
+docs/                     cadrage.md, prompt-claude-code.md, decisions/ (ADR), plans/, bilans/, demo/, pilote/, recrutement/
 agents/<agent>/           prompt.md (recopié du cadrage), permissions.md, skills/, tests/*.feature
 referentiels/<pays>/      pack pays (gabon/ = pilote) ; _modele/ pour un nouveau pays
 secrets/                  modèles *.env.example uniquement ; vrais .env ignorés et interdits en lecture
