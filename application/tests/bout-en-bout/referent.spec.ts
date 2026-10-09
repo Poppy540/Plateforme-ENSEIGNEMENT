@@ -420,7 +420,7 @@ test("Orchestrateur : agent suspendu, production mise en attente ; l'administrat
   expect(taches).toEqual([{ statut: "terminee", approuvee: true }]);
   // Journal d'audit pseudonymisé : aucune trace de l'identifiant en clair.
   const audit = await executerSql(
-    "select acteur, acteur_empreinte from journal_audit where action = 'reactivation_agent'",
+    "select acteur, acteur_empreinte from journal_audit where action = 'reactivation_agent' and details->>'agent' = 'production_video'",
   );
   expect(audit).toHaveLength(1);
   expect(audit[0].acteur).toBe("administrateur");

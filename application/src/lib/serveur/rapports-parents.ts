@@ -10,6 +10,7 @@ import {
   type ReponseParent,
 } from "@/lib/agents/tuteur/rapport";
 import { avecAgentTuteur, avecServiceMessagerie, avecUtilisateur, avecVisiteur } from "./base";
+import { agentSuspendu, MESSAGE_AGENT_SUSPENDU } from "./disponibilite";
 import { envoyerMessage } from "./messagerie";
 import { modeleDesAgents } from "./professeur";
 import { parametresTuteur } from "./tuteur";
@@ -134,6 +135,7 @@ export async function preparerEtEnvoyerRapport(
   periode: "hebdomadaire" | "a_la_demande",
   urlDuSite: string,
 ): Promise<ResultatRapport> {
+  if (await agentSuspendu("tuteur")) return { ok: false, erreur: MESSAGE_AGENT_SUSPENDU };
   const donnees = await faitsDeLaSemaine(eleve);
   if (!donnees) return { ok: false, erreur: "Élève introuvable." };
   const resultat = await genererRapport({
@@ -175,6 +177,8 @@ export async function preparerEtEnvoyerRapport(
 
 /** Rapports hebdomadaires dus (appel planifié). Renvoie le nombre de rapports envoyés. */
 export async function envoyerRapportsHebdomadaires(urlDuSite: string): Promise<number> {
+  // Tuteur suspendu : les rapports dus partiront au premier passage après sa réactivation.
+  if (await agentSuspendu("tuteur")) return 0;
   const dus = await avecAgentTuteur(null, (client) =>
     client
       .query("select eleve_id, consentement_id from rapports_hebdomadaires_dus()")
@@ -260,6 +264,7 @@ export async function questionDuParent(
   const texte = question.trim();
   if (!texte || texte.length > LONGUEUR_QUESTION_MAX)
     return { ok: false, erreur: `Question de 1 à ${LONGUEUR_QUESTION_MAX} caractères.` };
+  if (await agentSuspendu("tuteur")) return { ok: false, erreur: MESSAGE_AGENT_SUSPENDU };
   const l = await ligneParJeton(jeton);
   if (!l) return { ok: false, erreur: "Lien invalide." };
   // Le pays vient toujours du compte de l'élève ; les faits ne sont transmis qu'avec un accord actif.

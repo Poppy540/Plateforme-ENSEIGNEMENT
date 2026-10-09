@@ -2,7 +2,7 @@ import { seDeconnecter } from "../connexion/actions";
 import { formaterUSD } from "@/lib/format";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import { tableauAdministration } from "@/lib/serveur/administration";
-import { reactiver, traiter } from "./actions";
+import { basculerAccesEleves, reactiver, traiter } from "./actions";
 
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "short", timeStyle: "short" });
 const STATUTS: Record<string, string> = {
@@ -54,6 +54,45 @@ export default async function PageAdministration() {
         tâches récentes. Seule l&apos;administration réactive un agent suspendu et traite la file
         humaine ; une détresse appelle d&apos;abord une action humaine hors de la plateforme
         (procédure du pilote).
+      </p>
+
+      <h2>Accès des élèves</h2>
+      <p role="status">
+        {t.accesEleves.ouvert ? (
+          <>
+            Accès des élèves : <strong>ouvert</strong>
+          </>
+        ) : (
+          <>
+            Accès des élèves : <strong>fermé</strong> depuis le{" "}
+            {formatDate.format(new Date(t.accesEleves.majLe))}
+            {t.accesEleves.motif && <> — {t.accesEleves.motif}</>}
+          </>
+        )}
+      </p>
+      <form action={basculerAccesEleves} className="formulaire">
+        {t.accesEleves.ouvert ? (
+          <>
+            <input type="hidden" name="ouvert" value="non" />
+            <label htmlFor="motif">Motif (interne, jamais montré aux élèves)</label>
+            <input id="motif" name="motif" maxLength={500} />
+            <div className="actions">
+              <button type="submit">Fermer l&apos;accès des élèves</button>
+            </div>
+          </>
+        ) : (
+          <>
+            <input type="hidden" name="ouvert" value="oui" />
+            <div className="actions">
+              <button type="submit">Rouvrir l&apos;accès des élèves</button>
+            </div>
+          </>
+        )}
+      </form>
+      <p className="note">
+        Fermé : espace élève, cours, quiz, plan, assistant d&apos;aide et inscriptions affichent un
+        message neutre ; « Mes données » reste accessible. Un agent suspendu ne répond plus à
+        personne.
       </p>
 
       <h2>Agents</h2>

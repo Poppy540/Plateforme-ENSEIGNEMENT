@@ -1,6 +1,7 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import { contexteEleve } from "./catalogue";
+import { exigerAccesEleves } from "./disponibilite";
 import { noterActivite } from "./mes-donnees";
 import { utilisateurConnecte } from "./session";
 
@@ -11,6 +12,7 @@ export async function exigerEleveActif(): Promise<string> {
   const eleve = await contexteEleve(utilisateur);
   if (!eleve) redirect("/inscription");
   if (eleve.statut !== "actif") redirect("/espace");
+  await exigerAccesEleves();
   await noterActivite(utilisateur);
   return utilisateur;
 }

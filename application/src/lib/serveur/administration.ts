@@ -7,6 +7,7 @@ import { empreinteActeur, executerFile } from "./orchestrateur";
 // Les règles d'accès de la base réservent ces lectures et la réactivation d'un agent à l'administration.
 
 export interface TableauAdministration {
+  accesEleves: { ouvert: boolean; motif: string | null; majLe: string };
   agents: { agent: string; suspendu: boolean; motif: string | null; majLe: string }[];
   fileHumaine: {
     nature: "signalement" | "ticket";
@@ -58,7 +59,10 @@ export function tableauAdministration(administrateur: string): Promise<TableauAd
          from taches order by cree_le desc limit 30`,
       )
     ).rows;
-    return { agents, fileHumaine, taches } as TableauAdministration;
+    const accesEleves = (
+      await client.query(`select ouvert, motif, maj_le as "majLe" from acces_eleves`)
+    ).rows[0];
+    return { accesEleves, agents, fileHumaine, taches } as TableauAdministration;
   });
 }
 
@@ -116,6 +120,31 @@ export async function traiterFileHumaine(
         `insert into journal_audit (acteur, acteur_empreinte, action, objet_type, objet_id, details)
          values ('administrateur', $1, $2, $3, $4, '{}')`,
         [empreinteActeur(administrateur), `${nature}_${decision}`, nature, id],
+      );
+    return (rowCount ?? 0) > 0;
+  });
+}
+
+/** Interrupteur d'accès des élèves (ADR 0034) : administration seulement (vérifié par la base), audité. */
+export async function changerAccesEleves(
+  administrateur: string,
+  ouvert: boolean,
+  motif: string | null,
+): Promise<boolean> {
+  return avecUtilisateur(administrateur, async (client) => {
+    const { rowCount } = await client.query(
+      `update acces_eleves set ouvert = $1, motif = $2, maj_le = now(), maj_par = $3
+       where ouvert is distinct from $1`,
+      [ouvert, ouvert ? null : (motif?.slice(0, 500) ?? null), administrateur],
+    );
+    if (rowCount)
+      await client.query(
+        `insert into journal_audit (acteur, acteur_empreinte, action, objet_type, details)
+         values ('administrateur', $1, $2, 'acces_eleves', '{}')`,
+        [
+          empreinteActeur(administrateur),
+          ouvert ? "ouverture_acces_eleves" : "fermeture_acces_eleves",
+        ],
       );
     return (rowCount ?? 0) > 0;
   });

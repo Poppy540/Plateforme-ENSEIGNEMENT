@@ -2,7 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
-import { reactiverAgent, traiterFileHumaine } from "@/lib/serveur/administration";
+import {
+  changerAccesEleves,
+  reactiverAgent,
+  traiterFileHumaine,
+} from "@/lib/serveur/administration";
 
 export async function reactiver(donnees: FormData): Promise<void> {
   const administrateur = await exigerAdministrateur();
@@ -17,6 +21,16 @@ export async function traiter(donnees: FormData): Promise<void> {
     String(donnees.get("nature") ?? ""),
     String(donnees.get("id") ?? ""),
     String(donnees.get("decision") ?? ""),
+  );
+  revalidatePath("/administration");
+}
+
+export async function basculerAccesEleves(donnees: FormData): Promise<void> {
+  const administrateur = await exigerAdministrateur();
+  await changerAccesEleves(
+    administrateur,
+    donnees.get("ouvert") === "oui",
+    String(donnees.get("motif") ?? "").trim() || null,
   );
   revalidatePath("/administration");
 }

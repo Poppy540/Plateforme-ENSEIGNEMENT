@@ -32,7 +32,7 @@ Le pilote ne commence qu'une fois chaque ligne cochée par le propriétaire, ave
 | 9 | **Équipe de veille** nommée, avec contacts d'urgence locaux complétés dans [procedure-detresse.md](procedure-detresse.md) | Tableau rempli | ☐ |
 | 10 | **Valeurs provisoires validées** : FAQ du Support, délai de réponse aux tickets, durées de conservation, fiches des agents dans le pack | `statut` mis à jour dans le pack et `SOURCES.md` | ☐ |
 | 11 | **Budget du pilote** approuvé (modèles de langage, SMS, hébergement), avec le plafond journalier de l'Orchestrateur (`COUT_JOUR_MAX_AGENT_USD`) | Accord écrit du propriétaire | ☐ |
-| 12 | **Suspension effective** : un agent suspendu dans `/administration` cesse de répondre aux élèves (aujourd'hui, seules les tâches en file sont bloquées) ; interrupteur pour fermer l'accès des élèves du pilote avec un message neutre. *À construire* | Tests de bout en bout |
+| 12 | **Suspension effective** : un agent suspendu cesse de répondre ; interrupteur d'accès des élèves avec message neutre. *Construit (ADR 0034)* ; reste à l'essayer sur l'hébergement réel | Tests de bout en bout ; essai sur le site déployé |
 
 ## Ce qui reste hors du pilote
 

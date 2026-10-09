@@ -10,6 +10,7 @@ import {
   type SortieScenariste,
 } from "@/lib/agents/scenariste/script";
 import { avecAgentScenariste, avecUtilisateur } from "./base";
+import { agentSuspendu, MESSAGE_AGENT_SUSPENDU } from "./disponibilite";
 import { modeleDesAgents } from "./professeur";
 import { deciderContenu } from "./validation";
 
@@ -54,6 +55,7 @@ export async function genererBrouillonScript(
     revisionDe?: string;
   },
 ): Promise<ResultatBrouillon> {
+  if (await agentSuspendu("scenariste")) return { ok: false, erreur: MESSAGE_AGENT_SUSPENDU };
   if (demande.revisionDe !== undefined && !/^[0-9a-f-]{36}$/.test(demande.revisionDe))
     return { ok: false, erreur: "Script inconnu." };
   if (demande.revisionDe && !demande.consigne)

@@ -12,6 +12,7 @@ import { repondre, type ParametresModele } from "@/lib/agents/professeur/boucle"
 import { prioriteSignalement, type AppelOutil } from "@/lib/agents/professeur/outils";
 import { avecAgentProfesseur, avecUtilisateur } from "./base";
 import { simulationAutorisee } from "./configuration";
+import { accesElevesOuvert, agentSuspendu, MESSAGE_AGENT_SUSPENDU } from "./disponibilite";
 
 // Agent Professeur côté serveur : contexte vérifié, outils exécutés sous le rôle agent_professeur,
 // échanges conservés, quota quotidien. Aucun contenu de conversation n'est écrit dans les journaux.
@@ -115,6 +116,8 @@ export async function poserQuestion(
   contexte: ContexteChapitre,
   question: string,
 ): Promise<ResultatQuestion> {
+  if (!(await accesElevesOuvert()) || (await agentSuspendu("professeur")))
+    return { ok: false, statut: 503, erreur: MESSAGE_AGENT_SUSPENDU };
   const agent = { eleveId: contexte.eleveId, uniteId: contexte.uniteId };
   const limite = entier("QUESTIONS_PAR_JOUR", 40);
 

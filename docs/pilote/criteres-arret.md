@@ -2,7 +2,10 @@
 
 **Statut** : proposition de Claude Code, à valider par le propriétaire. Toute personne de l'équipe peut **demander** une suspension ; le propriétaire décide.
 
-**Moyens de suspension — état actuel** : la suspension d'un agent dans `/administration` (ou par l'Orchestrateur en cas de coût anormal) **ne bloque aujourd'hui que les tâches en file** (production vidéo). Le Professeur, le Tuteur, le Support et l'Évaluateur répondent encore aux élèves, et il n'existe pas d'interrupteur général. C'est la **condition préalable n° 12** : chaque agent en contact avec les élèves doit refuser de répondre quand il est suspendu, et l'administration doit pouvoir fermer l'accès des élèves du pilote avec un message neutre.
+**Moyens de suspension** (ADR 0034), dans `/administration` :
+
+- **Suspendre un agent** (l'Orchestrateur le fait aussi seul en cas de coût anormal) : il ne répond plus à personne, avec un message neutre ; « Réactiver » le remet en service.
+- **Fermer l'accès des élèves** : espace élève, cours, quiz, plan, aide et inscriptions affichent « La plateforme est momentanément indisponible » ; « Mes données » reste accessible. Le motif saisi reste interne. Pour arrêter aussi les rapports aux parents, suspendre le Tuteur.
 
 ## Suspension immédiate (avant toute analyse)
 
@@ -34,4 +37,4 @@ Une reprise après suspension exige : cause identifiée, correction faite **et t
 
 ## Garder les élèves informés
 
-À chaque suspension, un message court et neutre est affiché (« La plateforme est momentanément indisponible ») ; l'établissement est prévenu. Aucune information sur un élève n'est communiquée à d'autres.
+À chaque suspension, le message court et neutre de la plateforme s'affiche (« La plateforme est momentanément indisponible ») ; l'établissement est prévenu. Aucune information sur un élève n'est communiquée à d'autres.

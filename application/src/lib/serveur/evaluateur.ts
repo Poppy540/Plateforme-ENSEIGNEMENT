@@ -21,6 +21,7 @@ import {
 } from "@/lib/agents/evaluateur/quiz";
 import type { ParametresModele } from "@/lib/agents/professeur/boucle";
 import { avecAgentEvaluateur, avecUtilisateur } from "./base";
+import { accesElevesOuvert, agentSuspendu, MESSAGE_AGENT_SUSPENDU } from "./disponibilite";
 import { modeleDesAgents, type ContexteChapitre } from "./professeur";
 import { deciderContenu } from "./validation";
 
@@ -111,6 +112,7 @@ export async function genererBrouillonQuiz(
     revisionDe?: string;
   },
 ): Promise<ResultatBrouillonQuiz> {
+  if (await agentSuspendu("evaluateur")) return { ok: false, erreur: MESSAGE_AGENT_SUSPENDU };
   if (!UUID.test(demande.chapitreId)) return { ok: false, erreur: "Chapitre inconnu." };
   if (demande.revisionDe !== undefined && !UUID.test(demande.revisionDe))
     return { ok: false, erreur: "Quiz inconnu." };
@@ -496,6 +498,9 @@ export async function soumettreQuiz(
   reponses: (number | string | null)[],
 ): Promise<ResultatSoumission> {
   if (!UUID.test(quizId)) return { ok: false, erreur: "Quiz inconnu." };
+  // Rien n'est enregistré : l'élève pourra faire le quiz quand le service reviendra.
+  if (!(await accesElevesOuvert()) || (await agentSuspendu("evaluateur")))
+    return { ok: false, erreur: MESSAGE_AGENT_SUSPENDU };
   const agent = { eleveId: contexte.eleveId, uniteId: contexte.uniteId };
   const etat = await avecAgentEvaluateur(agent, async (client) => {
     const { rows } = await client.query(
@@ -603,6 +608,8 @@ export async function contesterCorrection(
 ): Promise<ResultatContestation> {
   const texte = message.trim();
   if (!texte) return { ok: false, erreur: "Explique pourquoi tu contestes la correction." };
+  if (!(await accesElevesOuvert()) || (await agentSuspendu("evaluateur")))
+    return { ok: false, erreur: MESSAGE_AGENT_SUSPENDU };
   if (texte.length > 1000)
     return { ok: false, erreur: "Message trop long (1000 caractères au plus)." };
   const quiz = await quizPourEleve(contexte);

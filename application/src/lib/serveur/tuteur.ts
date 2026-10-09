@@ -4,6 +4,7 @@ import type { ParametresModele } from "@/lib/agents/professeur/boucle";
 import { candidatsDeRevision, type ChapitreParcours } from "@/lib/agents/tuteur/analyse";
 import { controlerPlan, genererPlan, type PlanTuteur } from "@/lib/agents/tuteur/plan";
 import { avecAgentTuteur, avecUtilisateur } from "./base";
+import { accesElevesOuvert, agentSuspendu, MESSAGE_AGENT_SUSPENDU } from "./disponibilite";
 import { modeleDesAgents } from "./professeur";
 
 // Agent Tuteur côté serveur (ADR 0030) : analyse déterministe du parcours (graphe de prérequis validé),
@@ -159,6 +160,8 @@ export async function mettreAJourPlan(
   eleve: string,
   message: string | null,
 ): Promise<ResultatPlan> {
+  if (!(await accesElevesOuvert()) || (await agentSuspendu("tuteur")))
+    return { ok: false, erreur: MESSAGE_AGENT_SUSPENDU };
   if (message && message.length > LONGUEUR_MESSAGE_MAX)
     return { ok: false, erreur: `Message trop long (${LONGUEUR_MESSAGE_MAX} caractères au plus).` };
   const limite = entier("PLANS_PAR_JOUR", 3);

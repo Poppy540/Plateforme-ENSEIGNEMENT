@@ -10,6 +10,7 @@ import {
   type ReponseSupport,
 } from "@/lib/agents/support/reponse";
 import { avecAgentSupport, avecUtilisateur, avecVisiteur } from "./base";
+import { accesElevesOuvert, agentSuspendu, MESSAGE_AGENT_SUSPENDU } from "./disponibilite";
 import { modeleDesAgents } from "./professeur";
 
 // Agent Support/inscription sur le site (ADR 0027, 0032) : réponse à partir de la FAQ validée du pack pays ;
@@ -97,6 +98,8 @@ export async function questionAuSupport(
   const texte = message.trim();
   if (!texte || texte.length > LONGUEUR_MESSAGE_MAX)
     return { ok: false, erreur: `Message de 1 à ${LONGUEUR_MESSAGE_MAX} caractères.` };
+  if (!(await accesElevesOuvert()) || (await agentSuspendu("support")))
+    return { ok: false, erreur: MESSAGE_AGENT_SUSPENDU };
   const jour = new Date().toISOString().slice(0, 10);
   const c = compteur.get(utilisateur);
   const n = c && c.jour === jour ? c.n : 0;

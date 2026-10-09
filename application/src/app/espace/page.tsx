@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { seDeconnecter } from "../connexion/actions";
 import { profilEleve } from "@/lib/serveur/requetes";
 import { roleCompte } from "@/lib/serveur/referent";
+import { exigerAccesEleves } from "@/lib/serveur/disponibilite";
 import { noterActivite } from "@/lib/serveur/mes-donnees";
 import { utilisateurConnecte } from "@/lib/serveur/session";
 
@@ -14,6 +15,7 @@ export default async function PageEspace() {
   if (role === "administrateur") redirect("/administration");
   const profil = await profilEleve(utilisateur);
   if (!profil) redirect("/inscription");
+  await exigerAccesEleves();
   await noterActivite(utilisateur);
 
   return (

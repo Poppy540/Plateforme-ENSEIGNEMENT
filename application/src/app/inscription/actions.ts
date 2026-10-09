@@ -6,6 +6,7 @@ import { normaliserEmail, normaliserTelephone } from "@/lib/identifiants";
 import { urlPublique } from "@/lib/serveur/configuration";
 import { envoyerMessage } from "@/lib/serveur/messagerie";
 import { aUnProfil, inscrire, messageErreurMetier } from "@/lib/serveur/requetes";
+import { exigerAccesEleves } from "@/lib/serveur/disponibilite";
 import { utilisateurConnecte } from "@/lib/serveur/session";
 
 export type EtatInscription =
@@ -24,6 +25,7 @@ export async function sInscrire(
   const utilisateur = await utilisateurConnecte();
   if (!utilisateur) redirect("/connexion");
   if (await aUnProfil(utilisateur)) redirect("/espace");
+  await exigerAccesEleves();
 
   const prenom = champ(donnees, "prenom");
   const referentiel = champ(donnees, "referentiel");

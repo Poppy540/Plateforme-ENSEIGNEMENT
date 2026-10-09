@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { utilisateurConnecte } from "@/lib/serveur/session";
+import { accesElevesOuvert } from "@/lib/serveur/disponibilite";
 import { faqDuSite, LONGUEUR_MESSAGE_MAX } from "@/lib/serveur/support";
 import { FormulaireAide } from "./formulaire";
 
 export default async function PageAide() {
   const utilisateur = await utilisateurConnecte();
   const faq = await faqDuSite(utilisateur);
+  const ouvert = await accesElevesOuvert();
 
   return (
     <main className="conteneur">
@@ -30,7 +32,9 @@ export default async function PageAide() {
       )}
 
       <h2>Poser une question</h2>
-      {utilisateur ? (
+      {!ouvert ? (
+        <p role="status">L&apos;assistant d&apos;aide est momentanément indisponible.</p>
+      ) : utilisateur ? (
         <>
           <p className="note">
             L&apos;assistant d&apos;aide est une intelligence artificielle. Il répond à partir des
