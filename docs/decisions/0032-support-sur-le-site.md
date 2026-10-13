@@ -19,5 +19,5 @@
 
 - WhatsApp Business plus tard : fournisseur, coûts et modèles de messages à faire approuver.
 - Le traitement des tickets par un humain (liste, réponse, clôture) sera ajouté à l'administration ; en attendant, les tickets sont en base.
-- Le quota de questions est tenu en mémoire du serveur. Il sera à reprendre en base avant un déploiement à plusieurs instances.
+- Le quota de questions, d'abord tenu en mémoire du serveur, est en base depuis l'ADR 0036.
 - La FAQ et le délai de réponse aux tickets sont à valider par le propriétaire.

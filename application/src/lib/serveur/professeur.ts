@@ -12,6 +12,7 @@ import { repondre, type ParametresModele } from "@/lib/agents/professeur/boucle"
 import { prioriteSignalement, type AppelOutil } from "@/lib/agents/professeur/outils";
 import { avecAgentProfesseur, avecUtilisateur } from "./base";
 import { simulationAutorisee } from "./configuration";
+import { alerterVeilleSansAttendre } from "./veille";
 import { accesElevesOuvert, agentSuspendu, MESSAGE_AGENT_SUSPENDU } from "./disponibilite";
 
 // Agent Professeur côté serveur : contexte vérifié, outils exécutés sous le rôle agent_professeur,
@@ -171,8 +172,8 @@ export async function poserQuestion(
   }));
   const contexteSession = `# CONTEXTE DE LA SESSION\nChapitre en cours : « ${contexte.chapitreTitre} ».`;
 
-  const executerOutil = (appel: AppelOutil) =>
-    avecAgentProfesseur(agent, async (client) => {
+  const executerOutil = async (appel: AppelOutil) => {
+    const reponse = await avecAgentProfesseur(agent, async (client) => {
       if (appel.nom === "enregistrer_progression") {
         await client.query(
           `insert into progression (eleve_id, chapitre_id, statut) values ($1, $2, $3)
@@ -194,6 +195,10 @@ export async function poserQuestion(
       );
       return "Signalement transmis à un humain.";
     });
+    // Après la transaction (signalement enregistré) : la veille est prévenue sans attendre l'exécuteur.
+    if (appel.nom !== "enregistrer_progression") await alerterVeilleSansAttendre();
+    return reponse;
+  };
 
   const encodeur = new TextEncoder();
   const flux = new ReadableStream<Uint8Array>({

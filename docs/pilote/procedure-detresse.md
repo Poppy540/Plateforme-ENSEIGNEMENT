@@ -22,7 +22,7 @@ La base place toujours une détresse en priorité 1, en tête de la file (« IMM
 | Jours scolaires, [7 h – 20 h] | **2 heures** au plus |
 | Nuit, week-end, vacances | Dès la première veille suivante, et au plus **12 heures** |
 
-Ces délais supposent l'**alerte automatique** de la personne de veille (condition préalable n° 8), qui n'existe pas encore.
+Ces délais reposent sur l'**alerte automatique** de la personne de veille (condition préalable n° 8, ADR 0036) : message sans donnée d'élève dès l'arrivée du signalement, puis relance toutes les 2 heures tant qu'il n'est pas pris en charge. Elle est construite avec un envoi simulé ; le fournisseur réel reste à brancher.
 
 ## Étapes
 

@@ -14,6 +14,7 @@ import { lirePack, type PackPays } from "@/lib/pack-pays/lecture";
 import { avecAgentOrchestrateur } from "./base";
 import { coutJourMaxUSD, modeFile, selAudit } from "./configuration";
 import { executerProduction, type ScriptAProduire } from "./production-video";
+import { alerterVeilleSansAttendre } from "./veille";
 
 // Orchestrateur programmé (ADR 0027, 0029) : il reçoit des demandes structurées par le serveur, les route,
 // vérifie les approbations dans la base, crée et exécute les tâches, coupe les boucles, suspend un agent au
@@ -60,6 +61,7 @@ async function alerter(resume: string, priorite: 1 | 2 | 3 = 2) {
       [priorite, resume.slice(0, 2000)],
     ),
   );
+  if (priorite === 1) await alerterVeilleSansAttendre();
 }
 
 async function approbationsEnregistrees(objet: string, id: string): Promise<ApprobationEnBase[]> {

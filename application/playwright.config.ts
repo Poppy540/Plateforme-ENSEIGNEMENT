@@ -28,6 +28,8 @@ export default defineConfig({
       // Valeurs de TEST uniquement (aucun secret réel) : exécuteur planifié et liens envoyés.
       JETON_EXECUTEUR: "jeton-de-test-uniquement-pas-un-secret-0000",
       URL_PUBLIQUE: "http://localhost:3100",
+      // Contact FICTIF de l'équipe de veille (alertes de priorité 1, ADR 0036).
+      CONTACTS_VEILLE: "+999 900 000 01",
       URL_BASE_DONNEES: "postgresql://serveur_application@127.0.0.1:54330/postgres",
     },
   },

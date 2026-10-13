@@ -4,6 +4,7 @@ import type { ParametresModele } from "@/lib/agents/professeur/boucle";
 import { candidatsDeRevision, type ChapitreParcours } from "@/lib/agents/tuteur/analyse";
 import { controlerPlan, genererPlan, type PlanTuteur } from "@/lib/agents/tuteur/plan";
 import { avecAgentTuteur, avecUtilisateur } from "./base";
+import { alerterVeilleSansAttendre } from "./veille";
 import { accesElevesOuvert, agentSuspendu, MESSAGE_AGENT_SUSPENDU } from "./disponibilite";
 import { modeleDesAgents } from "./professeur";
 
@@ -255,6 +256,7 @@ export async function mettreAJourPlan(
         ],
       );
   });
+  if (signal) await alerterVeilleSansAttendre();
   return { ok: true };
 }
 

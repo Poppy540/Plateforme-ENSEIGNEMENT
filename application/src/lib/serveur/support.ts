@@ -10,6 +10,7 @@ import {
   type ReponseSupport,
 } from "@/lib/agents/support/reponse";
 import { avecAgentSupport, avecUtilisateur, avecVisiteur } from "./base";
+import { alerterVeilleSansAttendre } from "./veille";
 import { accesElevesOuvert, agentSuspendu, MESSAGE_AGENT_SUSPENDU } from "./disponibilite";
 import { modeleDesAgents } from "./professeur";
 
@@ -19,7 +20,6 @@ import { modeleDesAgents } from "./professeur";
 
 export const LONGUEUR_MESSAGE_MAX = 1000;
 const QUESTIONS_PAR_JOUR = 20;
-const compteur = new Map<string, { jour: string; n: number }>();
 
 function entier(nom: string, defaut: number): number {
   const v = Number(process.env[nom]);
@@ -100,12 +100,16 @@ export async function questionAuSupport(
     return { ok: false, erreur: `Message de 1 à ${LONGUEUR_MESSAGE_MAX} caractères.` };
   if (!(await accesElevesOuvert()) || (await agentSuspendu("support")))
     return { ok: false, erreur: MESSAGE_AGENT_SUSPENDU };
-  const jour = new Date().toISOString().slice(0, 10);
-  const c = compteur.get(utilisateur);
-  const n = c && c.jour === jour ? c.n : 0;
-  if (n >= entier("QUESTIONS_SUPPORT_PAR_JOUR", QUESTIONS_PAR_JOUR))
+  // Quota tenu en base (ADR 0036) : valable même avec plusieurs instances du serveur.
+  const dansLeQuota = await avecAgentSupport(utilisateur, (client) =>
+    client
+      .query("select prendre_quota_support($1) as ok", [
+        entier("QUESTIONS_SUPPORT_PAR_JOUR", QUESTIONS_PAR_JOUR),
+      ])
+      .then((r) => r.rows[0].ok as boolean),
+  );
+  if (!dansLeQuota)
     return { ok: false, erreur: "Tu as posé beaucoup de questions aujourd'hui. Reviens demain." };
-  compteur.set(utilisateur, { jour, n: n + 1 });
 
   const ctx = await contexte(utilisateur);
   if (!ctx) return { ok: false, erreur: "Aide indisponible pour le moment." };
@@ -164,6 +168,7 @@ export async function questionAuSupport(
         ],
       ),
     );
+  if (ticket || r.categorie === "detresse") await alerterVeilleSansAttendre();
   return {
     ok: true,
     reponse: r.reponse,

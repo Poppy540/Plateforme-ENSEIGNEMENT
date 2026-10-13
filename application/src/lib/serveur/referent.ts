@@ -1,5 +1,7 @@
 import "server-only";
 import { DatabaseError } from "pg";
+import { dossierPack, racineDepot } from "@/lib/agents/chargeur-prompt";
+import { libellesFamilles } from "@/lib/pack-pays/lecture";
 import { avecUtilisateur } from "./base";
 
 // Espace enseignant-référent : les règles d'accès ne lui montrent que les chapitres de ses familles de matières.
@@ -41,12 +43,19 @@ export function tableauReferent(utilisateur: string): Promise<TableauReferent> {
     const prenom = (
       await client.query("select prenom_ou_pseudo from profils where id = $1", [utilisateur])
     ).rows[0]?.prenom_ou_pseudo;
+    // Libellé lu dans le pack du pays de chaque référentiel (code brut si le pack ne le donne pas).
     const familles = (
       await client.query(
-        "select famille from referents_familles where referent_id = $1 order by famille",
+        `select rf.famille, r.pays_code from referents_familles rf
+         join referentiels r on r.id = rf.referentiel_id
+         where rf.referent_id = $1 order by rf.famille`,
         [utilisateur],
       )
-    ).rows.map((r) => r.famille as string);
+    ).rows.map(
+      (r) =>
+        libellesFamilles(dossierPack(racineDepot(), r.pays_code))[r.famille as string] ??
+        (r.famille as string),
+    );
     const aValider = (
       await client.query(
         `select c.id, c.titre, c.ordre, c.version, u.code as unite, coalesce(u.libelle_local, m.libelle) as matiere,

@@ -1,6 +1,6 @@
 # Plan du Jalon 4 — montée en charge
 
-**Statut** : validé par le propriétaire le 2026-10-13 (décisions ci-dessous, ADR 0035). Aucune étape commencée.
+**Statut** : validé par le propriétaire le 2026-10-13 (décisions ci-dessous, ADR 0035). Étape 0 faite (alerte de veille simulée, quota en base, libellés des familles ; ADR 0036).
 
 **Objectif (prompt maître §7, point 5)** : « Ensuite seulement : autres unités, Coordinateurs de famille (dès qu'une famille compte plusieurs unités), Recruteur, second pays. » Les trois derniers agents du cadrage (Conformité programme, Coordinateur de famille, Recruteur) sont construits. La plateforme passe d'une unité à une famille complète, et sa portabilité vers un autre pays est démontrée.
 

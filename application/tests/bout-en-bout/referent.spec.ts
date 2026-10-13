@@ -27,7 +27,7 @@ test("un enseignant active son accès référent avec son code d'invitation", as
   await page.getByRole("button", { name: "Activer mon accès" }).click();
   await expect(page).toHaveURL(/\/referent$/);
   await expect(page.getByRole("heading", { name: "Espace enseignant-référent" })).toBeVisible();
-  await expect(page.getByText("mathematiques")).toBeVisible();
+  await expect(page.getByText("Mathématiques", { exact: true })).toBeVisible();
 });
 
 test("le référent rejette sans commentaire : refusé ; puis valide un chapitre, visible ensuite par les élèves", async ({

@@ -58,6 +58,24 @@ test("Support (modèle simulé) : code refusé, remboursement escaladé, questio
   );
   expect(alerte).toEqual({ priorite: 1, motif: "detresse", ticket: 1 });
 
+  // L'équipe de veille est prévenue tout de suite, par un message sans aucune donnée d'élève.
+  await page.goto("/developpement/messages");
+  const alertes = page.locator(".messages li").filter({ hasText: "+999 900 000 01" });
+  await expect(alertes.first()).toContainText("priorité 1");
+  await expect(alertes.first()).toContainText("détresse");
+  await expect(alertes.first()).toContainText("/administration");
+  const texteAlerte = await alertes.first().innerText();
+  expect(texteAlerte).not.toMatch(/Élève fictif|disparaître|simulé|\+999 000/);
+  // Pas de relance avant le délai : l'exécuteur planifié n'envoie rien de plus.
+  const avant = await alertes.count();
+  const executeur = await page.request.post("/api/orchestrateur/executer", {
+    headers: { authorization: "Bearer jeton-de-test-uniquement-pas-un-secret-0000" },
+  });
+  expect(executeur.status()).toBe(200);
+  await page.reload();
+  expect(await alertes.count()).toBe(avant);
+  await page.goto("/aide");
+
   // Le code saisi n'est conservé nulle part.
   const traces = await executerSql(
     `select count(*)::int as n from tickets_support where resume like '%482913%'`,

@@ -311,3 +311,15 @@ function verifierUnicite(codes: string[], nature: string, erreurs: string[]) {
     vus.add(code);
   }
 }
+
+/** Libellés des familles de matières du pack (`familles.yaml`), par code ; vide si le fichier manque. */
+export function libellesFamilles(dossier: string): Record<string, string> {
+  const chemin = join(dossier, "familles.yaml");
+  if (!existsSync(chemin)) return {};
+  const brut = parse(readFileSync(chemin, "utf8")) as { familles?: unknown };
+  return Object.fromEntries(
+    liste(brut?.familles)
+      .filter((f) => typeof f.code === "string" && typeof f.libelle === "string")
+      .map((f) => [f.code as string, f.libelle as string]),
+  );
+}

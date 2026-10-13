@@ -21,6 +21,7 @@ import {
 } from "@/lib/agents/evaluateur/quiz";
 import type { ParametresModele } from "@/lib/agents/professeur/boucle";
 import { avecAgentEvaluateur, avecUtilisateur } from "./base";
+import { alerterVeilleSansAttendre } from "./veille";
 import { accesElevesOuvert, agentSuspendu, MESSAGE_AGENT_SUSPENDU } from "./disponibilite";
 import { modeleDesAgents, type ContexteChapitre } from "./professeur";
 import { deciderContenu } from "./validation";
@@ -484,6 +485,7 @@ async function signaler(contexte: ContexteChapitre, motif: string, resume: strin
       [motif, contexte.eleveId, contexte.chapitreId, resume.slice(0, 2000)],
     ),
   );
+  await alerterVeilleSansAttendre();
 }
 
 export type ResultatSoumission = { ok: true } | { ok: false; erreur: string };
