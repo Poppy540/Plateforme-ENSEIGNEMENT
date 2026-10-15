@@ -1,0 +1,52 @@
+# Graphe de prérequis proposé — famille Mathématiques, collège (Gabon).
+# PROPOSITION de Claude Code (2026-10-15) à partir des programmes provisoires du pack : chaque lien est
+# « à valider » par un enseignant-référent de la famille (espace référent) ; seul un lien validé sert au Tuteur,
+# au Scénariste et à l'Évaluateur. Nature : strict (indispensable) ou souple (utile). Format : <unité>/<chapitre>.
+# Un prérequis appartient toujours à la même classe ou à une classe inférieure ; le graphe n'a pas de cycle.
+famille: mathematiques
+statut: a_valider
+liens:
+  - {chapitre: ga-6e-mathematiques/decimaux,                          prerequis: ga-6e-mathematiques/entiers,                           nature: strict}
+  - {chapitre: ga-6e-mathematiques/division-euclidienne,              prerequis: ga-6e-mathematiques/entiers,                           nature: strict}
+  - {chapitre: ga-6e-mathematiques/division-decimale,                 prerequis: ga-6e-mathematiques/decimaux,                          nature: strict}
+  - {chapitre: ga-6e-mathematiques/division-decimale,                 prerequis: ga-6e-mathematiques/division-euclidienne,              nature: strict}
+  - {chapitre: ga-6e-mathematiques/fractions-definition,              prerequis: ga-6e-mathematiques/division-euclidienne,              nature: souple}
+  - {chapitre: ga-6e-mathematiques/fractions-calculs,                 prerequis: ga-6e-mathematiques/fractions-definition,              nature: strict}
+  - {chapitre: ga-6e-mathematiques/proportionnalite-pourcentages,     prerequis: ga-6e-mathematiques/decimaux,                          nature: strict}
+  - {chapitre: ga-6e-mathematiques/proportionnalite-pourcentages,     prerequis: ga-6e-mathematiques/fractions-calculs,                 nature: souple}
+  - {chapitre: ga-6e-mathematiques/statistiques-tableaux,             prerequis: ga-6e-mathematiques/proportionnalite-pourcentages,     nature: souple}
+  - {chapitre: ga-6e-mathematiques/perimetres,                        prerequis: ga-6e-mathematiques/grandeurs-conversions,             nature: strict}
+  - {chapitre: ga-6e-mathematiques/aires,                             prerequis: ga-6e-mathematiques/grandeurs-conversions,             nature: strict}
+  - {chapitre: ga-6e-mathematiques/aires,                             prerequis: ga-6e-mathematiques/perimetres,                        nature: souple}
+  - {chapitre: ga-6e-mathematiques/volumes,                           prerequis: ga-6e-mathematiques/aires,                             nature: strict}
+  - {chapitre: ga-6e-mathematiques/symetrie-axiale,                   prerequis: ga-6e-mathematiques/droites-segments,                  nature: strict}
+  - {chapitre: ga-6e-mathematiques/triangles-quadrilateres,           prerequis: ga-6e-mathematiques/droites-segments,                  nature: strict}
+  - {chapitre: ga-6e-mathematiques/triangles-quadrilateres,           prerequis: ga-6e-mathematiques/angles,                            nature: strict}
+  - {chapitre: ga-6e-mathematiques/cercle,                            prerequis: ga-6e-mathematiques/droites-segments,                  nature: strict}
+  - {chapitre: ga-5e-mathematiques/relatifs,                          prerequis: ga-6e-mathematiques/entiers,                           nature: strict}
+  - {chapitre: ga-5e-mathematiques/calcul-litteral-initiation,        prerequis: ga-5e-mathematiques/relatifs,                          nature: strict}
+  - {chapitre: ga-5e-mathematiques/fractions-operations,              prerequis: ga-6e-mathematiques/fractions-calculs,                 nature: strict}
+  - {chapitre: ga-5e-mathematiques/proportionnalite-vitesse-echelle,  prerequis: ga-6e-mathematiques/proportionnalite-pourcentages,     nature: strict}
+  - {chapitre: ga-5e-mathematiques/triangles-hauteurs,                prerequis: ga-6e-mathematiques/triangles-quadrilateres,           nature: strict}
+  - {chapitre: ga-5e-mathematiques/symetrie-centrale,                 prerequis: ga-6e-mathematiques/symetrie-axiale,                   nature: souple}
+  - {chapitre: ga-5e-mathematiques/aires-volumes,                     prerequis: ga-6e-mathematiques/aires,                             nature: strict}
+  - {chapitre: ga-5e-mathematiques/aires-volumes,                     prerequis: ga-6e-mathematiques/volumes,                           nature: strict}
+  - {chapitre: ga-5e-mathematiques/statistiques-moyenne,              prerequis: ga-6e-mathematiques/statistiques-tableaux,             nature: strict}
+  - {chapitre: ga-4e-mathematiques/puissances,                        prerequis: ga-5e-mathematiques/relatifs,                          nature: strict}
+  - {chapitre: ga-4e-mathematiques/calcul-litteral,                   prerequis: ga-5e-mathematiques/calcul-litteral-initiation,        nature: strict}
+  - {chapitre: ga-4e-mathematiques/equations-premier-degre,           prerequis: ga-4e-mathematiques/calcul-litteral,                   nature: strict}
+  - {chapitre: ga-4e-mathematiques/pythagore,                         prerequis: ga-5e-mathematiques/triangles-hauteurs,                nature: strict}
+  - {chapitre: ga-4e-mathematiques/pythagore,                         prerequis: ga-4e-mathematiques/puissances,                        nature: souple}
+  - {chapitre: ga-4e-mathematiques/triangles-semblables,              prerequis: ga-5e-mathematiques/proportionnalite-vitesse-echelle,  nature: strict}
+  - {chapitre: ga-4e-mathematiques/fonction-lineaire,                 prerequis: ga-5e-mathematiques/proportionnalite-vitesse-echelle,  nature: strict}
+  - {chapitre: ga-4e-mathematiques/statistiques-probabilites,         prerequis: ga-5e-mathematiques/statistiques-moyenne,              nature: strict}
+  - {chapitre: ga-4e-mathematiques/statistiques-probabilites,         prerequis: ga-5e-mathematiques/fractions-operations,              nature: souple}
+  - {chapitre: ga-4e-mathematiques/translations,                      prerequis: ga-5e-mathematiques/symetrie-centrale,                 nature: souple}
+  - {chapitre: ga-3e-mathematiques/thales,                            prerequis: ga-4e-mathematiques/triangles-semblables,              nature: strict}
+  - {chapitre: ga-3e-mathematiques/thales,                            prerequis: ga-5e-mathematiques/fractions-operations,              nature: souple}
+  - {chapitre: ga-3e-mathematiques/trigonometrie,                     prerequis: ga-4e-mathematiques/pythagore,                         nature: strict}
+  - {chapitre: ga-3e-mathematiques/trigonometrie,                     prerequis: ga-3e-mathematiques/thales,                            nature: souple}
+  - {chapitre: ga-3e-mathematiques/equations-inequations,             prerequis: ga-4e-mathematiques/equations-premier-degre,           nature: strict}
+  - {chapitre: ga-3e-mathematiques/systemes,                          prerequis: ga-3e-mathematiques/equations-inequations,             nature: strict}
+  - {chapitre: ga-3e-mathematiques/fonctions-affines,                 prerequis: ga-4e-mathematiques/fonction-lineaire,                 nature: strict}
+  - {chapitre: ga-3e-mathematiques/probabilites,                      prerequis: ga-4e-mathematiques/statistiques-probabilites,         nature: strict}

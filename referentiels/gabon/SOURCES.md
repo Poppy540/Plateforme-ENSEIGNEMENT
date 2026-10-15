@@ -29,6 +29,10 @@ Statuts : **validé** (confirmé par un enseignant-référent sur le programme o
 | `agents/tuteur/pays.yaml` | Variables du prompt Tuteur | Proposition de Claude Code | à valider |
 | `agents/scenariste/ga-3e-mathematiques.yaml` | Variables du prompt Scénariste | Cadrage, Partie B et profils de niveau ; persona et référent provisoires (Claude Code) | à valider |
 | (futur) Histoire-Géographie 6e | Intitulés | Programmes IPN 1993/1996, via l'étude Ntsame Edjo (2010/2015, CRIRES-Université Laval) ; réforme des curricula en cours depuis 2022 | à valider |
+| `programmes/ga-6e-mathematiques.yaml`, `ga-5e-…`, `ga-4e-…` | 17, 8 et 8 chapitres de Maths (intitulés repris mot pour mot) | Cadrage, « Découpage des cours », base francophone générique (ADR 0035) | à valider |
+| `programmes/ga-6e-…`, `ga-5e-…`, `ga-4e-mathematiques.yaml` | Volumes horaires, coefficients | — | manquant |
+| `prerequis/mathematiques.yaml` | 44 liens de prérequis chapitre par chapitre, 6e → 3e (strict / souple) | Proposition de Claude Code d'après les programmes provisoires (ADR 0037) | chaque lien à valider par un référent dans l'espace référent |
+| `agents/{professeur,scenariste,evaluateur,production-video}/ga-{6e,5e,4e}-mathematiques.yaml` | Variables des prompts et fiche d'avatar | Valeurs de l'unité pilote adaptées au niveau d'après `profils-niveau.yaml` (Claude Code) | à valider |
 | (futur) autres programmes | Chapitres des autres unités | Cadrage, « Découpage des cours », base francophone générique | à valider (pas encore importés) |
 
 ## Règle d'or

@@ -38,7 +38,7 @@ test("le référent rejette sans commentaire : refusé ; puis valide un chapitre
   await page.getByRole("link", { name: /Systèmes d'équations/ }).click();
   await expect(page.getByRole("heading", { name: "Systèmes d'équations" })).toBeVisible();
 
-  await page.getByRole("button", { name: "Rejeter" }).click();
+  await page.getByRole("button", { name: "Rejeter", exact: true }).click();
   await expect(page.locator(".erreur")).toContainText("Expliquez");
 
   await page.getByLabel(/Commentaire/).fill("Relu, conforme.");
@@ -137,13 +137,13 @@ test("le référent rejette un script, le fait réviser, puis valide la nouvelle
   await expect(page.getByText("Statut : Brouillon")).toBeVisible();
 
   // Rejet sans commentaire refusé ; validation impossible sans confirmer les points signalés.
-  await page.getByRole("button", { name: "Rejeter" }).click();
+  await page.getByRole("button", { name: "Rejeter", exact: true }).click();
   await expect(page.locator(".erreur")).toContainText("Expliquez");
   await page.getByRole("button", { name: "Valider la version 1" }).click();
   await expect(page.locator(".erreur")).toContainText("Cochez la case");
 
   await page.getByLabel(/Commentaire/).fill("Accroche trop longue, raccourcir.");
-  await page.getByRole("button", { name: "Rejeter" }).click();
+  await page.getByRole("button", { name: "Rejeter", exact: true }).click();
   await expect(page.getByText("Statut : Rejeté")).toBeVisible();
   await expect(page.getByText(/rejetée par Prof fictif/)).toBeVisible();
 

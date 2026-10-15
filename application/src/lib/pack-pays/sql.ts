@@ -80,6 +80,16 @@ values (${unite}, (select id from series where referentiel_id = ${ref} and code 
   for (const [codeUnite, chapitres] of Object.entries(pack.programmes)) {
     lignes.push(...chapitresEnSql(codeUnite, chapitres));
   }
+  // Graphe proposé : un lien nouveau entre « à valider » ; un lien existant garde la décision du référent.
+  for (const l of pack.prerequis) {
+    const chapitre = (r: { unite: string; code: string }) =>
+      `(select c.id from chapitres c join unites u on u.id = c.unite_id where u.code = ${texteSql(r.unite)} and c.code = ${texteSql(r.code)})`;
+    lignes.push(
+      `insert into prerequis_chapitres (chapitre_id, prerequis_id, nature)
+values (${chapitre(l.chapitre)}, ${chapitre(l.prerequis)}, ${texteSql(l.nature)})
+on conflict (chapitre_id, prerequis_id) do nothing;`,
+    );
+  }
 
   lignes.push("commit;");
   return lignes.join("\n") + "\n";

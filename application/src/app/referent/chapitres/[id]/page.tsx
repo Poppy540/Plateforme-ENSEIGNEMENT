@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
-import { chapitrePourReferent } from "@/lib/serveur/referent";
+import { chapitrePourReferent, prerequisDuChapitre } from "@/lib/serveur/referent";
 import { quizDuChapitre } from "@/lib/serveur/evaluateur";
 import { scriptsDuChapitre } from "@/lib/serveur/scenariste";
 import { FormulaireDecision } from "./formulaire-decision";
+import { FormulaireLien } from "./formulaire-lien";
 import { FormulaireQuiz } from "./formulaire-quiz";
 import { FormulaireScript } from "./formulaire-script";
 
@@ -25,6 +26,7 @@ export default async function PageChapitreReferent({
   const revisionQuiz = Number(recherche.quiz);
   const scripts = chapitre.statut === "valide" ? await scriptsDuChapitre(utilisateur, id) : [];
   const quiz = chapitre.statut === "valide" ? await quizDuChapitre(utilisateur, id) : [];
+  const prerequis = await prerequisDuChapitre(utilisateur, id);
 
   return (
     <main className="conteneur">
@@ -59,6 +61,33 @@ export default async function PageChapitreReferent({
       ) : (
         <p className="note">Ce chapitre n&apos;est pas en attente de validation.</p>
       )}
+
+      <section>
+        <h2>Prérequis ({prerequis.length})</h2>
+        <p className="note">
+          Chapitres à maîtriser avant celui-ci, proposés par le pack (y compris d&apos;une classe
+          inférieure). Seuls les liens validés servent au Tuteur, au Scénariste et à
+          l&apos;Évaluateur.
+        </p>
+        {prerequis.length === 0 && <p className="note">Aucun prérequis proposé.</p>}
+        <ul>
+          {prerequis.map((p) => (
+            <li key={p.prerequisId}>
+              <Link href={`/referent/chapitres/${p.prerequisId}`}>{p.prerequisTitre}</Link> (
+              {p.prerequisNiveau}, {p.nature === "strict" ? "indispensable" : "utile"}) :{" "}
+              <strong>{LIBELLES[p.statut]}</strong>
+              {p.commentaire && <> — {p.commentaire}</>}
+              {p.statut === "a_valider" && (
+                <FormulaireLien
+                  chapitre={chapitre.id}
+                  prerequis={p.prerequisId}
+                  titre={p.prerequisTitre}
+                />
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
 
       {chapitre.statut === "valide" && (
         <section>

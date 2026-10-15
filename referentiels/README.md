@@ -15,6 +15,7 @@ referentiels/<code-pays>/
   profils-niveau.yaml     adaptation du langage et des formats par niveau
   unites.yaml             unités (niveau, séries, matière)
   programmes/<unite>.yaml chapitres, sous-thèmes, volumes, coefficients, prérequis, statut de validation
+  prerequis/<famille>.yaml     graphe de prérequis proposé (chapitre ← prérequis, strict/souple), validé lien par lien
   contexte-local.yaml     exemples et repères locaux
   agents/<agent>/<unite>.yaml  valeurs injectées dans les prompts des agents
   SOURCES.md              origine et statut (validé / à valider / manquant) de chaque donnée

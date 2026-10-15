@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
-import { deciderChapitre } from "@/lib/serveur/referent";
+import { deciderChapitre, deciderLienPrerequis } from "@/lib/serveur/referent";
 import { genererBrouillonQuiz } from "@/lib/serveur/evaluateur";
 import { genererBrouillonScript } from "@/lib/serveur/scenariste";
 
@@ -75,4 +75,23 @@ export async function genererQuizBrouillon(
   return {
     succes: `Quiz version ${resultat.version} créé${resultat.questionsSignalees > 0 ? ` — ${resultat.questionsSignalees} question(s) signalée(s) par l'Évaluateur` : ""}.`,
   };
+}
+
+export type EtatLien = { erreur?: string } | undefined;
+
+export async function deciderLien(_etat: EtatLien, donnees: FormData): Promise<EtatLien> {
+  const utilisateur = await exigerReferent();
+  const chapitreId = String(donnees.get("chapitre") ?? "");
+  const choix = String(donnees.get("decision") ?? "");
+  if (choix !== "valide" && choix !== "rejete") return { erreur: "Choisissez une décision." };
+  const erreur = await deciderLienPrerequis(
+    utilisateur,
+    { chapitreId, prerequisId: String(donnees.get("prerequis") ?? "") },
+    choix,
+    String(donnees.get("commentaire") ?? "").trim() || null,
+  );
+  if (erreur) return { erreur };
+  revalidatePath(`/referent/chapitres/${chapitreId}`);
+  revalidatePath("/referent");
+  return undefined;
 }

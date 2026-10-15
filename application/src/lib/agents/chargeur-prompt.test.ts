@@ -32,6 +32,24 @@ describe("chargeur de prompt", () => {
     expect(prompt).not.toMatch(/^---$/m);
   });
 
+  it("compose les prompts du Professeur, du Scénariste et de l'Évaluateur pour la famille Maths 6e-3e", () => {
+    for (const niveau of ["6e", "5e", "4e", "3e"])
+      for (const agent of ["professeur", "scenariste", "evaluateur"]) {
+        const prompt = composerPrompt(
+          {
+            agent,
+            codePays: "ga",
+            unite: `ga-${niveau}-mathematiques`,
+            skills: [],
+            valeursDynamiques: { LISTE_CHAPITRES: "x", CHAPITRE_EN_COURS: "x", DUREE: "x" },
+          },
+          racine,
+        );
+        expect(prompt, `${agent} ${niveau}`).not.toMatch(/\{\{[A-Z_]+\}\}/);
+        expect(prompt).toContain(`${niveau}`);
+      }
+  });
+
   it("est identique d'un appel à l'autre (condition de la mise en cache)", () => {
     expect(composerPrompt(configuration, racine)).toBe(composerPrompt(configuration, racine));
   });

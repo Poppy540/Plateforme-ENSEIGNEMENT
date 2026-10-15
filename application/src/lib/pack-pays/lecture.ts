@@ -79,6 +79,14 @@ export interface PackPays {
   unites: Unite[];
   /** Chapitres par code d'unité (seulement les unités qui ont un programme). */
   programmes: Record<string, Chapitre[]>;
+  /** Liens de prérequis proposés (`prerequis/*.yaml`), toujours « à valider » à l'import. */
+  prerequis: LienPrerequis[];
+}
+
+export interface LienPrerequis {
+  chapitre: { unite: string; code: string };
+  prerequis: { unite: string; code: string };
+  nature: "strict" | "souple";
 }
 
 export class ErreurPack extends Error {
@@ -300,8 +308,81 @@ export function lirePack(dossier: string): PackPays {
     }
   }
 
+  const prerequis = lirePrerequis(dossier, programmes, unites, niveaux, erreurs);
+
   if (erreurs.length > 0) throw new ErreurPack(erreurs);
-  return { pays, referentiel, niveaux, series, matieres, unites, programmes };
+  return { pays, referentiel, niveaux, series, matieres, unites, programmes, prerequis };
+}
+
+/**
+ * Graphe de prérequis proposé (`prerequis/*.yaml`) : chaque extrémité existe dans un programme du pack, un
+ * prérequis appartient à la même classe ou à une classe inférieure, pas de doublon ni de cycle.
+ */
+function lirePrerequis(
+  dossier: string,
+  programmes: Record<string, Chapitre[]>,
+  unites: Unite[],
+  niveaux: Niveau[],
+  erreurs: string[],
+): LienPrerequis[] {
+  const dossierPrerequis = join(dossier, "prerequis");
+  if (!existsSync(dossierPrerequis)) return [];
+  const ordreNiveau = new Map(niveaux.map((n) => [n.code, n.ordre]));
+  const niveauUnite = new Map(unites.map((u) => [u.code, ordreNiveau.get(u.niveau) ?? 0]));
+  const existe = (r: { unite: string; code: string }) =>
+    (programmes[r.unite] ?? []).some((c) => c.code === r.code);
+  const reference = (valeur: unknown) => {
+    const [unite, code] = texte(valeur).split("/");
+    return { unite: unite ?? "", code: code ?? "" };
+  };
+  const liens: LienPrerequis[] = [];
+  for (const fichier of readdirSync(dossierPrerequis)
+    .filter((f) => f.endsWith(".yaml"))
+    .sort()) {
+    for (const brut of liste(lireYaml(join(dossierPrerequis, fichier)).liens)) {
+      const lien: LienPrerequis = {
+        chapitre: reference(brut.chapitre),
+        prerequis: reference(brut.prerequis),
+        nature: brut.nature === "souple" ? "souple" : "strict",
+      };
+      const nom = `${texte(brut.chapitre)} ← ${texte(brut.prerequis)}`;
+      if (brut.nature !== "strict" && brut.nature !== "souple")
+        erreurs.push(`prerequis/${fichier} : nature inconnue pour ${nom}`);
+      if (!existe(lien.chapitre) || !existe(lien.prerequis)) {
+        erreurs.push(`prerequis/${fichier} : chapitre inconnu dans ${nom}`);
+        continue;
+      }
+      if (
+        (niveauUnite.get(lien.prerequis.unite) ?? 0) > (niveauUnite.get(lien.chapitre.unite) ?? 0)
+      )
+        erreurs.push(`prerequis/${fichier} : prérequis d'une classe supérieure dans ${nom}`);
+      liens.push(lien);
+    }
+  }
+  const cle = (r: { unite: string; code: string }) => `${r.unite}/${r.code}`;
+  verifierUnicite(
+    liens.map((l) => `${cle(l.chapitre)} ← ${cle(l.prerequis)}`),
+    "lien de prérequis",
+    erreurs,
+  );
+  for (const l of liens)
+    if (cle(l.chapitre) === cle(l.prerequis))
+      erreurs.push(`lien de prérequis sur lui-même : ${cle(l.chapitre)}`);
+  // Détection de cycle (parcours en profondeur).
+  const suivants = new Map<string, string[]>();
+  for (const l of liens)
+    suivants.set(cle(l.chapitre), [...(suivants.get(cle(l.chapitre)) ?? []), cle(l.prerequis)]);
+  const etat = new Map<string, "en_cours" | "fini">();
+  const visiter = (n: string): boolean => {
+    if (etat.get(n) === "en_cours") return true;
+    if (etat.get(n) === "fini") return false;
+    etat.set(n, "en_cours");
+    const cycle = (suivants.get(n) ?? []).some(visiter);
+    etat.set(n, "fini");
+    return cycle;
+  };
+  if ([...suivants.keys()].some(visiter)) erreurs.push("graphe de prérequis : cycle détecté");
+  return liens;
 }
 
 function verifierUnicite(codes: string[], nature: string, erreurs: string[]) {

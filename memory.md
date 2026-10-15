@@ -55,6 +55,7 @@
 
 ## État d'avancement
 
+- 2026-10-15 : Jalon 4, étape 1 faite (ADR 0037, migration 0020, tests G01-G03, `famille-maths.spec.ts`) — programmes Maths 6e (17 ch.), 5e (8), 4e (8) repris mot pour mot du cadrage, PROVISOIRES ; graphe `referentiels/gabon/prerequis/mathematiques.yaml` (44 liens proposés par Claude Code, strict/souple) contrôlé à la lecture (chapitre inconnu, classe supérieure, cycle) et importé « à valider » sans jamais écraser une décision ; validation lien par lien par un référent des deux chapitres (`decider_prerequis`, rejet commenté), section « Prérequis » sur la page du chapitre, `/referent/prerequis` ; valeurs des 4 agents pour 6e-4e. Un élève peut ouvrir une unité d'une autre classe de son référentiel (voulu : liens du plan du Tuteur) ; son catalogue ne liste que sa classe. Tests : 126 unitaires, base passée, 45 de bout en bout.
 - 2026-10-13 : Jalon 4, étape 0 faite (ADR 0036, migration 0019, tests W01-W04) — alerte de veille : déclencheur en base sur toute priorité 1 (signalement ou ticket), envoi groupé SANS donnée d'élève par `service_messagerie` aux `CONTACTS_VEILLE` (hors dépôt ; contact FICTIF dans `playwright.config.ts`), tout de suite après chaque signalement et à chaque passage de l'exécuteur, relance toutes les 120 min (3 max) tant que non pris en charge ; envoi simulé. Quota de l'assistant d'aide en base (`prendre_quota_support`). Libellés des familles dans l'espace référent (`libellesFamilles`). Tests : 124 unitaires, base passée, 42 de bout en bout.
 - 2026-10-13 : plan du Jalon 4 validé (`docs/plans/jalon-4.md`, ADR 0035) : 0 reliquats du pilote (alerte de veille simulée, quota d'aide en base, libellés des familles) ; 1 Maths collège 6e-3e (programmes du cadrage, provisoires) ; 2 Coordinateur (famille Maths) ; 3 Conformité programme ; 4 Recruteur (données fictives, envoi sur approbation enregistrée, usage réel après avis du juriste) ; 5 pack fictif `zz` de portabilité ; 6 tests, démo, bilan. Rien de commencé.
 - 2026-10-09 : Jalon 3, étape 8 faite — bilan `docs/bilans/jalon-3.md` (toutes les étapes faites en simulation ; clôture du jalon subordonnée aux passages réels TU/SU et au pilote réel). Passages réels complets estimés à ~61,6 USD (tous agents), mini-essais ~1,25 USD.
@@ -110,6 +111,6 @@
 
 ## Prochaine étape
 
-Jalon 4, étape 1 : famille Mathématiques au collège (programmes 6e, 5e, 4e repris du cadrage, provisoires ; prérequis entre classes à valider ; valeurs des agents par unité ; catalogue et Tuteur sur quatre unités).
+Jalon 4, étape 2 : agent Coordinateur de la famille Mathématiques (cohérence 6e → 3e : prérequis, notations, glossaire, charte, plans de production, rapports ; brouillons validés par le référent ; statistiques agrégées seulement ; jamais en contact avec les élèves ; batterie CM, 16 scénarios).
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU) ; validation de la FAQ du Support et du délai de réponse aux tickets ; fournisseurs vidéo et budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).

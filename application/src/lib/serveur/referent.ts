@@ -184,3 +184,79 @@ export async function activerReferent(
     throw erreur;
   }
 }
+
+// ---------------------------------------------------------------------------------------------------------
+// Graphe de prérequis (ADR 0037) : liens proposés par le pack, décidés par un référent de la famille des deux
+// chapitres (vérifié par la base). Seuls les liens validés servent aux agents.
+// ---------------------------------------------------------------------------------------------------------
+
+export interface LienPrerequis {
+  chapitreId: string;
+  chapitreTitre: string;
+  prerequisId: string;
+  prerequisTitre: string;
+  prerequisNiveau: string;
+  nature: "strict" | "souple";
+  statut: "a_valider" | "valide" | "rejete";
+  commentaire: string | null;
+}
+
+const SELECTION_LIENS = `select p.chapitre_id as "chapitreId", a.titre as "chapitreTitre",
+    p.prerequis_id as "prerequisId", b.titre as "prerequisTitre", nb.libelle as "prerequisNiveau",
+    p.nature, p.statut, p.commentaire
+  from prerequis_chapitres p
+  join chapitres a on a.id = p.chapitre_id
+  join chapitres b on b.id = p.prerequis_id join unites ub on ub.id = b.unite_id
+  join niveaux nb on nb.id = ub.niveau_id
+  where est_referent_du_chapitre(p.chapitre_id) and est_referent_du_chapitre(p.prerequis_id)`;
+
+/** Liens dont ce chapitre dépend (ses prérequis), pour sa page. */
+export function prerequisDuChapitre(utilisateur: string, id: string): Promise<LienPrerequis[]> {
+  return avecUtilisateur(utilisateur, async (client) => {
+    if (!/^[0-9a-f-]{36}$/.test(id)) return [];
+    const { rows } = await client.query(
+      `${SELECTION_LIENS} and p.chapitre_id = $1 order by nb.ordre, b.ordre`,
+      [id],
+    );
+    return rows as LienPrerequis[];
+  });
+}
+
+/** Liens encore à valider dans les familles du référent (tableau de bord). */
+export function liensAValider(utilisateur: string): Promise<LienPrerequis[]> {
+  return avecUtilisateur(utilisateur, async (client) => {
+    const { rows } = await client.query(
+      `${SELECTION_LIENS} and p.statut = 'a_valider' order by a.unite_id, a.ordre, b.ordre limit 100`,
+    );
+    return rows as LienPrerequis[];
+  });
+}
+
+export async function deciderLienPrerequis(
+  utilisateur: string,
+  lien: { chapitreId: string; prerequisId: string },
+  decision: "valide" | "rejete",
+  commentaire: string | null,
+): Promise<string | null> {
+  if (![lien.chapitreId, lien.prerequisId].every((x) => /^[0-9a-f-]{36}$/.test(x)))
+    return "Lien inconnu.";
+  if (decision === "rejete" && !commentaire) return "Expliquez pourquoi ce lien est rejeté.";
+  if (commentaire && commentaire.length > 1000) return "Commentaire trop long (1000 caractères).";
+  try {
+    const ok = await avecUtilisateur(utilisateur, (client) =>
+      client
+        .query("select decider_prerequis($1, $2, $3, $4) as ok", [
+          lien.chapitreId,
+          lien.prerequisId,
+          decision,
+          commentaire,
+        ])
+        .then((r) => r.rows[0].ok as boolean),
+    );
+    return ok ? null : "Lien inconnu.";
+  } catch (erreur) {
+    if (erreur instanceof DatabaseError && erreur.code === "42501")
+      return "Ce lien ne relève pas de vos familles de matières.";
+    throw erreur;
+  }
+}

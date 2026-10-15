@@ -1,4 +1,5 @@
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { cpSync, mkdtempSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { ErreurPack, lirePack } from "./lecture";
@@ -17,6 +18,43 @@ describe("lecture d'un pack pays", () => {
     expect(pack.niveaux).toHaveLength(7);
     expect(pack.series).toHaveLength(5);
     expect(pack.programmes["ga-3e-mathematiques"]).toHaveLength(7);
+    // Famille Mathématiques au collège (programmes provisoires) et son graphe proposé.
+    expect(Object.keys(pack.programmes).filter((u) => u.endsWith("-mathematiques"))).toHaveLength(
+      4,
+    );
+    expect(pack.prerequis.length).toBeGreaterThan(0);
+    expect(pack.prerequis).toContainEqual({
+      chapitre: { unite: "ga-3e-mathematiques", code: "thales" },
+      prerequis: { unite: "ga-4e-mathematiques", code: "triangles-semblables" },
+      nature: "strict",
+    });
+  });
+
+  it("refuse un graphe de prérequis incohérent (chapitre inconnu, classe supérieure, cycle)", () => {
+    const dossier = mkdtempSync(join(tmpdir(), "pack-"));
+    cpSync(packFictif, dossier, { recursive: true });
+    writeFileSync(
+      join(dossier, "prerequis", "algebre.yaml"),
+      `liens:
+  - { chapitre: yy-g7-algebre/equations, prerequis: yy-g7-algebre/inconnu, nature: strict }
+  - { chapitre: yy-g7-algebre/equations, prerequis: yy-g12-algebre/fonctions, nature: strict }
+  - { chapitre: yy-g7-algebre/expressions, prerequis: yy-g7-algebre/equations, nature: souple }
+  - { chapitre: yy-g7-algebre/equations, prerequis: yy-g7-algebre/expressions, nature: strict }
+`,
+    );
+    let erreurs: string[] = [];
+    try {
+      lirePack(dossier);
+    } catch (e) {
+      erreurs = (e as ErreurPack).erreurs;
+    }
+    expect(erreurs).toEqual(
+      expect.arrayContaining([
+        "prerequis/algebre.yaml : chapitre inconnu dans yy-g7-algebre/equations ← yy-g7-algebre/inconnu",
+        "prerequis/algebre.yaml : prérequis d'une classe supérieure dans yy-g7-algebre/equations ← yy-g12-algebre/fonctions",
+        "graphe de prérequis : cycle détecté",
+      ]),
+    );
   });
 
   it("charge un pays fictif à la structure différente sans modifier le code", () => {
@@ -29,6 +67,7 @@ describe("lecture d'un pack pays", () => {
     ]);
     expect(pack.unites[1].series).toEqual(["SCI", "LIT"]);
     expect(pack.programmes["yy-g7-algebre"][1]).toMatchObject({ volumeHoraire: 6, coefficient: 2 });
+    expect(pack.prerequis).toHaveLength(2);
   });
 
   it("lit les durées de conservation du cadre légal (provisoires pour le pilote)", () => {

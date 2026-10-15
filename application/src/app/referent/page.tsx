@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { seDeconnecter } from "../connexion/actions";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
-import { tableauReferent } from "@/lib/serveur/referent";
+import { liensAValider, tableauReferent } from "@/lib/serveur/referent";
 import { quizARelire } from "@/lib/serveur/evaluateur";
 import { scriptsARelire } from "@/lib/serveur/scenariste";
 import { videosPourTableau } from "@/lib/serveur/videos";
@@ -14,6 +14,7 @@ export default async function PageReferent() {
   const scripts = await scriptsARelire(utilisateur);
   const quiz = await quizARelire(utilisateur);
   const videos = await videosPourTableau(utilisateur);
+  const liens = await liensAValider(utilisateur);
 
   return (
     <main className="conteneur">
@@ -43,6 +44,14 @@ export default async function PageReferent() {
           </li>
         ))}
       </ul>
+
+      <h2>Liens de prérequis à valider ({liens.length})</h2>
+      {liens.length === 0 && <p>Aucun lien en attente.</p>}
+      {liens.length > 0 && (
+        <p>
+          <Link href="/referent/prerequis">Voir les liens à valider</Link>
+        </p>
+      )}
 
       <h2>Scripts à relire ({scripts.length})</h2>
       {scripts.length === 0 && <p>Aucun script en attente.</p>}

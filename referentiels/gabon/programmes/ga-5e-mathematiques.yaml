@@ -1,0 +1,24 @@
+# Programme provisoire — Mathématiques 5e (Gabon).
+# Source : docs/cadrage.md (« Découpage des cours — Classe de 5e », Mathématiques). PROVISOIRE : base francophone
+# générique, à valider par un enseignant-référent gabonais à partir du programme officiel IPN (ADR 0035).
+unite: ga-5e-mathematiques
+statut: a_valider
+valide_par: null
+date_validation: null
+examen: null   # le BEPC se passe en fin de 3e
+chapitres:
+  - {ordre: 1, code: relatifs,                          titre: "Nombres relatifs", statut: a_valider}
+  - {ordre: 2, code: calcul-litteral-initiation,        titre: "Calcul littéral (initiation)", statut: a_valider}
+  - {ordre: 3, code: fractions-operations,              titre: "Fractions : opérations complètes", statut: a_valider}
+  - {ordre: 4, code: proportionnalite-vitesse-echelle,  titre: "Proportionnalité (vitesse, échelle)", statut: a_valider}
+  - {ordre: 5, code: triangles-hauteurs,                titre: "Triangles : propriétés et hauteurs", statut: a_valider}
+  - {ordre: 6, code: symetrie-centrale,                 titre: "Symétrie centrale et parallélogramme", statut: a_valider}
+  - {ordre: 7, code: aires-volumes,                     titre: "Aires et volumes (prisme, cylindre)", statut: a_valider}
+  - {ordre: 8, code: statistiques-moyenne,              titre: "Statistiques : moyenne", statut: a_valider}
+# Prérequis de l'unité. Les liens chapitre par chapitre sont dans prerequis/mathematiques.yaml.
+prerequis:
+  - {notion: "Fractions", unite_source: ga-6e-mathematiques}
+  - {notion: "Proportionnalité", unite_source: ga-6e-mathematiques}
+  - {notion: "Aires et volumes", unite_source: ga-6e-mathematiques}
+  - {notion: "Symétrie axiale", unite_source: ga-6e-mathematiques}
+# Volumes horaires et coefficients : manquants (à demander au référent / IPN).
