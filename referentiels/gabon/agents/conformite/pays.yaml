@@ -1,0 +1,9 @@
+# Valeurs injectées dans agents/conformite/prompt.md (une instance par pays, décisions 0005 et 0039). Provisoire.
+# REFERENTIEL et VERSION_REFERENTIEL sont lus à l'exécution dans pays.yaml (référentiel du pack).
+unite: pays
+variables:
+  PAYS: "Gabon"
+  # Valeurs PROVISOIRES proposées par Claude Code, à valider par le propriétaire.
+  REFERENT: "l'enseignant-référent de la famille concernée (en cours de désignation)"
+  DATE: "non relu"
+  VERSION: "0.1-provisoire"

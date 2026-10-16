@@ -19,7 +19,23 @@ export async function appelStructure<T>(entree: {
   parametres: ParametresModele;
   /** Nouvelles tentatives si la sortie est illisible (jamais en cas de refus ou de troncature). */
   tentatives?: number;
+  /** Documents PDF joints (en base64, placés avant le texte), lus par le modèle comme des données. */
+  documents?: { titre: string; pdfBase64: string }[];
 }): Promise<ResultatStructure<T>> {
+  const contenu = entree.documents?.length
+    ? [
+        ...entree.documents.map((d) => ({
+          type: "document" as const,
+          title: d.titre,
+          source: {
+            type: "base64" as const,
+            media_type: "application/pdf" as const,
+            data: d.pdfBase64,
+          },
+        })),
+        { type: "text" as const, text: entree.message },
+      ]
+    : entree.message;
   const consommations: BetaMessage["usage"][] = [];
   for (let essai = 0; essai < (entree.tentatives ?? 2); essai++) {
     const flux = entree.modele({
@@ -32,7 +48,7 @@ export async function appelStructure<T>(entree: {
       },
       betas: ["server-side-fallback-2026-07-01"],
       fallbacks: "default",
-      messages: [{ role: "user", content: entree.message }],
+      messages: [{ role: "user", content: contenu }],
     });
     const message = await flux.message;
     if (message.usage) consommations.push(message.usage);

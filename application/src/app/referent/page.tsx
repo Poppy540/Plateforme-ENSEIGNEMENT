@@ -57,6 +57,11 @@ export default async function PageReferent() {
         </p>
       )}
 
+      <p>
+        <Link href="/referent/conformite">Conformité au programme officiel</Link>{" "}
+        <span className="note">(documents officiels et rapports d&apos;écart)</span>
+      </p>
+
       <h2>Coordinateur de famille</h2>
       <p className="note">
         Le Coordinateur (une intelligence artificielle) vérifie la cohérence de la famille

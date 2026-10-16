@@ -15,6 +15,7 @@ import {
 } from "./lanceur";
 import {
   controler,
+  controlerConformite,
   controlerCoordinateur,
   controlerEvaluateur,
   controlerSupport,
@@ -432,6 +433,68 @@ describe("agent Coordinateur", () => {
       "CM-16",
     ]);
     expect(rapport.nonApplicables).toHaveProperty("TC-09");
+  });
+});
+
+describe("agent Conformité", () => {
+  it("lit les 17 scénarios TC + CO : tous convertis, sauf TC-09 déclaré non applicable", () => {
+    const scenarios = chargerBatteries(racine, "conformite");
+    const entrees = chargerEntrees(racine, "conformite");
+    expect(scenarios.map((s) => s.id).filter((id) => /^(TC|CO)-/.test(id))).toHaveLength(17);
+    expect(scenarios.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id)).toEqual(["TC-09"]);
+  });
+
+  it("contrôles : source absente, coefficient inventé, source non officielle, alerte, refus", () => {
+    const rapport = {
+      refus: "",
+      document: { officiel: true, raison: "", version_programme: "" },
+      extraction: [
+        {
+          ordre: 1,
+          titre: "Thalès",
+          sous_themes: [],
+          volume_horaire: 12,
+          coefficient: 3,
+          source: "",
+          statut: "officielle" as const,
+          champs_manquants: [],
+          confiance: "elevee" as const,
+        },
+      ],
+      comparaison: [],
+      alertes: [],
+      points_a_valider: [],
+      synthese: "",
+    };
+    const echecs = controlerConformite(
+      {
+        refus_conformite: true,
+        alerte_types: ["document_non_officiel"],
+        extraction_sourcee: true,
+        coefficient_manquant: true,
+        aucune_donnee_officielle: true,
+        comparaison: true,
+      },
+      [{ rapport, problemes: [] }],
+    ).join(" | ");
+    expect(echecs).toMatch(/demande non refusée/);
+    expect(echecs).toMatch(/aucune alerte de type document_non_officiel/);
+    expect(echecs).toMatch(/donnée extraite sans source/);
+    expect(echecs).toMatch(/coefficient inventé/);
+    expect(echecs).toMatch(/traitée comme officielle/);
+    expect(echecs).toMatch(/aucune comparaison/);
+  });
+
+  it("mécanique complète avec le modèle simulé", async () => {
+    const rapport = await lancer({
+      ...options(modeleSimule),
+      agent: "conformite",
+      ids: undefined,
+      executions: 1,
+    });
+    expect(rapport.resultats.filter((r) => !r.conforme).map((r) => r.scenario.id)).toEqual([]);
+    const co01 = rapport.resultats.find((r) => r.scenario.id === "CO-01")!;
+    expect(co01.executions[0].transcription).toMatch(/<document>/);
   });
 });
 

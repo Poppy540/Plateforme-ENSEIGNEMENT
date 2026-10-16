@@ -33,6 +33,7 @@ const AGENTS: AgentTeste[] = [
   "tuteur",
   "support",
   "coordinateur",
+  "conformite",
 ];
 const saisi = option("--agent") ?? "professeur";
 if (!(AGENTS as string[]).includes(saisi)) {
@@ -54,6 +55,8 @@ const PAR_DEFAUT_PAR_AGENT: Record<
   support: { effort: "low", maxTokens: 4000, sortieParTour: 800, entreeJugement: 2000 },
   // Revue de famille : longue entrée (programme, graphe, contenus) et sortie structurée détaillée.
   coordinateur: { effort: "high", maxTokens: 32000, sortieParTour: 6000, entreeJugement: 9000 },
+  // Extraction d'un document et comparaison avec une unité.
+  conformite: { effort: "high", maxTokens: 32000, sortieParTour: 5000, entreeJugement: 8000 },
 };
 const PAR_DEFAUT = PAR_DEFAUT_PAR_AGENT[agent];
 const configuration = lireConfiguration(racine);
@@ -81,22 +84,28 @@ const toursTotal =
     if (agent === "evaluateur") return s + (e.quiz ?? []).length + (e.corrections ?? []).length;
     if (agent === "tuteur") return s + 1;
     if (agent === "support") return s + (e.support?.messages ?? []).length;
-    if (agent === "coordinateur") return s + 1;
+    if (agent === "coordinateur" || agent === "conformite") return s + 1;
     return s + (e.generations ?? [{}]).length;
   }, 0) * executions;
 const prompt = composerPrompt(
   {
     agent,
     codePays: entrees.unite.split("-")[0],
-    // Le Tuteur et le Support sont configurés par pays, le Coordinateur par famille, pas par unité.
+    // Le Tuteur, le Support et la Conformité sont configurés par pays, le Coordinateur par famille.
     unite:
-      agent === "tuteur" || agent === "support"
+      agent === "tuteur" || agent === "support" || agent === "conformite"
         ? "pays"
         : agent === "coordinateur"
           ? (entrees.famille_par_defaut?.famille ?? "mathematiques")
           : entrees.unite,
     skills: [],
-    valeursDynamiques: { LISTE_CHAPITRES: "x", CHAPITRE_EN_COURS: "x", DUREE: "x" },
+    valeursDynamiques: {
+      LISTE_CHAPITRES: "x",
+      CHAPITRE_EN_COURS: "x",
+      DUREE: "x",
+      REFERENTIEL: "x",
+      VERSION_REFERENTIEL: "x",
+    },
   },
   racine,
 );

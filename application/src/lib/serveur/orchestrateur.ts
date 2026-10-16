@@ -13,6 +13,7 @@ import {
 import { lirePack, type PackPays } from "@/lib/pack-pays/lecture";
 import { avecAgentOrchestrateur } from "./base";
 import { coutJourMaxUSD, modeFile, selAudit } from "./configuration";
+import { executerAnalyse } from "./conformite-execution";
 import { executerRevue } from "./coordinateur-execution";
 import { executerProduction, type ScriptAProduire } from "./production-video";
 import { alerterVeilleSansAttendre } from "./veille";
@@ -205,6 +206,9 @@ const EXECUTEURS: Record<string, (entrees: Record<string, unknown>) => Promise<R
   {
     // Revue de cohérence d'une famille (Coordinateur) : référentiel et demandeur ajoutés par le serveur.
     coherence_famille: (entrees) => executerRevue(entrees as Parameters<typeof executerRevue>[0]),
+    // Comparaison d'une unité à un document officiel (Conformité) : document et unité ajoutés par le serveur.
+    comparaison_programme: (entrees) =>
+      executerAnalyse(entrees as Parameters<typeof executerAnalyse>[0]),
     async production_video(entrees) {
       const r = await executerProduction(entrees as unknown as ScriptAProduire);
       if (!r.ok) return { ok: false, erreur: r.erreur };

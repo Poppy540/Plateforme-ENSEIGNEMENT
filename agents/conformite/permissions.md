@@ -20,6 +20,9 @@ Variables : `DATABASE_URL`, `DATABASE_AGENT_KEY`.
 
 Aucune clé de paiement ni de signature électronique. La clé de la base est propre à cet agent et limitée à son rôle.
 
-## Mise en œuvre (à faire)
+## Mise en œuvre (ADR 0039)
 
-Ces droits seront appliqués techniquement (rôle de base de données dédié, politiques d'accès au niveau des lignes, outils exposés à l'agent), pas seulement par le prompt.
+- Rôle de base `agent_conformite` : référentiel, unité comparée et document fixés par le serveur ; lecture du référentiel du pays, de **son seul document** et des scripts et quiz **validés** de l'unité ; **aucune** table d'élève lisible ; aucune écriture dans le référentiel.
+- Écrit uniquement des rapports d'écart au statut brouillon (version et statut imposés par la base) et des signalements sans élève.
+- Ne déclare jamais une conformité : « conforme » n'existe pas dans sa sortie ; le serveur refuse toute donnée « officielle » sans source ou issue d'un document non déclaré officiel.
+- Son extraction devient, au choix du référent, un brouillon YAML à relire et à ranger dans le pack (import « à valider »).

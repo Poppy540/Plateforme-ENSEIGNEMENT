@@ -116,26 +116,28 @@ export default async function PageRapportCoordinateur({
       <h2>Glossaire et notations proposés ({c.glossaire.length})</h2>
       {c.glossaire.length > 0 && (
         <>
-          <table>
-            <thead>
-              <tr>
-                <th>Terme</th>
-                <th>Définition</th>
-                <th>Niveaux</th>
-                <th>Notation</th>
-              </tr>
-            </thead>
-            <tbody>
-              {c.glossaire.map((g) => (
-                <tr key={g.terme}>
-                  <td>{g.terme}</td>
-                  <td>{g.definition}</td>
-                  <td>{g.niveaux.join(", ")}</td>
-                  <td>{g.notation}</td>
+          <div className="tableau-defilant">
+            <table>
+              <thead>
+                <tr>
+                  <th>Terme</th>
+                  <th>Définition</th>
+                  <th>Niveaux</th>
+                  <th>Notation</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {c.glossaire.map((g) => (
+                  <tr key={g.terme}>
+                    <td>{g.terme}</td>
+                    <td>{g.definition}</td>
+                    <td>{g.niveaux.join(", ")}</td>
+                    <td>{g.notation}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           {decision("glossaire", 0) ? (
             <p role="status">
               Glossaire {decision("glossaire", 0)!.decision === "acceptee" ? "adopté" : "écarté"}

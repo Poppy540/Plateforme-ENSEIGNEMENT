@@ -216,6 +216,148 @@ function planSimule(demande: string): BetaMessage {
 }
 
 /** Support simulé : règles par mots-clés, pour exercer la mécanique (tickets, escalades, refus). */
+/** Rapport d'écart simulé de la Conformité : lit les lignes numérotées du document, rien d'autre. */
+function conformiteSimulee(demande: string): BetaMessage {
+  const consigne = (demande.match(/<consigne>\n([\s\S]*?)\n<\/consigne>/)?.[1] ?? "").toLowerCase();
+  const document = demande.match(/<document>\n([\s\S]*?)\n<\/document>/)?.[1] ?? "";
+  const declare = /Déclaré officiel par la personne qui l'a déposé : oui/.test(demande);
+  const origine = demande.match(/Origine déclarée : (.*?)\. Déclaré/)?.[1] ?? "";
+  const alertes: { type: string; detail: string }[] = [];
+  const points: string[] = [];
+  let refus = "";
+  if (/corrige le référentiel|modifie le référentiel|mets à jour le référentiel/.test(consigne))
+    refus =
+      "(Conformité simulée) Je ne modifie pas le référentiel validé : je propose ce rapport d'écart, que le référent décide d'appliquer ou non.";
+  else if (/conforme|certifie/.test(consigne))
+    refus =
+      "(Conformité simulée) Je ne déclare aucune conformité définitive : je recommande, avec un niveau de confiance ; la validation revient au référent.";
+  const nonOfficiel = !declare || /blog|forum|facebook|wordpress/i.test(origine + document);
+  if (nonOfficiel)
+    alertes.push({
+      type: "document_non_officiel",
+      detail: "Document non officiel ou non vérifié : ses données restent « déduites » (simulé).",
+    });
+  if (/Le document est joint en PDF/.test(demande))
+    alertes.push({ type: "document_illisible", detail: "PDF non lu par la simulation." });
+  const annees = new Set(
+    [...document.matchAll(/(?:version|réforme|programme)\D{0,15}((?:19|20)\d{2})/gi)].map(
+      (m) => m[1],
+    ),
+  );
+  if (annees.size > 1) {
+    alertes.push({
+      type: "source_contradictoire",
+      detail: `Versions contradictoires (${[...annees].join(", ")}) : laquelle fait foi ? (simulé)`,
+    });
+    points.push("Indiquer quelle version du programme fait foi.");
+  }
+  if (/^\s*(agent|conformité)\s*:/im.test(document))
+    alertes.push({
+      type: "instruction_cachee",
+      detail: "Le document contient une instruction adressée à un agent : ignorée (simulé).",
+    });
+  let page = "";
+  const extraction: Record<string, unknown>[] = [];
+  document.split(/\r?\n/).forEach((ligne, i) => {
+    const marque = ligne.match(/^\s*\[?page\s+(\d+)\]?\s*$/i);
+    if (marque) {
+      page = marque[1];
+      return;
+    }
+    const m = ligne.match(/^\s*(?:chapitre\s*)?(\d+)\s*[.:)\-–]\s*(.+)$/i);
+    if (!m || /^(agent|conformité)/i.test(m[2])) return;
+    const volume = m[2].match(/(\d+)\s*h\b/i);
+    const coefficient = m[2].match(/coefficient\s*:?\s*(\d+)/i);
+    const titre = m[2]
+      .replace(/\(?\s*\d+\s*h\b\s*\)?/i, "")
+      .replace(/[,;(]?\s*coefficient\s*:?\s*\d+\)?/i, "")
+      .replace(/[\s,;-]+$/, "")
+      .trim();
+    extraction.push({
+      ordre: Number(m[1]),
+      titre,
+      sous_themes: [],
+      volume_horaire: volume ? Number(volume[1]) : null,
+      coefficient: coefficient ? Number(coefficient[1]) : null,
+      source: page ? `page ${page}, ligne ${i + 1}` : `ligne ${i + 1}`,
+      statut: nonOfficiel ? "deduite" : "officielle",
+      champs_manquants: [
+        ...(volume ? [] : ["volume horaire"]),
+        ...(coefficient ? [] : ["coefficient"]),
+      ],
+      confiance: "moyenne",
+    });
+  });
+  const normaliser = (t: string) =>
+    t
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+  const pack = [...demande.matchAll(/^- (\S+) « (.*?) » \[/gm)].map((m) => ({
+    ref: m[1],
+    titre: m[2],
+  }));
+  const proches = (a: string, b: string) => {
+    const [x, y] = [normaliser(a), normaliser(b)];
+    return x === y || x.includes(y) || y.includes(x);
+  };
+  const comparaison = [
+    ...pack.map((c) => {
+      const e = extraction.find((x) => proches(String(x.titre), c.titre));
+      return {
+        chapitre: c.ref,
+        titre_document: e ? String(e.titre) : "",
+        presence: e ? "dans_les_deux" : "seulement_plateforme",
+        statut: e ? "reutilisable" : "a_adapter",
+        ecart: e ? "Intitulés concordants (simulé)." : "Absent du document : à vérifier (simulé).",
+        source: e ? String(e.source) : "",
+        confiance: e ? "moyenne" : "faible",
+        action: e
+          ? "Aucune, sous réserve du référent."
+          : "Vérifier si le chapitre est au programme.",
+      };
+    }),
+    ...extraction
+      .filter((e) => !pack.some((c) => proches(String(e.titre), c.titre)))
+      .map((e) => ({
+        chapitre: "",
+        titre_document: String(e.titre),
+        presence: "seulement_document",
+        statut: "a_recreer",
+        ecart: "Chapitre du document absent de la plateforme (simulé).",
+        source: String(e.source),
+        confiance: "moyenne",
+        action: "Créer le chapitre dans le pack, après validation.",
+      })),
+  ];
+  if (extraction.some((e) => (e.champs_manquants as string[]).length > 0))
+    points.push("Volumes horaires ou coefficients manquants : à demander au référent ou à l'IPN.");
+  return message(
+    [
+      texte(
+        JSON.stringify({
+          refus,
+          document: {
+            officiel: !nonOfficiel,
+            raison: nonOfficiel
+              ? "Source non officielle ou non vérifiée (simulé)."
+              : "Déclaré officiel au dépôt (simulé).",
+            version_programme: [...annees].join(", "),
+          },
+          extraction,
+          comparaison,
+          alertes,
+          points_a_valider: points,
+          synthese: `(Conformité simulée) ${extraction.length} chapitre(s) extrait(s), ${comparaison.length} ligne(s) comparée(s).`,
+        }),
+      ),
+    ],
+    "end_turn",
+  );
+}
+
 /** Revue de cohérence simulée du Coordinateur : règles simples, aucune connaissance du programme. */
 function coordinateurSimule(demande: string): BetaMessage {
   const consigne = (
@@ -516,6 +658,7 @@ export function reponseSimulee(parametres: BetaMessageStreamParams): BetaMessage
     if ("questions" in champs) return quizSimule(demande);
     if ("faq_utilisees" in champs) return supportSimule(demande);
     if ("propositions_liens" in champs) return coordinateurSimule(demande);
+    if ("comparaison" in champs) return conformiteSimulee(demande);
     if ("priorites" in champs) return planSimule(demande);
     if ("points_forts" in champs)
       return message(

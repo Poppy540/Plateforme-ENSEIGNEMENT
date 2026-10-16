@@ -22,7 +22,8 @@ type RoleAgent =
   | "agent_tuteur"
   | "service_messagerie"
   | "agent_support"
-  | "agent_coordinateur";
+  | "agent_coordinateur"
+  | "agent_conformite";
 
 async function enTransaction<T>(
   role: "anon" | "authenticated" | RoleAgent,
@@ -145,6 +146,24 @@ export function avecAgentCoordinateur<T>(
       `select set_config('app.referentiel_id', $1, true), set_config('app.famille', $2, true),
               set_config('app.eleve_id', '', true), set_config('app.unite_id', '', true)`,
       [contexte.referentielId, contexte.famille],
+    );
+    return traitement(client);
+  });
+}
+
+/**
+ * Requêtes de l'agent Conformité programme : référentiel, unité comparée et document fixés par le serveur ;
+ * aucun élève dans le contexte.
+ */
+export function avecAgentConformite<T>(
+  contexte: { referentielId: string; uniteId: string; documentId: string },
+  traitement: (client: PoolClient) => Promise<T>,
+) {
+  return enTransaction("agent_conformite", null, async (client) => {
+    await client.query(
+      `select set_config('app.referentiel_id', $1, true), set_config('app.unite_id', $2, true),
+              set_config('app.document_id', $3, true), set_config('app.eleve_id', '', true)`,
+      [contexte.referentielId, contexte.uniteId, contexte.documentId],
     );
     return traitement(client);
   });

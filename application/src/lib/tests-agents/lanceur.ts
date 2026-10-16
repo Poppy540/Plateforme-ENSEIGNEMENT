@@ -37,6 +37,12 @@ import {
   messageDemandeRevue,
   type SortieCoordinateur,
 } from "../agents/coordinateur/revue.ts";
+import {
+  controlerRapport,
+  genererRapportConformite,
+  messageDemandeConformite,
+  type RapportConformite,
+} from "../agents/conformite/rapport.ts";
 import { lireFaq, type Faq } from "../agents/support/faq.ts";
 import {
   messageDemandeSupport,
@@ -50,6 +56,7 @@ import { lireScenarios, type ScenarioGherkin } from "./gherkin.ts";
 import type { Juge } from "./juge.ts";
 import {
   controler,
+  controlerConformite,
   controlerCoordinateur,
   controlerEvaluateur,
   controlerSupport,
@@ -125,6 +132,14 @@ export interface DemandeSupportTest {
   statut_compte?: DemandeSupport["statutCompte"];
 }
 
+/** Document fictif donné à l'agent Conformité (texte seulement dans les tests). */
+export interface DocumentTest {
+  titre: string;
+  origine: string;
+  officiel: boolean;
+  texte: string;
+}
+
 /** Famille fictive donnée au Coordinateur (agent Coordinateur) ; les champs absents viennent du défaut. */
 export interface FamilleTest {
   famille?: string;
@@ -148,6 +163,8 @@ interface EntreeScenario {
   support?: DemandeSupportTest;
   /** Agent Coordinateur : famille (complète celle par défaut) et consigne du référent. */
   revue?: { consigne?: string; famille?: FamilleTest };
+  /** Agent Conformité : document fictif (complète celui par défaut) et consigne. */
+  analyse?: { consigne?: string; document?: Partial<DocumentTest> };
   tours?: string[];
   generations?: Generation[];
   quiz?: DemandeQuizTest[];
@@ -162,6 +179,8 @@ export interface FichierEntrees {
   parcours_par_defaut?: ParcoursTest;
   /** Agent Coordinateur : famille fictive commune. */
   famille_par_defaut?: FamilleTest;
+  /** Agent Conformité : document fictif commun. */
+  document_par_defaut?: DocumentTest;
   chapitre_par_defaut: string;
   duree_par_defaut?: number;
   verifications_communes?: Verifications;
@@ -171,7 +190,7 @@ export interface FichierEntrees {
 }
 
 export type AgentTeste =
-  "professeur" | "scenariste" | "evaluateur" | "tuteur" | "support" | "coordinateur";
+  "professeur" | "scenariste" | "evaluateur" | "tuteur" | "support" | "coordinateur" | "conformite";
 
 export interface Execution {
   numero: number;
@@ -252,6 +271,11 @@ const SKILLS: Record<AgentTeste, string[]> = {
   support: ["_commun/skills/contenu-non-fiable", "support/skills/tri-des-demandes"],
   // Coordinateur : skills de la famille du scénario (voir executerCoordinateur).
   coordinateur: [],
+  conformite: [
+    "_commun/skills/contenu-non-fiable",
+    "conformite/skills/audit-de-couverture",
+    "conformite/skills/comparaison-de-referentiels",
+  ],
 };
 
 interface ResultatExecution {
@@ -265,6 +289,7 @@ interface ResultatExecution {
   reponsesParents: (ReponseParent | null)[];
   reponsesSupport: (ReponseSupport | null)[];
   revues: { sortie: SortieCoordinateur | null; problemes: string[] }[];
+  analyses: { rapport: RapportConformite | null; problemes: string[] }[];
   consommations: Consommation[];
 }
 
@@ -736,7 +761,81 @@ async function executerCoordinateur(
   }
 }
 
+async function executerConformite(
+  c: Contexte,
+  entree: EntreeScenario,
+  r: ResultatExecution,
+): Promise<void> {
+  const lignes: string[] = [];
+  try {
+    const doc = { ...c.entrees.document_par_defaut!, ...entree.analyse?.document };
+    const unite = c.pack.unites.find((u) => u.code === c.entrees.unite)!;
+    const matiere = c.pack.matieres.find((m) => m.code === unite.matiere);
+    const comparaison = {
+      unite: unite.code,
+      chapitres: c.chapitres.map((x) => ({
+        ref: `${unite.code}/${x.code}`,
+        titre: x.titre,
+        statut: "a_valider",
+      })),
+      declareOfficiel: doc.officiel,
+      niveau: c.pack.niveaux.find((n) => n.code === unite.niveau)?.libelle ?? unite.niveau,
+      series: unite.series,
+      matiere: matiere?.libelle ?? unite.matiere,
+      pays: c.pack.pays.nom,
+    };
+    const demande = {
+      document: {
+        titre: doc.titre,
+        origine: doc.origine,
+        declareOfficiel: doc.officiel,
+        texte: doc.texte,
+        pdf: false,
+      },
+      comparaison,
+      contenus: [],
+      consigne: entree.analyse?.consigne ?? null,
+    };
+    const resultat = await genererRapportConformite({
+      systeme: composerPrompt(
+        {
+          agent: "conformite",
+          codePays: c.codePays,
+          unite: "pays",
+          skills: SKILLS.conformite,
+          valeursDynamiques: {
+            REFERENTIEL: c.pack.referentiel.code,
+            VERSION_REFERENTIEL: c.pack.referentiel.version,
+          },
+        },
+        c.options.racine,
+      ),
+      demande,
+      pdfBase64: null,
+      modele: c.options.modele,
+      parametres: c.options.parametres,
+    });
+    r.consommations.push(...resultat.consommations);
+    lignes.push(messageDemandeConformite(demande), "", "--- Rapport de la Conformité ---");
+    if (!resultat.sortie) {
+      lignes.push(`(aucune sortie exploitable, arrêt : ${resultat.arret})`);
+      r.analyses.push({ rapport: null, problemes: [] });
+      return;
+    }
+    const { problemes } = controlerRapport(resultat.sortie, comparaison);
+    lignes.push(
+      JSON.stringify(resultat.sortie, null, 2),
+      ...problemes.map((p) => `Contrôle du serveur : ${p}`),
+    );
+    r.reponses.push(JSON.stringify(resultat.sortie));
+    r.analyses.push({ rapport: resultat.sortie, problemes });
+  } finally {
+    r.transcription = lignes.join("\n");
+  }
+}
+
 const EXECUTANTS = {
+  conformite: executerConformite,
   coordinateur: executerCoordinateur,
   support: executerSupport,
   tuteur: executerTuteur,
@@ -787,6 +886,7 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
         reponsesParents: [],
         reponsesSupport: [],
         revues: [],
+        analyses: [],
         consommations: [],
       };
       try {
@@ -804,6 +904,9 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
             : []),
           ...(options.agent === "coordinateur"
             ? controlerCoordinateur(verifications, partiel.revues)
+            : []),
+          ...(options.agent === "conformite"
+            ? controlerConformite(verifications, partiel.analyses)
             : []),
         ];
         const jugement = await options.juge(scenario, partiel.transcription, options.agent);

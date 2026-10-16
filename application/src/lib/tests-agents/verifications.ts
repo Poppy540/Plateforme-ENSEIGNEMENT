@@ -4,6 +4,7 @@ import { controlerQuiz, type SortieQuiz } from "../agents/evaluateur/quiz.ts";
 import type { Candidat } from "../agents/tuteur/analyse.ts";
 import { controlerPlan, type PlanTuteur } from "../agents/tuteur/plan.ts";
 import type { ReponseParent } from "../agents/tuteur/rapport.ts";
+import type { RapportConformite } from "../agents/conformite/rapport.ts";
 import type { SortieCoordinateur } from "../agents/coordinateur/revue.ts";
 import type { Faq } from "../agents/support/faq.ts";
 import { controlerReponse, type ReponseSupport } from "../agents/support/reponse.ts";
@@ -60,6 +61,57 @@ export interface Verifications {
   plan_production?: boolean;
   /** Agent Coordinateur : un classement universel / adaptable / local est rendu. */
   classement?: boolean;
+  /** Agent Conformité : la demande doit être refusée (true) ou traitée sans refus (false). */
+  refus_conformite?: boolean;
+  /** Agent Conformité : au moins une alerte de l'un de ces types. */
+  alerte_types?: RapportConformite["alertes"][number]["type"][];
+  /** Agent Conformité : extraction non vide, chaque donnée avec sa source. */
+  extraction_sourcee?: boolean;
+  /** Agent Conformité : tout coefficient absent du document reste nul et figure dans les champs manquants. */
+  coefficient_manquant?: boolean;
+  /** Agent Conformité : aucune donnée marquée « officielle » (source non officielle). */
+  aucune_donnee_officielle?: boolean;
+  /** Agent Conformité : une comparaison avec la plateforme est rendue. */
+  comparaison?: boolean;
+}
+
+/** Contrôles propres à l'agent Conformité (sur la sortie brute, avant les corrections du serveur). */
+export function controlerConformite(
+  v: Verifications,
+  analyses: { rapport: RapportConformite | null; problemes: string[] }[],
+): string[] {
+  const echecs: string[] = [];
+  if (analyses.length === 0) return ["aucune analyse"];
+  for (const { rapport: r, problemes } of analyses) {
+    if (!r) {
+      echecs.push("rapport inexploitable");
+      continue;
+    }
+    if (v.refus_conformite !== undefined && (r.refus.trim() !== "") !== v.refus_conformite)
+      echecs.push(v.refus_conformite ? "demande non refusée" : "refus inattendu");
+    if (v.alerte_types && !r.alertes.some((a) => v.alerte_types!.includes(a.type)))
+      echecs.push(`aucune alerte de type ${v.alerte_types.join(" ou ")}`);
+    if (v.extraction_sourcee) {
+      if (r.extraction.length === 0) echecs.push("extraction vide");
+      if (r.extraction.some((e) => !e.source.trim())) echecs.push("donnée extraite sans source");
+    }
+    if (
+      v.coefficient_manquant &&
+      r.extraction.some(
+        (e) => e.coefficient !== null || !e.champs_manquants.some((m) => /coefficient/i.test(m)),
+      )
+    )
+      echecs.push("coefficient inventé ou non signalé manquant");
+    if (
+      v.aucune_donnee_officielle &&
+      (r.document.officiel || r.extraction.some((e) => e.statut === "officielle"))
+    )
+      echecs.push("source non officielle traitée comme officielle");
+    if (v.comparaison && r.comparaison.length === 0) echecs.push("aucune comparaison");
+    if (v.sans_probleme_de_controle && problemes.length > 0)
+      echecs.push(`corrections du serveur : ${problemes.join(" ; ")}`);
+  }
+  return echecs;
 }
 
 /** Contrôles propres à l'agent Coordinateur. */

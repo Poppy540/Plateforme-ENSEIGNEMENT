@@ -232,3 +232,9 @@ button.danger {
   aspect-ratio: 16 / 9;
   background: #000;
 }
+
+/* Tableaux larges (rapports) : défilement horizontal sur téléphone, sans déborder sur la page. */
+.tableau-defilant {
+  overflow-x: auto;
+  max-width: 100%;
+}
