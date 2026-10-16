@@ -1,0 +1,14 @@
+# Valeurs injectées dans agents/coordinateur/prompt.md pour la famille Mathématiques (décisions 0005, 0008, 0038).
+# Le fichier est nommé d'après la famille : le Coordinateur est instancié une fois par famille, pas par unité.
+# Valeurs PROVISOIRES proposées par Claude Code, à valider par le propriétaire (aucune personne réelle).
+unite: mathematiques
+# Skill propre à la famille, chargée en plus des skills communes du Coordinateur.
+skill_famille: coordination-maths
+variables:
+  FAMILLE: "Mathématiques"
+  MATIERES_FAMILLE: "Mathématiques"
+  PAYS: "Gabon"
+  REFERENTIEL: "ga-general"
+  REFERENT: "l'enseignant-référent de la famille Mathématiques (en cours de désignation)"
+  DATE: "non relu"
+  VERSION: "0.1-provisoire"

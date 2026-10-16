@@ -20,6 +20,9 @@ Accès : URL de la base et clé à rôle restreint (`agent_coordinateur` : lectu
 
 Variables : `DATABASE_URL`, `DATABASE_AGENT_KEY`.
 
-## Mise en œuvre (à faire)
+## Mise en œuvre (ADR 0038)
 
-Ces droits seront appliqués techniquement (rôle de base de données dédié, politiques d'accès au niveau des lignes, statistiques agrégées avec un seuil minimal d'effectif), pas seulement par le prompt.
+- Rôle de base `agent_coordinateur` : famille et référentiel fixés par le serveur ; lecture du catalogue, des chapitres et liens de la famille, des scripts et quiz **validés** de la famille ; statistiques agrégées seulement pour les quiz d'au moins 5 tentatives (seuil non abaissable) ; **aucune** table d'élève lisible.
+- Écrit uniquement des rapports au statut brouillon (version et statut imposés par la base) et des signalements sans élève.
+- Toute décision (lien accepté, proposition écartée, glossaire adopté comme charte, rapport clos) est prise par un référent de la famille, vérifiée par la base ; un lien accepté ne peut ni créer de cycle ni venir d'une classe supérieure.
+- Lancé par l'Orchestrateur (type `coherence_famille`) ; il ne parle jamais aux élèves.

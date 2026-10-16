@@ -33,6 +33,7 @@ Statuts : **validé** (confirmé par un enseignant-référent sur le programme o
 | `programmes/ga-6e-…`, `ga-5e-…`, `ga-4e-mathematiques.yaml` | Volumes horaires, coefficients | — | manquant |
 | `prerequis/mathematiques.yaml` | 44 liens de prérequis chapitre par chapitre, 6e → 3e (strict / souple) | Proposition de Claude Code d'après les programmes provisoires (ADR 0037) | chaque lien à valider par un référent dans l'espace référent |
 | `agents/{professeur,scenariste,evaluateur,production-video}/ga-{6e,5e,4e}-mathematiques.yaml` | Variables des prompts et fiche d'avatar | Valeurs de l'unité pilote adaptées au niveau d'après `profils-niveau.yaml` (Claude Code) | à valider |
+| `agents/coordinateur/<famille>.yaml` (6 familles) | Variables du prompt Coordinateur et skill de famille | Proposition de Claude Code (ADR 0038) | à valider |
 | (futur) autres programmes | Chapitres des autres unités | Cadrage, « Découpage des cours », base francophone générique | à valider (pas encore importés) |
 
 ## Règle d'or

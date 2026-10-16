@@ -21,7 +21,8 @@ type RoleAgent =
   | "agent_orchestrateur"
   | "agent_tuteur"
   | "service_messagerie"
-  | "agent_support";
+  | "agent_support"
+  | "agent_coordinateur";
 
 async function enTransaction<T>(
   role: "anon" | "authenticated" | RoleAgent,
@@ -129,4 +130,22 @@ export async function creerCompteSimule(utilisateur: string): Promise<void> {
 /** Réservé à l'authentification simulée (développement et test) : supprime le compte d'authentification. */
 export async function supprimerCompteSimule(utilisateur: string): Promise<void> {
   await pool().query("delete from auth.users where id = $1", [utilisateur]);
+}
+
+/**
+ * Requêtes de l'agent Coordinateur : référentiel et famille fixés par le serveur, jamais par le modèle ;
+ * aucun élève dans le contexte.
+ */
+export function avecAgentCoordinateur<T>(
+  contexte: { referentielId: string; famille: string },
+  traitement: (client: PoolClient) => Promise<T>,
+) {
+  return enTransaction("agent_coordinateur", null, async (client) => {
+    await client.query(
+      `select set_config('app.referentiel_id', $1, true), set_config('app.famille', $2, true),
+              set_config('app.eleve_id', '', true), set_config('app.unite_id', '', true)`,
+      [contexte.referentielId, contexte.famille],
+    );
+    return traitement(client);
+  });
 }

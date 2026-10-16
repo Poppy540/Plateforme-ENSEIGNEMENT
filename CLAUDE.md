@@ -58,7 +58,7 @@ pnpm pack:sql ../referentiels/<pays>   # contrôle un pack pays et génère son 
 pnpm referent:invitation <référentiel> <famille[,famille]> [jours] > invitation.sql   # invitation de référent (le propriétaire seul)
 bash scripts/base-locale.sh demarrer   # base locale (données fictives) pour pnpm dev ; voir application/README.md
 CHEMIN_CHROMIUM=/opt/pw-browsers/chromium-1194/chrome-linux/chrome pnpm test:e2e   # bout en bout (Playwright, base locale réinitialisée)
-pnpm test:agents [--agent scenariste|evaluateur|tuteur|support]   # tests des agents, simulés (sans coût) ; passage réel : voir tests/README.md (payant, accord du propriétaire)
+pnpm test:agents [--agent scenariste|evaluateur|tuteur|support|coordinateur]   # tests des agents, simulés (sans coût) ; passage réel : voir tests/README.md (payant, accord du propriétaire)
 ```
 
 # 5. DROITS ET INTERDICTIONS

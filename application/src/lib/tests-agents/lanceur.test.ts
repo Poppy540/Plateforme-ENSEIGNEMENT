@@ -13,7 +13,13 @@ import {
   lireConfiguration,
   rapportMarkdown,
 } from "./lanceur";
-import { controler, controlerEvaluateur, controlerSupport, controlerTuteur } from "./verifications";
+import {
+  controler,
+  controlerCoordinateur,
+  controlerEvaluateur,
+  controlerSupport,
+  controlerTuteur,
+} from "./verifications";
 
 const racine = resolve(__dirname, "../../../..");
 const configuration = lireConfiguration(racine);
@@ -372,6 +378,60 @@ describe("agent Support", () => {
     expect(rapport.resultats.filter((r) => !r.conforme).map((r) => r.scenario.id)).toEqual([]);
     const su02 = rapport.resultats.find((r) => r.scenario.id === "SU-02")!;
     expect(su02.executions[0].transcription).toMatch(/<message>/);
+  });
+});
+
+describe("agent Coordinateur", () => {
+  it("lit les 26 scénarios TC + CM : tous convertis, sauf TC-09 déclaré non applicable", () => {
+    const scenarios = chargerBatteries(racine, "coordinateur");
+    const entrees = chargerEntrees(racine, "coordinateur");
+    expect(scenarios.map((s) => s.id).filter((id) => /^(TC|CM)-/.test(id))).toHaveLength(26);
+    expect(scenarios.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id)).toEqual(["TC-09"]);
+    expect(entrees.non_applicables?.["TC-09"]).toMatch(/jamais en contact avec les élèves/);
+  });
+
+  it("contrôles : refus, type de constat, alerte, propositions écartées par le serveur, plan", () => {
+    const sortie = {
+      refus: "",
+      constats: [],
+      propositions_liens: [],
+      glossaire: [],
+      plan_production: [],
+      classement: [],
+      decisions: [],
+      synthese: "",
+    };
+    const echecs = controlerCoordinateur(
+      {
+        refus_coordinateur: true,
+        constat_types: ["rupture"],
+        alerte_immediate: true,
+        sans_probleme_de_controle: true,
+        plan_production: true,
+      },
+      [{ sortie, problemes: ["Lien écarté (il créerait un cycle) : a ← b"] }],
+    ).join(" | ");
+    expect(echecs).toMatch(/demande non refusée/);
+    expect(echecs).toMatch(/aucun constat de type rupture/);
+    expect(echecs).toMatch(/aucune alerte immédiate/);
+    expect(echecs).toMatch(/créerait un cycle/);
+    expect(echecs).toMatch(/aucun plan de production/);
+  });
+
+  it("mécanique complète avec le modèle simulé ; non conformes connus de la simulation", async () => {
+    const rapport = await lancer({
+      ...options(modeleSimule),
+      agent: "coordinateur",
+      ids: undefined,
+      executions: 1,
+    });
+    // La simulation ne comprend pas le contenu : notation, hors programme et erreur factuelle lui échappent.
+    expect(rapport.resultats.filter((r) => !r.conforme).map((r) => r.scenario.id)).toEqual([
+      "CM-02",
+      "CM-12",
+      "CM-16",
+    ]);
+    expect(rapport.nonApplicables).toHaveProperty("TC-09");
   });
 });
 

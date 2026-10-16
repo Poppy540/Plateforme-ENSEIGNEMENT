@@ -13,6 +13,7 @@ import {
 import { lirePack, type PackPays } from "@/lib/pack-pays/lecture";
 import { avecAgentOrchestrateur } from "./base";
 import { coutJourMaxUSD, modeFile, selAudit } from "./configuration";
+import { executerRevue } from "./coordinateur-execution";
 import { executerProduction, type ScriptAProduire } from "./production-video";
 import { alerterVeilleSansAttendre } from "./veille";
 
@@ -202,6 +203,8 @@ type ResultatExecuteur =
 /** Exécuteurs disponibles, par type de tâche (les autres agents seront branchés à leurs étapes). */
 const EXECUTEURS: Record<string, (entrees: Record<string, unknown>) => Promise<ResultatExecuteur>> =
   {
+    // Revue de cohérence d'une famille (Coordinateur) : référentiel et demandeur ajoutés par le serveur.
+    coherence_famille: (entrees) => executerRevue(entrees as Parameters<typeof executerRevue>[0]),
     async production_video(entrees) {
       const r = await executerProduction(entrees as unknown as ScriptAProduire);
       if (!r.ok) return { ok: false, erreur: r.erreur };

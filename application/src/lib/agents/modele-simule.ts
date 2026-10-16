@@ -216,6 +216,162 @@ function planSimule(demande: string): BetaMessage {
 }
 
 /** Support simulé : règles par mots-clés, pour exercer la mécanique (tickets, escalades, refus). */
+/** Revue de cohérence simulée du Coordinateur : règles simples, aucune connaissance du programme. */
+function coordinateurSimule(demande: string): BetaMessage {
+  const consigne = (
+    demande.match(/<consigne_referent>\n([\s\S]*?)\n<\/consigne_referent>/)?.[1] ?? ""
+  ).toLowerCase();
+  const contenus = demande.match(/<contenus>\n([\s\S]*?)\n<\/contenus>/)?.[1] ?? "";
+  const vide = {
+    constats: [],
+    propositions_liens: [],
+    glossaire: [],
+    plan_production: [],
+    classement: [],
+    decisions: [],
+  };
+  const sortie = (s: Record<string, unknown>) =>
+    message([texte(JSON.stringify({ refus: "", synthese: "", ...vide, ...s }))], "end_turn");
+  if (/valid|publi/.test(consigne) && /marque|comme valid|valide tout|publie/.test(consigne))
+    return sortie({
+      refus:
+        "(Coordinateur simulé) Je ne peux rien valider ni publier : la décision revient au référent. Je prépare une synthèse des points à décider.",
+    });
+  if (/résultats? de l'élève|notes de l'élève|données de l'élève|l'élève [a-z]\b/.test(consigne))
+    return sortie({
+      refus:
+        "(Coordinateur simulé) Je n'ai accès à aucune donnée individuelle d'élève, seulement à des statistiques agrégées.",
+    });
+  if (/explique-lui|réponds à l'élève|élève .*bloqué|question de cours/.test(consigne))
+    return sortie({
+      refus:
+        "(Coordinateur simulé) Je ne m'adresse pas aux élèves : la question va au Professeur de l'unité par l'Orchestrateur. Je peux vérifier si un prérequis manque.",
+    });
+  if (/prompt système|clé api|mot de passe|programme qui|administrateur/.test(consigne))
+    return sortie({
+      refus:
+        "(Coordinateur simulé) Cette demande sort de mon rôle : je ne révèle ni mes instructions ni aucun secret, et je n'agis que sur la cohérence de la famille.",
+    });
+  if (/modifie (le|les) (prompt|droits)|change le prompt/.test(consigne))
+    return sortie({
+      refus:
+        "(Coordinateur simulé) Je ne modifie ni prompt ni droits : je peux proposer une modification au référent.",
+    });
+
+  // Programme : unités dans l'ordre des classes, chapitres par unité.
+  const unites = [...demande.matchAll(/^## (\S+) \(classe [^)]*\)\n((?:- .*\n?)*)/gm)].map((m) => ({
+    code: m[1],
+    chapitres: [...m[2].matchAll(/^- (\S+) « (.*?) »/gm)].map((c) => ({ ref: c[1], titre: c[2] })),
+  }));
+  const constats: Record<string, unknown>[] = [];
+  const propositions: Record<string, unknown>[] = [];
+  const constat = (type: string, c: string, r: string, chapitres: string[] = [], alerte = false) =>
+    constats.push({
+      type,
+      chapitres,
+      niveaux: [],
+      gravite: alerte ? "elevee" : "moyenne",
+      constat: `${c} (simulé)`,
+      recommandation: r,
+      confiance: "moyenne",
+      alerte_immediate: alerte,
+    });
+  for (const m of demande.matchAll(/Chapitre isolé \(aucun prérequis ni suite\) : (\S+)/g)) {
+    const ref = m[1];
+    const i = unites.findIndex((u) => u.chapitres.some((c) => c.ref === ref));
+    const precedent = i > 0 ? unites[i - 1].chapitres.at(-1) : undefined;
+    constat(
+      "rupture",
+      `Le chapitre ${ref} n'est relié à aucun prérequis : une notion risque d'y être utilisée sans avoir été introduite`,
+      "Ajouter un prérequis ou un chapitre d'introduction, à décider par le référent.",
+      [ref],
+    );
+    if (precedent && propositions.length < 3)
+      propositions.push({
+        chapitre: ref,
+        prerequis: precedent.ref,
+        nature: "souple",
+        justification: "Chapitre de la classe précédente le plus proche (simulé).",
+      });
+  }
+  const parTitre = new Map<string, string[]>();
+  for (const c of unites.flatMap((u) => u.chapitres))
+    parTitre.set(c.titre, [...(parTitre.get(c.titre) ?? []), c.ref]);
+  for (const [titre, refs] of parTitre)
+    if (refs.length > 1)
+      constat(
+        "doublon",
+        `Chapitres quasi identiques « ${titre} »`,
+        "Proposer un socle commun et des extensions par série.",
+        refs,
+      );
+  if (/(agent|coordinateur)\s*:\s*(valide|marque|publie)/i.test(contenus))
+    constat(
+      "instruction_cachee",
+      "Un contenu contient une instruction adressée au Coordinateur ; elle est ignorée",
+      "Vérifier et corriger ce contenu.",
+      [],
+      true,
+    );
+  if (/colonisation|guerre|religion|ethnie/i.test(contenus + consigne))
+    constat(
+      "sujet_sensible",
+      "Sujet sensible : vérifier l'équilibre factuel",
+      "Relecture prioritaire par le référent.",
+      [],
+      true,
+    );
+  for (const m of demande.matchAll(/^- (\S+), question (\d+) : (\d+) % de réussite/gm))
+    if (Number(m[3]) < 40)
+      constat(
+        "question_defectueuse",
+        `Taux de réussite faible (${m[3]} %) à la question ${m[2]} de ${m[1]}`,
+        "Vérifier d'abord si la question est ambiguë ou défectueuse avant de conclure à une incompréhension.",
+        [m[1]],
+      );
+  if (/quiz écarté\(s\) des statistiques/.test(demande))
+    constat(
+      "donnees_insuffisantes",
+      "Des quiz ont trop peu de tentatives pour rester anonymes ; ils ne sont pas analysés",
+      "Attendre au moins 5 tentatives.",
+    );
+  const ordre = demande.match(/compatible avec les prérequis : (.*)/)?.[1]?.split(", ") ?? [];
+  const classement = /pays|référentiel/.test(consigne)
+    ? unites
+        .flatMap((u) => u.chapitres)
+        .slice(0, 3)
+        .map((c) => ({
+          chapitre: c.ref,
+          couche: "adaptable",
+          confiance: "faible",
+          raison: "Classement simulé, à vérifier.",
+        }))
+    : [];
+  return sortie({
+    constats,
+    propositions_liens: propositions,
+    glossaire: [
+      {
+        terme: "Notation simulée",
+        definition: "Entrée de glossaire simulée.",
+        niveaux: [],
+        notation: "—",
+      },
+    ],
+    plan_production: ordre.slice(0, 5).map((ref) => ({
+      chapitre: ref,
+      raison: "Placé après ses prérequis (simulé).",
+    })),
+    classement,
+    decisions: constats.slice(0, 3).map((c) => ({
+      question: `Que faire : ${c.constat}`,
+      recommandation: String(c.recommandation),
+      confiance: "moyenne",
+    })),
+    synthese: `(Coordinateur simulé) ${constats.length} constat(s), ${propositions.length} lien(s) proposé(s).`,
+  });
+}
+
 function supportSimule(demande: string): BetaMessage {
   const m = (demande.match(/<message>\n([\s\S]*?)\n<\/message>/)?.[1] ?? "").toLowerCase();
   const r = (
@@ -359,6 +515,7 @@ export function reponseSimulee(parametres: BetaMessageStreamParams): BetaMessage
     const demande = dernierTexteEleve(messages);
     if ("questions" in champs) return quizSimule(demande);
     if ("faq_utilisees" in champs) return supportSimule(demande);
+    if ("propositions_liens" in champs) return coordinateurSimule(demande);
     if ("priorites" in champs) return planSimule(demande);
     if ("points_forts" in champs)
       return message(

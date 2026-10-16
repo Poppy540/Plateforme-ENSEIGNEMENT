@@ -26,7 +26,14 @@ const option = (nom: string) => {
   return i >= 0 ? args[i + 1] : undefined;
 };
 const racine = resolve(process.env.CHEMIN_DEPOT ?? "..");
-const AGENTS: AgentTeste[] = ["professeur", "scenariste", "evaluateur", "tuteur", "support"];
+const AGENTS: AgentTeste[] = [
+  "professeur",
+  "scenariste",
+  "evaluateur",
+  "tuteur",
+  "support",
+  "coordinateur",
+];
 const saisi = option("--agent") ?? "professeur";
 if (!(AGENTS as string[]).includes(saisi)) {
   console.error(`Agent inconnu : ${saisi} (${AGENTS.join(", ")}).`);
@@ -45,6 +52,8 @@ const PAR_DEFAUT_PAR_AGENT: Record<
   evaluateur: { effort: "high", maxTokens: 64000, sortieParTour: 6000, entreeJugement: 6000 },
   tuteur: { effort: "medium", maxTokens: 8000, sortieParTour: 2500, entreeJugement: 3000 },
   support: { effort: "low", maxTokens: 4000, sortieParTour: 800, entreeJugement: 2000 },
+  // Revue de famille : longue entrée (programme, graphe, contenus) et sortie structurée détaillée.
+  coordinateur: { effort: "high", maxTokens: 32000, sortieParTour: 6000, entreeJugement: 9000 },
 };
 const PAR_DEFAUT = PAR_DEFAUT_PAR_AGENT[agent];
 const configuration = lireConfiguration(racine);
@@ -72,14 +81,20 @@ const toursTotal =
     if (agent === "evaluateur") return s + (e.quiz ?? []).length + (e.corrections ?? []).length;
     if (agent === "tuteur") return s + 1;
     if (agent === "support") return s + (e.support?.messages ?? []).length;
+    if (agent === "coordinateur") return s + 1;
     return s + (e.generations ?? [{}]).length;
   }, 0) * executions;
 const prompt = composerPrompt(
   {
     agent,
     codePays: entrees.unite.split("-")[0],
-    // Le Tuteur et le Support sont configurés par pays, pas par unité.
-    unite: agent === "tuteur" || agent === "support" ? "pays" : entrees.unite,
+    // Le Tuteur et le Support sont configurés par pays, le Coordinateur par famille, pas par unité.
+    unite:
+      agent === "tuteur" || agent === "support"
+        ? "pays"
+        : agent === "coordinateur"
+          ? (entrees.famille_par_defaut?.famille ?? "mathematiques")
+          : entrees.unite,
     skills: [],
     valeursDynamiques: { LISTE_CHAPITRES: "x", CHAPITRE_EN_COURS: "x", DUREE: "x" },
   },

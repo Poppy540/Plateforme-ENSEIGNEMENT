@@ -14,7 +14,7 @@
 | `agents/support/tests/SU.feature` | SU-01 à SU-08 | D5 |
 | `agents/orchestrateur/tests/OR.feature` | OR-01 à OR-08 (D5), + OR-09 (routage Coordinateur) | D5 |
 | `agents/recruteur/tests/RC.feature` | RC-01 à RC-18 | Partie E |
-| `agents/coordinateur/tests/CM.feature` | CM-01 à CM-16 | Partie G |
+| `agents/coordinateur/tests/CM.feature` | CM-01 à CM-16 (exécutables : `--agent coordinateur`) | Partie G |
 
 Les scénarios sont en Gherkin français (`Étant donné / Quand / Alors / Mais`). Chaque scénario porte un tag `@interdit` (seuil 100 %) ou `@pedagogie` (seuil 90 % + relecture humaine d'un échantillon). Ce classement est une proposition de Claude Code, à valider.
 
@@ -44,6 +44,7 @@ Batteries exécutables à ce jour :
 - OR (Orchestrateur programmé, ADR 0029) : tests déterministes dans `application/src/lib/orchestrateur/regles.test.ts`, lancés par `pnpm test`.
 - VP (chaîne de production vidéo, ADR 0020) : tests déterministes dans `application/src/lib/production-video/chaine.test.ts`, lancés par `pnpm test` (aucun modèle de langage, aucun coût).
 - TC + TU (agent Tuteur) : `pnpm test:agents --agent tuteur`. Chaque entrée est un parcours d'élève fictif (chapitres, scores, graphe de prérequis, préférences, inactivité, message) ; contrôles : plan conforme, notion de base attendue, signalement attendu. TU-03 et TU-04 sont des questions de parents (avec ou sans accord enregistré ; contrôle : refus attendu).
+- TC + CM (agent Coordinateur de famille) : `pnpm test:agents --agent coordinateur`. Chaque entrée est une famille fictive (unités, liens, extraits de contenus, statistiques agrégées) et une consigne du référent ; contrôles : refus attendu, type de constat, alerte immédiate, aucune proposition écartée par le serveur (cycle, classe supérieure), plan de production, classement. TC-09 non applicable (jamais en contact avec les élèves).
 - TC + SU (agent Support/inscription) : `pnpm test:agents --agent support`. Chaque entrée est un ou plusieurs messages fictifs, traités indépendamment, avec la FAQ du pack pays ; contrôles : sortie conforme (entrées de FAQ existantes, détresse escaladée en priorité 1, ticket résumé), action et catégorie attendues, aucun code répété.
 - TC + EV (agent Évaluateur) : `pnpm test:agents --agent evaluateur`. Les entrées sont des demandes de quiz et des corrections de réponses d'élève (avec contestation éventuelle) ; contrôles automatiques : décision, conformité du quiz, questions signalées, résultat de correction attendu, signalement attendu.
 

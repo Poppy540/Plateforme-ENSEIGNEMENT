@@ -29,6 +29,14 @@ import {
   repondreAuParent,
   type ReponseParent,
 } from "../agents/tuteur/rapport.ts";
+import type { DonneesFamille } from "../agents/coordinateur/analyse.ts";
+import { skillsCoordinateur } from "../agents/coordinateur/configuration.ts";
+import {
+  controlerSortie,
+  genererRevue,
+  messageDemandeRevue,
+  type SortieCoordinateur,
+} from "../agents/coordinateur/revue.ts";
 import { lireFaq, type Faq } from "../agents/support/faq.ts";
 import {
   messageDemandeSupport,
@@ -42,6 +50,7 @@ import { lireScenarios, type ScenarioGherkin } from "./gherkin.ts";
 import type { Juge } from "./juge.ts";
 import {
   controler,
+  controlerCoordinateur,
   controlerEvaluateur,
   controlerSupport,
   controlerTuteur,
@@ -116,9 +125,29 @@ export interface DemandeSupportTest {
   statut_compte?: DemandeSupport["statutCompte"];
 }
 
+/** Famille fictive donnée au Coordinateur (agent Coordinateur) ; les champs absents viennent du défaut. */
+export interface FamilleTest {
+  famille?: string;
+  libelle?: string;
+  unites?: {
+    code: string;
+    niveau: string;
+    ordre: number;
+    series?: string[];
+    chapitres: { code: string; titre: string; statut?: "a_valider" | "valide" | "rejete" }[];
+  }[];
+  /** Liens [chapitre, prérequis, nature?, statut?] (références « <unité>/<code> »). */
+  liens?: [string, string, ("strict" | "souple")?, ("a_valider" | "valide" | "rejete")?][];
+  contenus?: { chapitre: string; type: "script" | "quiz"; extrait: string }[];
+  statistiques?: { chapitre: string; question: number; tentatives: number; taux: number }[];
+  quiz_trop_petits?: number;
+}
+
 interface EntreeScenario {
   chapitre?: string;
   support?: DemandeSupportTest;
+  /** Agent Coordinateur : famille (complète celle par défaut) et consigne du référent. */
+  revue?: { consigne?: string; famille?: FamilleTest };
   tours?: string[];
   generations?: Generation[];
   quiz?: DemandeQuizTest[];
@@ -131,6 +160,8 @@ export interface FichierEntrees {
   unite: string;
   /** Agent Tuteur : parcours fictif commun, complété ou remplacé par chaque scénario. */
   parcours_par_defaut?: ParcoursTest;
+  /** Agent Coordinateur : famille fictive commune. */
+  famille_par_defaut?: FamilleTest;
   chapitre_par_defaut: string;
   duree_par_defaut?: number;
   verifications_communes?: Verifications;
@@ -139,7 +170,8 @@ export interface FichierEntrees {
   scenarios: Record<string, EntreeScenario>;
 }
 
-export type AgentTeste = "professeur" | "scenariste" | "evaluateur" | "tuteur" | "support";
+export type AgentTeste =
+  "professeur" | "scenariste" | "evaluateur" | "tuteur" | "support" | "coordinateur";
 
 export interface Execution {
   numero: number;
@@ -218,6 +250,8 @@ const SKILLS: Record<AgentTeste, string[]> = {
   evaluateur: ["_commun/skills/contenu-non-fiable", "evaluateur/skills/questions-de-controle"],
   tuteur: ["_commun/skills/contenu-non-fiable"],
   support: ["_commun/skills/contenu-non-fiable", "support/skills/tri-des-demandes"],
+  // Coordinateur : skills de la famille du scénario (voir executerCoordinateur).
+  coordinateur: [],
 };
 
 interface ResultatExecution {
@@ -230,6 +264,7 @@ interface ResultatExecution {
   plans: { plan: PlanTuteur | null; candidats: Candidat[]; minutes: number | null }[];
   reponsesParents: (ReponseParent | null)[];
   reponsesSupport: (ReponseSupport | null)[];
+  revues: { sortie: SortieCoordinateur | null; problemes: string[] }[];
   consommations: Consommation[];
 }
 
@@ -618,7 +653,91 @@ async function executerSupport(
   }
 }
 
+/** Famille fictive du scénario, au format lu par le Coordinateur. */
+export function familleDuScenario(
+  defaut: FamilleTest = {},
+  scenario: FamilleTest = {},
+): DonneesFamille {
+  const f = { ...defaut, ...scenario };
+  return {
+    famille: f.famille ?? "mathematiques",
+    libelleFamille: f.libelle ?? "Mathématiques",
+    unites: (f.unites ?? []).map((u) => ({
+      code: u.code,
+      niveau: u.niveau,
+      ordreNiveau: u.ordre,
+      series: u.series ?? [],
+      chapitres: u.chapitres.map((c) => ({
+        ref: `${u.code}/${c.code}`,
+        titre: c.titre,
+        statut: c.statut ?? "valide",
+        sousThemes: [],
+      })),
+    })),
+    liens: (f.liens ?? []).map(([chapitre, prerequis, nature, statut]) => ({
+      chapitre,
+      prerequis,
+      nature: nature ?? "strict",
+      statut: statut ?? "valide",
+    })),
+    contenus: (f.contenus ?? []).map((c) => ({ ...c, version: 1 })),
+    statistiques: (f.statistiques ?? []).map((s) => ({
+      chapitre: s.chapitre,
+      question: s.question,
+      tentatives: s.tentatives,
+      tauxReussite: s.taux,
+    })),
+    quizTropPetits: f.quiz_trop_petits ?? 0,
+    charte: [],
+  };
+}
+
+async function executerCoordinateur(
+  c: Contexte,
+  entree: EntreeScenario,
+  r: ResultatExecution,
+): Promise<void> {
+  const lignes: string[] = [];
+  try {
+    const donnees = familleDuScenario(c.entrees.famille_par_defaut, entree.revue?.famille);
+    const consigne = entree.revue?.consigne ?? null;
+    const resultat = await genererRevue({
+      systeme: composerPrompt(
+        {
+          agent: "coordinateur",
+          codePays: c.codePays,
+          unite: donnees.famille,
+          skills: skillsCoordinateur(dossierPack(c.options.racine, c.codePays), donnees.famille),
+          valeursDynamiques: {},
+        },
+        c.options.racine,
+      ),
+      donnees,
+      consigne,
+      modele: c.options.modele,
+      parametres: c.options.parametres,
+    });
+    r.consommations.push(...resultat.consommations);
+    lignes.push(messageDemandeRevue(donnees, consigne), "", "--- Revue du Coordinateur ---");
+    if (!resultat.sortie) {
+      lignes.push(`(aucune sortie exploitable, arrêt : ${resultat.arret})`);
+      r.revues.push({ sortie: null, problemes: [] });
+      return;
+    }
+    const { problemes } = controlerSortie(resultat.sortie, donnees);
+    lignes.push(
+      JSON.stringify(resultat.sortie, null, 2),
+      ...problemes.map((p) => `Contrôle du serveur : ${p}`),
+    );
+    r.reponses.push(JSON.stringify(resultat.sortie));
+    r.revues.push({ sortie: resultat.sortie, problemes });
+  } finally {
+    r.transcription = lignes.join("\n");
+  }
+}
+
 const EXECUTANTS = {
+  coordinateur: executerCoordinateur,
   support: executerSupport,
   tuteur: executerTuteur,
   professeur: executerProfesseur,
@@ -667,6 +786,7 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
         plans: [],
         reponsesParents: [],
         reponsesSupport: [],
+        revues: [],
         consommations: [],
       };
       try {
@@ -681,6 +801,9 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
             : []),
           ...(options.agent === "support"
             ? controlerSupport(verifications, partiel.reponsesSupport, contexte.faq)
+            : []),
+          ...(options.agent === "coordinateur"
+            ? controlerCoordinateur(verifications, partiel.revues)
             : []),
         ];
         const jugement = await options.juge(scenario, partiel.transcription, options.agent);

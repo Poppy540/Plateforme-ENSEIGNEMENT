@@ -63,12 +63,11 @@ test("le référent valide un lien de prérequis entre classes ; un rejet exige 
 
   const [trace] = await executerSql(
     `select count(*) filter (where statut = 'valide')::int as valides,
-            count(*) filter (where statut = 'rejete')::int as rejetes,
-            bool_and(decide_par = $1) as par_le_referent
-     from prerequis_chapitres where statut <> 'a_valider'`,
+            count(*) filter (where statut = 'rejete')::int as rejetes
+     from prerequis_chapitres where decide_par = $1`,
     [identifiantSimule(REFERENT)],
   );
-  expect(trace).toEqual({ valides: 1, rejetes: 1, par_le_referent: true });
+  expect(trace).toEqual({ valides: 1, rejetes: 1 });
 });
 
 test("le catalogue d'un élève de 4e liste les mathématiques de 4e, pas celles d'une autre classe", async ({

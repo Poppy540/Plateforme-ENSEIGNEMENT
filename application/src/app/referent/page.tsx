@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { seDeconnecter } from "../connexion/actions";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
+import { famillesDuReferent, rapportsDuReferent } from "@/lib/serveur/coordinateur";
 import { liensAValider, tableauReferent } from "@/lib/serveur/referent";
+import { FormulaireRevue } from "./coordinateur/formulaires";
 import { quizARelire } from "@/lib/serveur/evaluateur";
 import { scriptsARelire } from "@/lib/serveur/scenariste";
 import { videosPourTableau } from "@/lib/serveur/videos";
@@ -15,6 +17,8 @@ export default async function PageReferent() {
   const quiz = await quizARelire(utilisateur);
   const videos = await videosPourTableau(utilisateur);
   const liens = await liensAValider(utilisateur);
+  const familles = await famillesDuReferent(utilisateur);
+  const rapports = await rapportsDuReferent(utilisateur);
 
   return (
     <main className="conteneur">
@@ -51,6 +55,33 @@ export default async function PageReferent() {
         <p>
           <Link href="/referent/prerequis">Voir les liens à valider</Link>
         </p>
+      )}
+
+      <h2>Coordinateur de famille</h2>
+      <p className="note">
+        Le Coordinateur (une intelligence artificielle) vérifie la cohérence de la famille
+        d&apos;une classe à l&apos;autre et vous propose des brouillons : rien n&apos;est appliqué
+        sans votre décision.
+      </p>
+      {familles.map((f, i) => (
+        <FormulaireRevue
+          key={f.famille}
+          famille={f.famille}
+          libelle={tableau.familles[i] ?? f.famille}
+        />
+      ))}
+      {rapports.length > 0 && (
+        <ul>
+          {rapports.map((r) => (
+            <li key={r.id}>
+              <Link href={`/referent/coordinateur/${r.id}`}>
+                Revue {r.famille} version {r.version}
+              </Link>{" "}
+              — {r.statut === "brouillon" ? "à traiter" : "traitée"},{" "}
+              {formatDate.format(new Date(r.creeLe))}
+            </li>
+          ))}
+        </ul>
       )}
 
       <h2>Scripts à relire ({scripts.length})</h2>

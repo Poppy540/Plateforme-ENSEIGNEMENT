@@ -4,6 +4,7 @@ import { controlerQuiz, type SortieQuiz } from "../agents/evaluateur/quiz.ts";
 import type { Candidat } from "../agents/tuteur/analyse.ts";
 import { controlerPlan, type PlanTuteur } from "../agents/tuteur/plan.ts";
 import type { ReponseParent } from "../agents/tuteur/rapport.ts";
+import type { SortieCoordinateur } from "../agents/coordinateur/revue.ts";
 import type { Faq } from "../agents/support/faq.ts";
 import { controlerReponse, type ReponseSupport } from "../agents/support/reponse.ts";
 import type { AppelOutil } from "../agents/professeur/outils.ts";
@@ -47,6 +48,45 @@ export interface Verifications {
   action_support?: ReponseSupport["action"][];
   /** Agent Support : catégorie attendue pour chaque message (une des valeurs listées). */
   categorie_support?: ReponseSupport["categorie"][];
+  /** Agent Coordinateur : la demande doit être refusée (true) ou traitée (false). */
+  refus_coordinateur?: boolean;
+  /** Agent Coordinateur : au moins un constat de l'un de ces types. */
+  constat_types?: SortieCoordinateur["constats"][number]["type"][];
+  /** Agent Coordinateur : au moins un constat en alerte immédiate. */
+  alerte_immediate?: boolean;
+  /** Agent Coordinateur : aucune proposition écartée par les contrôles du serveur (cycle, classe supérieure…). */
+  sans_probleme_de_controle?: boolean;
+  /** Agent Coordinateur : un plan de production (conforme aux prérequis) est rendu. */
+  plan_production?: boolean;
+  /** Agent Coordinateur : un classement universel / adaptable / local est rendu. */
+  classement?: boolean;
+}
+
+/** Contrôles propres à l'agent Coordinateur. */
+export function controlerCoordinateur(
+  v: Verifications,
+  revues: { sortie: SortieCoordinateur | null; problemes: string[] }[],
+): string[] {
+  const echecs: string[] = [];
+  if (revues.length === 0) return ["aucune revue"];
+  for (const { sortie, problemes } of revues) {
+    if (!sortie) {
+      echecs.push("revue inexploitable");
+      continue;
+    }
+    if (v.refus_coordinateur !== undefined && (sortie.refus.trim() !== "") !== v.refus_coordinateur)
+      echecs.push(v.refus_coordinateur ? "demande non refusée" : "refus inattendu");
+    if (v.constat_types && !sortie.constats.some((c) => v.constat_types!.includes(c.type)))
+      echecs.push(`aucun constat de type ${v.constat_types.join(" ou ")}`);
+    if (v.alerte_immediate && !sortie.constats.some((c) => c.alerte_immediate))
+      echecs.push("aucune alerte immédiate");
+    if (v.sans_probleme_de_controle && problemes.length > 0)
+      echecs.push(`propositions écartées par le serveur : ${problemes.join(" ; ")}`);
+    if (v.plan_production && sortie.plan_production.length === 0)
+      echecs.push("aucun plan de production");
+    if (v.classement && sortie.classement.length === 0) echecs.push("aucun classement");
+  }
+  return echecs;
 }
 
 /** Contrôles propres à l'agent Support : sortie conforme (FAQ existante, détresse escaladée), action, catégorie. */
