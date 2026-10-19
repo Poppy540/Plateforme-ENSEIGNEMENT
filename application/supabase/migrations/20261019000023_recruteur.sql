@@ -254,6 +254,9 @@ begin
     if v_premier is null then
       raise exception 'Pas de relance sans premier contact.' using errcode = '22023';
     end if;
+    if c.statut not in ('contacte', 'relance') then
+      raise exception 'La personne a répondu ou le recrutement a avancé : pas de relance.' using errcode = '22023';
+    end if;
     if exists (select 1 from messages_recrutement where candidat_id = c.id and nature = 'relance' and statut = 'envoye') then
       raise exception 'Une seule relance.' using errcode = '22023';
     end if;
@@ -269,6 +272,22 @@ begin
     else statut end, maj_le = now()
   where id = c.id and statut in ('identifie', 'qualifie', 'contacte');
   return query select c.contact, m.objet, m.texte;
+end;
+$$;
+
+/** Le propriétaire annule un brouillon ou un message approuvé qui n'est pas encore parti. */
+create function annuler_message_recrutement(p_message uuid) returns boolean
+language plpgsql security definer
+set search_path = pg_catalog, public
+as $$
+declare v_n integer;
+begin
+  if role_courant() is distinct from 'administrateur' then
+    raise exception 'Seul le propriétaire annule.' using errcode = '42501';
+  end if;
+  update messages_recrutement set statut = 'annule' where id = p_message and statut in ('brouillon', 'approuve');
+  get diagnostics v_n = row_count;
+  return v_n > 0;
 end;
 $$;
 
@@ -293,8 +312,10 @@ $$;
 
 revoke execute on function empreinte_contact(text), dans_opposition(text), enregistrer_opposition(text),
   approuver_message_recrutement(uuid, text), envoyer_message_recrutement(uuid, integer), supprimer_candidat(uuid),
+  annuler_message_recrutement(uuid),
   candidats_avant_insertion(), messages_recrutement_versionnes() from public, anon, authenticated;
 grant execute on function enregistrer_opposition(text) to agent_recruteur;
-grant execute on function approuver_message_recrutement(uuid, text), supprimer_candidat(uuid) to authenticated;
+grant execute on function approuver_message_recrutement(uuid, text), supprimer_candidat(uuid),
+  annuler_message_recrutement(uuid) to authenticated;
 grant execute on function envoyer_message_recrutement(uuid, integer) to service_messagerie;
 grant execute on function dans_opposition(text) to authenticated;

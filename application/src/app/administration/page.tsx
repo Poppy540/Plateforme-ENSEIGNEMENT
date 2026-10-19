@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { seDeconnecter } from "../connexion/actions";
 import { formaterUSD } from "@/lib/format";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
@@ -40,6 +41,9 @@ const SOURCES: Record<string, string> = {
   agent_support: "Support",
   agent_production_video: "Production vidéo",
   agent_orchestrateur: "Orchestrateur",
+  agent_coordinateur: "Coordinateur",
+  agent_conformite: "Conformité",
+  agent_recruteur: "Recruteur",
 };
 
 export default async function PageAdministration() {
@@ -54,6 +58,10 @@ export default async function PageAdministration() {
         tâches récentes. Seule l&apos;administration réactive un agent suspendu et traite la file
         humaine ; une détresse appelle d&apos;abord une action humaine hors de la plateforme
         (procédure du pilote).
+      </p>
+
+      <p>
+        <Link href="/administration/recrutement">Recrutement des enseignants-référents</Link>
       </p>
 
       <h2>Accès des élèves</h2>

@@ -23,7 +23,8 @@ type RoleAgent =
   | "service_messagerie"
   | "agent_support"
   | "agent_coordinateur"
-  | "agent_conformite";
+  | "agent_conformite"
+  | "agent_recruteur";
 
 async function enTransaction<T>(
   role: "anon" | "authenticated" | RoleAgent,
@@ -164,6 +165,20 @@ export function avecAgentConformite<T>(
       `select set_config('app.referentiel_id', $1, true), set_config('app.unite_id', $2, true),
               set_config('app.document_id', $3, true), set_config('app.eleve_id', '', true)`,
       [contexte.referentielId, contexte.uniteId, contexte.documentId],
+    );
+    return traitement(client);
+  });
+}
+
+/** Requêtes de l'agent Recruteur : un seul candidat, fixé par le serveur ; aucun élève dans le contexte. */
+export function avecAgentRecruteur<T>(
+  contexte: { candidatId: string },
+  traitement: (client: PoolClient) => Promise<T>,
+) {
+  return enTransaction("agent_recruteur", null, async (client) => {
+    await client.query(
+      "select set_config('app.candidat_id', $1, true), set_config('app.eleve_id', '', true)",
+      [contexte.candidatId],
     );
     return traitement(client);
   });

@@ -7,7 +7,14 @@ import { avecAgentOrchestrateur, avecVisiteur } from "./base";
 // avant tout appel à un modèle de langage.
 
 export type AgentSuspendable =
-  "professeur" | "evaluateur" | "scenariste" | "tuteur" | "support" | "coordinateur" | "conformite";
+  | "professeur"
+  | "evaluateur"
+  | "scenariste"
+  | "tuteur"
+  | "support"
+  | "coordinateur"
+  | "conformite"
+  | "recruteur";
 
 export const MESSAGE_AGENT_SUSPENDU =
   "Ce service est momentanément indisponible. Merci de réessayer plus tard.";

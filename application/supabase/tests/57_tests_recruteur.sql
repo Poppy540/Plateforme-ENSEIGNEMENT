@@ -195,7 +195,14 @@ do $$ begin
   end;
 end $$;
 reset role;
-\echo OK N04 envoi approuvé seulement, un seul premier contact
+select pg_temp.connecter('55555555-5555-4555-8555-555555555555');
+set role authenticated;
+do $$ begin
+  assert annuler_message_recrutement((select valeur from ids where cle = 'second')), 'N04 : annulation';
+  assert not annuler_message_recrutement((select valeur from ids where cle = 'm1')), 'N04 : message envoyé annulé';
+end $$;
+reset role;
+\echo OK N04 envoi approuvé seulement, un seul premier contact, annulation
 
 -- N05 Une seule relance, après le délai.
 set role service_messagerie;
