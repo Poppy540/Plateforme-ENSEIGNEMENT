@@ -1,6 +1,6 @@
 # Plan du Jalon 4 — montée en charge
 
-**Statut** : validé par le propriétaire le 2026-10-13 (décisions ci-dessous, ADR 0035). Étape 0 faite (alerte de veille simulée, quota en base, libellés des familles ; ADR 0036). Étape 1 faite (Maths 6e-3e provisoires, graphe de prérequis validé lien par lien ; ADR 0037). Étape 2 faite (Coordinateur, modèle simulé ; ADR 0038). Étape 3 faite (Conformité programme, modèle simulé ; ADR 0039).
+**Statut** : validé par le propriétaire le 2026-10-13 (décisions ci-dessous, ADR 0035). Étape 0 faite (alerte de veille simulée, quota en base, libellés des familles ; ADR 0036). Étape 1 faite (Maths 6e-3e provisoires, graphe de prérequis validé lien par lien ; ADR 0037). Étape 2 faite (Coordinateur, modèle simulé ; ADR 0038). Étape 3 faite (Conformité programme, modèle simulé ; ADR 0039). Étape 4 faite (Recruteur, modèle simulé, envoi simulé, données fictives ; ADR 0040).
 
 **Objectif (prompt maître §7, point 5)** : « Ensuite seulement : autres unités, Coordinateurs de famille (dès qu'une famille compte plusieurs unités), Recruteur, second pays. » Les trois derniers agents du cadrage (Conformité programme, Coordinateur de famille, Recruteur) sont construits. La plateforme passe d'une unité à une famille complète, et sa portabilité vers un autre pays est démontrée.
 

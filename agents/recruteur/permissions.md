@@ -24,6 +24,9 @@ Aucune clé de paiement ni de signature électronique. La clé de la base est pr
 
 Le Recruteur envoie les messages et les invitations d'agenda **uniquement après validation du propriétaire**, enregistrée dans le système. L'outil d'envoi vérifie l'approbation (valideur, date, empreinte du texte), la liste d'opposition et la limite d'une relance ; sans approbation, l'envoi est refusé.
 
-## Mise en œuvre (à faire)
+## Mise en œuvre (ADR 0040)
 
-Ces droits seront appliqués techniquement (rôle de base de données dédié, politiques d'accès au niveau des lignes, outils exposés à l'agent), pas seulement par le prompt.
+- Rôle de base de données `agent_recruteur` (migration 0023), limité au candidat fixé par le serveur : fiche sans le contact, brouillons de messages et de dossiers d'accord, statuts (jamais « signé »), liste d'opposition en écriture seule, signalements sans élève. Aucune approbation, aucun envoi, aucune donnée d'élève.
+- Approbation par le propriétaire avec l'empreinte du texte ; texte figé ; envoi par le service de messagerie seulement, après contrôle de l'approbation, de l'opposition, du premier contact unique et de la relance unique après délai (tests de base N01-N07).
+- Contrôles du serveur sur chaque sortie de l'agent (`application/src/lib/agents/recruteur/tache.ts`).
+- Outils non encore branchés : recherche web, calendrier, envoi réel d'emails (fournisseurs à choisir, avis du juriste).
