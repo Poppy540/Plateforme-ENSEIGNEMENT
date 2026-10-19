@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { seDeconnecter } from "../connexion/actions";
+import { FormulaireDeconnexion } from "../composants/hors-ligne";
 import { formaterUSD } from "@/lib/format";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import { tableauAdministration } from "@/lib/serveur/administration";
@@ -169,11 +170,7 @@ export default async function PageAdministration() {
         ))}
       </ul>
 
-      <form action={seDeconnecter}>
-        <button type="submit" className="secondaire">
-          Se déconnecter
-        </button>
-      </form>
+      <FormulaireDeconnexion action={seDeconnecter} />
     </main>
   );
 }

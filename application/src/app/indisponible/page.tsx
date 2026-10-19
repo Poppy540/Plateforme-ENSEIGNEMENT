@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { seDeconnecter } from "../connexion/actions";
+import { FormulaireDeconnexion } from "../composants/hors-ligne";
 import { accesElevesOuvert } from "@/lib/serveur/disponibilite";
 import { utilisateurConnecte } from "@/lib/serveur/session";
 
@@ -22,11 +23,7 @@ export default async function PageIndisponible() {
           <p>
             <Link href="/espace/mes-donnees">Mes données (télécharger, supprimer mon compte)</Link>
           </p>
-          <form action={seDeconnecter}>
-            <button type="submit" className="secondaire">
-              Se déconnecter
-            </button>
-          </form>
+          <FormulaireDeconnexion action={seDeconnecter} />
         </>
       )}
       <p className="note">

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { seDeconnecter } from "../connexion/actions";
+import { EnregistrementHorsLigne, FormulaireDeconnexion } from "../composants/hors-ligne";
+import { cleHorsLigne } from "@/lib/serveur/cle-hors-ligne";
 import { profilEleve } from "@/lib/serveur/requetes";
 import { roleCompte } from "@/lib/serveur/referent";
 import { exigerAccesEleves } from "@/lib/serveur/disponibilite";
@@ -20,6 +22,7 @@ export default async function PageEspace() {
 
   return (
     <main className="conteneur">
+      <EnregistrementHorsLigne cle={cleHorsLigne(utilisateur)} />
       <h1>Bonjour {profil.prenom}</h1>
       <p>
         Classe : <strong>{profil.niveau}</strong>
@@ -58,11 +61,7 @@ export default async function PageEspace() {
       <p>
         <Link href="/aide">Aide</Link>
       </p>
-      <form action={seDeconnecter}>
-        <button type="submit" className="secondaire">
-          Se déconnecter
-        </button>
-      </form>
+      <FormulaireDeconnexion action={seDeconnecter} />
     </main>
   );
 }

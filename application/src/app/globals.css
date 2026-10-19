@@ -238,3 +238,17 @@ button.danger {
   overflow-x: auto;
   max-width: 100%;
 }
+
+/* Connexions lentes et coupures (ADR 0044). */
+.bandeau-hors-ligne {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  background: #fff4d6;
+  border-bottom: 1px solid #e0c36b;
+  color: #4a3b00;
+}
+
+.echange.en-attente {
+  opacity: 0.75;
+  border-style: dashed;
+}

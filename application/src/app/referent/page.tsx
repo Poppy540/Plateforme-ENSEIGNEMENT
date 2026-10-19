@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { seDeconnecter } from "../connexion/actions";
+import { FormulaireDeconnexion } from "../composants/hors-ligne";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { famillesDuReferent, rapportsDuReferent } from "@/lib/serveur/coordinateur";
 import { liensAValider, tableauReferent } from "@/lib/serveur/referent";
@@ -151,11 +152,7 @@ export default async function PageReferent() {
         </>
       )}
 
-      <form action={seDeconnecter}>
-        <button type="submit" className="secondaire">
-          Se déconnecter
-        </button>
-      </form>
+      <FormulaireDeconnexion action={seDeconnecter} />
     </main>
   );
 }

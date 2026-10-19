@@ -6,6 +6,7 @@ import { quizPourEleve } from "@/lib/serveur/evaluateur";
 import { videoDuChapitre } from "@/lib/serveur/videos";
 import { LecteurVideo } from "../../../composants/lecteur-video";
 import { contexteChapitre, echangesDuChapitre, nomProfesseur } from "@/lib/serveur/professeur";
+import { cleHorsLigne } from "@/lib/serveur/cle-hors-ligne";
 import { Conversation } from "./conversation";
 
 export default async function PageChapitre({ params }: PageProps<"/catalogue/[unite]/[chapitre]">) {
@@ -51,6 +52,7 @@ export default async function PageChapitre({ params }: PageProps<"/catalogue/[un
         chapitre={chapitre}
         echanges={echanges}
         nomProfesseur={nomProfesseur(contexte)}
+        session={cleHorsLigne(utilisateur)}
       />
     </main>
   );
