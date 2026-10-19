@@ -9,6 +9,7 @@ import {
   type SortieRecruteur,
   type Tache,
 } from "@/lib/agents/recruteur/tache";
+import { masquerDonneesSensibles } from "@/lib/agents/masquage";
 import { libellesFamilles } from "@/lib/pack-pays/lecture";
 import { coutUSD } from "@/lib/tests-agents/cout";
 import { avecAgentRecruteur, avecUtilisateur } from "./base";
@@ -129,7 +130,8 @@ export async function executerTacheRecruteur(entree: {
       },
       historique: lu.historique,
       delaiRelanceJours: configuration.delaiRelanceJours,
-      informations: entree.informations,
+      // Numéros (pièce d'identité, téléphone), emails et liens masqués avant l'envoi au modèle.
+      informations: entree.informations ? masquerDonneesSensibles(entree.informations) : null,
       consigne: entree.consigne,
     },
     modele: modeleDesAgents(),
@@ -222,7 +224,12 @@ export async function executerTacheRecruteur(entree: {
           actions.has("demande_suppression") ? 2 : 3,
           `Recrutement (candidat ${entree.candidatId.slice(0, 8)}) : ${aSignaler
             .map((a) => LIBELLES_ACTIONS[a])
-            .join(" ; ")}${sortie.escalade ? `. ${sortie.escalade}` : ""}`.slice(0, 2000),
+            .join(
+              " ; ",
+            )}${sortie.escalade ? `. ${masquerDonneesSensibles(sortie.escalade)}` : ""}`.slice(
+            0,
+            2000,
+          ),
         ],
       );
     return { messageCree, dossierCree };

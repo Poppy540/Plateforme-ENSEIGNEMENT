@@ -68,10 +68,8 @@ export function lireReponseSupport(brut: string): ReponseSupport | null {
   }
 }
 
-/** Retire d'un texte ce qui ressemble à un code de connexion ou à un numéro de carte (jamais conservé). */
-export function masquerDonneesSensibles(texte: string): string {
-  return texte.replace(/\b\d(?:[\s-]?\d){3,18}\b/g, "[masqué]");
-}
+/** Retire d'un texte codes, numéros, emails et liens (jamais conservés) ; voir ../masquage.ts. */
+export { masquerDonneesSensibles } from "../masquage.ts";
 
 /** Contrôles : FAQ citées existantes, détresse en priorité 1, ticket résumé quand il y en a un. */
 export function controlerReponse(r: ReponseSupport, faq: Faq): string[] {

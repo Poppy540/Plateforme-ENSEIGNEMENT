@@ -80,6 +80,12 @@ describe("Support : contrôles", () => {
       "Mon code est [masqué], carte [masqué].",
     );
     expect(masquerDonneesSensibles("Je suis en 3e.")).toBe("Je suis en 3e.");
+    expect(
+      masquerDonneesSensibles(
+        "Écrivez à parent.fictif@exemple.invalid ou https://exemple.invalid/x",
+      ),
+    ).toBe("Écrivez à [email masqué] ou [lien masqué]");
+    expect(masquerDonneesSensibles("Appelez le +999 000 000 12")).toBe("Appelez le [masqué]");
   });
 
   it("refuse une entrée de FAQ inventée, une détresse non escaladée, un ticket sans résumé", () => {

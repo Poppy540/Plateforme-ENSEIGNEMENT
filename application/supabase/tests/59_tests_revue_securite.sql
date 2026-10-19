@@ -99,4 +99,23 @@ end $$;
 reset role;
 \echo OK S05 prérequis cloisonnés pour la Conformité
 
+-- S06 Connexion : envois et essais de code limités par fenêtre, table illisible.
+set role anon;
+do $$ begin
+  assert limiter_connexion(repeat('a', 64), 'envoi', 2, 15), 'S06 : premier envoi';
+  assert limiter_connexion(repeat('a', 64), 'envoi', 2, 15), 'S06 : deuxième envoi';
+  assert not limiter_connexion(repeat('a', 64), 'envoi', 2, 15), 'S06 : troisième envoi accepté';
+  assert limiter_connexion(repeat('a', 64), 'verification', 2, 15), 'S06 : natures séparées';
+  begin perform 1 from limites_connexion; raise exception 'S06 : limites lisibles';
+  exception when insufficient_privilege then null; end;
+end $$;
+reset role;
+update limites_connexion set debut = now() - interval '20 minutes' where cle = repeat('a', 64);
+set role anon;
+do $$ begin
+  assert limiter_connexion(repeat('a', 64), 'envoi', 2, 15), 'S06 : nouvelle fenêtre';
+end $$;
+reset role;
+\echo OK S06 envois et essais de code limités
+
 \echo TOUS LES TESTS DE LA REVUE DE SÉCURITÉ SONT PASSÉS

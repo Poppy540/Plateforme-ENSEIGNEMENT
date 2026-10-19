@@ -30,6 +30,9 @@ export default defineConfig({
       URL_PUBLIQUE: "http://localhost:3100",
       // Contact FICTIF de l'équipe de veille (alertes de priorité 1, ADR 0036).
       CONTACTS_VEILLE: "+999 900 000 01",
+      // Les tests se reconnectent souvent avec les mêmes numéros fictifs : limites de connexion relevées.
+      CODES_PAR_IDENTIFIANT: "1000",
+      CODES_PAR_HEURE: "100000",
       URL_BASE_DONNEES: "postgresql://serveur_application@127.0.0.1:54330/postgres",
     },
   },

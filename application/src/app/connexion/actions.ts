@@ -8,6 +8,7 @@ import {
   memoriserIdentifiant,
   oublierIdentifiant,
 } from "@/lib/serveur/connexion-en-cours";
+import { envoiAutorise, verificationAutorisee } from "@/lib/serveur/limites-connexion";
 import { fermerSession, ouvrirSession } from "@/lib/serveur/session";
 
 export type EtatFormulaire = { erreur?: string } | undefined;
@@ -23,6 +24,8 @@ export async function demanderCode(
         "Entre un numéro au format international (commençant par + et l’indicatif du pays) ou une adresse email.",
     };
   }
+  if (!(await envoiAutorise(identifiant)))
+    return { erreur: "Trop de demandes de code. Attends un quart d'heure avant de réessayer." };
   try {
     await (await fournisseurAuthentification()).envoyerCode(identifiant);
   } catch {
@@ -40,6 +43,8 @@ export async function verifierCode(
   if (!identifiant) redirect("/connexion");
   const code = codeValide(String(donnees.get("code") ?? ""));
   if (!code) return { erreur: "Le code contient 6 chiffres." };
+  if (!(await verificationAutorisee(identifiant)))
+    return { erreur: "Trop d'essais. Demande un nouveau code dans un quart d'heure." };
 
   const utilisateur = await (await fournisseurAuthentification()).verifierCode(identifiant, code);
   if (!utilisateur) return { erreur: "Code incorrect ou expiré." };
