@@ -29,6 +29,8 @@ demarrer() {
     psql_admin -f "$racine/supabase/tests/00_simulation_supabase.sql"
     for migration in "$racine"/supabase/migrations/*.sql; do psql_admin -f "$migration"; done
     node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/pack-en-sql.mts" "$racine/../referentiels/gabon" | psql_admin -o /dev/null
+    # Pays FICTIF « zz » (statut test) : essai de portabilité, développement et tests seulement (ADR 0041).
+    node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/pack-en-sql.mts" "$racine/../referentiels/zz-fictif" --test | psql_admin -o /dev/null
     # Développement seulement : le serveur se connecte sans mot de passe et crée les comptes simulés.
     psql_admin -c "alter role serveur_application login; grant usage on schema auth to serveur_application; grant select, insert, delete on auth.users to serveur_application;"
   fi

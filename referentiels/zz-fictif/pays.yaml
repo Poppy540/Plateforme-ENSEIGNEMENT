@@ -1,0 +1,30 @@
+# Fiche pays — PAYS FICTIF « Z » : pack de TEST (Jalon 4, étape 5 ; ADR 0041).
+# Il prouve qu'un second pays s'ajoute à côté du pilote sans modifier le code. Tout y est inventé.
+# statut_pack « test » : l'import le refuse sans l'option --test ; jamais importé en production.
+code: zz
+nom: Pays fictif Z
+langue_enseignement: fr
+langues_vivantes: [en]
+fuseau_horaire: UTC
+monnaie: null
+statut_pack: test
+referentiel:
+  code: zz-general
+  version: "0.1-fictif"
+  date_validation: null
+  source_officielle: "Aucune : référentiel inventé pour les tests"
+paiement:
+  moyens: []
+connectivite: "fictive"
+cadre_legal:
+  statut: fictif
+  age_majorite: 16          # valeur inventée, différente du pilote, pour tester la logique de majorité
+  conservation:
+    echanges_jours: 90
+    inscription_non_confirmee_jours: 14
+    compte_inactif_jours: 365
+  points: []
+calendrier_scolaire: fictif
+equipe_locale:
+  referents: []
+  contact_institutionnel: null

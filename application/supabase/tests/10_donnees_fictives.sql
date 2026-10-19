@@ -1,6 +1,6 @@
--- Données fictives de test (aucune donnée réelle). Pays fictif « zz ».
-insert into pays (code, nom, langue_enseignement, fuseau_horaire) values ('zz', 'Pays fictif', 'fr', 'UTC');
-insert into referentiels (id, code, pays_code, version) values ('00000000-0000-0000-0000-0000000000a1', 'zz-general', 'zz', '0.1');
+-- Données fictives de test (aucune donnée réelle). Pays fictif « xx » (le pack de test « zz » est importé plus loin).
+insert into pays (code, nom, langue_enseignement, fuseau_horaire) values ('xx', 'Pays fictif', 'fr', 'UTC');
+insert into referentiels (id, code, pays_code, version) values ('00000000-0000-0000-0000-0000000000a1', 'xx-general', 'xx', '0.1');
 insert into niveaux (id, referentiel_id, code, libelle, cycle, ordre, code_interne, series_obligatoires) values
   ('00000000-0000-0000-0000-0000000000b1', '00000000-0000-0000-0000-0000000000a1', 'n4', 'Niveau 4', 'c1', 4, 's-4', false),
   ('00000000-0000-0000-0000-0000000000b2', '00000000-0000-0000-0000-0000000000a1', 'n7', 'Niveau 7', 'c2', 7, 's-7', true);
@@ -10,8 +10,8 @@ insert into matieres (id, referentiel_id, code, libelle, famille, couche) values
   ('00000000-0000-0000-0000-0000000000d1', '00000000-0000-0000-0000-0000000000a1', 'maths', 'Maths', 'mathematiques', 'adaptable'),
   ('00000000-0000-0000-0000-0000000000d2', '00000000-0000-0000-0000-0000000000a1', 'histoire', 'Histoire', 'histoire-geo-ses', 'local');
 insert into unites (id, referentiel_id, code, niveau_id, matiere_id) values
-  ('00000000-0000-0000-0000-0000000000e1', '00000000-0000-0000-0000-0000000000a1', 'zz-n4-maths', '00000000-0000-0000-0000-0000000000b1', '00000000-0000-0000-0000-0000000000d1'),
-  ('00000000-0000-0000-0000-0000000000e2', '00000000-0000-0000-0000-0000000000a1', 'zz-n4-histoire', '00000000-0000-0000-0000-0000000000b1', '00000000-0000-0000-0000-0000000000d2');
+  ('00000000-0000-0000-0000-0000000000e1', '00000000-0000-0000-0000-0000000000a1', 'xx-n4-maths', '00000000-0000-0000-0000-0000000000b1', '00000000-0000-0000-0000-0000000000d1'),
+  ('00000000-0000-0000-0000-0000000000e2', '00000000-0000-0000-0000-0000000000a1', 'xx-n4-histoire', '00000000-0000-0000-0000-0000000000b1', '00000000-0000-0000-0000-0000000000d2');
 insert into chapitres (id, unite_id, code, ordre, titre, sous_themes, statut) values
   ('00000000-0000-0000-0000-0000000000f1', '00000000-0000-0000-0000-0000000000e1', 'c1', 1, 'Chapitre validé', '{a,b}', 'valide'),
   ('00000000-0000-0000-0000-0000000000f2', '00000000-0000-0000-0000-0000000000e1', 'c2', 2, 'Chapitre à valider', '{c}', 'a_valider'),

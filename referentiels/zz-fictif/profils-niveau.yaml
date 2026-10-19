@@ -1,0 +1,14 @@
+# Profils FICTIFS par niveau.
+profils:
+  - code: inferieur
+    niveaux: [an1, an2, an3]
+    langage: "Phrases simples, exemples concrets"
+    duree_video_min: [6, 10]
+    autonomie: "Guidée"
+    evaluation: "Quiz courts"
+  - code: superieur
+    niveaux: [an4]
+    langage: "Précis et rigoureux"
+    duree_video_min: [12, 18]
+    autonomie: "Forte"
+    evaluation: "Sujets types du diplôme fictif"

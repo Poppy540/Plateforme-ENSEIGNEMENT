@@ -1,0 +1,6 @@
+# Programme FICTIF — Mathématiques, Année 2 (pays Z).
+unite: zz-an2-mathematiques
+statut: a_valider
+chapitres:
+  - {ordre: 1, code: nombres-relatifs, titre: "Nombres relatifs (pays Z)",         volume_horaire: 8, coefficient: 3, statut: a_valider}
+  - {ordre: 2, code: proportions,      titre: "Proportions et échelles (pays Z)",  volume_horaire: 6, coefficient: 3, statut: a_valider}

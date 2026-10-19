@@ -1,0 +1,17 @@
+# Valeurs FICTIVES du Professeur pour l'unité de test du pays Z (ADR 0041).
+unite: zz-an3-mathematiques
+variables:
+  MATIERE: "Mathématiques"
+  NIVEAU: "Année 3"
+  SERIE: ""
+  PAYS: "Pays fictif Z"
+  EXAMEN: "le Certificat fictif de fin de cycle"
+  PREREQUIS: "nombres relatifs, proportions et échelles"
+  PROFIL_NIVEAU: "phrases simples, exemples concrets, autonomie guidée"
+  METHODE_MATIERE: "partir d'un exemple, faire écrire chaque étape, vérifier le résultat ; jamais de résultat sans la méthode"
+  CONTEXTE_LOCAL: "exemples inventés du pays Z (la ville fictive de Zédie, le fleuve fictif Zor)"
+  NOM_AVATAR: "Professeur IA de mathématiques (pays Z)"
+  PERSONA: "Clair et encourageant."
+  REFERENT: "référent fictif du pays Z"
+  DATE: "fictif"
+  VERSION: "0.1-fictif"

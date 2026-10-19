@@ -1,0 +1,12 @@
+# Valeurs FICTIVES de l'Évaluateur (pays Z).
+unite: zz-an3-mathematiques
+variables:
+  MATIERE: "Mathématiques"
+  NIVEAU: "Année 3"
+  SERIE: ""
+  PAYS: "Pays fictif Z"
+  EXAMEN: "le Certificat fictif de fin de cycle"
+  PROFIL_NIVEAU: "quiz courts, autonomie guidée"
+  REFERENT: "référent fictif du pays Z"
+  DATE: "fictif"
+  VERSION: "0.1-fictif"

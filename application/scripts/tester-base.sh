@@ -30,12 +30,16 @@ psql_test -f "$racine/supabase/tests/20_tests_acces.sql"
 psql_test -f "$racine/supabase/tests/41_tests_echanges.sql"
 
 # Import des packs pays : pack pilote deux fois (idempotence), puis pack fictif.
-pack_sql() { node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/pack-en-sql.mts" "$1"; }
+pack_sql() { node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/pack-en-sql.mts" "$@"; }
 pack_sql "$racine/../referentiels/gabon" > "$dossier/pilote.sql"
 pack_sql "$racine/tests/packs/yy-fictif" > "$dossier/fictif.sql"
+# Pack de test « zz » (référentiels/, statut test) : refusé sans --test, puis importé à côté du pilote.
+if pack_sql "$racine/../referentiels/zz-fictif" > /dev/null 2>&1; then echo "Pack de test importé sans --test" >&2; exit 1; fi
+pack_sql "$racine/../referentiels/zz-fictif" --test > "$dossier/zz.sql"
 psql_test -f "$dossier/pilote.sql" -o /dev/null
 psql_test -f "$dossier/pilote.sql" -o /dev/null
 psql_test -f "$dossier/fictif.sql" -o /dev/null
+psql_test -f "$dossier/zz.sql" -o /dev/null
 psql_test -f "$racine/supabase/tests/30_tests_import.sql"
 
 # Réimport après modification, dans le pack, d'un chapitre déjà validé.
@@ -59,5 +63,6 @@ psql_test -f "$racine/supabase/tests/54_tests_prerequis.sql"
 psql_test -f "$racine/supabase/tests/55_tests_coordinateur.sql"
 psql_test -f "$racine/supabase/tests/56_tests_conformite.sql"
 psql_test -f "$racine/supabase/tests/57_tests_recruteur.sql"
+psql_test -f "$racine/supabase/tests/58_tests_portabilite.sql"
 psql_test -f "$racine/supabase/tests/42_tests_conservation.sql"
 echo "TOUS LES TESTS DE BASE SONT PASSÉS"

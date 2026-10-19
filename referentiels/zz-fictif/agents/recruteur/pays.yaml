@@ -1,0 +1,10 @@
+# Valeurs FICTIVES du Recruteur pour le pays Z ; le reste vient de recrutement.yaml.
+unite: pays
+variables:
+  PROJET: "Plateforme d'enseignement (pays Z, fictif)"
+  PAYS: "Pays fictif Z"
+  RESPONSABLE: "la responsable fictive du pays Z"
+  MATIERES_CIBLES: "les mathématiques et les sciences du pays Z"
+  PROFIL_RECHERCHE: "enseignant fictif du pays Z, qui connaît le programme fictif"
+  DATE: "fictif"
+  VERSION: "0.1-fictif"

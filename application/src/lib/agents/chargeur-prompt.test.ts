@@ -65,7 +65,7 @@ describe("chargeur de prompt", () => {
   });
 
   it("refuse un pays sans pack", () => {
-    expect(() => composerPrompt({ ...configuration, codePays: "zz" }, racine)).toThrow(
+    expect(() => composerPrompt({ ...configuration, codePays: "xx" }, racine)).toThrow(
       /Aucun pack/,
     );
   });

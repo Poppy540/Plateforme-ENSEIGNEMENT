@@ -1,0 +1,8 @@
+# Unités FICTIVES du pays Z. Total : 6 unités (calculé, jamais codé ailleurs).
+unites:
+  - {code: zz-an1-mathematiques,     niveau: an1, series: [],    matiere: mathematiques, statut: a_valider}
+  - {code: zz-an2-mathematiques,     niveau: an2, series: [],    matiere: mathematiques, statut: a_valider}
+  - {code: zz-an3-mathematiques,     niveau: an3, series: [],    matiere: mathematiques, statut: a_valider}
+  - {code: zz-an3-sciences,          niveau: an3, series: [],    matiere: sciences,      statut: a_valider}
+  - {code: zz-an4-sci-mathematiques, niveau: an4, series: [SCI], matiere: mathematiques, statut: a_valider}
+  - {code: zz-an4-mathematiques,     niveau: an4, series: [HUM], matiere: mathematiques, statut: a_valider}

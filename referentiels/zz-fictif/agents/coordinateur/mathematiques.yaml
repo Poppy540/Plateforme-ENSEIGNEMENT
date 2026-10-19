@@ -1,0 +1,11 @@
+# Valeurs FICTIVES du Coordinateur, famille Mathématiques (pays Z).
+unite: mathematiques
+skill_famille: coordination-maths
+variables:
+  FAMILLE: "Mathématiques (pays Z)"
+  MATIERES_FAMILLE: "Mathématiques"
+  PAYS: "Pays fictif Z"
+  REFERENTIEL: "zz-general"
+  REFERENT: "référent fictif de la famille Mathématiques (pays Z)"
+  DATE: "fictif"
+  VERSION: "0.1-fictif"

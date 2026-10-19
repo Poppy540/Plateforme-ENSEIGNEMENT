@@ -1,0 +1,11 @@
+# Valeurs FICTIVES du Coordinateur, famille Sciences (pays Z).
+unite: sciences
+skill_famille: null
+variables:
+  FAMILLE: "Sciences (pays Z)"
+  MATIERES_FAMILLE: "Sciences"
+  PAYS: "Pays fictif Z"
+  REFERENTIEL: "zz-general"
+  REFERENT: "référent fictif de la famille Sciences (pays Z)"
+  DATE: "fictif"
+  VERSION: "0.1-fictif"

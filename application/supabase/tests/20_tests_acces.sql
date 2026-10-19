@@ -214,17 +214,17 @@ select pg_temp.connecter('66666666-6666-6666-6666-666666666666');
 set role authenticated;
 do $$ begin
   begin
-    perform inscrire_eleve('Kofi', 'zz-general', 'n7', null, true, '+000 00 00 00');
+    perform inscrire_eleve('Kofi', 'xx-general', 'n7', null, true, '+000 00 00 00');
     raise exception 'T14 : inscription acceptée sans série obligatoire';
   exception when invalid_parameter_value then null;
   end;
   begin
-    perform inscrire_eleve('Kofi', 'zz-general', 'n4', null, true, null);
+    perform inscrire_eleve('Kofi', 'xx-general', 'n4', null, true, null);
     raise exception 'T14 : mineur inscrit sans contact parent';
   exception when invalid_parameter_value then null;
   end;
 end $$;
-select inscrire_eleve('Kofi', 'zz-general', 'n4', null, true, '+000 00 00 00') as jeton \gset
+select inscrire_eleve('Kofi', 'xx-general', 'n4', null, true, '+000 00 00 00') as jeton \gset
 do $$ begin
   assert (select statut from eleves) = 'en_attente_parent', 'T14 : un mineur est actif sans validation parentale';
   assert (select empreinte_jeton from consentements) <> '', 'T14 : jeton non enregistré';

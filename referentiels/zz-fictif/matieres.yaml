@@ -1,0 +1,10 @@
+# Matières FICTIVES du pays Z (deux familles seulement).
+matieres:
+  - code: mathematiques
+    libelle: "Mathématiques"
+    famille: mathematiques
+    couche: universel
+  - code: sciences
+    libelle: "Sciences"
+    famille: sciences
+    couche: adaptable

@@ -1,0 +1,10 @@
+# Familles FICTIVES du pays Z (configuration partagée, ADR 0008).
+familles:
+  - code: mathematiques
+    libelle: Mathématiques (pays Z)
+    methode: "Partir d'un exemple, faire écrire chaque étape, vérifier le résultat."
+    garde_fous: "Jamais de résultat sans la méthode."
+  - code: sciences
+    libelle: Sciences (pays Z)
+    methode: "Observer, formuler une hypothèse, vérifier par une expérience décrite."
+    garde_fous: "Aucun conseil médical ; expériences seulement décrites ou simulées."

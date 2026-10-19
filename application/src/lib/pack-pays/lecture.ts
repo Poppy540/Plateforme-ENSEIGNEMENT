@@ -12,7 +12,8 @@ export interface Pays {
   langueEnseignement: string;
   fuseauHoraire: string;
   monnaie: string | null;
-  statutPack: "en_preparation" | "pilote" | "ouvert";
+  /** « test » : pack fictif d'essai, importé seulement avec l'option --test (ADR 0041). */
+  statutPack: "en_preparation" | "pilote" | "ouvert" | "test";
   /** Âge de la majorité ; null = inconnu, tout élève est alors traité comme mineur. */
   ageMajorite: number | null;
   /** Durées de conservation en jours (cadre légal du pays) ; null = pas de purge. */
@@ -124,7 +125,7 @@ function liste(valeur: unknown): Brut[] {
 }
 
 const COUCHES: Couche[] = ["universel", "adaptable", "local"];
-const STATUTS_PACK = ["en_preparation", "pilote", "ouvert"] as const;
+const STATUTS_PACK = ["en_preparation", "pilote", "ouvert", "test"] as const;
 
 /** Lit un pack pays et vérifie sa cohérence. Lève ErreurPack avec la liste de toutes les erreurs. */
 export function lirePack(dossier: string): PackPays {

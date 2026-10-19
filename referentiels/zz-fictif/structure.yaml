@@ -1,0 +1,20 @@
+# Structure FICTIVE : quatre années, une seule section à options en dernière année (« Sciences », « Humanités »).
+# Volontairement différente du pilote (codes, libellés, cycles, examen) pour éprouver la portabilité.
+cycles:
+  - code: inferieur
+    libelle: Secondaire inférieur
+    examen_fin: certificat
+  - code: superieur
+    libelle: Secondaire supérieur
+    examen_fin: diplome
+niveaux:
+  - {code: an1, libelle: "Année 1", cycle: inferieur, ordre: 1, code_interne: secondaire-1}
+  - {code: an2, libelle: "Année 2", cycle: inferieur, ordre: 2, code_interne: secondaire-2}
+  - {code: an3, libelle: "Année 3", cycle: inferieur, ordre: 3, code_interne: secondaire-3-fin-cycle-1}
+  - {code: an4, libelle: "Année 4", cycle: superieur, ordre: 4, code_interne: secondaire-4-fin-cycle-2, series_obligatoires: true}
+series:
+  - {code: SCI, libelle: "Option Sciences",  type: option, code_interne: scientifique}
+  - {code: HUM, libelle: "Option Humanités", type: option, code_interne: litteraire}
+examens:
+  - {code: certificat, libelle: "Certificat fictif de fin de cycle", niveau: an3}
+  - {code: diplome,    libelle: "Diplôme fictif",                    niveau: an4}

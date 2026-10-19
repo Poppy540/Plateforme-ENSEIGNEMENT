@@ -1,0 +1,7 @@
+# Valeurs FICTIVES de l'agent support pour le pays Z (ADR 0041).
+unite: pays
+variables:
+  PAYS: "Pays fictif Z"
+  REFERENT: "équipe fictive du pays Z"
+  DATE: "fictif"
+  VERSION: "0.1-fictif"
