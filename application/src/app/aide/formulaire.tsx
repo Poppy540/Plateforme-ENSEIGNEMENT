@@ -4,11 +4,18 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { poserQuestion } from "./actions";
 
-export function FormulaireAide({ longueurMax }: { longueurMax: number }) {
+export function FormulaireAide({
+  longueurMax,
+  referentiel,
+}: {
+  longueurMax: number;
+  referentiel: string | null;
+}) {
   const [etat, action, enCours] = useActionState(poserQuestion, undefined);
   return (
     <>
       <form action={action} className="formulaire">
+        {referentiel && <input type="hidden" name="referentiel" value={referentiel} />}
         <label htmlFor="question">Ta question</label>
         <textarea
           id="question"

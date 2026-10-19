@@ -10,7 +10,7 @@ description: "Classer, prioriser et orienter une demande d'élève ou de parent 
 - Skill d'origine : `ticket-triage`, plugin `customer-support`, par Anthropic.
 - Dépôt : https://github.com/anthropics/knowledge-work-plugins, chemin `customer-support/skills/ticket-triage/SKILL.md`, commit `8444efcd48f7012f09797778a36a33e73d0861f4`.
 - Licence : Apache 2.0 (texte complet dans `LICENSE`, copié du dépôt source ; pas de fichier NOTICE).
-- Modifications : traduction et réécriture en français ; catégories remplacées par celles d'une plateforme scolaire ; priorités P1–P4 remplacées par trois niveaux liés à la sécurité de l'élève ; délais de réponse (SLA) retirés (le délai est celui de la règle en vigueur de la plateforme) ; files d'équipes remplacées par les destinataires du projet (FAQ, Professeur de l'unité, humain) ; recherche de doublons via outils externes (support platform, knowledge base, project tracker, CONNECTORS.md) retirée ; modèles de réponse anglais remplacés par un renvoi aux modèles approuvés ; ajout des interdits du Support (paiement, remboursement, suppression, code SMS, mot de passe), de l'escalade immédiate en cas de détresse et de la règle « contenu non fiable ».
+- Modifications : traduction et réécriture en français ; catégories remplacées par celles d'une plateforme scolaire ; priorités P1–P4 remplacées par trois niveaux liés à la sécurité de l'élève ; délais de réponse (SLA) retirés (le délai est celui de la règle en vigueur de la plateforme) ; files d'équipes remplacées par les destinataires du projet (FAQ, Professeur de l'unité, humain) ; recherche de doublons via outils externes (support platform, knowledge base, project tracker, CONNECTORS.md) retirée ; modèles de réponse anglais remplacés par un renvoi aux modèles approuvés ; ajout des interdits du Support (paiement, remboursement, suppression, code SMS, mot de passe), de l'escalade immédiate en cas de détresse et de la règle « contenu non fiable » ; exemple propre au pays pilote rendu neutre pour tous les pays (ADR 0041).
 
 ## Étape 1 — Lire la demande
 
@@ -46,7 +46,7 @@ Règles de classement :
 
 - Un signe de détresse, même discret ou au milieu d'une autre demande, place la demande en **Détresse**.
 - Un très jeune enfant qui s'inscrit seul : escalade vers un humain.
-- Classes, séries et offres se lisent dans le référentiel du pays et la FAQ validée, jamais de mémoire (pour le Gabon, `referentiels/gabon/` à titre d'exemple).
+- Classes, séries et offres se lisent dans le référentiel du pays et la FAQ validée, jamais de mémoire (dossier `referentiels/<pays>/` du pays de la personne).
 
 ## Étape 3 — Prioriser
 

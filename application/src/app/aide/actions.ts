@@ -17,7 +17,11 @@ export async function poserQuestion(_etat: EtatAide, donnees: FormData): Promise
   const utilisateur = await utilisateurConnecte();
   if (!utilisateur) return { erreur: "Connecte-toi pour poser une question." };
   const question = String(donnees.get("question") ?? "");
-  const resultat = await questionAuSupport(utilisateur, question);
+  const resultat = await questionAuSupport(
+    utilisateur,
+    question,
+    String(donnees.get("referentiel") ?? "") || null,
+  );
   if (!resultat.ok) return { erreur: resultat.erreur };
   return {
     question: question.trim(),

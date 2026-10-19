@@ -17,7 +17,7 @@ Next.js + TypeScript, mobile-first, en français (ADR 0011 et 0012). Données fi
 ## Lancer l'application en local
 
 ```
-bash scripts/base-locale.sh demarrer        # Postgres local + migrations + pack pilote (données fictives)
+bash scripts/base-locale.sh demarrer        # Postgres local + migrations + pack pilote + pays fictif zz (données fictives)
 ENVIRONNEMENT=developpement MODE_AUTH=simulation \
 URL_BASE_DONNEES=postgresql://serveur_application@127.0.0.1:54330/postgres pnpm dev
 ```

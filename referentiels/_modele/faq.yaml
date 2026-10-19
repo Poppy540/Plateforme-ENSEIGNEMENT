@@ -1,0 +1,5 @@
+# Modèle : FAQ du Support pour ce pays (voir referentiels/gabon/faq.yaml ; exemple fictif : referentiels/zz-fictif/faq.yaml).
+# Le Support ne répond qu'avec ces entrées. statut : a_valider tant que le propriétaire ne l'a pas relue.
+statut: a_valider
+delai_reponse_tickets: null
+entrees: []

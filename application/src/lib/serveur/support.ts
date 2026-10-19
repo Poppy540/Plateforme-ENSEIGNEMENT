@@ -37,8 +37,11 @@ export function parametresSupport(): ParametresModele {
   };
 }
 
-/** Pays du référentiel de l'élève, sinon du premier référentiel publié (comme à l'inscription). */
-async function contexte(utilisateur: string | null) {
+/**
+ * Pays du référentiel de l'élève ; sinon celui que la personne a choisi (code de référentiel), sinon le
+ * premier référentiel publié (comme à l'inscription).
+ */
+async function contexte(utilisateur: string | null, referentielChoisi: string | null = null) {
   const requete = async (client: import("pg").PoolClient) => {
     // Un visiteur n'a aucun droit sur la table des élèves : on ne la lit que pour une personne connectée.
     const r = (
@@ -46,10 +49,13 @@ async function contexte(utilisateur: string | null) {
         ? await client.query(
             `select r.id, r.pays_code from referentiels r
              left join eleves e on e.referentiel_id = r.id and e.id = $1
-             order by (e.id is null), r.code limit 1`,
-            [utilisateur],
+             order by (e.id is null), (r.code = $2) desc, r.code limit 1`,
+            [utilisateur, referentielChoisi ?? ""],
           )
-        : await client.query("select id, pays_code from referentiels order by code limit 1")
+        : await client.query(
+            "select id, pays_code from referentiels order by (code = $1) desc, code limit 1",
+            [referentielChoisi ?? ""],
+          )
     ).rows[0];
     if (!r) return null;
     const classes = (
@@ -68,8 +74,11 @@ async function contexte(utilisateur: string | null) {
 }
 
 /** FAQ affichée à tous (sans modèle de langage). */
-export async function faqDuSite(utilisateur: string | null): Promise<Faq> {
-  const c = await contexte(utilisateur);
+export async function faqDuSite(
+  utilisateur: string | null,
+  referentielChoisi: string | null = null,
+): Promise<Faq> {
+  const c = await contexte(utilisateur, referentielChoisi);
   return c
     ? lireFaq(dossierPack(racineDepot(), c.codePays))
     : { statut: "absente", delaiReponseTickets: null, entrees: [] };
@@ -94,6 +103,7 @@ export type ResultatSupport =
 export async function questionAuSupport(
   utilisateur: string,
   message: string,
+  referentielChoisi: string | null = null,
 ): Promise<ResultatSupport> {
   const texte = message.trim();
   if (!texte || texte.length > LONGUEUR_MESSAGE_MAX)
@@ -111,7 +121,7 @@ export async function questionAuSupport(
   if (!dansLeQuota)
     return { ok: false, erreur: "Tu as posé beaucoup de questions aujourd'hui. Reviens demain." };
 
-  const ctx = await contexte(utilisateur);
+  const ctx = await contexte(utilisateur, referentielChoisi);
   if (!ctx) return { ok: false, erreur: "Aide indisponible pour le moment." };
   const faq = lireFaq(dossierPack(racineDepot(), ctx.codePays));
   const resultat = await repondreSupport({

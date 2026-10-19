@@ -17,7 +17,9 @@ referentiels/<code-pays>/
   programmes/<unite>.yaml chapitres, sous-thèmes, volumes, coefficients, prérequis, statut de validation
   prerequis/<famille>.yaml     graphe de prérequis proposé (chapitre ← prérequis, strict/souple), validé lien par lien
   contexte-local.yaml     exemples et repères locaux
-  agents/<agent>/<unite>.yaml  valeurs injectées dans les prompts des agents
+  agents/<agent>/<unite>.yaml  valeurs injectées dans les prompts des agents (voir _modele/agents/README.md)
+  faq.yaml                FAQ du Support (seules réponses possibles)
+  recrutement.yaml        sources autorisées, canaux, relance, conditions, FAQ de recrutement (agent Recruteur)
   SOURCES.md              origine et statut (validé / à valider / manquant) de chaque donnée
 ```
 
@@ -37,4 +39,7 @@ Le contrôle refuse un pack incohérent (niveau, série ou matière inconnus, do
 2. Suivre le processus du cadrage (« Processus d'ajout d'un nouveau pays ») : sources officielles, équipe locale, structuration (premier jet par l'agent Conformité programme), analyse de réutilisation, validation.
 3. Aucune modification de code n'est nécessaire.
 
-Packs existants : `gabon/` (pilote, statut « en préparation »).
+Packs existants :
+
+- `gabon/` : pilote, statut « en préparation ».
+- `zz-fictif/` : **pays fictif de test** (statut `test`, ADR 0041). Il prouve qu'un second pays s'ajoute sans modifier le code. Le générateur le refuse sans l'option `--test` ; il n'est importé que par les tests et la base locale, jamais en production.
