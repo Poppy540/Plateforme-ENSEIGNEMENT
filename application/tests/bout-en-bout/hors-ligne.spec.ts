@@ -37,9 +37,18 @@ test("chapitre lu hors ligne, question gardée puis envoyée, copies effacées �
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Théorème de Thalès");
   await page.getByLabel("Ta question").fill("Je ne comprends pas l'étape 2");
   await page.getByRole("button", { name: "Envoyer" }).click();
-  await expect(page.locator(".echange-professeur").last()).not.toBeEmpty();
-  await page.reload(); // la copie gardée contient l'échange
-  await expect.poll(() => copies(page)).toHaveLength(1);
+  // Réponse terminée (bouton de nouveau disponible) : l'échange est enregistré avant de recharger.
+  await expect(page.getByRole("button", { name: "Envoyer" })).toBeEnabled();
+  await page.reload(); // la copie gardée (mise à jour en arrière-plan) contient l'échange
+  await expect
+    .poll(() =>
+      page.evaluate(async () => {
+        const [nom] = (await caches.keys()).filter((n) => n.startsWith("chapitres-"));
+        const copie = nom ? await (await caches.open(nom)).match(location.pathname) : undefined;
+        return copie ? (await copie.text()).includes("étape 2") : false;
+      }),
+    )
+    .toBe(true);
 
   await couperReseau(context, true);
   await page.reload();
@@ -62,9 +71,12 @@ test("chapitre lu hors ligne, question gardée puis envoyée, copies effacées �
   await expect(page.locator(".en-attente")).toHaveCount(0);
   await expect(page.locator(".echange-eleve").last()).toContainText("Et la réciproque ?");
   await expect(page.locator(".echange-professeur").last()).not.toBeEmpty();
-  expect(
-    await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith("plateforme:"))),
-  ).toEqual([]);
+  // La question quitte l'appareil une fois la réponse entièrement reçue.
+  await expect
+    .poll(() =>
+      page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith("plateforme:"))),
+    )
+    .toEqual([]);
 
   // Déconnexion : copies et questions effacées de l'appareil.
   await page.goto("/espace");

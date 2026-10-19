@@ -13,6 +13,7 @@
 
    Rien d'autre : ni vidéos, ni quiz, ni API, ni autres pages.
 3. **Cloisonnement par personne** : les copies portent une clé de session, pseudonyme salé calculé par le serveur et jamais l'identifiant. Quand la clé change (autre personne sur le même téléphone), quand on se déconnecte ou quand on arrive sur la page de connexion, toutes les copies et les questions en attente sont effacées.
+3 bis. **Copies dans l'ordre** : deux chargements d'une même page peuvent finir dans le désordre sur réseau lent ; une copie plus ancienne ne remplace jamais une copie plus récente (date de la demande gardée avec la copie).
 4. **Questions sans réseau** : gardées sur l'appareil (5 au plus par chapitre, pour cette session seulement), affichées « en attente », envoyées dans l'ordre au retour du réseau. Le quota du Professeur s'applique normalement.
 5. **Liens vers les chapitres** en navigation classique (page complète), pour que la page soit gardée. Champ et bouton de question désactivés tant que la page n'est pas interactive : sur réseau lent, une saisie faite avant serait perdue.
 6. **Budget de poids** : 200 Ko transférés au premier chargement par page (mesure : 145 à 150 Ko pour l'accueil, la connexion, l'aide, le catalogue et un chapitre ; vidéo exclue). La page de connexion doit être utilisable en moins de 20 s sur un réseau lent simulé (250 kbit/s, 600 ms) ; mesure : environ 6 s.

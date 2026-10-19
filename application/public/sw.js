@@ -80,21 +80,28 @@ self.addEventListener("message", (evenement) => {
 });
 
 /** Copie d'une page de chapitre, avec son titre et sa date (lus dans la page, rien d'autre). */
-async function garderChapitre(requete, reponse) {
+async function garderChapitre(requete, reponse, demandeLe) {
   const cle = await cleCourante();
   if (!cle) return;
   const texte = await reponse.text();
+  const cache = await caches.open(PREFIXE_CHAPITRES + cle);
+  const chemin = new URL(requete.url).pathname;
+  // Deux chargements peuvent finir dans le désordre (réseau lent) : une copie plus ancienne ne remplace
+  // jamais une copie plus récente.
+  const existante = await cache.match(chemin);
+  if (existante && Number(existante.headers.get("x-demande-le") || 0) > demandeLe) return;
   const titre = (texte.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)?.[1] || "")
     .replace(/<[^>]+>/g, "")
     .trim();
   const entetes = new Headers({ "content-type": "text/html; charset=utf-8" });
   entetes.set("x-titre-chapitre", encodeURIComponent(titre).slice(0, 300));
   entetes.set("x-garde-le", new Date().toISOString());
-  const cache = await caches.open(PREFIXE_CHAPITRES + cle);
-  await cache.put(new URL(requete.url).pathname, new Response(texte, { headers: entetes }));
+  entetes.set("x-demande-le", String(demandeLe));
+  await cache.put(chemin, new Response(texte, { headers: entetes }));
 }
 
 async function pageDeChapitre(evenement) {
+  const demandeLe = Date.now();
   try {
     const reponse = await fetch(evenement.request);
     if (
@@ -102,7 +109,7 @@ async function pageDeChapitre(evenement) {
       !reponse.redirected &&
       reponse.headers.get("content-type")?.includes("text/html")
     ) {
-      evenement.waitUntil(garderChapitre(evenement.request, reponse.clone()));
+      evenement.waitUntil(garderChapitre(evenement.request, reponse.clone(), demandeLe));
     }
     return reponse;
   } catch {
