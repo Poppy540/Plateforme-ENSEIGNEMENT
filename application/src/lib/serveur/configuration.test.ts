@@ -39,4 +39,22 @@ describe("garde-fous de configuration", () => {
     vi.stubEnv("URL_PUBLIQUE", "");
     expect(() => urlPublique("http://site-pirate.exemple")).toThrow(/URL_PUBLIQUE/);
   });
+
+  it("refuse la simulation sur un serveur accessible depuis Internet, même en « test »", () => {
+    vi.stubEnv("ENVIRONNEMENT", "test");
+    vi.stubEnv("URL_PUBLIQUE", "https://plateforme.exemple");
+    expect(simulationAutorisee()).toBe(false);
+    vi.stubEnv("URL_PUBLIQUE", "http://localhost:3100");
+    expect(simulationAutorisee()).toBe(true);
+  });
+
+  it("refuse un secret de session recopié du modèle ou trop peu aléatoire en production", () => {
+    vi.stubEnv("ENVIRONNEMENT", "production");
+    vi.stubEnv("SECRET_SESSION", "remplacer-moi-par-au-moins-32-caracteres-aleatoires");
+    expect(() => secretSession()).toThrow(/modèle/);
+    vi.stubEnv("SECRET_SESSION", "a".repeat(40));
+    expect(() => secretSession()).toThrow(/aléatoire/);
+    vi.stubEnv("SECRET_SESSION", "Zq7-vP2!mK9#tR4$wX8&nB3*hL6@jD1^cF5");
+    expect(secretSession()).toHaveLength(35);
+  });
 });

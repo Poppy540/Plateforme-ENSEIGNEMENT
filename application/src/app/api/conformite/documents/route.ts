@@ -14,7 +14,11 @@ export async function POST(requete: Request): Promise<Response> {
   const utilisateur = await utilisateurConnecte();
   if (!utilisateur || (await roleCompte(utilisateur)) !== "referent")
     return Response.json({ erreur: "Référent requis." }, { status: 403 });
-  if (Number(requete.headers.get("content-length") ?? 0) > TAILLE_PDF_MAX + 100_000)
+  // Taille annoncée obligatoire : un envoi « chunked » sans Content-Length serait lu en entier en mémoire.
+  const taille = Number(requete.headers.get("content-length"));
+  if (!Number.isFinite(taille) || taille <= 0)
+    return Response.json({ erreur: "Taille de l'envoi requise." }, { status: 411 });
+  if (taille > TAILLE_PDF_MAX + 100_000)
     return retour(`erreur=${encodeURIComponent("Fichier trop lourd (10 Mo au plus).")}`);
   let donnees: FormData;
   try {

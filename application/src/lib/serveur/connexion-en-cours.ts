@@ -1,7 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { lireIdentifiant, type Identifiant } from "@/lib/identifiants";
-import { environnement } from "./configuration";
+import { simulationAutorisee } from "./configuration";
 
 // Identifiant en attente de code, gardé 10 minutes dans un cookie (jamais dans l'adresse de la page).
 const NOM = "connexion_en_cours";
@@ -9,7 +9,7 @@ const NOM = "connexion_en_cours";
 export async function memoriserIdentifiant(identifiant: Identifiant): Promise<void> {
   (await cookies()).set(NOM, JSON.stringify(identifiant), {
     httpOnly: true,
-    secure: environnement() === "production",
+    secure: !simulationAutorisee(),
     sameSite: "lax",
     path: "/connexion",
     maxAge: 10 * 60,

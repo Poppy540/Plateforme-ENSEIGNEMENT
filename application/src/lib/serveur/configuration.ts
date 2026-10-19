@@ -13,9 +13,23 @@ export function environnement(): string {
   return lire("ENVIRONNEMENT") ?? "production";
 }
 
-/** Le mode simulation (codes fixes, messages affichés à l'écran) n'existe qu'en développement et en test. */
+const HOTES_LOCAUX = new Set(["localhost", "127.0.0.1", "[::1]"]);
+
+/**
+ * Le mode simulation (codes fixes, messages affichés à l'écran) n'existe qu'en développement et en test, et
+ * seulement sur un poste local (revue de sécurité, ADR 0043) : adresse publique locale, ou absente hors d'un
+ * serveur compilé pour la production. Un serveur accessible depuis Internet n'est donc jamais en simulation,
+ * même si ENVIRONNEMENT est mal renseigné.
+ */
 export function simulationAutorisee(): boolean {
-  return ["developpement", "test"].includes(environnement());
+  if (!["developpement", "test"].includes(environnement())) return false;
+  const url = lire("URL_PUBLIQUE");
+  if (!url) return process.env.NODE_ENV !== "production";
+  try {
+    return HOTES_LOCAUX.has(new URL(url).hostname);
+  } catch {
+    return false;
+  }
 }
 
 export function modeAuthentification(): ModeAuthentification {
@@ -40,11 +54,18 @@ export function urlBaseDeDonnees(): string {
 // toutes les parties du serveur (pages, routes d'API) vérifient les mêmes sessions.
 const SECRET_DE_DEVELOPPEMENT = "secret-de-developpement-uniquement-jamais-en-production";
 
+/** Valeur recopiée d'un modèle (« remplacer-moi ») ou secret public de développement : jamais en production. */
+function secretDeModele(valeur: string): boolean {
+  return /remplacer-moi/i.test(valeur) || valeur === SECRET_DE_DEVELOPPEMENT;
+}
+
 /** Secret de signature des sessions. Obligatoire (32 caractères au moins) hors développement et test. */
 export function secretSession(): string {
   const secret = lire("SECRET_SESSION");
   if (secret) {
     if (secret.length < 32) throw new Error("SECRET_SESSION doit compter au moins 32 caractères.");
+    if (!simulationAutorisee() && (secretDeModele(secret) || new Set(secret).size < 10))
+      throw new Error("SECRET_SESSION est une valeur de modèle ou trop peu aléatoire.");
     return secret;
   }
   if (!simulationAutorisee()) throw new Error("SECRET_SESSION manquant.");
@@ -76,6 +97,8 @@ export function urlPublique(origineRequete: string | null): string {
 /** Sel de pseudonymisation du journal d'audit. Obligatoire hors développement et test. */
 export function selAudit(): string {
   const sel = lire("SEL_AUDIT");
+  if (sel && !simulationAutorisee() && secretDeModele(sel))
+    throw new Error("SEL_AUDIT est une valeur de modèle.");
   if (sel) return sel;
   if (!simulationAutorisee()) throw new Error("SEL_AUDIT manquant.");
   return "sel-d-audit-de-developpement-uniquement";

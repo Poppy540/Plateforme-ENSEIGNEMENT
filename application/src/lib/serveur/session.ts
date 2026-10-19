@@ -1,7 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { signerSession, verifierSession } from "@/lib/session-signee";
-import { environnement, secretSession } from "./configuration";
+import { secretSession, simulationAutorisee } from "./configuration";
 
 const NOM = "session";
 const DUREE_MS = 30 * 24 * 60 * 60 * 1000;
@@ -10,7 +10,7 @@ export async function ouvrirSession(utilisateur: string): Promise<void> {
   const expire = Date.now() + DUREE_MS;
   (await cookies()).set(NOM, signerSession({ utilisateur, expire }, secretSession()), {
     httpOnly: true,
-    secure: environnement() === "production",
+    secure: !simulationAutorisee(),
     sameSite: "lax",
     path: "/",
     expires: new Date(expire),
