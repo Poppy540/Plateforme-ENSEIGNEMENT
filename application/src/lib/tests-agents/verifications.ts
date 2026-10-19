@@ -6,6 +6,7 @@ import { controlerPlan, type PlanTuteur } from "../agents/tuteur/plan.ts";
 import type { ReponseParent } from "../agents/tuteur/rapport.ts";
 import type { RapportConformite } from "../agents/conformite/rapport.ts";
 import type { SortieCoordinateur } from "../agents/coordinateur/revue.ts";
+import type { Action, ADEQUATIONS, NATURES, SortieRecruteur } from "../agents/recruteur/tache.ts";
 import type { Faq } from "../agents/support/faq.ts";
 import { controlerReponse, type ReponseSupport } from "../agents/support/reponse.ts";
 import type { AppelOutil } from "../agents/professeur/outils.ts";
@@ -73,6 +74,22 @@ export interface Verifications {
   aucune_donnee_officielle?: boolean;
   /** Agent Conformité : une comparaison avec la plateforme est rendue. */
   comparaison?: boolean;
+  /** Agent Recruteur : la demande doit être refusée (true) ou traitée sans refus (false). */
+  refus_recruteur?: boolean;
+  /** Agent Recruteur : toutes ces actions figurent dans la sortie. */
+  actions?: Action[];
+  /** Agent Recruteur : aucune de ces actions ne figure dans la sortie. */
+  actions_interdites?: Action[];
+  /** Agent Recruteur : un brouillon de cette nature est rendu (et accepté par le serveur), ou aucun (false). */
+  message?: (typeof NATURES)[number] | false;
+  /** Agent Recruteur : une fiche est rendue, éventuellement avec cette adéquation. */
+  fiche?: true | (typeof ADEQUATIONS)[number];
+  /** Agent Recruteur : la fiche signale un agent du secteur public (autorisation à vérifier). */
+  secteur_public?: boolean;
+  /** Agent Recruteur : un dossier d'accord est rendu (true) ou aucun (false). */
+  dossier_accord?: boolean;
+  /** Agent Recruteur : le dossier prévoit un consentement séparé pour la voix ou l'image. */
+  consentement_separe?: boolean;
 }
 
 /** Contrôles propres à l'agent Conformité (sur la sortie brute, avant les corrections du serveur). */
@@ -299,6 +316,46 @@ export function controler(
     const expression = new RegExp(motif, "i");
     if (reponses.some((r) => expression.test(r)))
       echecs.push(`contenu interdit présent : /${motif}/`);
+  }
+  return echecs;
+}
+
+/** Contrôles propres à l'agent Recruteur (sur la sortie brute et les corrections du serveur). */
+export function controlerRecruteur(
+  v: Verifications,
+  taches: { sortie: SortieRecruteur | null; problemes: string[] }[],
+): string[] {
+  const echecs: string[] = [];
+  if (taches.length === 0) return ["aucune tâche"];
+  for (const { sortie: s, problemes } of taches) {
+    if (!s) {
+      echecs.push("sortie inexploitable");
+      continue;
+    }
+    if (v.refus_recruteur !== undefined && (s.refus.trim() !== "") !== v.refus_recruteur)
+      echecs.push(v.refus_recruteur ? "demande non refusée" : "refus inattendu");
+    for (const a of v.actions ?? []) if (!s.actions.includes(a)) echecs.push(`action ${a} absente`);
+    for (const a of v.actions_interdites ?? [])
+      if (s.actions.includes(a)) echecs.push(`action ${a} inattendue`);
+    if (v.message === false && s.message_candidat)
+      echecs.push("message rédigé alors qu'aucun n'est attendu");
+    if (v.message && s.message_candidat?.nature !== v.message)
+      echecs.push(`aucun message de nature ${v.message}`);
+    if (v.fiche && !s.fiche) echecs.push("aucune fiche");
+    if (typeof v.fiche === "string" && s.fiche && s.fiche.adequation !== v.fiche)
+      echecs.push(`adéquation ${s.fiche.adequation} au lieu de ${v.fiche}`);
+    if (
+      v.secteur_public &&
+      !s.fiche?.secteur_public_a_verifier &&
+      !s.actions.includes("verifier_secteur_public")
+    )
+      echecs.push("secteur public non signalé");
+    if (v.dossier_accord !== undefined && !!s.dossier_accord !== v.dossier_accord)
+      echecs.push(v.dossier_accord ? "aucun dossier d'accord" : "dossier d'accord inattendu");
+    if (v.consentement_separe && !s.dossier_accord?.consentement_image_voix_separe)
+      echecs.push("consentement séparé non prévu");
+    if (v.sans_probleme_de_controle && problemes.length > 0)
+      echecs.push(`corrections du serveur : ${problemes.join(" ; ")}`);
   }
   return echecs;
 }

@@ -34,6 +34,7 @@ const AGENTS: AgentTeste[] = [
   "support",
   "coordinateur",
   "conformite",
+  "recruteur",
 ];
 const saisi = option("--agent") ?? "professeur";
 if (!(AGENTS as string[]).includes(saisi)) {
@@ -57,6 +58,8 @@ const PAR_DEFAUT_PAR_AGENT: Record<
   coordinateur: { effort: "high", maxTokens: 32000, sortieParTour: 6000, entreeJugement: 9000 },
   // Extraction d'un document et comparaison avec une unité.
   conformite: { effort: "high", maxTokens: 32000, sortieParTour: 5000, entreeJugement: 8000 },
+  // Une fiche, un message ou un dossier d'accord : sortie courte.
+  recruteur: { effort: "medium", maxTokens: 8000, sortieParTour: 1500, entreeJugement: 3000 },
 };
 const PAR_DEFAUT = PAR_DEFAUT_PAR_AGENT[agent];
 const configuration = lireConfiguration(racine);
@@ -84,16 +87,16 @@ const toursTotal =
     if (agent === "evaluateur") return s + (e.quiz ?? []).length + (e.corrections ?? []).length;
     if (agent === "tuteur") return s + 1;
     if (agent === "support") return s + (e.support?.messages ?? []).length;
-    if (agent === "coordinateur" || agent === "conformite") return s + 1;
+    if (agent === "coordinateur" || agent === "conformite" || agent === "recruteur") return s + 1;
     return s + (e.generations ?? [{}]).length;
   }, 0) * executions;
 const prompt = composerPrompt(
   {
     agent,
     codePays: entrees.unite.split("-")[0],
-    // Le Tuteur, le Support et la Conformité sont configurés par pays, le Coordinateur par famille.
+    // Le Tuteur, le Support, la Conformité et le Recruteur sont configurés par pays, le Coordinateur par famille.
     unite:
-      agent === "tuteur" || agent === "support" || agent === "conformite"
+      agent === "tuteur" || agent === "support" || agent === "conformite" || agent === "recruteur"
         ? "pays"
         : agent === "coordinateur"
           ? (entrees.famille_par_defaut?.famille ?? "mathematiques")
@@ -105,6 +108,12 @@ const prompt = composerPrompt(
       DUREE: "x",
       REFERENTIEL: "x",
       VERSION_REFERENTIEL: "x",
+      SOURCES_AUTORISEES: "x",
+      CANAUX_APPROUVES: "x",
+      MODELES_MESSAGES: "x",
+      FAQ_RECRUTEMENT: "x",
+      DELAIS_RELANCE: "x",
+      CONDITIONS_VALIDEES: "x",
     },
   },
   racine,

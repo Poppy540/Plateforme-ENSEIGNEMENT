@@ -35,6 +35,8 @@ Statuts : **validé** (confirmé par un enseignant-référent sur le programme o
 | `agents/{professeur,scenariste,evaluateur,production-video}/ga-{6e,5e,4e}-mathematiques.yaml` | Variables des prompts et fiche d'avatar | Valeurs de l'unité pilote adaptées au niveau d'après `profils-niveau.yaml` (Claude Code) | à valider |
 | `agents/coordinateur/<famille>.yaml` (6 familles) | Variables du prompt Coordinateur et skill de famille | Proposition de Claude Code (ADR 0038) | à valider |
 | `agents/conformite/pays.yaml` | Variables du prompt Conformité programme | Proposition de Claude Code (ADR 0039) | à valider |
+| `agents/recruteur/pays.yaml` | Variables du prompt Recruteur | Proposition de Claude Code (ADR 0040) | à valider |
+| `recrutement.yaml` | Sources autorisées, canaux, délai de relance, modèles et FAQ de recrutement ; conditions non fixées (`null`) | Proposition de Claude Code d'après le cadrage, Parties E et F (ADR 0040) | à valider ; aucun usage réel avant l'avis du juriste |
 | (futur) autres programmes | Chapitres des autres unités | Cadrage, « Découpage des cours », base francophone générique | à valider (pas encore importés) |
 
 ## Règle d'or

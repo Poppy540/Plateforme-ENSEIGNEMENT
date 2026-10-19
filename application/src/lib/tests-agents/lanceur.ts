@@ -43,6 +43,15 @@ import {
   messageDemandeConformite,
   type RapportConformite,
 } from "../agents/conformite/rapport.ts";
+import { lireRecrutement, valeursRecrutement } from "../agents/recruteur/configuration.ts";
+import {
+  controlerSortie as controlerSortieRecruteur,
+  genererTacheRecruteur,
+  messageDemandeRecruteur,
+  type DemandeRecruteur,
+  type SortieRecruteur,
+  type Tache,
+} from "../agents/recruteur/tache.ts";
 import { lireFaq, type Faq } from "../agents/support/faq.ts";
 import {
   messageDemandeSupport,
@@ -59,6 +68,7 @@ import {
   controlerConformite,
   controlerCoordinateur,
   controlerEvaluateur,
+  controlerRecruteur,
   controlerSupport,
   controlerTuteur,
   fusionner,
@@ -140,6 +150,18 @@ export interface DocumentTest {
   texte: string;
 }
 
+/** Candidat fictif donné au Recruteur ; les champs absents viennent du défaut. */
+export interface CandidatTest {
+  nom: string;
+  famille: string;
+  niveau: string | null;
+  structure: string | null;
+  source: string;
+  statut: string;
+  adequation: string | null;
+  points_a_verifier: string[];
+}
+
 /** Famille fictive donnée au Coordinateur (agent Coordinateur) ; les champs absents viennent du défaut. */
 export interface FamilleTest {
   famille?: string;
@@ -165,6 +187,14 @@ interface EntreeScenario {
   revue?: { consigne?: string; famille?: FamilleTest };
   /** Agent Conformité : document fictif (complète celui par défaut) et consigne. */
   analyse?: { consigne?: string; document?: Partial<DocumentTest> };
+  /** Agent Recruteur : tâche, candidat (complète celui par défaut), historique, informations et consigne. */
+  recrutement?: {
+    tache: Tache;
+    candidat?: Partial<CandidatTest>;
+    historique?: DemandeRecruteur["historique"];
+    informations?: string;
+    consigne?: string;
+  };
   tours?: string[];
   generations?: Generation[];
   quiz?: DemandeQuizTest[];
@@ -181,6 +211,8 @@ export interface FichierEntrees {
   famille_par_defaut?: FamilleTest;
   /** Agent Conformité : document fictif commun. */
   document_par_defaut?: DocumentTest;
+  /** Agent Recruteur : candidat fictif commun. */
+  candidat_par_defaut?: CandidatTest;
   chapitre_par_defaut: string;
   duree_par_defaut?: number;
   verifications_communes?: Verifications;
@@ -190,7 +222,14 @@ export interface FichierEntrees {
 }
 
 export type AgentTeste =
-  "professeur" | "scenariste" | "evaluateur" | "tuteur" | "support" | "coordinateur" | "conformite";
+  | "professeur"
+  | "scenariste"
+  | "evaluateur"
+  | "tuteur"
+  | "support"
+  | "coordinateur"
+  | "conformite"
+  | "recruteur";
 
 export interface Execution {
   numero: number;
@@ -276,6 +315,7 @@ const SKILLS: Record<AgentTeste, string[]> = {
     "conformite/skills/audit-de-couverture",
     "conformite/skills/comparaison-de-referentiels",
   ],
+  recruteur: ["_commun/skills/contenu-non-fiable", "recruteur/skills/preselection-equitable"],
 };
 
 interface ResultatExecution {
@@ -290,6 +330,7 @@ interface ResultatExecution {
   reponsesSupport: (ReponseSupport | null)[];
   revues: { sortie: SortieCoordinateur | null; problemes: string[] }[];
   analyses: { rapport: RapportConformite | null; problemes: string[] }[];
+  taches: { sortie: SortieRecruteur | null; problemes: string[] }[];
   consommations: Consommation[];
 }
 
@@ -834,7 +875,72 @@ async function executerConformite(
   }
 }
 
+async function executerRecruteur(
+  c: Contexte,
+  entree: EntreeScenario,
+  r: ResultatExecution,
+): Promise<void> {
+  const lignes: string[] = [];
+  try {
+    const t = entree.recrutement!;
+    const candidat = { ...c.entrees.candidat_par_defaut!, ...t.candidat };
+    const configuration = lireRecrutement(dossierPack(c.options.racine, c.codePays));
+    if (!configuration) throw new Error("recrutement.yaml absent du pack.");
+    const historique = t.historique ?? [];
+    const envoye = (nature: string) =>
+      historique.some((h) => h.nature === nature && h.statut === "envoye");
+    const demande: DemandeRecruteur = {
+      tache: t.tache,
+      pays: c.pack.pays.nom,
+      famille: candidat.famille,
+      candidat: { ...candidat, nom: t.tache === "qualifier" ? null : candidat.nom },
+      historique,
+      delaiRelanceJours: configuration.delaiRelanceJours,
+      informations: t.informations ?? null,
+      consigne: t.consigne ?? null,
+    };
+    const resultat = await genererTacheRecruteur({
+      systeme: composerPrompt(
+        {
+          agent: "recruteur",
+          codePays: c.codePays,
+          unite: "pays",
+          skills: SKILLS.recruteur,
+          valeursDynamiques: valeursRecrutement(configuration),
+        },
+        c.options.racine,
+      ),
+      demande,
+      modele: c.options.modele,
+      parametres: c.options.parametres,
+    });
+    r.consommations.push(...resultat.consommations);
+    lignes.push(messageDemandeRecruteur(demande), "", "--- Sortie du Recruteur ---");
+    if (!resultat.sortie) {
+      lignes.push(`(aucune sortie exploitable, arrêt : ${resultat.arret})`);
+      r.taches.push({ sortie: null, problemes: [] });
+      return;
+    }
+    const { problemes } = controlerSortieRecruteur(resultat.sortie, {
+      tache: t.tache,
+      statutCandidat: candidat.statut,
+      premierContactEnvoye: envoye("premier_contact"),
+      relanceEnvoyee: envoye("relance"),
+      conditionsValidees: configuration.conditionsValidees !== null,
+    });
+    lignes.push(
+      JSON.stringify(resultat.sortie, null, 2),
+      ...problemes.map((p) => `Contrôle du serveur : ${p}`),
+    );
+    r.reponses.push(JSON.stringify(resultat.sortie));
+    r.taches.push({ sortie: resultat.sortie, problemes });
+  } finally {
+    r.transcription = lignes.join("\n");
+  }
+}
+
 const EXECUTANTS = {
+  recruteur: executerRecruteur,
   conformite: executerConformite,
   coordinateur: executerCoordinateur,
   support: executerSupport,
@@ -887,6 +993,7 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
         reponsesSupport: [],
         revues: [],
         analyses: [],
+        taches: [],
         consommations: [],
       };
       try {
@@ -907,6 +1014,9 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
             : []),
           ...(options.agent === "conformite"
             ? controlerConformite(verifications, partiel.analyses)
+            : []),
+          ...(options.agent === "recruteur"
+            ? controlerRecruteur(verifications, partiel.taches)
             : []),
         ];
         const jugement = await options.juge(scenario, partiel.transcription, options.agent);

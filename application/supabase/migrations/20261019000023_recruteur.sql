@@ -118,6 +118,19 @@ $$;
 create trigger messages_recrutement_versionnes before insert or update on messages_recrutement
   for each row execute function messages_recrutement_versionnes();
 
+-- Dossier d'accord : un brouillon préparé par l'agent (résumé des conditions, points à faire valider). Jamais
+-- signé dans le système : la signature est humaine et hors de la plateforme (ADR 0010).
+create table dossiers_accord (
+  id uuid primary key default gen_random_uuid(),
+  candidat_id uuid not null references candidats (id) on delete cascade,
+  resume text not null check (char_length(resume) between 1 and 4000),
+  consentement_image_voix_separe boolean not null,
+  points_a_valider text[] not null default '{}',
+  cree_le timestamptz not null default now()
+);
+alter table dossiers_accord enable row level security;
+revoke all on dossiers_accord from public, anon, authenticated;
+
 -- ---------------------------------------------------------------------------------------------------------
 -- Droits de l'agent : fiches minimales, brouillons de messages, statuts du pipeline (sauf « signé »),
 -- inscription dans la liste d'opposition. Ni approbation, ni envoi, ni lecture de la liste d'opposition.
@@ -137,6 +150,13 @@ grant insert (candidat_id, nature, objet, texte) on messages_recrutement to agen
 create policy messages_recruteur on messages_recrutement for select to agent_recruteur
   using (candidat_id = contexte_agent('candidat_id'));
 create policy messages_recruteur_creation on messages_recrutement for insert to agent_recruteur
+  with check (candidat_id = contexte_agent('candidat_id'));
+
+grant select, insert (candidat_id, resume, consentement_image_voix_separe, points_a_valider) on dossiers_accord
+  to agent_recruteur;
+create policy dossiers_recruteur on dossiers_accord for select to agent_recruteur
+  using (candidat_id = contexte_agent('candidat_id'));
+create policy dossiers_recruteur_creation on dossiers_accord for insert to agent_recruteur
   with check (candidat_id = contexte_agent('candidat_id'));
 
 /** L'agent enregistre un refus ou une demande de suppression : opposition et arrêt de tout contact. */
@@ -177,6 +197,10 @@ create policy candidats_administration_maj on candidats for update to authentica
   using (role_courant() = 'administrateur') with check (role_courant() = 'administrateur');
 grant select on messages_recrutement to authenticated;
 create policy messages_administration on messages_recrutement for select to authenticated
+  using (role_courant() = 'administrateur');
+
+grant select on dossiers_accord to authenticated;
+create policy dossiers_administration on dossiers_accord for select to authenticated
   using (role_courant() = 'administrateur');
 
 /** Approbation d'un brouillon par le propriétaire : l'empreinte du texte lu est enregistrée. */

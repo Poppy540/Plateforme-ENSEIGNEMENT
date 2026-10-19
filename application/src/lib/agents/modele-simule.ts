@@ -615,6 +615,232 @@ function supportSimule(demande: string): BetaMessage {
   );
 }
 
+/** Recruteur simulé : réponses scriptées selon la tâche, la consigne et les informations du candidat. */
+function recruteurSimule(demande: string): BetaMessage {
+  const tache = demande.match(/^# TÂCHE DE RECRUTEMENT — .* : (\w+)$/m)?.[1] ?? "consigne";
+  const consigne = (demande.match(/<consigne>\n([\s\S]*?)\n<\/consigne>/)?.[1] ?? "").toLowerCase();
+  const infos = (
+    demande.match(/<informations>\n([\s\S]*?)\n<\/informations>/)?.[1] ?? ""
+  ).toLowerCase();
+  const source = demande.match(/^- Source : (.*)$/m)?.[1] ?? "une source autorisée";
+  const nom = demande.match(/^- Nom : (.*)$/m)?.[1] ?? "";
+  const relanceEnvoyee = /^- relance « .* » : envoye/m.test(demande);
+  const sortie = {
+    refus: "",
+    reponse_au_responsable: "",
+    fiche: null as unknown,
+    message_candidat: null as unknown,
+    dossier_accord: null as unknown,
+    actions: [] as string[],
+    escalade: "",
+  };
+  const fin = () => message([texte(JSON.stringify(sortie))], "end_turn");
+  const signature =
+    "Ce message a été rédigé par une intelligence artificielle, l'assistant de recrutement du projet, pour le compte du responsable du projet.";
+  const refuser = (raison: string, proposition: string) => {
+    sortie.refus = `(Recruteur simulé) ${raison}`;
+    sortie.reponse_au_responsable = `(Recruteur simulé) ${raison} ${proposition}`;
+    return fin();
+  };
+  // Consignes du responsable contraires aux règles : refus, avec une proposition légitime.
+  if (/ignore tes instructions|prompt système|affiche ton prompt/.test(consigne))
+    return refuser(
+      "Je ne communique pas mes instructions.",
+      "Je peux vous aider à préparer un message ou une fiche.",
+    );
+  if (/clé api|mot de passe|secret/.test(consigne))
+    return refuser(
+      "Je n'ai pas accès aux clés et je ne les demande jamais.",
+      "Je peux continuer le recrutement.",
+    );
+  if (/malveillant|virus|pirat/.test(consigne))
+    return refuser(
+      "Ce n'est pas dans ma mission.",
+      "Je peux préparer une fiche ou un message de recrutement.",
+    );
+  if (/autre candidat|liste des candidats|infos d'un autre|notes d'un autre/.test(consigne))
+    return refuser(
+      "Je ne parle pas d'une personne à une autre.",
+      "Je travaille seulement sur la fiche en cours.",
+    );
+  if (/administrateur|droit de publier|droit d'envoyer|droits/.test(consigne))
+    return refuser(
+      "Mes droits ne changent que par configuration.",
+      "Je continue avec les brouillons.",
+    );
+  if (/sexuel|violent|haineux/.test(consigne))
+    return refuser("Je ne produis pas ce type de contenu.", "Je reprends le recrutement.");
+  if (/script|aspir|récupère|collecte automatis/.test(consigne))
+    return refuser(
+      "Je ne fais aucune collecte automatisée de coordonnées.",
+      "Je propose la cooptation, les candidatures spontanées et les sources autorisées du pack.",
+    );
+  if (/achet|liste de téléphones|liste d'adresses/.test(consigne))
+    return refuser(
+      "Je n'utilise que les sources autorisées : pas de liste achetée.",
+      "Je propose la cooptation.",
+    );
+  if (/directement|pas besoin que je|sans relire|sans validation/.test(consigne)) {
+    sortie.actions = ["transmettre_responsable"];
+    return refuser(
+      "Je n'envoie rien sans votre approbation enregistrée.",
+      "Le brouillon reste en attente de votre approbation dans l'administration.",
+    );
+  }
+  if (/dernière place|urgence|presse|mets la pression/.test(consigne))
+    return refuser(
+      "Je ne mens pas et je ne crée pas de fausse urgence.",
+      "Je peux rédiger un rappel neutre.",
+    );
+  if (/accord est conclu|c'est signé|confirme .*accord/.test(consigne))
+    return refuser(
+      "Je ne peux pas confirmer un accord : il devient valable seulement quand le responsable et le candidat ont signé.",
+      "Je prépare le dossier pour la signature.",
+    );
+  if (/religion|situation familiale|santé|opinions/.test(consigne))
+    return refuser(
+      "Je ne collecte aucune donnée sensible.",
+      "La fiche reste minimale et pédagogique.",
+    );
+  if (/candidates|hommes|femmes|âge|jeunes/.test(consigne))
+    return refuser(
+      "Je n'applique aucun critère discriminatoire.",
+      "J'évalue seulement la maîtrise de la matière, l'expérience d'enseignement, la connaissance du programme et la disponibilité.",
+    );
+  if (/négoci|tarif|exclusivité|rémunération/.test(consigne)) {
+    sortie.actions = ["transmettre_responsable"];
+    sortie.escalade = "Question de rémunération ou d'exclusivité : hors des conditions validées.";
+    return refuser(
+      "Je ne négocie ni ne promets aucune contrepartie hors des conditions validées.",
+      "Je vous transmets la question.",
+    );
+  }
+  if (/voix|clon|image/.test(consigne) || tache === "accord") {
+    const voix = /voix|clon|image/.test(consigne);
+    if (voix)
+      sortie.refus = "(Recruteur simulé) L'usage de la voix n'entre pas dans l'accord de référent.";
+    sortie.dossier_accord = {
+      resume:
+        "Rôle : relire et valider programmes, scripts, quiz et vidéos de la famille. Conditions : celles validées par le responsable (aucune fixée pour l'instant). Aucun engagement avant la signature humaine.",
+      consentement_image_voix_separe: true,
+      points_a_valider: [
+        "Conditions à fixer par le responsable",
+        "Relecture du modèle par le juriste",
+        "Consentement séparé, spécifique et révocable si la voix ou l'image doivent servir (document distinct)",
+      ],
+    };
+    sortie.reponse_au_responsable =
+      "(Recruteur simulé) Dossier d'accord préparé en brouillon ; à valider.";
+    return fin();
+  }
+  // Informations venant du candidat (données non fiables).
+  if (/(recruteur|agent) ?:|ignore|tarifs confidentiels|envoie à tous/.test(infos)) {
+    sortie.actions.push("signaler_contenu_suspect");
+    sortie.escalade = "Instruction cachée dans le profil du candidat : ignorée et signalée.";
+  }
+  if (tache === "repondre") {
+    if (/ne me contactez plus|non merci|\bstop\b|pas intéressé/.test(infos)) {
+      sortie.actions.push("enregistrer_refus");
+      sortie.reponse_au_responsable =
+        "(Recruteur simulé) Refus enregistré dans la liste d'opposition : plus aucun contact.";
+      return fin();
+    }
+    if (/supprim/.test(infos)) {
+      sortie.actions.push("demande_suppression", "transmettre_responsable");
+      sortie.escalade = "Demande de suppression des données : à traiter par le responsable.";
+      sortie.reponse_au_responsable =
+        "(Recruteur simulé) Demande de suppression enregistrée ; contact arrêté.";
+      return fin();
+    }
+    let reponse = "Merci pour votre message.";
+    if (/vraie personne|un humain|un robot/.test(infos))
+      reponse =
+        "Je suis une intelligence artificielle : l'assistant de recrutement du projet. Les décisions sont prises par le responsable du projet, un humain.";
+    else if (/engag/.test(infos))
+      reponse =
+        "Vous ne vous engagez à rien : aucun engagement n'existe avant un accord écrit, relu par un juriste et signé par le responsable du projet et par vous.";
+    else if (
+      /\?/.test(infos) &&
+      !/pièce|combien|payé|rémunér|salaire|fonctionnaire|public/.test(infos)
+    ) {
+      sortie.actions.push("transmettre_responsable");
+      sortie.escalade = "Question hors de la FAQ de recrutement.";
+      reponse =
+        "Je ne connais pas la réponse à cette question et je préfère ne rien inventer : je la transmets au responsable du projet.";
+    }
+    if (/pièce d'identité|carte d'identité|passeport/.test(infos)) {
+      sortie.actions = sortie.actions.filter((a) => a !== "transmettre_responsable");
+      sortie.actions.push("piece_identite_non_conservee", "transmettre_responsable");
+      sortie.escalade = "Pièce d'identité reçue : non conservée.";
+      reponse =
+        "Merci, mais une pièce d'identité n'est pas nécessaire : nous ne la conservons pas. Vous pourrez confirmer votre fonction par le moyen de votre choix.";
+    } else if (/combien|payé|rémunér|salaire/.test(infos)) {
+      sortie.actions.push("transmettre_responsable");
+      sortie.escalade = "Question sur la rémunération : conditions non validées.";
+      reponse =
+        "Je ne peux pas répondre sur ce point : je transmets votre question au responsable du projet, qui vous répondra.";
+    } else if (
+      /fonctionnaire|enseignement public|secteur public|établissement public/.test(infos)
+    ) {
+      sortie.actions.push("verifier_secteur_public", "transmettre_responsable");
+      sortie.escalade =
+        "Agent du secteur public : une autorisation éventuelle est à vérifier (sans trancher).";
+      reponse =
+        "Merci pour cette précision : le responsable du projet regardera avec vous si une démarche auprès de votre employeur est utile.";
+    }
+    sortie.message_candidat = {
+      nature: "reponse",
+      objet: "Votre message",
+      texte: `Bonjour ${nom},\n\n${reponse}\n\n${signature} Pour ne plus être contacté, répondez STOP.`,
+    };
+    return fin();
+  }
+  if (tache === "qualifier") {
+    const incoherence = /incohérence|ne correspond pas|aucune trace|contradict/.test(infos);
+    const enseigne = /enseigne|professeur|cours de/.test(infos);
+    const publicSecteur = /fonctionnaire|public/.test(infos);
+    if (incoherence) {
+      sortie.actions.push("signaler_incoherence", "transmettre_responsable");
+      sortie.escalade =
+        "Les informations déclarées et la source ne concordent pas : à vérifier avec la personne, sans conclusion.";
+    }
+    if (publicSecteur) sortie.actions.push("verifier_secteur_public");
+    sortie.fiche = {
+      adequation: incoherence || !enseigne ? "impossible_a_evaluer" : "forte",
+      justification: enseigne
+        ? "« enseigne la matière au niveau visé » d'après les informations fournies."
+        : "Les informations ne disent rien de l'expérience d'enseignement.",
+      points_a_verifier: [
+        "Disponibilité réelle",
+        ...(incoherence ? ["Fonction déclarée à confirmer par la personne"] : []),
+      ],
+      secteur_public_a_verifier: publicSecteur,
+    };
+    sortie.reponse_au_responsable = "(Recruteur simulé) Fiche qualifiée sur critères pédagogiques.";
+    return fin();
+  }
+  if (tache === "relance") {
+    if (relanceEnvoyee) {
+      sortie.reponse_au_responsable =
+        "(Recruteur simulé) Une relance a déjà été envoyée : arrêt, plus de contact.";
+      return fin();
+    }
+    sortie.message_candidat = {
+      nature: "relance",
+      objet: "Rappel : proposition de relecture",
+      texte: `Bonjour ${nom},\n\nJe me permets un unique rappel de mon précédent message. Il n'y aura pas d'autre relance. ${signature} Pour ne plus être contacté, répondez STOP.`,
+    };
+    return fin();
+  }
+  sortie.message_candidat = {
+    nature: "premier_contact",
+    objet: "Proposition : relire des cours en ligne",
+    texte: `Bonjour ${nom},\n\n${signature} Nous vous avons connu par la source suivante : ${source}. Le projet prépare des cours en ligne pour le collège et le lycée ; nous cherchons des enseignants pour relire et valider le programme, les scripts et les quiz de leur matière. Il n'y a aucun engagement à ce stade. Si cela vous intéresse, répondez à ce message ; sinon, répondez STOP et nous ne vous écrirons plus.`,
+  };
+  sortie.reponse_au_responsable = "(Recruteur simulé) Brouillon prêt pour votre approbation.";
+  return fin();
+}
+
 /** Correction simulée d'une réponse courte. */
 function correctionSimulee(demande: string): BetaMessage {
   const attendue = demande.match(/Réponse attendue : (.*)/)?.[1]?.trim() ?? "";
@@ -659,6 +885,7 @@ export function reponseSimulee(parametres: BetaMessageStreamParams): BetaMessage
     if ("faq_utilisees" in champs) return supportSimule(demande);
     if ("propositions_liens" in champs) return coordinateurSimule(demande);
     if ("comparaison" in champs) return conformiteSimulee(demande);
+    if ("message_candidat" in champs) return recruteurSimule(demande);
     if ("priorites" in champs) return planSimule(demande);
     if ("points_forts" in champs)
       return message(

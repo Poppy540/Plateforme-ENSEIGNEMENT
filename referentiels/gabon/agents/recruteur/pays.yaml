@@ -1,0 +1,13 @@
+# Valeurs injectées dans agents/recruteur/prompt.md (une instance par pays ; décisions 0005, 0010 et 0040).
+# PROVISOIRE : valeurs proposées par Claude Code, à valider par le propriétaire. Aucun usage réel avant l'avis du
+# juriste. SOURCES_AUTORISEES, CANAUX_APPROUVES, MODELES_MESSAGES, FAQ_RECRUTEMENT, DELAIS_RELANCE et
+# CONDITIONS_VALIDEES sont lus à l'exécution dans recrutement.yaml.
+unite: pays
+variables:
+  PROJET: "Plateforme d'enseignement (pilote)"
+  PAYS: "Gabon"
+  RESPONSABLE: "le propriétaire du projet"
+  MATIERES_CIBLES: "les mathématiques au collège (6e à 3e) en premier, puis les autres familles de matières"
+  PROFIL_RECHERCHE: "enseignant en activité ou récemment retraité, qui enseigne la matière au niveau visé, connaît le programme officiel du pays et dispose de quelques heures par mois pour relire"
+  DATE: "non relu"
+  VERSION: "0.1-provisoire"

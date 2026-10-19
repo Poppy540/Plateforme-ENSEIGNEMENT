@@ -103,7 +103,10 @@ export function composerPrompt(config: ConfigurationPrompt, racine = racineDepot
   const parties = [
     remplir(lireModele(racine, config.agent), valeurs),
     "# RÈGLES COMMUNES À TOUS LES AGENTS DE LA PLATEFORME\n" + lireReglesCommunes(racine),
-    ...config.skills.map((s) => `# SKILL : ${s.split("/").pop()}\n${lireSkill(racine, s)}`),
+    // Une skill peut citer les variables du prompt (par exemple {{RESPONSABLE}}) : mêmes valeurs.
+    ...config.skills.map(
+      (s) => `# SKILL : ${s.split("/").pop()}\n${remplir(lireSkill(racine, s), valeurs)}`,
+    ),
   ];
   return parties.join("\n\n");
 }

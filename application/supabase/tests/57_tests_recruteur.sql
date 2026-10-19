@@ -87,6 +87,14 @@ do $$ begin
   end;
   begin perform 1 from eleves; raise exception 'N02 : élèves lisibles';
   exception when insufficient_privilege then null; end;
+  insert into dossiers_accord (candidat_id, resume, consentement_image_voix_separe)
+  values ((select valeur from ids where cle = 'a'), 'Résumé fictif', true);
+  begin
+    insert into dossiers_accord (candidat_id, resume, consentement_image_voix_separe)
+    values ((select valeur from ids where cle = 'b'), 'X', true);
+    raise exception 'N02 : dossier pour un autre candidat';
+  exception when insufficient_privilege then null;
+  end;
   insert into signalements (source, motif, priorite, resume) values ('agent_recruteur', 'autre', 3, 'Source douteuse (test)');
 end $$;
 reset role;

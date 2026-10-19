@@ -22,7 +22,7 @@ on:
       agent:
         description: "Agent testé"
         type: choice
-        options: [professeur, scenariste, evaluateur, tuteur, support, coordinateur, conformite]
+        options: [professeur, scenariste, evaluateur, tuteur, support, coordinateur, conformite, recruteur]
         default: professeur
       scenarios:
         description: "Scénarios à lancer (vide = tous), par exemple PR-01,TC-09"
@@ -84,7 +84,7 @@ jobs:
           EXECUTIONS: ${{ inputs.executions }}
         run: |
           # Saisies passées par variables d'environnement et contrôlées (pas d'injection dans le shell).
-          [[ "$AGENT" =~ ^(professeur|scenariste|evaluateur|tuteur|support|coordinateur|conformite)$ ]] || { echo "Agent invalide"; exit 1; }
+          [[ "$AGENT" =~ ^(professeur|scenariste|evaluateur|tuteur|support|coordinateur|conformite|recruteur)$ ]] || { echo "Agent invalide"; exit 1; }
           ARGS=(--confirmer --agent "$AGENT")
           if [ -n "$SCENARIOS" ]; then
             [[ "$SCENARIOS" =~ ^[A-Z]{2}-[0-9]{2}(,[A-Z]{2}-[0-9]{2})*$ ]] || { echo "Liste de scénarios invalide"; exit 1; }
