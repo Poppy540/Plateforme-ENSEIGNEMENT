@@ -15,6 +15,11 @@ import { envoyerMessage } from "./messagerie";
 import { modeleDesAgents } from "./professeur";
 import { parametresTuteur } from "./tuteur";
 
+function entierPositif(nom: string, defaut: number): number {
+  const v = Number(process.env[nom]);
+  return Number.isInteger(v) && v > 0 ? v : defaut;
+}
+
 // Rapports du Tuteur aux parents (ADR 0027, 0031) : accord séparé demandé par l'élève, accepté par le parent
 // par lien, révocable ; rapport hebdomadaire et à la demande ; envoi par le service de messagerie (le Tuteur
 // ne voit jamais le contact) ; lien propre à chaque rapport pour le lire, en redemander un ou arrêter.
@@ -49,10 +54,16 @@ export async function demanderAccordRapports(
   urlDuSite: string,
 ): Promise<string | null> {
   try {
-    const { jeton, contact: destinataire } = await avecUtilisateur(eleve, (client) =>
+    const demande = await avecUtilisateur(eleve, (client) =>
       client
-        .query("select * from demander_consentement_rapports($1)", [contact])
-        .then((r) => r.rows[0]),
+        .query("select demander_consentement_rapports($1) as id", [contact])
+        .then((r) => r.rows[0].id as string),
+    );
+    // Le jeton n'est émis que par le service de messagerie (jamais rendu à la session de l'élève).
+    const { jeton, contact: destinataire } = await avecServiceMessagerie((client) =>
+      client
+        .query("select * from emettre_jeton_consentement($1)", [demande])
+        .then((r) => r.rows[0] as { contact: string; jeton: string }),
     );
     await envoyerMessage(
       destinataire,
@@ -199,14 +210,15 @@ export async function envoyerRapportsHebdomadaires(urlDuSite: string): Promise<n
 
 export interface RapportParent {
   prenom: string;
-  rapport: Rapport;
+  /** null une fois les rapports arrêtés : le contenu n'est plus lisible (revue de sécurité, S6). */
+  rapport: Rapport | null;
   creeLe: string;
   accordActif: boolean;
 }
 
 interface LigneRapport {
   prenom: string;
-  contenu: Rapport & { faits?: FaitsRapport };
+  contenu: (Rapport & { faits?: FaitsRapport }) | null;
   cree_le: string;
   accord_actif: boolean;
   eleve_id: string;
@@ -267,6 +279,22 @@ export async function questionDuParent(
   if (await agentSuspendu("tuteur")) return { ok: false, erreur: MESSAGE_AGENT_SUSPENDU };
   const l = await ligneParJeton(jeton);
   if (!l) return { ok: false, erreur: "Lien invalide." };
+  if (!l.accord_actif)
+    return { ok: false, erreur: "Les rapports ne sont plus actifs pour cet élève." };
+  // Quota par élève et par jour, pris avant l'appel au modèle (un lien transféré ne coûte pas à volonté).
+  const dansLeQuota = await avecVisiteur((client) =>
+    client
+      .query("select prendre_quota_parent($1, $2) as ok", [
+        jeton,
+        entierPositif("QUESTIONS_PARENT_PAR_JOUR", 5),
+      ])
+      .then((r) => r.rows[0].ok === true),
+  );
+  if (!dansLeQuota)
+    return {
+      ok: false,
+      erreur: "Vous avez posé plusieurs questions aujourd'hui. Réessayez demain.",
+    };
   // Le pays vient toujours du compte de l'élève ; les faits ne sont transmis qu'avec un accord actif.
   const donnees = await faitsDeLaSemaine(l.eleve_id);
   if (!donnees) return { ok: false, erreur: "Lien invalide." };

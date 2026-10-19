@@ -10,20 +10,29 @@ $$;
 create temp table jetons (cle text primary key, valeur text);
 grant select, insert, update on jetons to public;
 
+-- Les demandes des tests précédents datent d'avant-hier (une seule demande par jour, revue de sécurité S7).
+update consentements set demande_le = now() - interval '2 days' where type = 'rapport_parents';
+
 -- RP01 L'élève demande l'accord ; le contact est celui de l'inscription ; une seule demande à la fois.
 select pg_temp.connecter('11111111-1111-1111-1111-111111111111');
 set role authenticated;
-do $$
-declare v record;
-begin
-  select * into v from demander_consentement_rapports();
-  assert v.contact = '+999 000 000 99', 'RP01 : contact de l''inscription';
-  insert into jetons values ('accord', v.jeton);
+do $$ begin
+  insert into jetons values ('demande', demander_consentement_rapports()::text);
   begin
     perform demander_consentement_rapports();
     raise exception 'RP01 : seconde demande acceptée';
   exception when invalid_parameter_value then null;
   end;
+end $$;
+reset role;
+-- Le jeton n'est émis que par le service de messagerie (revue de sécurité, S2).
+set role service_messagerie;
+do $$
+declare v record;
+begin
+  select * into v from emettre_jeton_consentement((select valeur from jetons where cle = 'demande')::uuid);
+  assert v.contact = '+999 000 000 99', 'RP01 : contact de l''inscription';
+  insert into jetons values ('accord', v.jeton);
 end $$;
 reset role;
 select pg_temp.connecter('');
@@ -86,6 +95,7 @@ begin
   assert arreter_rapports_parents((select valeur from jetons where cle = 'accord')), 'RP03 : arrêt';
   select * into v from rapport_par_jeton((select valeur from jetons where cle = 'accord'));
   assert not v.accord_actif, 'RP03 : accord encore actif après l''arrêt';
+  assert v.contenu is null, 'RP03 : contenu lisible après l''arrêt';
 end $$;
 reset role;
 set role agent_tuteur;
@@ -102,7 +112,19 @@ end $$;
 reset role;
 \echo OK RP03 rapport consulté par son lien, arrêt par le parent
 
--- RP04 L'élève peut aussi retirer son accord ; il peut redemander ensuite.
+-- RP04 L'élève peut aussi retirer son accord ; il peut redemander ensuite, une fois par jour au plus
+-- (revue de sécurité, S7 : pas de messages en boucle vers un numéro).
+select pg_temp.connecter('11111111-1111-1111-1111-111111111111');
+set role authenticated;
+do $$ begin
+  begin
+    perform demander_consentement_rapports();
+    raise exception 'RP04 : deuxième demande le même jour';
+  exception when invalid_parameter_value then null;
+  end;
+end $$;
+reset role;
+update consentements set demande_le = now() - interval '2 days' where type = 'rapport_parents';
 select pg_temp.connecter('11111111-1111-1111-1111-111111111111');
 set role authenticated;
 do $$ begin

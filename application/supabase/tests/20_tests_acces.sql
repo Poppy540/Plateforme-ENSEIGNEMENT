@@ -224,12 +224,32 @@ do $$ begin
   exception when invalid_parameter_value then null;
   end;
 end $$;
-select inscrire_eleve('Kofi', 'xx-general', 'n4', null, true, '+000 00 00 00') as jeton \gset
+select inscrire_eleve('Kofi', 'xx-general', 'n4', null, true, '+000 00 00 00') as demande \gset
 do $$ begin
   assert (select statut from eleves) = 'en_attente_parent', 'T14 : un mineur est actif sans validation parentale';
-  assert (select empreinte_jeton from consentements) <> '', 'T14 : jeton non enregistré';
+  -- Revue de sécurité (S2) : l'élève ne reçoit que l'identifiant de la demande, jamais le jeton.
+  begin
+    perform emettre_jeton_consentement((select id from consentements limit 1));
+    raise exception 'T14 : jeton émis pour la session de l''élève';
+  exception when insufficient_privilege then null;
+  end;
 end $$;
 reset role;
+set role service_messagerie;
+select jeton from emettre_jeton_consentement(:'demande'::uuid) \gset
+do $$ begin
+  begin
+    perform emettre_jeton_consentement((select id from consentements where empreinte_jeton is not null limit 1));
+    raise exception 'T14 : jeton émis deux fois';
+  exception when others then
+    if sqlerrm like 'T14%' then raise; end if;
+  end;
+end $$;
+reset role;
+do $$ begin
+  assert (select empreinte_jeton from consentements where eleve_id = '66666666-6666-6666-6666-666666666666') <> '',
+    'T14 : jeton non enregistré';
+end $$;
 select count(*) = 0 as jeton_absent_en_clair from consentements where empreinte_jeton = :'jeton' \gset
 \if :jeton_absent_en_clair
 \else

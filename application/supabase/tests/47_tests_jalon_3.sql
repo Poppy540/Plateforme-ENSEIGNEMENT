@@ -64,7 +64,7 @@ reset role;
 -- J03 Rapports aux parents : jamais sans consentement « rapport_parents » actif (celui de l'inscription ne suffit pas).
 insert into consentements (id, eleve_id, type, contact_parent, demande_le, accorde_le)
 values ('00000000-0000-4000-8000-0000000000c0', '11111111-1111-1111-1111-111111111111', 'inscription',
-  '+999 000 000 99', now(), now());
+  '+999 000 000 99', now() - interval '2 days', now() - interval '2 days');
 set role agent_tuteur;
 do $$ begin
   begin

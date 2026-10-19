@@ -76,7 +76,7 @@ export interface DemandeInscription {
   etablissement: string | null;
 }
 
-/** Inscrit l'élève connecté. Renvoie le jeton de validation parentale (élève mineur) ou null. */
+/** Inscrit l'élève connecté. Renvoie l'identifiant de la demande d'accord parental (élève mineur) ou null. */
 export async function inscrire(
   utilisateur: string,
   demande: DemandeInscription,

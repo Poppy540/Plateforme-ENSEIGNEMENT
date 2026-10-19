@@ -35,10 +35,14 @@ export default async function PageRapportParent({ searchParams }: PageProps<"/pa
         Rédigé le {formatDate.format(new Date(r.creeLe))} par son tuteur, une intelligence
         artificielle. Aucune comparaison avec d&apos;autres élèves.
       </p>
-      <p>{r.rapport.progression}</p>
-      <Liste titre="Points forts" elements={r.rapport.points_forts} />
-      <Liste titre="Points à renforcer" elements={r.rapport.points_a_renforcer} />
-      <Liste titre="Suggestions" elements={r.rapport.suggestions} />
+      {r.rapport && (
+        <>
+          <p>{r.rapport.progression}</p>
+          <Liste titre="Points forts" elements={r.rapport.points_forts} />
+          <Liste titre="Points à renforcer" elements={r.rapport.points_a_renforcer} />
+          <Liste titre="Suggestions" elements={r.rapport.suggestions} />
+        </>
+      )}
       {!r.accordActif && (
         <p role="status">
           Les rapports sont arrêtés. Pour les recevoir à nouveau, votre enfant peut vous les

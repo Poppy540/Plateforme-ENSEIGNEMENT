@@ -183,3 +183,16 @@ export function avecAgentRecruteur<T>(
     return traitement(client);
   });
 }
+
+/** Place du quota du jour de l'élève connecté, prise avant l'appel au modèle et gardée s'il échoue. */
+export function prendreQuotaEleve(
+  eleve: string,
+  nature: "plan_tuteur" | "correction_quiz" | "contestation_quiz",
+  max: number,
+): Promise<boolean> {
+  return avecUtilisateur(eleve, (client) =>
+    client
+      .query("select prendre_quota_eleve($1, $2) as ok", [nature, max])
+      .then((r) => r.rows[0].ok === true),
+  );
+}

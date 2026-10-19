@@ -20,7 +20,7 @@ import {
   type SortieQuiz,
 } from "@/lib/agents/evaluateur/quiz";
 import type { ParametresModele } from "@/lib/agents/professeur/boucle";
-import { avecAgentEvaluateur, avecUtilisateur } from "./base";
+import { avecAgentEvaluateur, avecUtilisateur, prendreQuotaEleve } from "./base";
 import { alerterVeilleSansAttendre } from "./veille";
 import { accesElevesOuvert, agentSuspendu, MESSAGE_AGENT_SUSPENDU } from "./disponibilite";
 import { modeleDesAgents, type ContexteChapitre } from "./professeur";
@@ -521,6 +521,17 @@ export async function soumettreQuiz(
   if (reponses.length !== etat.questions.length)
     return { ok: false, erreur: "Réponses incomplètes : recharge la page." };
 
+  // Les réponses courtes sont corrigées par le modèle : quota du jour pris avant les appels, gardé s'ils
+  // échouent (revue de sécurité, S4), pour qu'un envoi répété ne coûte pas à volonté.
+  if (
+    etat.questions.some((q) => q.type === "reponse_courte") &&
+    !(await prendreQuotaEleve(
+      contexte.eleveId,
+      "correction_quiz",
+      entier("CORRECTIONS_QUIZ_PAR_JOUR", 20),
+    ))
+  )
+    return { ok: false, erreur: "Tu as envoyé beaucoup de quiz aujourd'hui. Reviens demain." };
   const systeme = promptEvaluateur(contexte.codePays, contexte.uniteCode);
   const enregistrees: ReponseEnregistree[] = [];
   for (const [i, q] of etat.questions.entries()) {
@@ -623,6 +634,17 @@ export async function contesterCorrection(
   const precedentes = quiz.tentative.contestations.filter((c) => c.question === question);
   if (precedentes.length >= CONTESTATIONS_MAX)
     return { ok: false, erreur: "Ta contestation a déjà été transmise à un enseignant." };
+  if (
+    !(await prendreQuotaEleve(
+      contexte.eleveId,
+      "contestation_quiz",
+      entier("CONTESTATIONS_PAR_JOUR", 10),
+    ))
+  )
+    return {
+      ok: false,
+      erreur: "Tu as contesté plusieurs corrections aujourd'hui. Reviens demain.",
+    };
 
   const reponseEleve =
     reponse.texte ??

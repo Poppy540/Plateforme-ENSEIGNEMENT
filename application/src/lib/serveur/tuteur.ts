@@ -3,7 +3,7 @@ import { composerPrompt } from "@/lib/agents/chargeur-prompt";
 import type { ParametresModele } from "@/lib/agents/professeur/boucle";
 import { candidatsDeRevision, type ChapitreParcours } from "@/lib/agents/tuteur/analyse";
 import { controlerPlan, genererPlan, type PlanTuteur } from "@/lib/agents/tuteur/plan";
-import { avecAgentTuteur, avecUtilisateur } from "./base";
+import { avecAgentTuteur, avecUtilisateur, prendreQuotaEleve } from "./base";
 import { alerterVeilleSansAttendre } from "./veille";
 import { accesElevesOuvert, agentSuspendu, MESSAGE_AGENT_SUSPENDU } from "./disponibilite";
 import { modeleDesAgents } from "./professeur";
@@ -165,16 +165,8 @@ export async function mettreAJourPlan(
     return { ok: false, erreur: MESSAGE_AGENT_SUSPENDU };
   if (message && message.length > LONGUEUR_MESSAGE_MAX)
     return { ok: false, erreur: `Message trop long (${LONGUEUR_MESSAGE_MAX} caractères au plus).` };
-  const limite = entier("PLANS_PAR_JOUR", 3);
-  const aujourdhui = await avecUtilisateur(eleve, (client) =>
-    client
-      .query(
-        "select count(*)::int as n from recommandations_tuteur where eleve_id = $1 and cree_le > now() - interval '1 day'",
-        [eleve],
-      )
-      .then((r) => r.rows[0].n as number),
-  );
-  if (aujourdhui >= limite)
+  // Quota pris avant l'appel au modèle et gardé même si la réponse est rejetée (revue de sécurité, S4).
+  if (!(await prendreQuotaEleve(eleve, "plan_tuteur", entier("PLANS_PAR_JOUR", 3))))
     return {
       ok: false,
       erreur: "Tu as déjà mis ton plan à jour plusieurs fois aujourd'hui. Reviens demain.",

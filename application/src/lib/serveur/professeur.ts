@@ -123,6 +123,8 @@ export async function poserQuestion(
   const limite = entier("QUESTIONS_PAR_JOUR", 40);
 
   const preparation = await avecAgentProfesseur(agent, async (client) => {
+    // Verrou par élève le temps de la transaction : des envois simultanés ne dépassent pas le quota.
+    await client.query("select pg_advisory_xact_lock(hashtext($1))", [contexte.eleveId]);
     const quota = await client.query(
       `select count(*)::int as n from echanges_professeur
        where eleve_id = $1 and auteur = 'eleve' and cree_le > now() - interval '1 day'`,

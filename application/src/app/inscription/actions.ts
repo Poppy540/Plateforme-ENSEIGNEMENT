@@ -5,7 +5,13 @@ import { redirect } from "next/navigation";
 import { normaliserEmail, normaliserTelephone } from "@/lib/identifiants";
 import { urlPublique } from "@/lib/serveur/configuration";
 import { envoyerMessage } from "@/lib/serveur/messagerie";
-import { aUnProfil, inscrire, messageErreurMetier } from "@/lib/serveur/requetes";
+import { avecServiceMessagerie } from "@/lib/serveur/base";
+import {
+  aUnProfil,
+  inscrire,
+  messageErreurMetier,
+  optionsInscription,
+} from "@/lib/serveur/requetes";
 import { exigerAccesEleves } from "@/lib/serveur/disponibilite";
 import { utilisateurConnecte } from "@/lib/serveur/session";
 
@@ -35,7 +41,11 @@ export async function sInscrire(
   if (!referentiel || !niveau) return { erreur: "Choisis ta classe." };
 
   // « majeur » n'est proposé que si l'âge de la majorité du pays est connu ; sinon l'élève est traité comme mineur.
-  const estMineur = champ(donnees, "majeur") !== "oui";
+  // Le formulaire n'est pas cru sur parole : l'âge vient du référentiel (et la base le vérifie aussi).
+  const ageMajorite =
+    (await optionsInscription()).referentiels.find((r) => r.code === referentiel)?.ageMajorite ??
+    null;
+  const estMineur = ageMajorite === null || champ(donnees, "majeur") !== "oui";
   const saisieParent = champ(donnees, "contact_parent");
   const contactParent = saisieParent
     ? (normaliserTelephone(saisieParent) ?? normaliserEmail(saisieParent))
@@ -47,9 +57,9 @@ export async function sInscrire(
     };
   }
 
-  let jeton: string | null;
+  let demande: string | null;
   try {
-    jeton = await inscrire(utilisateur, {
+    demande = await inscrire(utilisateur, {
       prenom,
       referentiel,
       niveau,
@@ -64,14 +74,20 @@ export async function sInscrire(
     throw erreur;
   }
 
-  if (jeton && contactParent) {
+  if (demande) {
+    // Le jeton n'est émis que par le service de messagerie, qui l'envoie au parent (jamais à l'élève).
+    const { contact, jeton } = await avecServiceMessagerie((client) =>
+      client
+        .query("select * from emettre_jeton_consentement($1)", [demande])
+        .then((r) => r.rows[0] as { contact: string; jeton: string }),
+    );
     const entetes = await headers();
     const origine = entetes.get("host")
       ? `${entetes.get("x-forwarded-proto") ?? "http"}://${entetes.get("host")}`
       : null;
     const lien = `${urlPublique(origine)}/parent/confirmer?jeton=${encodeURIComponent(jeton)}`;
     await envoyerMessage(
-      contactParent,
+      contact,
       `Bonjour, ${prenom} souhaite s'inscrire sur la plateforme de cours en ligne. ` +
         `Pour accepter, ouvrez ce lien : ${lien} . Si vous ne connaissez pas cette demande, ignorez ce message.`,
     );
