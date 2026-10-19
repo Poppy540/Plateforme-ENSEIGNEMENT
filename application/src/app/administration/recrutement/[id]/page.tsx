@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
-import { ficheCandidat } from "@/lib/serveur/recrutement";
+import { ficheCandidat, referentielsRecrutement } from "@/lib/serveur/recrutement";
 import { annuler, approuver, changerStatut, supprimer } from "../actions";
 import { FormulaireEnvoi, FormulaireTache } from "../formulaires";
 import { ADEQUATIONS, NATURES, STATUTS_CANDIDAT, STATUTS_MESSAGE } from "../libelles";
@@ -17,6 +17,9 @@ export default async function PageCandidat({
   const c = await ficheCandidat(administrateur, id);
   if (!c) notFound();
   const arret = ["refus", "suppression_demandee"].includes(c.statut);
+  const familles =
+    (await referentielsRecrutement(administrateur)).find((r) => r.id === c.referentielId)
+      ?.familles ?? {};
 
   return (
     <main className="conteneur">
@@ -34,7 +37,7 @@ export default async function PageCandidat({
         </p>
       )}
       <ul>
-        <li>Famille : {c.famille}</li>
+        <li>Famille : {familles[c.famille] ?? c.famille}</li>
         <li>Niveau : {c.niveau ?? "—"}</li>
         <li>Établissement ou structure : {c.structure ?? "—"}</li>
         <li>Contact : {c.contact}</li>

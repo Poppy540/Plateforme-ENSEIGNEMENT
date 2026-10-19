@@ -1,6 +1,8 @@
 import "server-only";
 import { DatabaseError } from "pg";
+import { dossierPack, racineDepot } from "@/lib/agents/chargeur-prompt";
 import type { SortieCoordinateur } from "@/lib/agents/coordinateur/revue";
+import { libellesFamilles } from "@/lib/pack-pays/lecture";
 import { avecUtilisateur } from "./base";
 import { etatTache, soumettre } from "./orchestrateur";
 
@@ -88,6 +90,8 @@ export function rapportsDuReferent(referent: string): Promise<RapportResume[]> {
 }
 
 export interface RapportDetaille extends RapportResume {
+  /** Libellé de la famille dans le pack du pays (le code à défaut). */
+  libelleFamille: string;
   contenu: SortieCoordinateur;
   controles: string[];
   decisions: {
@@ -103,7 +107,8 @@ export function rapportPourReferent(referent: string, id: string): Promise<Rappo
     if (!/^[0-9a-f-]{36}$/.test(id)) return null;
     const r = (
       await client.query(
-        `select id, famille, version, statut, cree_le as "creeLe", contenu, controles
+        `select id, famille, version, statut, cree_le as "creeLe", contenu, controles,
+           (select pays_code from referentiels where id = referentiel_id) as "codePays"
          from rapports_coordinateur where id = $1`,
         [id],
       )
@@ -115,7 +120,10 @@ export function rapportPourReferent(referent: string, id: string): Promise<Rappo
         [id],
       )
     ).rows;
-    return { ...r, decisions } as RapportDetaille;
+    const { codePays, ...rapport } = r;
+    const libelleFamille =
+      libellesFamilles(dossierPack(racineDepot(), codePays))[r.famille] ?? r.famille;
+    return { ...rapport, libelleFamille, decisions } as RapportDetaille;
   });
 }
 

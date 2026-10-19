@@ -23,6 +23,7 @@ export interface ReferentielRecrutement {
 
 export interface LigneCandidat {
   id: string;
+  referentielId: string;
   nom: string;
   famille: string;
   source: string;
@@ -51,7 +52,7 @@ export function listeCandidats(administrateur: string): Promise<LigneCandidat[]>
   return avecUtilisateur(administrateur, (client) =>
     client
       .query(
-        `select c.id, c.nom, c.famille, c.source, c.statut, c.adequation, c.maj_le as "majLe",
+        `select c.id, c.referentiel_id as "referentielId", c.nom, c.famille, c.source, c.statut, c.adequation, c.maj_le as "majLe",
            (select count(*)::int from messages_recrutement m where m.candidat_id = c.id and m.statut = 'brouillon')
              as "enAttente"
          from candidats c order by c.maj_le desc limit 200`,

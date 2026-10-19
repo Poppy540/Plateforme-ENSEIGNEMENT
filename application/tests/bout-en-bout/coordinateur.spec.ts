@@ -28,7 +28,7 @@ test("revue de cohérence : rapport brouillon, lien accepté dans le graphe, glo
   await page.getByRole("button", { name: /Lancer une revue de cohérence/ }).click();
   await expect(page).toHaveURL(/\/referent\/coordinateur\/[0-9a-f-]{36}$/);
   await expect(
-    page.getByRole("heading", { name: /Revue de cohérence — mathematiques/ }),
+    page.getByRole("heading", { name: /Revue de cohérence — Mathématiques/ }),
   ).toBeVisible();
   await expect(page.getByText("Statut :")).toContainText("brouillon");
 

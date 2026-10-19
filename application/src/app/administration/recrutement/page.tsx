@@ -12,9 +12,10 @@ export default async function PageRecrutement({
 }: PageProps<"/administration/recrutement">) {
   const administrateur = await exigerAdministrateur();
   const { referentiel: choisi } = await searchParams;
-  const referentiels = (await referentielsRecrutement(administrateur)).filter(
-    (r) => r.configuration,
-  );
+  const tous = await referentielsRecrutement(administrateur);
+  const referentiels = tous.filter((r) => r.configuration);
+  const libelle = (c: { referentielId: string; famille: string }) =>
+    tous.find((r) => r.id === c.referentielId)?.familles[c.famille] ?? c.famille;
   const courant = referentiels.find((r) => r.code === choisi) ?? referentiels[0];
   const candidats = await listeCandidats(administrateur);
 
@@ -54,7 +55,7 @@ export default async function PageRecrutement({
                   <td>
                     <Link href={`/administration/recrutement/${c.id}`}>{c.nom}</Link>
                   </td>
-                  <td>{c.famille}</td>
+                  <td>{libelle(c)}</td>
                   <td>{c.source}</td>
                   <td>{c.adequation ? (ADEQUATIONS[c.adequation] ?? c.adequation) : "—"}</td>
                   <td>{STATUTS_CANDIDAT[c.statut] ?? c.statut}</td>

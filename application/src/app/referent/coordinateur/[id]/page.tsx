@@ -37,7 +37,7 @@ export default async function PageRapportCoordinateur({
         <Link href="/referent">← Espace référent</Link>
       </p>
       <h1>
-        Revue de cohérence — {r.famille}, version {r.version}
+        Revue de cohérence — {r.libelleFamille}, version {r.version}
       </h1>
       <p>
         Statut : <strong>{r.statut === "brouillon" ? "brouillon" : "traité"}</strong> · rédigé par
