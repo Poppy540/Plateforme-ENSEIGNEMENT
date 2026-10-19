@@ -105,7 +105,10 @@ do $$ begin
   assert limiter_connexion(repeat('a', 64), 'envoi', 2, 15), 'S06 : premier envoi';
   assert limiter_connexion(repeat('a', 64), 'envoi', 2, 15), 'S06 : deuxième envoi';
   assert not limiter_connexion(repeat('a', 64), 'envoi', 2, 15), 'S06 : troisième envoi accepté';
-  assert limiter_connexion(repeat('a', 64), 'verification', 2, 15), 'S06 : natures séparées';
+  assert limiter_connexion(repeat('a', 64), 'verification', 1, 15), 'S06 : natures séparées';
+  assert not limiter_connexion(repeat('a', 64), 'verification', 1, 15), 'S06 : essai faux de trop';
+  perform rendre_essai_connexion(repeat('a', 64));
+  assert limiter_connexion(repeat('a', 64), 'verification', 1, 15), 'S06 : essai juste rendu';
   begin perform 1 from limites_connexion; raise exception 'S06 : limites lisibles';
   exception when insufficient_privilege then null; end;
 end $$;

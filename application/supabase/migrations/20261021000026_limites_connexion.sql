@@ -32,5 +32,12 @@ begin
   return v_n is not null;
 end;
 $$;
-revoke execute on function limiter_connexion(text, text, integer, integer) from public, authenticated;
-grant execute on function limiter_connexion(text, text, integer, integer) to anon;
+/** Code juste : l'essai est rendu (seuls les essais faux comptent). La clé exige le sel du serveur. */
+create function rendre_essai_connexion(p_cle text) returns void
+language sql security definer
+set search_path = pg_catalog, public
+as $$ update limites_connexion set n = greatest(n - 1, 0) where cle = p_cle and nature = 'verification' $$;
+
+revoke execute on function limiter_connexion(text, text, integer, integer), rendre_essai_connexion(text)
+  from public, authenticated;
+grant execute on function limiter_connexion(text, text, integer, integer), rendre_essai_connexion(text) to anon;

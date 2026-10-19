@@ -8,7 +8,7 @@ import {
   memoriserIdentifiant,
   oublierIdentifiant,
 } from "@/lib/serveur/connexion-en-cours";
-import { envoiAutorise, verificationAutorisee } from "@/lib/serveur/limites-connexion";
+import { envoiAutorise, rendreEssai, verificationAutorisee } from "@/lib/serveur/limites-connexion";
 import { fermerSession, ouvrirSession } from "@/lib/serveur/session";
 
 export type EtatFormulaire = { erreur?: string } | undefined;
@@ -48,6 +48,7 @@ export async function verifierCode(
 
   const utilisateur = await (await fournisseurAuthentification()).verifierCode(identifiant, code);
   if (!utilisateur) return { erreur: "Code incorrect ou expiré." };
+  await rendreEssai(identifiant);
 
   await oublierIdentifiant();
   await ouvrirSession(utilisateur);

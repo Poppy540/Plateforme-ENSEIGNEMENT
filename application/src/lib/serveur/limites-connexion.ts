@@ -35,7 +35,16 @@ export async function envoiAutorise(identifiant: Identifiant): Promise<boolean> 
   );
 }
 
-/** Vérification d'un code : 5 essais par identifiant et par 15 minutes (au-delà, le code est inutilisable). */
+/**
+ * Vérification d'un code : 5 essais faux par identifiant et par 15 minutes (au-delà, plus aucun code n'est
+ * accepté). L'essai est pris avant la vérification, puis rendu si le code est juste.
+ */
 export function verificationAutorisee(identifiant: Identifiant): Promise<boolean> {
   return prendre(cle(identifiant), "verification", entier("ESSAIS_CODE", 5), 15);
+}
+
+export function rendreEssai(identifiant: Identifiant): Promise<void> {
+  return avecVisiteur(async (client) => {
+    await client.query("select rendre_essai_connexion($1)", [cle(identifiant)]);
+  });
 }
