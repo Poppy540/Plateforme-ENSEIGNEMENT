@@ -1,0 +1,16 @@
+# Programme provisoire — Mathématiques Terminale C (Gabon).
+# Source : docs/cadrage.md (« Découpage des cours — Première & Terminale, série C (Maths-Sciences Physiques) », Mathématiques), intitulés repris mot pour mot. PROVISOIRE : base
+# francophone générique, à valider par un enseignant-référent gabonais à partir du programme officiel IPN.
+# Répartition Première / Terminale (le cadrage donne un programme continu sur deux ans) : décision provisoire
+# du propriétaire (2026-10-20), à valider par le référent.
+unite: ga-tle-c-mathematiques
+statut: a_valider
+valide_par: null
+date_validation: null
+examen: bac
+chapitres:
+  - {ordre: 1, code: logarithme-exponentielle, titre: "Logarithme et exponentielle", statut: a_valider}
+  - {ordre: 2, code: geometrie-espace, titre: "Géométrie dans l'espace", statut: a_valider}
+  - {ordre: 3, code: nombres-complexes, titre: "Nombres complexes", statut: a_valider}
+  - {ordre: 4, code: probabilites-statistiques, titre: "Probabilités et statistiques", statut: a_valider}
+# Volumes horaires et coefficients : manquants (à demander au référent / IPN).

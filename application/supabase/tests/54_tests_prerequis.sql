@@ -16,7 +16,7 @@ $$;
 -- G01 Le graphe du pack est importé « à valider », entre classes ; import idempotent.
 do $$ begin
   assert (select count(*) from prerequis_chapitres p join chapitres c on c.id = p.chapitre_id
-          join unites u on u.id = c.unite_id where u.code like 'ga-%-mathematiques') = 44, 'G01 : nombre de liens';
+          join unites u on u.id = c.unite_id where u.code like 'ga-%-mathematiques') = 70, 'G01 : nombre de liens (collège 44, lycée 26)';
   assert not exists (select 1 from prerequis_chapitres where statut <> 'a_valider'), 'G01 : lien déjà validé';
   assert exists (
     select 1 from prerequis_chapitres p
@@ -81,5 +81,27 @@ end $$;
 reset role;
 update prerequis_chapitres set statut = 'a_valider', decide_par = null, decide_le = null, commentaire = null;
 \echo OK G03 seuls les liens validés servent aux agents
+
+-- G04 Lycée (ADR 0047) : un prérequis d'une autre série est refusé ; un prérequis sans série vaut pour tous.
+do $$
+declare v_tle_d uuid; v_1re_c uuid; v_1re_d uuid;
+begin
+  select c.id into v_tle_d from chapitres c join unites u on u.id = c.unite_id
+  where u.code = 'ga-tle-d-mathematiques' and c.code = 'probabilites-statistiques';
+  select c.id into v_1re_c from chapitres c join unites u on u.id = c.unite_id
+  where u.code = 'ga-1re-c-mathematiques' and c.code = 'suites';
+  select c.id into v_1re_d from chapitres c join unites u on u.id = c.unite_id
+  where u.code = 'ga-1re-d-mathematiques' and c.code = 'suites';
+  begin
+    insert into prerequis_chapitres (chapitre_id, prerequis_id, nature) values (v_tle_d, v_1re_c, 'souple');
+    raise exception 'G04 : prérequis d''une autre série accepté';
+  exception when invalid_parameter_value then null;
+  end;
+  insert into prerequis_chapitres (chapitre_id, prerequis_id, nature) values (v_tle_d, v_1re_d, 'souple');
+  delete from prerequis_chapitres where chapitre_id = v_tle_d and prerequis_id = v_1re_d;
+  assert (select count(*) from prerequis_chapitres p join chapitres c on c.id = p.chapitre_id
+          join unites u on u.id = c.unite_id where u.code = 'ga-2nde-mathematiques') = 9, 'G04 : liens de la Seconde';
+end $$;
+\echo OK G04 aucun prérequis d une autre série
 
 \echo TOUS LES TESTS DU GRAPHE DE PRÉREQUIS SONT PASSÉS

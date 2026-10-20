@@ -108,6 +108,31 @@ describe("Coordinateur : contrôles de la sortie", () => {
     expect(problemes.join("\n")).toMatch(/déjà dans le graphe/);
   });
 
+  it("écarte un prérequis d'une autre série (lycée) ; garde un prérequis sans série", () => {
+    const lycee = famille({
+      unites: [
+        { code: "u2", niveau: "2nde", ordreNiveau: 1, series: [], chapitres: [ch("u2/f")] },
+        { code: "u1c", niveau: "1re", ordreNiveau: 2, series: ["C"], chapitres: [ch("u1c/s")] },
+        { code: "u1d", niveau: "1re", ordreNiveau: 2, series: ["D"], chapitres: [ch("u1d/s")] },
+        { code: "utd", niveau: "tle", ordreNiveau: 3, series: ["D"], chapitres: [ch("utd/l")] },
+      ],
+      liens: [],
+    });
+    const { sortie: s, problemes } = controlerSortie(
+      sortie({
+        propositions_liens: [
+          { chapitre: "utd/l", prerequis: "u1c/s", nature: "strict", justification: "autre série" },
+          { chapitre: "utd/l", prerequis: "u1d/s", nature: "strict", justification: "même série" },
+          { chapitre: "u1c/s", prerequis: "u2/f", nature: "souple", justification: "sans série" },
+        ],
+        plan_production: [],
+      }),
+      lycee,
+    );
+    expect(s.propositions_liens.map((l) => l.prerequis)).toEqual(["u1d/s", "u2/f"]);
+    expect(problemes.join("\n")).toMatch(/autre série/);
+  });
+
   it("écarte un plan qui place un chapitre avant son prérequis ; garde trois décisions au plus", () => {
     const decision = { question: "q", recommandation: "r", confiance: "moyenne" as const };
     const { sortie: s, problemes } = controlerSortie(

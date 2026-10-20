@@ -330,6 +330,16 @@ function lirePrerequis(
   if (!existsSync(dossierPrerequis)) return [];
   const ordreNiveau = new Map(niveaux.map((n) => [n.code, n.ordre]));
   const niveauUnite = new Map(unites.map((u) => [u.code, ordreNiveau.get(u.niveau) ?? 0]));
+  const seriesUnite = new Map(unites.map((u) => [u.code, u.series]));
+  /**
+   * Un prérequis propre à des séries ne vaut que pour un chapitre de ces mêmes séries : un élève de série D
+   * n'a pas les chapitres de série C (ADR 0047).
+   */
+  const seriesCompatibles = (chapitre: string, prerequis: string) => {
+    const sp = seriesUnite.get(prerequis) ?? [];
+    const sc = seriesUnite.get(chapitre) ?? [];
+    return sp.length === 0 || (sc.length > 0 && sc.every((s) => sp.includes(s)));
+  };
   const existe = (r: { unite: string; code: string }) =>
     (programmes[r.unite] ?? []).some((c) => c.code === r.code);
   const reference = (valeur: unknown) => {
@@ -357,6 +367,8 @@ function lirePrerequis(
         (niveauUnite.get(lien.prerequis.unite) ?? 0) > (niveauUnite.get(lien.chapitre.unite) ?? 0)
       )
         erreurs.push(`prerequis/${fichier} : prérequis d'une classe supérieure dans ${nom}`);
+      if (!seriesCompatibles(lien.chapitre.unite, lien.prerequis.unite))
+        erreurs.push(`prerequis/${fichier} : prérequis d'une autre série dans ${nom}`);
       liens.push(lien);
     }
   }

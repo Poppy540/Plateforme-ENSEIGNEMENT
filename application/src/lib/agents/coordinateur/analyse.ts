@@ -47,6 +47,18 @@ export function ordreDesNiveaux(d: DonneesFamille): Map<string, number> {
   return new Map(d.unites.flatMap((u) => u.chapitres.map((c) => [c.ref, u.ordreNiveau] as const)));
 }
 
+/** Séries de l'unité de chaque chapitre (référence « <unité>/<code> » ; vide : pas de série). */
+export function seriesDesChapitres(d: DonneesFamille): Map<string, string[]> {
+  return new Map(d.unites.flatMap((u) => u.chapitres.map((c) => [c.ref, u.series] as const)));
+}
+
+/** Un prérequis propre à des séries ne vaut que pour un chapitre de ces mêmes séries (ADR 0047). */
+export function seriesCompatibles(chapitre: string[], prerequis: string[]): boolean {
+  return (
+    prerequis.length === 0 || (chapitre.length > 0 && chapitre.every((s) => prerequis.includes(s)))
+  );
+}
+
 /** Vrai si ajouter « chapitre ← prérequis » crée un cycle avec les liens donnés (rejetés exclus). */
 export function creeUnCycle(
   liens: { chapitre: string; prerequis: string; statut?: string }[],

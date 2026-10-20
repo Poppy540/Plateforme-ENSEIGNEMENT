@@ -18,9 +18,15 @@ describe("lecture d'un pack pays", () => {
     expect(pack.niveaux).toHaveLength(7);
     expect(pack.series).toHaveLength(5);
     expect(pack.programmes["ga-3e-mathematiques"]).toHaveLength(7);
-    // Famille Mathématiques au collège (programmes provisoires) et son graphe proposé.
+    // Famille Mathématiques, collège et lycée (séries C et D), programmes provisoires, et son graphe proposé.
     expect(Object.keys(pack.programmes).filter((u) => u.endsWith("-mathematiques"))).toHaveLength(
-      4,
+      9,
+    );
+    expect(pack.programmes["ga-tle-c-mathematiques"].map((c) => c.code)).toContain(
+      "nombres-complexes",
+    );
+    expect(pack.programmes["ga-tle-d-mathematiques"].map((c) => c.code)).not.toContain(
+      "nombres-complexes",
     );
     expect(pack.prerequis.length).toBeGreaterThan(0);
     expect(pack.prerequis).toContainEqual({
@@ -28,6 +34,35 @@ describe("lecture d'un pack pays", () => {
       prerequis: { unite: "ga-4e-mathematiques", code: "triangles-semblables" },
       nature: "strict",
     });
+    expect(pack.prerequis).toContainEqual({
+      chapitre: { unite: "ga-tle-c-mathematiques", code: "logarithme-exponentielle" },
+      prerequis: { unite: "ga-1re-c-mathematiques", code: "derivation" },
+      nature: "strict",
+    });
+  });
+
+  it("refuse un prérequis propre à une autre série", () => {
+    const dossier = mkdtempSync(join(tmpdir(), "pack-"));
+    cpSync(packFictif, dossier, { recursive: true });
+    writeFileSync(
+      join(dossier, "programmes", "yy-g12-civisme.yaml"),
+      'unite: yy-g12-civisme\nchapitres:\n  - { ordre: 1, code: debat, titre: "Débattre" }\n',
+    );
+    writeFileSync(
+      join(dossier, "prerequis", "algebre.yaml"),
+      `liens:
+  - { chapitre: yy-g12-algebre/fonctions, prerequis: yy-g12-civisme/debat, nature: souple }
+`,
+    );
+    let erreurs: string[] = [];
+    try {
+      lirePack(dossier);
+    } catch (e) {
+      erreurs = (e as ErreurPack).erreurs;
+    }
+    expect(erreurs).toEqual([
+      "prerequis/algebre.yaml : prérequis d'une autre série dans yy-g12-algebre/fonctions ← yy-g12-civisme/debat",
+    ]);
   });
 
   it("refuse un graphe de prérequis incohérent (chapitre inconnu, classe supérieure, cycle)", () => {

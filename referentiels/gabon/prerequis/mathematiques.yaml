@@ -1,4 +1,4 @@
-# Graphe de prérequis proposé — famille Mathématiques, collège (Gabon).
+# Graphe de prérequis proposé — famille Mathématiques, collège et lycée (séries C et D) (Gabon).
 # PROPOSITION de Claude Code (2026-10-15) à partir des programmes provisoires du pack : chaque lien est
 # « à valider » par un enseignant-référent de la famille (espace référent) ; seul un lien validé sert au Tuteur,
 # au Scénariste et à l'Évaluateur. Nature : strict (indispensable) ou souple (utile). Format : <unité>/<chapitre>.
@@ -50,3 +50,30 @@ liens:
   - {chapitre: ga-3e-mathematiques/systemes,                          prerequis: ga-3e-mathematiques/equations-inequations,             nature: strict}
   - {chapitre: ga-3e-mathematiques/fonctions-affines,                 prerequis: ga-4e-mathematiques/fonction-lineaire,                 nature: strict}
   - {chapitre: ga-3e-mathematiques/probabilites,                      prerequis: ga-4e-mathematiques/statistiques-probabilites,         nature: strict}
+  # --- Lycée (proposition de Claude Code, 2026-10-20, à valider lien par lien) ---
+  - {chapitre: ga-2nde-mathematiques/ensembles-nombres,               prerequis: ga-4e-mathematiques/puissances,                         nature: souple}
+  - {chapitre: ga-2nde-mathematiques/calcul-algebrique,               prerequis: ga-4e-mathematiques/calcul-litteral,                    nature: strict}
+  - {chapitre: ga-2nde-mathematiques/calcul-algebrique,               prerequis: ga-3e-mathematiques/equations-inequations,              nature: strict}
+  - {chapitre: ga-2nde-mathematiques/fonctions-generalites,           prerequis: ga-3e-mathematiques/fonctions-affines,                  nature: strict}
+  - {chapitre: ga-2nde-mathematiques/fonctions-affines-second-degre,  prerequis: ga-2nde-mathematiques/fonctions-generalites,             nature: strict}
+  - {chapitre: ga-2nde-mathematiques/fonctions-affines-second-degre,  prerequis: ga-2nde-mathematiques/calcul-algebrique,                 nature: strict}
+  - {chapitre: ga-2nde-mathematiques/geometrie-reperee,               prerequis: ga-3e-mathematiques/thales,                             nature: souple}
+  - {chapitre: ga-2nde-mathematiques/geometrie-reperee,               prerequis: ga-4e-mathematiques/translations,                       nature: souple}
+  - {chapitre: ga-2nde-mathematiques/statistiques-probabilites,       prerequis: ga-3e-mathematiques/probabilites,                       nature: strict}
+  - {chapitre: ga-1re-c-mathematiques/suites,                      prerequis: ga-2nde-mathematiques/calcul-algebrique,                 nature: strict}
+  - {chapitre: ga-1re-c-mathematiques/suites,                      prerequis: ga-2nde-mathematiques/fonctions-generalites,             nature: souple}
+  - {chapitre: ga-1re-c-mathematiques/derivation,                  prerequis: ga-2nde-mathematiques/fonctions-generalites,             nature: strict}
+  - {chapitre: ga-1re-c-mathematiques/derivation,                  prerequis: ga-2nde-mathematiques/fonctions-affines-second-degre,    nature: strict}
+  - {chapitre: ga-tle-c-mathematiques/logarithme-exponentielle,    prerequis: ga-1re-c-mathematiques/derivation,                     nature: strict}
+  - {chapitre: ga-tle-c-mathematiques/logarithme-exponentielle,    prerequis: ga-1re-c-mathematiques/suites,                         nature: souple}
+  - {chapitre: ga-tle-c-mathematiques/probabilites-statistiques,   prerequis: ga-2nde-mathematiques/statistiques-probabilites,         nature: strict}
+  - {chapitre: ga-1re-d-mathematiques/suites,                      prerequis: ga-2nde-mathematiques/calcul-algebrique,                 nature: strict}
+  - {chapitre: ga-1re-d-mathematiques/suites,                      prerequis: ga-2nde-mathematiques/fonctions-generalites,             nature: souple}
+  - {chapitre: ga-1re-d-mathematiques/derivation,                  prerequis: ga-2nde-mathematiques/fonctions-generalites,             nature: strict}
+  - {chapitre: ga-1re-d-mathematiques/derivation,                  prerequis: ga-2nde-mathematiques/fonctions-affines-second-degre,    nature: strict}
+  - {chapitre: ga-tle-d-mathematiques/logarithme-exponentielle,    prerequis: ga-1re-d-mathematiques/derivation,                     nature: strict}
+  - {chapitre: ga-tle-d-mathematiques/logarithme-exponentielle,    prerequis: ga-1re-d-mathematiques/suites,                         nature: souple}
+  - {chapitre: ga-tle-d-mathematiques/probabilites-statistiques,   prerequis: ga-2nde-mathematiques/statistiques-probabilites,         nature: strict}
+  - {chapitre: ga-tle-c-mathematiques/geometrie-espace,              prerequis: ga-2nde-mathematiques/geometrie-reperee,                 nature: strict}
+  - {chapitre: ga-tle-c-mathematiques/nombres-complexes,              prerequis: ga-2nde-mathematiques/calcul-algebrique,                 nature: strict}
+  - {chapitre: ga-tle-c-mathematiques/nombres-complexes,              prerequis: ga-2nde-mathematiques/geometrie-reperee,                 nature: souple}

@@ -124,7 +124,7 @@ async function parcours(eleve: string) {
     ).rows[0];
     if (!e) return null;
     // Chapitres validés du référentiel de l'élève : ceux de sa classe (et série), et ceux des classes
-    // inférieures (prérequis possibles).
+    // inférieures (prérequis possibles), seulement dans des unités sans série ou de sa série (ADR 0047).
     const chapitres = (
       await client.query(
         `select c.id, c.titre, c.code, c.ordre, u.code as unite,
@@ -135,7 +135,9 @@ async function parcours(eleve: string) {
             where q.chapitre_id = c.id and t.eleve_id = $4 order by t.corrige_le desc limit 1) as score_quiz
          from chapitres c join unites u on u.id = c.unite_id join niveaux n on n.id = u.niveau_id
          left join progression p on p.chapitre_id = c.id and p.eleve_id = $4
-         where u.referentiel_id = $1 and c.statut = 'valide' and n.ordre <= $5`,
+         where u.referentiel_id = $1 and c.statut = 'valide' and n.ordre <= $5
+           and (not exists (select 1 from unites_series us where us.unite_id = u.id)
+                or exists (select 1 from unites_series us where us.unite_id = u.id and us.serie_id = $3))`,
         [e.referentiel_id, e.niveau_id, e.serie_id, eleve, e.niveau_ordre],
       )
     ).rows;

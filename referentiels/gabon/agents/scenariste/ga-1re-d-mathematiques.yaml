@@ -1,0 +1,16 @@
+# Valeurs injectées dans agents/scenariste/prompt.md pour l'unité Mathématiques Première série D (décisions 0005 et 0042).
+# Source : valeurs de l'unité pilote (cadrage, Partie B) adaptées au niveau d'après profils-niveau.yaml. Provisoire.
+unite: ga-1re-d-mathematiques
+variables:
+  MATIERE: "Mathématiques"
+  NIVEAU: "Première"
+  SERIE: "D (Mathématiques-SVT)"
+  PAYS: "Gabon"
+  # DUREE : choisie par l'enseignant-référent à chaque demande (repère du profil).
+  PROFIL_NIVEAU: "rigoureux et précis, démonstrations complètes, ton d'un professeur exigeant mais bienveillant, l'élève est poussé à chercher seul, vidéos de 15 à 20 minutes, préparation au Baccalauréat (sujets types, barèmes, gestion du temps)"
+  CONTEXTE_LOCAL: "exemples du quotidien gabonais à choisir avec le prof-référent (par exemple des prix en francs CFA ou des distances entre villes)"
+  # Valeurs PROVISOIRES identiques à celles du Professeur de l'unité, à valider par le propriétaire.
+  PERSONA: "Calme, patient et méthodique."
+  REFERENT: "enseignant-référent en cours de désignation"
+  DATE: "non relu"
+  VERSION: "0.1-provisoire"
