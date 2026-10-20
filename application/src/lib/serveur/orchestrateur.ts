@@ -310,20 +310,26 @@ export async function executerFile(max = 5): Promise<string[]> {
       cout.rows[0].total,
       coutJourMaxUSD(),
     );
+    // Coût des tâches (fournisseur vidéo compris) ; les appels au modèle sont aussi plafonnés par le registre
+    // des consommations (ADR 0046). Une seule suspension et une seule alerte.
     if (controle.suspendre) {
-      await avecAgentOrchestrateur((client) =>
-        client.query("update etat_agents set suspendu = true, motif = $2 where agent = $1", [
-          tache.agent,
-          controle.alerte,
-        ]),
+      const suspendu = await avecAgentOrchestrateur((client) =>
+        client
+          .query(
+            "update etat_agents set suspendu = true, motif = $2 where agent = $1 and not suspendu",
+            [tache.agent, controle.alerte],
+          )
+          .then((r) => (r.rowCount ?? 0) > 0),
       );
-      await auditer(
-        { role: "agent_orchestrateur" },
-        "suspension_agent",
-        { type: "agent" },
-        { agent: tache.agent },
-      );
-      await alerter(controle.alerte, 1);
+      if (suspendu) {
+        await auditer(
+          { role: "agent_orchestrateur" },
+          "suspension_agent",
+          { type: "agent" },
+          { agent: tache.agent },
+        );
+        await alerter(controle.alerte, 1);
+      }
     }
   }
   return traitees;

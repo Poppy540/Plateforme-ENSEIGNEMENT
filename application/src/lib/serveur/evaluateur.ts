@@ -199,7 +199,7 @@ export async function genererBrouillonQuiz(
       consigne: demande.consigne ?? undefined,
       quizPrecedent: contexte.precedent ?? undefined,
     },
-    modele: modeleDesAgents(),
+    modele: modeleDesAgents("evaluateur"),
     parametres: reglages,
   });
   if (resultat.arret === "refus")
@@ -545,7 +545,7 @@ export async function soumettreQuiz(
         const resultat = await corrigerReponse({
           systeme,
           demande: { question: q, reponseEleve: texte },
-          modele: modeleDesAgents(),
+          modele: modeleDesAgents("evaluateur"),
           parametres: parametresCorrection(),
         });
         if (!resultat.sortie)
@@ -659,7 +659,7 @@ export async function contesterCorrection(
         messages: [...precedentes.map((c) => c.message), texte],
       },
     },
-    modele: modeleDesAgents(),
+    modele: modeleDesAgents("evaluateur"),
     parametres: parametresCorrection(),
   });
   if (!resultat.sortie)

@@ -159,7 +159,7 @@ export async function executerAnalyse(entrees: {
       consigne: entrees.donnees_non_fiables?.details?.trim() || null,
     },
     pdfBase64: doc.pdf ? Buffer.from(doc.pdf).toString("base64") : null,
-    modele: modeleDesAgents(),
+    modele: modeleDesAgents("conformite"),
     parametres,
   });
   const cout = resultat.consommations.reduce((s, c) => s + (coutUSD(parametres.modele, c) || 0), 0);

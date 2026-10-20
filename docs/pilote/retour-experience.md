@@ -22,7 +22,9 @@
 | Plans de révision demandés, accords et rapports aux parents | `recommandations_tuteur`, `consentements` (`rapport_parents`), `rapports_parents` |
 | Signalements par motif et source, délai de traitement | `signalements` (`cree_le`, `traite_le`) |
 | Tickets par catégorie, délai de résolution | `tickets_support` |
-| Coût des agents par jour, tâches échouées, suspensions | `taches`, `etat_agents`, `journal_audit` |
+| Coût des agents par jour (tous les appels au modèle), tâches échouées, suspensions | `consommation_agents`, `taches`, `etat_agents`, `journal_audit` |
+
+Ces indicateurs sont réunis sur `/administration/exploitation` et dans l'export CSV agrégé, qui applique déjà le seuil de diffusion ci-dessous (ADR 0046).
 
 **Non mesuré aujourd'hui** : visionnage des vidéos (aucune trace de lecture). À ajouter avant le pilote si le propriétaire le souhaite (compteur agrégé par vidéo, sans suivi individuel).
 

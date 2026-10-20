@@ -62,6 +62,7 @@ export default async function PageAdministration() {
       </p>
 
       <p>
+        <Link href="/administration/exploitation">Pilotage de l&apos;exploitation</Link> ·{" "}
         <Link href="/administration/recrutement">Recrutement des enseignants-référents</Link>
       </p>
 

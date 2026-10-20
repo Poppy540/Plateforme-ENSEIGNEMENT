@@ -134,7 +134,7 @@ export async function executerTacheRecruteur(entree: {
       informations: entree.informations ? masquerDonneesSensibles(entree.informations) : null,
       consigne: entree.consigne,
     },
-    modele: modeleDesAgents(),
+    modele: modeleDesAgents("recruteur"),
     parametres,
   });
   const cout = resultat.consommations.reduce((s, x) => s + (coutUSD(parametres.modele, x) || 0), 0);

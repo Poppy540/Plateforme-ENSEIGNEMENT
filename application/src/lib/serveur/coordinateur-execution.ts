@@ -173,7 +173,7 @@ export async function executerRevue(entrees: {
     }),
     donnees: lu.donnees,
     consigne: entrees.donnees_non_fiables?.details?.trim() || null,
-    modele: modeleDesAgents(),
+    modele: modeleDesAgents("coordinateur"),
     parametres,
   });
   const cout = resultat.consommations.reduce((s, c) => s + (coutUSD(parametres.modele, c) || 0), 0);

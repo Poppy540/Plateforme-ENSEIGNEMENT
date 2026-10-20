@@ -207,7 +207,7 @@ export async function mettreAJourPlan(
       examen: null,
       message: message ?? undefined,
     },
-    modele: modeleDesAgents(),
+    modele: modeleDesAgents("tuteur"),
     parametres: parametresTuteur(),
   });
   if (!resultat.sortie)

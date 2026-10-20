@@ -139,7 +139,7 @@ export async function questionAuSupport(
       classes: ctx.classes,
       series: ctx.series,
     },
-    modele: modeleDesAgents(),
+    modele: modeleDesAgents("support"),
     parametres: parametresSupport(),
   });
   const r: ReponseSupport | null = resultat.sortie;

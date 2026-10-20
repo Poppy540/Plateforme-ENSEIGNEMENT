@@ -14,6 +14,7 @@ import { avecAgentProfesseur, avecUtilisateur } from "./base";
 import { simulationAutorisee } from "./configuration";
 import { alerterVeilleSansAttendre } from "./veille";
 import { accesElevesOuvert, agentSuspendu, MESSAGE_AGENT_SUSPENDU } from "./disponibilite";
+import { avecComptage, type AgentFacture } from "./consommation";
 
 // Agent Professeur côté serveur : contexte vérifié, outils exécutés sous le rôle agent_professeur,
 // échanges conservés, quota quotidien. Aucun contenu de conversation n'est écrit dans les journaux.
@@ -31,16 +32,19 @@ function entier(nom: string, defaut: number): number {
   return Number.isInteger(v) && v > 0 ? v : defaut;
 }
 
-/** Modèle de langage des agents : réel (API Claude) ou simulé (développement et test uniquement). */
-export function modeleDesAgents(): Modele {
+/**
+ * Modèle de langage d'un agent : réel (API Claude) ou simulé (développement et test uniquement). Chaque
+ * appel est noté au registre des consommations de l'agent (ADR 0046).
+ */
+export function modeleDesAgents(agent: AgentFacture): Modele {
   const mode = process.env.MODE_MODELE ?? "anthropic";
   if (mode === "simulation") {
     if (!simulationAutorisee())
       throw new Error("MODE_MODELE=simulation est interdit hors développement et test.");
-    return modeleSimule;
+    return avecComptage(modeleSimule, agent);
   }
   if (mode !== "anthropic") throw new Error(`MODE_MODELE inconnu : ${mode}`);
-  return modeleAnthropic;
+  return avecComptage(modeleAnthropic, agent);
 }
 
 export function parametresModele(): ParametresModele {
@@ -211,7 +215,7 @@ export async function poserQuestion(
           contexteSession,
           historique,
           question,
-          modele: modeleDesAgents(),
+          modele: modeleDesAgents("professeur"),
           parametres: parametresModele(),
           executerOutil,
           emettre: (texte) => controleur.enqueue(encodeur.encode(texte)),

@@ -155,7 +155,7 @@ export async function genererBrouillonScript(
       consigne: demande.consigne ?? undefined,
       scriptPrecedent: contexte.precedent ?? undefined,
     },
-    modele: modeleDesAgents(),
+    modele: modeleDesAgents("scenariste"),
     parametres,
   });
   if (resultat.arret === "refus")

@@ -153,7 +153,7 @@ export async function preparerEtEnvoyerRapport(
     systeme: prompt(donnees.codePays),
     faits: donnees.faits,
     periode,
-    modele: modeleDesAgents(),
+    modele: modeleDesAgents("tuteur"),
     parametres: parametresTuteur(),
   });
   if (!resultat.sortie || controlerRapport(resultat.sortie).length > 0)
@@ -303,7 +303,7 @@ export async function questionDuParent(
     question: texte,
     accordActif: l.accord_actif,
     faits: l.accord_actif ? donnees.faits : null,
-    modele: modeleDesAgents(),
+    modele: modeleDesAgents("tuteur"),
     parametres: parametresTuteur(),
   });
   if (!resultat.sortie)
