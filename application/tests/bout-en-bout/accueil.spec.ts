@@ -12,3 +12,9 @@ test("le manifeste de la PWA est servi", async ({ request }) => {
   const contenu = await reponse.json();
   expect(contenu.lang).toBe("fr");
 });
+
+test("état de service pour la surveillance, sans aucune donnée", async ({ request }) => {
+  const reponse = await request.get("/api/sante");
+  expect(reponse.status()).toBe(200);
+  expect(await reponse.json()).toEqual({ etat: "ok" });
+});

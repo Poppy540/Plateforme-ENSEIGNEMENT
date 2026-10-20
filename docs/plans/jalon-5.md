@@ -1,6 +1,6 @@
 # Plan du Jalon 5 — prêt pour le réel
 
-**Statut** : validé par le propriétaire le 2026-10-20 (décisions ci-dessous, ADR 0042). Étape 0 faite (revue de sécurité, ADR 0043, `docs/securite/revue-jalon-5.md`). Étape 1 faite (hors ligne et réseau lent, ADR 0044).
+**Statut** : validé par le propriétaire le 2026-10-20 (décisions ci-dessous, ADR 0042). Étape 0 faite (revue de sécurité, ADR 0043, `docs/securite/revue-jalon-5.md`). Étape 1 faite (hors ligne et réseau lent, ADR 0044). Étape 2 faite (fournisseurs prêts à brancher et dossier `docs/production/`, ADR 0045).
 
 **Objectif** : le prompt maître (§7) s'arrête au point 5, couvert par le Jalon 4. Le Jalon 5 comble ce qui manque avant d'accueillir de vrais élèves, **sans rien déployer ni payer**. Il étend ensuite la famille Mathématiques au lycée.
 

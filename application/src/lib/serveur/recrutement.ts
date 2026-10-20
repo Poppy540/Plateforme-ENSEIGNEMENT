@@ -216,7 +216,7 @@ export async function envoyerMessageRecrutement(
         [message, delaiRelanceJours],
       );
       // Dans la même transaction : si l'envoi échoue, le message reste « approuvé ».
-      await envoyerMessage(rows[0].contact, `${rows[0].objet}\n\n${rows[0].texte}`);
+      await envoyerMessage(rows[0].contact, rows[0].texte, rows[0].objet);
     });
     return { ok: true };
   } catch (erreur) {
