@@ -23,6 +23,7 @@
 | 2026-10-04 | Code en français (identifiants sans accents) | ADR 0012 |
 | 2026-10-04 | Pilote gratuit, pas de paiement | ADR 0013 |
 | 2026-10-04 | Plan du Jalon 1 validé | docs/plans/jalon-1.md |
+| 2026-10-20 | Plan du Jalon 6 validé : sécurité (D1-D9, propositions de la revue) d'abord, Sciences 3e, leçons écrites, compteur agrégé + questionnaire anonyme, préparation du pilote | ADR 0048, docs/plans/jalon-6.md |
 | 2026-10-04 | Fichier commun de secrets nommé `secrets/commun.env.example` (et non `.env.example`), car les `.env*` sont interdits en lecture | `secrets/README.md` |
 
 ## Hypothèses à vérifier
@@ -55,6 +56,8 @@
 5. Séries techniques F/G : à définir avec des enseignants techniques.
 
 ## État d'avancement
+
+- 2026-10-20 : Jalon 6, étape 0 faite — plan `docs/plans/jalon-6.md` et ADR 0048 validés. **Rien d'autre n'est commencé.**
 
 - 2026-10-20 : Jalon 5, étape 6 faite — bilan `docs/bilans/jalon-5.md` (toutes les étapes faites sauf la 3, passages réels, en attente de la clé) ; 7 captures `docs/demo/jalon-5/` (`tests/demo/jalon-5.spec.ts`). Tests : 197 unitaires, 94 scénarios de base, 63 de bout en bout.
 - 2026-10-20 : Jalon 5, étape 4 faite (ADR 0047, migration 0028, test G04, `maths-lycee.spec.ts`) — Maths 2nde (6 ch.), 1re C/D (2), Tle C (4), Tle D (2), intitulés du cadrage, PROVISOIRES ; répartition 1re/Tle décidée par le propriétaire (Suites et Dérivation en 1re, le reste en Tle) ; +26 liens de prérequis (70 au total) ; valeurs des agents des 5 unités. Règle des séries (un prérequis de série ne vaut que pour la même série) au pack, en base (déclencheur), dans les contrôles du Coordinateur et dans le Tuteur (il prenait les chapitres de toutes les séries des classes inférieures : corrigé). Série B hors jalon. Tests : 197 unitaires, base passée, 63 de bout en bout.
@@ -124,6 +127,6 @@
 
 ## Prochaine étape
 
-Jalon 5 fait en simulation, sauf l'étape 3 (passages réels : mini-essais dès la clé API et l'accord sur le coût). Attendre les décisions du propriétaire (bilan §6, revue D1-D9) ; proposer ensuite la suite sans rien commencer avant validation.
+Jalon 6, étape 1 (décisions D1 à D9 de la revue de sécurité), seulement après accord du propriétaire pour la commencer. Étape 2 (passages réels) dès la clé API et l'accord sur le coût.
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).
