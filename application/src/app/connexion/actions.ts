@@ -8,6 +8,7 @@ import {
   memoriserIdentifiant,
   oublierIdentifiant,
 } from "@/lib/serveur/connexion-en-cours";
+import { MESSAGE_INDICATIF, numeroAccepte } from "@/lib/serveur/indicatifs";
 import { envoiAutorise, rendreEssai, verificationAutorisee } from "@/lib/serveur/limites-connexion";
 import { fermerSession, ouvrirSession } from "@/lib/serveur/session";
 
@@ -24,6 +25,8 @@ export async function demanderCode(
         "Entre un numéro au format international (commençant par + et l’indicatif du pays) ou une adresse email.",
     };
   }
+  if (identifiant.type === "telephone" && !(await numeroAccepte(identifiant.valeur)))
+    return { erreur: MESSAGE_INDICATIF };
   if (!(await envoiAutorise(identifiant)))
     return { erreur: "Trop de demandes de code. Attends un quart d'heure avant de réessayer." };
   try {

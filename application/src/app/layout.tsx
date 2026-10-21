@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { connection } from "next/server";
 import { identite } from "@/lib/identite";
 import "./globals.css";
 
@@ -15,7 +16,10 @@ export const viewport: Viewport = {
   themeColor: identite.couleurTheme,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+// Rendu à chaque requête : le nonce de la politique de contenu (src/proxy.ts) change à chaque page servie ;
+// une page pré-rendue porterait des scripts sans nonce, bloqués par le navigateur.
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  await connection();
   return (
     <html lang="fr">
       <body>{children}</body>

@@ -27,11 +27,12 @@ export function packEnSql(pack: PackPays): string {
     `-- Import du pack pays « ${pays.code} » (référentiel ${referentiel.code}, version ${referentiel.version}).`,
     "-- Généré automatiquement depuis referentiels/ : ne pas modifier à la main.",
     "begin;",
-    `insert into pays (code, nom, langue_enseignement, fuseau_horaire, monnaie, statut_pack, age_majorite, conservation)
-values (${texteSql(pays.code)}, ${texteSql(pays.nom)}, ${texteSql(pays.langueEnseignement)}, ${texteSql(pays.fuseauHoraire)}, ${texteSql(pays.monnaie)}, ${texteSql(pays.statutPack)}, ${nombreSql(pays.ageMajorite)}, ${texteSql(JSON.stringify(pays.conservation))}::jsonb)
+    `insert into pays (code, nom, langue_enseignement, fuseau_horaire, monnaie, statut_pack, age_majorite, conservation, indicatifs_telephone)
+values (${texteSql(pays.code)}, ${texteSql(pays.nom)}, ${texteSql(pays.langueEnseignement)}, ${texteSql(pays.fuseauHoraire)}, ${texteSql(pays.monnaie)}, ${texteSql(pays.statutPack)}, ${nombreSql(pays.ageMajorite)}, ${texteSql(JSON.stringify({ ...pays.conservation, resumes_apres_suppression: pays.resumesApresSuppression }))}::jsonb, ${tableauSql(pays.indicatifsTelephone)})
 on conflict (code) do update set nom = excluded.nom, langue_enseignement = excluded.langue_enseignement,
   fuseau_horaire = excluded.fuseau_horaire, monnaie = excluded.monnaie, statut_pack = excluded.statut_pack,
-  age_majorite = excluded.age_majorite, conservation = excluded.conservation;`,
+  age_majorite = excluded.age_majorite, conservation = excluded.conservation,
+  indicatifs_telephone = excluded.indicatifs_telephone;`,
     `insert into referentiels (code, pays_code, version, date_validation, source_officielle)
 values (${texteSql(referentiel.code)}, ${texteSql(pays.code)}, ${texteSql(referentiel.version)}, ${texteSql(referentiel.dateValidation)}, ${texteSql(referentiel.sourceOfficielle)})
 on conflict (code) do update set version = excluded.version, date_validation = excluded.date_validation,

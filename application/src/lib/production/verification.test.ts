@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { verifierConfiguration } from "./verification";
+import { verifierApiDeDonnees, verifierConfiguration } from "./verification";
 
 // Valeurs FICTIVES de test (aucun secret réel).
 const COMPLETE = {
@@ -7,6 +7,7 @@ const COMPLETE = {
   URL_PUBLIQUE: "https://plateforme.exemple",
   SECRET_SESSION: "Zq7-vP2!mK9#tR4$wX8&nB3*hL6@jD1^cF5",
   SEL_AUDIT: "sel-fictif-de-test",
+  SEL_OPPOSITION: "sel-d-opposition-fictif-de-plus-de-32-caracteres",
   URL_BASE_DONNEES: "postgresql://serveur_application@base.exemple/postgres",
   URL_SUPABASE: "https://projet.exemple",
   CLE_PUBLIQUE_SUPABASE: "cle-publique-fictive",
@@ -53,6 +54,7 @@ describe("vérification de la configuration de production", () => {
     const secrets = [
       "SECRET_SESSION",
       "SEL_AUDIT",
+      "SEL_OPPOSITION",
       "URL_BASE_DONNEES",
       "CLE_SERVICE_SUPABASE",
       "ANTHROPIC_API_KEY",
@@ -62,5 +64,32 @@ describe("vérification de la configuration de production", () => {
     ] as const;
     for (const nom of secrets) expect(texte).not.toContain(COMPLETE[nom]);
     expect(texte).not.toContain("remplacer-moi");
+  });
+});
+
+describe("API de données de Supabase (D1)", () => {
+  const reponse = (statut: number, corps: unknown) =>
+    (async () => new Response(JSON.stringify(corps), { status: statut })) as typeof fetch;
+
+  it("signale une API ouverte (description des tables rendue)", async () => {
+    const c = await verifierApiDeDonnees(COMPLETE, reponse(200, { paths: { "/eleves": {} } }));
+    expect(c.ok).toBe(false);
+    expect(c.message).toContain("ouverte");
+    expect(JSON.stringify(c)).not.toContain(COMPLETE.CLE_PUBLIQUE_SUPABASE);
+  });
+
+  it("accepte une API fermée ou un schéma non exposé", async () => {
+    expect((await verifierApiDeDonnees(COMPLETE, reponse(404, {}))).ok).toBe(true);
+    expect((await verifierApiDeDonnees(COMPLETE, reponse(406, { code: "PGRST106" }))).ok).toBe(
+      true,
+    );
+  });
+
+  it("ne conclut pas sans adresse ni réponse", async () => {
+    expect((await verifierApiDeDonnees({}, reponse(404, {}))).ok).toBe(false);
+    const injoignable = (async () => {
+      throw new Error("réseau");
+    }) as typeof fetch;
+    expect((await verifierApiDeDonnees(COMPLETE, injoignable)).ok).toBe(false);
   });
 });

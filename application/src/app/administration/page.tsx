@@ -3,8 +3,14 @@ import { seDeconnecter } from "../connexion/actions";
 import { FormulaireDeconnexion } from "../composants/hors-ligne";
 import { formaterUSD } from "@/lib/format";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
-import { tableauAdministration } from "@/lib/serveur/administration";
-import { basculerAccesEleves, reactiver, traiter } from "./actions";
+import { documentsOfficiels, tableauAdministration } from "@/lib/serveur/administration";
+import {
+  basculerAccesEleves,
+  deconnecterTout,
+  reactiver,
+  supprimerDocument,
+  traiter,
+} from "./actions";
 
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "short", timeStyle: "short" });
 const STATUTS: Record<string, string> = {
@@ -49,7 +55,10 @@ const SOURCES: Record<string, string> = {
 
 export default async function PageAdministration() {
   const administrateur = await exigerAdministrateur();
-  const t = await tableauAdministration(administrateur);
+  const [t, documents] = await Promise.all([
+    tableauAdministration(administrateur),
+    documentsOfficiels(administrateur),
+  ]);
 
   return (
     <main className="conteneur">
@@ -63,7 +72,8 @@ export default async function PageAdministration() {
 
       <p>
         <Link href="/administration/exploitation">Pilotage de l&apos;exploitation</Link> ·{" "}
-        <Link href="/administration/recrutement">Recrutement des enseignants-référents</Link>
+        <Link href="/administration/recrutement">Recrutement des enseignants-référents</Link> ·{" "}
+        <Link href="/espace/mes-donnees">Mes données</Link>
       </p>
 
       <h2>Accès des élèves</h2>
@@ -170,6 +180,44 @@ export default async function PageAdministration() {
           </li>
         ))}
       </ul>
+
+      <h2>Documents officiels ({documents.length})</h2>
+      <p className="note">
+        Déposés par les référents pour l&apos;agent Conformité. La suppression est définitive et
+        emporte les rapports d&apos;écart du document ; elle est inscrite au journal d&apos;audit.
+      </p>
+      {documents.length === 0 && <p>Aucun document déposé.</p>}
+      <ul>
+        {documents.map((d) => (
+          <li key={d.id}>
+            <strong>{d.titre}</strong> ({d.referentiel}, {d.format === "pdf" ? "PDF" : "texte"},{" "}
+            {formatDate.format(new Date(d.deposeLe))}, {d.rapports} rapport(s)) — {d.origine}
+            <form action={supprimerDocument} className="actions">
+              <input type="hidden" name="document" value={d.id} />
+              <label>
+                <input type="checkbox" name="confirmation" value="oui" required /> Je confirme
+              </label>{" "}
+              <button type="submit" className="secondaire">
+                Supprimer « {d.titre} »
+              </button>
+            </form>
+          </li>
+        ))}
+      </ul>
+
+      <h2>Sessions</h2>
+      <p className="note">
+        En cas d&apos;incident (dossier de production, §8) : toutes les personnes connectées sont
+        déconnectées, sauf vous. Elles devront redemander un code.
+      </p>
+      <form action={deconnecterTout} className="actions">
+        <label>
+          <input type="checkbox" name="confirmation" value="oui" required /> Je confirme
+        </label>{" "}
+        <button type="submit" className="secondaire">
+          Déconnecter toutes les sessions
+        </button>
+      </form>
 
       <FormulaireDeconnexion action={seDeconnecter} />
     </main>

@@ -1,6 +1,6 @@
 import "server-only";
 import { Pool, type PoolClient } from "pg";
-import { urlBaseDeDonnees } from "./configuration";
+import { selOpposition, urlBaseDeDonnees } from "./configuration";
 
 // Le serveur se connecte avec le rôle « serveur_application » (aucun droit propre) puis, pour chaque
 // requête, prend le rôle « anon » ou « authenticated » avec l'identité de l'utilisateur : les règles
@@ -26,6 +26,8 @@ type RoleAgent =
   | "agent_conformite"
   | "agent_recruteur";
 
+const ROLES_OPPOSITION = new Set(["authenticated", "agent_recruteur", "service_messagerie"]);
+
 async function enTransaction<T>(
   role: "anon" | "authenticated" | RoleAgent,
   utilisateur: string | null,
@@ -36,7 +38,12 @@ async function enTransaction<T>(
   try {
     await client.query("begin");
     await client.query(`set local role ${role}`);
-    await client.query("select set_config('request.jwt.claim.sub', $1, true)", [utilisateur ?? ""]);
+    // Sel de la liste d'opposition (revue de sécurité D4) : pour la transaction seulement, et seulement pour les
+    // rôles qui créent ou suppriment une fiche de candidat, enregistrent une opposition ou envoient un message.
+    await client.query(
+      "select set_config('request.jwt.claim.sub', $1, true), set_config('app.sel_opposition', $2, true)",
+      [utilisateur ?? "", ROLES_OPPOSITION.has(role) ? selOpposition() : ""],
+    );
     if (contexteAgent) {
       await client.query(
         "select set_config('app.eleve_id', $1, true), set_config('app.unite_id', $2, true)",

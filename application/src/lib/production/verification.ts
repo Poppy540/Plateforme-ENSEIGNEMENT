@@ -46,6 +46,11 @@ export function verifierConfiguration(env: Env): Constat[] {
     "32 caractères aléatoires au moins, propres à ce serveur",
   );
   present("SEL_AUDIT");
+  exiger(
+    "SEL_OPPOSITION",
+    valeur(env, "SEL_OPPOSITION").length >= 32 && !deModele(valeur(env, "SEL_OPPOSITION")),
+    "32 caractères aléatoires au moins ; ne plus jamais le changer ensuite",
+  );
   present("URL_BASE_DONNEES", "connexion du rôle serveur_application");
   exiger(
     "MODE_AUTH",
@@ -101,4 +106,38 @@ export function verifierConfiguration(env: Env): Constat[] {
     );
   }
   return constats;
+}
+
+/**
+ * API de données de Supabase fermée (revue de sécurité D1) : l'application n'en a pas besoin (accès direct à
+ * Postgres). Si la racine de l'API répond avec la description des tables et fonctions, le schéma est exposé.
+ * Un seul appel, avec la clé publique (déjà publique) ; aucune valeur n'est affichée.
+ */
+export async function verifierApiDeDonnees(
+  env: Env,
+  appeler: typeof fetch = fetch,
+): Promise<Constat> {
+  const point = "API de données Supabase";
+  const url = valeur(env, "URL_SUPABASE");
+  const cle = valeur(env, "CLE_PUBLIQUE_SUPABASE");
+  if (!url || !cle || deModele(url) || deModele(cle))
+    return { ok: false, point, message: "non vérifiée (URL_SUPABASE ou clé publique absente)" };
+  try {
+    const reponse = await appeler(`${url.replace(/\/$/, "")}/rest/v1/`, {
+      headers: { apikey: cle, authorization: `Bearer ${cle}` },
+      signal: AbortSignal.timeout(10_000),
+    });
+    const corps = reponse.ok
+      ? ((await reponse.json().catch(() => null)) as { paths?: object } | null)
+      : null;
+    return corps?.paths
+      ? {
+          ok: false,
+          point,
+          message: "ouverte : retirer « public » des schémas exposés (dossier de production §2.2)",
+        }
+      : { ok: true, point, message: "fermée" };
+  } catch {
+    return { ok: false, point, message: "non vérifiée (Supabase injoignable)" };
+  }
 }

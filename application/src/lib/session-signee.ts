@@ -1,9 +1,12 @@
-// Jeton de session signé (HMAC-SHA256) : identifiant de l'utilisateur et date d'expiration.
+// Jeton de session signé (HMAC-SHA256) : identifiant de l'utilisateur, de la session (révocable en base) et date
+// d'expiration.
 // Fonctions pures, sans dépendance au serveur web, pour pouvoir les tester.
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 export interface ContenuSession {
   utilisateur: string;
+  /** Identifiant de la session en base (revue de sécurité D6). */
+  session: string;
   expire: number; // millisecondes depuis l'époque Unix
 }
 
@@ -31,7 +34,12 @@ export function verifierSession(
     const contenu = JSON.parse(
       Buffer.from(donnees, "base64url").toString("utf8"),
     ) as ContenuSession;
-    if (typeof contenu.utilisateur !== "string" || typeof contenu.expire !== "number") return null;
+    if (
+      typeof contenu.utilisateur !== "string" ||
+      typeof contenu.session !== "string" ||
+      typeof contenu.expire !== "number"
+    )
+      return null;
     return contenu.expire > maintenant ? contenu : null;
   } catch {
     return null;

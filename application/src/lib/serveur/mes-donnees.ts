@@ -62,6 +62,28 @@ export function exporterDonnees(utilisateur: string) {
       tickets_support: await requete(
         "select categorie, resume, statut, cree_le, traite_le from tickets_support where demandeur_id = $1 order by cree_le",
       ),
+      // Comptes de l'équipe (revue de sécurité D9) : familles, décisions de validation, documents déposés.
+      ...(profil && profil.role !== "eleve"
+        ? {
+            familles_validees: await requete(
+              `select r.code as referentiel, rf.famille from referents_familles rf
+               join referentiels r on r.id = rf.referentiel_id where rf.referent_id = $1 order by 1, 2`,
+            ),
+            decisions_de_validation: await requete(
+              `select objet_type, version, decision, commentaire, decide_le from approbations
+               where valideur_id = $1 order by decide_le`,
+            ),
+            documents_deposes: await requete(
+              `select titre, origine, format, depose_le from documents_officiels
+               where depose_par = $1 order by depose_le`,
+            ),
+            signalements_traites: await requete(
+              // Le résumé (rédigé sur un élève) n'est pas une donnée de la personne qui a traité.
+              `select motif, priorite, cree_le, traite_le from signalements
+               where traite_par = $1 order by traite_le`,
+            ),
+          }
+        : {}),
     };
   });
 }

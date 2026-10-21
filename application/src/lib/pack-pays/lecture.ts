@@ -16,12 +16,24 @@ export interface Pays {
   statutPack: "en_preparation" | "pilote" | "ouvert" | "test";
   /** Âge de la majorité ; null = inconnu, tout élève est alors traité comme mineur. */
   ageMajorite: number | null;
+  /** Indicatifs téléphoniques autorisés (« +XXX ») pour la connexion par SMS et le contact du parent. */
+  indicatifsTelephone: string[];
   /** Durées de conservation en jours (cadre légal du pays) ; null = pas de purge. */
   conservation: {
     echanges_jours: number | null;
     inscription_non_confirmee_jours: number | null;
     compte_inactif_jours: number | null;
+    /** Purge étendue (revue de sécurité D3) : null tant que le juriste n'a pas fixé la durée. */
+    signalements_traites_jours: number | null;
+    tickets_resolus_jours: number | null;
+    recrutement_clos_jours: number | null;
+    rapports_parents_jours: number | null;
   };
+  /**
+   * Résumés des signalements et des tickets à la suppression d'un compte (revue de sécurité D2) : « garder »
+   * (le compte n'y est plus rattaché) ou « effacer » ; null = garder, en attendant le juriste.
+   */
+  resumesApresSuppression: "garder" | "effacer" | null;
 }
 
 export interface Referentiel {
@@ -160,8 +172,19 @@ export function lirePack(dossier: string): PackPays {
         echanges_jours: nombreOuNul(c.echanges_jours),
         inscription_non_confirmee_jours: nombreOuNul(c.inscription_non_confirmee_jours),
         compte_inactif_jours: nombreOuNul(c.compte_inactif_jours),
+        signalements_traites_jours: nombreOuNul(c.signalements_traites_jours),
+        tickets_resolus_jours: nombreOuNul(c.tickets_resolus_jours),
+        recrutement_clos_jours: nombreOuNul(c.recrutement_clos_jours),
+        rapports_parents_jours: nombreOuNul(c.rapports_parents_jours),
       };
     })(),
+    resumesApresSuppression: (() => {
+      const c = (((brutPays.cadre_legal ?? {}) as Brut).conservation ?? {}) as Brut;
+      return texteOuNul(c.resumes_apres_suppression) as Pays["resumesApresSuppression"];
+    })(),
+    indicatifsTelephone: Array.isArray(brutPays.indicatifs_telephone)
+      ? (brutPays.indicatifs_telephone as unknown[]).map((i) => String(i).trim())
+      : [],
   };
   if (!pays.code) erreurs.push("pays.yaml : code du pays manquant");
   if (!pays.nom) erreurs.push("pays.yaml : nom du pays manquant");
@@ -181,6 +204,16 @@ export function lirePack(dossier: string): PackPays {
     if (valeur !== null && (!Number.isInteger(valeur) || valeur < 1)) {
       erreurs.push(`pays.yaml : durée de conservation invalide (${cle})`);
     }
+  }
+  if (
+    pays.resumesApresSuppression !== null &&
+    !["garder", "effacer"].includes(pays.resumesApresSuppression)
+  ) {
+    erreurs.push("pays.yaml : resumes_apres_suppression vaut « garder » ou « effacer »");
+  }
+  for (const indicatif of pays.indicatifsTelephone) {
+    if (!/^\+[1-9]\d{0,3}$/.test(indicatif))
+      erreurs.push(`pays.yaml : indicatif téléphonique invalide « ${indicatif} »`);
   }
   if (!referentiel.code) erreurs.push("pays.yaml : code du référentiel manquant");
   if (!referentiel.version) erreurs.push("pays.yaml : version du référentiel manquante");

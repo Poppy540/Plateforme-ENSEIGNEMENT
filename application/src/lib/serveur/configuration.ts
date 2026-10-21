@@ -105,6 +105,34 @@ export function selAudit(): string {
 }
 
 /**
+ * Sel secret des empreintes de la liste d'opposition (revue de sécurité D4) : transmis à la base pour la
+ * transaction, jamais stocké en base. Obligatoire hors développement et test ; ne jamais le changer une fois
+ * des oppositions enregistrées (elles ne seraient plus reconnues).
+ */
+export function selOpposition(): string {
+  const sel = lire("SEL_OPPOSITION");
+  if (sel && !simulationAutorisee() && (secretDeModele(sel) || sel.length < 32))
+    throw new Error(
+      "SEL_OPPOSITION est une valeur de modèle ou trop courte (32 caractères au moins).",
+    );
+  if (sel) return sel;
+  if (!simulationAutorisee()) throw new Error("SEL_OPPOSITION manquant.");
+  return "sel-d-opposition-de-developpement-uniquement";
+}
+
+/** Durée d'une session selon le rôle (revue de sécurité D6), en heures : plus courte pour les rôles sensibles. */
+export function dureeSessionHeures(role: string | null): number {
+  const [nom, defaut] =
+    role === "administrateur"
+      ? ["SESSION_ADMINISTRATION_HEURES", 12]
+      : role === "referent"
+        ? ["SESSION_REFERENT_HEURES", 168]
+        : ["SESSION_ELEVE_HEURES", 720];
+  const v = Number(lire(nom));
+  return Number.isInteger(v) && v > 0 ? Math.min(v, 720) : defaut;
+}
+
+/**
  * Exécution de la file de tâches : « immediat » (développement et test : traitée juste après la demande)
  * ou « file » (production : par l'exécuteur appelé régulièrement, voir /api/orchestrateur/executer).
  */

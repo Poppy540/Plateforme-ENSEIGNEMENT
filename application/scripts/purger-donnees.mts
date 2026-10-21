@@ -1,4 +1,4 @@
-// Purge des données selon les durées de conservation de chaque pack pays (ADR 0019).
+// Purge des données selon les durées de conservation de chaque pack pays (ADR 0019 ; étendue par l'ADR 0049).
 // À lancer par l'administration (tâche planifiée), jamais par un agent.
 //   pnpm donnees:purger                 simulation : affiche ce qui serait effacé, puis annule tout
 //   pnpm donnees:purger --confirmer     efface réellement (irréversible)
@@ -35,6 +35,11 @@ try {
       `${code} : ${avant - apres} échange(s) expiré(s), ${designes.length} compte(s) à supprimer.`,
     );
     comptes.push(...designes);
+    // Purge étendue (revue de sécurité D3) : seulement les catégories dont le pack fixe une durée.
+    const etendue = (
+      await client.query("select categorie, nombre from purger_donnees_etendues($1)", [code])
+    ).rows as { categorie: string; nombre: number }[];
+    for (const { categorie, nombre } of etendue) console.log(`${code} : ${nombre} ${categorie}.`);
   }
 
   if (!confirmer) {

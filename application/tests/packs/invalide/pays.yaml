@@ -8,3 +8,4 @@ statut_pack: en_preparation
 referentiel:
   code: yy-general
   version: "0.1"
+indicatifs_telephone: ["241"]

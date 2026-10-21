@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { fournisseurAuthentification } from "@/lib/serveur/authentification/fournisseur";
 import { roleCompte } from "@/lib/serveur/referent";
-import { fermerSession, utilisateurConnecte } from "@/lib/serveur/session";
+import { fermerSession, fermerToutesMesSessions, utilisateurConnecte } from "@/lib/serveur/session";
 
 export type EtatSuppression = { erreur?: string } | undefined;
 
@@ -31,4 +31,12 @@ export async function supprimerMonCompte(
   console.info(JSON.stringify({ evenement: "compte_supprime_par_son_titulaire" }));
   await fermerSession();
   redirect("/?compte=supprime");
+}
+
+/** Toutes les sessions de la personne sont révoquées en base (celle-ci comprise). */
+export async function deconnecterMesAppareils(): Promise<void> {
+  const utilisateur = await utilisateurConnecte();
+  if (!utilisateur) redirect("/connexion");
+  await fermerToutesMesSessions(utilisateur);
+  redirect("/connexion");
 }

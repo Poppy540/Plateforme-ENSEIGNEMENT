@@ -5,6 +5,7 @@ code: zz
 nom: Pays fictif Z
 langue_enseignement: fr
 langues_vivantes: [en]
+indicatifs_telephone: ["+999"]   # indicatif inventé (non attribué), pour les tests
 fuseau_horaire: UTC
 monnaie: null
 statut_pack: test

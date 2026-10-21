@@ -37,3 +37,12 @@ export function masquer(identifiant: Identifiant): string {
   const [nom, domaine] = identifiant.valeur.split("@");
   return `${nom.slice(0, 1)}•••@${domaine}`;
 }
+
+/**
+ * Numéro dont l'indicatif est déclaré par un pack pays importé (revue de sécurité D5). Les indicatifs E.164 ne
+ * sont jamais préfixes l'un de l'autre. Sans aucun indicatif déclaré, seule la simulation accepte un numéro.
+ */
+export function telephoneAutorise(numero: string, indicatifs: string[], simulation: boolean) {
+  if (indicatifs.length === 0) return simulation;
+  return indicatifs.some((i) => numero.startsWith(i));
+}

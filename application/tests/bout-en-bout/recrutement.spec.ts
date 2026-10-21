@@ -94,9 +94,11 @@ test("suppression : fiche et messages effacés, seule l'empreinte reste dans la 
   await page.getByRole("button", { name: "Supprimer la fiche et les messages" }).click();
   await expect(page).toHaveURL(/\/administration\/recrutement$/);
   await expect(page.getByRole("link", { name: "Candidat Fictif B" })).toHaveCount(0);
+  // Empreinte salée par le sel de développement (D4, ADR 0049) : le contact n'est pas gardé en clair.
   const [r] = await executerSql(
-    "select count(*)::int as n from liste_opposition where empreinte = empreinte_contact($1)",
-    ["b.fictif@exemple.invalid"],
+    `select count(*)::int as n from liste_opposition
+     where salee and empreinte = encode(sha256(convert_to($1 || E'\\n' || $2, 'UTF8')), 'hex')`,
+    ["sel-d-opposition-de-developpement-uniquement", "b.fictif@exemple.invalid"],
   );
   expect(r.n).toBe(1);
   const [m] = await executerSql(

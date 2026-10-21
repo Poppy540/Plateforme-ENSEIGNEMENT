@@ -57,6 +57,8 @@
 
 ## État d'avancement
 
+- 2026-10-21 : Jalon 6, étape 1 faite (ADR 0049, migrations 0029-0030, tests D01-D07, `decisions-securite.spec.ts`) — D1 contrôle de l'API de données dans `verifier:production` ; D2 `resumes_apres_suppression` (pack, null = garder) ; D3 purge étendue `purger_donnees_etendues` (durées null en attendant le juriste ; `pays_code` noté sur signalements et tickets) ; D4 `SEL_OPPOSITION` transmis par transaction (`app.sel_opposition`, rôles authenticated, agent_recruteur, service_messagerie), anciennes empreintes `salee = false` reconnues ; D5 `indicatifs_telephone` dans `pays.yaml` (Gabon +241, zz +999), contrôlés à la connexion, à l'inscription et pour les rapports ; D6 table `sessions_ouvertes`, cookie avec identifiant de session, durées par rôle (720/168/12 h), « tous mes appareils », révocation générale par l'administration ; D7 approbations limitées aux familles, signalements à l'administration seule ; D8 `src/proxy.ts` (nonce, `strict-dynamic`), `connection()` dans la disposition racine ; D9 suppression des documents officiels (`/administration`), export « Mes données » pour l'équipe. Piège : `session_active` n'est accordée qu'à `anon` (le serveur vérifie la session en visiteur) ; un test SQL qui calcule une empreinte d'opposition doit poser `app.sel_opposition`. Tests : 206 unitaires, 101 scénarios de base, 67 de bout en bout.
+
 - 2026-10-20 : Jalon 6, étape 0 faite — plan `docs/plans/jalon-6.md` et ADR 0048 validés. **Rien d'autre n'est commencé.**
 
 - 2026-10-20 : Jalon 5, étape 6 faite — bilan `docs/bilans/jalon-5.md` (toutes les étapes faites sauf la 3, passages réels, en attente de la clé) ; 7 captures `docs/demo/jalon-5/` (`tests/demo/jalon-5.spec.ts`). Tests : 197 unitaires, 94 scénarios de base, 63 de bout en bout.
@@ -127,6 +129,6 @@
 
 ## Prochaine étape
 
-Jalon 6, étape 1 (décisions D1 à D9 de la revue de sécurité), seulement après accord du propriétaire pour la commencer. Étape 2 (passages réels) dès la clé API et l'accord sur le coût.
+Jalon 6, étape 3 (Sciences 3e), seulement après accord du propriétaire. Étape 2 (passages réels) dès la clé API et l'accord sur le coût. À fixer par le propriétaire : `SEL_OPPOSITION` en production ; D2 et durées D3 avec le juriste.
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).

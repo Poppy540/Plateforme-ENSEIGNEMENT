@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { normaliserEmail, normaliserTelephone } from "@/lib/identifiants";
+import { contactAccepte, MESSAGE_INDICATIF } from "@/lib/serveur/indicatifs";
 import { urlPublique } from "@/lib/serveur/configuration";
 import { envoyerMessage } from "@/lib/serveur/messagerie";
 import { avecServiceMessagerie } from "@/lib/serveur/base";
@@ -56,6 +57,7 @@ export async function sInscrire(
         "Indique le numéro (format international, avec l’indicatif du pays) ou l'email d'un parent ou tuteur.",
     };
   }
+  if (estMineur && !(await contactAccepte(contactParent))) return { erreur: MESSAGE_INDICATIF };
 
   let demande: string | null;
   try {

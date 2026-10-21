@@ -7,6 +7,8 @@
 create function pg_temp.connecter(p_utilisateur text) returns void language sql as $$
   select set_config('request.jwt.claim.sub', p_utilisateur, false)
 $$;
+-- Sel de la liste d'opposition (D4), transmis par le serveur en temps normal : valeur FICTIVE de test.
+select set_config('app.sel_opposition', 'sel-fictif-de-test-de-la-base-0000', false);
 create temp table ids (cle text primary key, valeur uuid);
 grant select, insert on ids to public;
 insert into ids select 'referentiel', id from referentiels where code = 'ga-general';

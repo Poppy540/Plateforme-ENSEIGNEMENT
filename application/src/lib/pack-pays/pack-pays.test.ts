@@ -110,8 +110,19 @@ describe("lecture d'un pack pays", () => {
       echanges_jours: 365,
       inscription_non_confirmee_jours: 30,
       compte_inactif_jours: 730,
+      signalements_traites_jours: null,
+      tickets_resolus_jours: null,
+      recrutement_clos_jours: null,
+      rapports_parents_jours: null,
     });
+    expect(lirePack(packGabon).pays.resumesApresSuppression).toBeNull();
     expect(lirePack(packFictif).pays.conservation.inscription_non_confirmee_jours).toBe(7);
+  });
+
+  it("lit les indicatifs téléphoniques autorisés du pack", () => {
+    expect(lirePack(packGabon).pays.indicatifsTelephone).toHaveLength(1);
+    expect(lirePack(packGabon).pays.indicatifsTelephone[0]).toMatch(/^\+\d{1,4}$/);
+    expect(lirePack(packFictif).pays.indicatifsTelephone).toEqual([]);
   });
 
   it("refuse un pack incohérent en listant toutes les erreurs", () => {
@@ -129,6 +140,7 @@ describe("lecture d'un pack pays", () => {
         "unites.yaml : niveau inconnu « inexistant » pour u1",
         "unites.yaml : matière inconnue « absente » pour u2",
         "unites.yaml : série inconnue « X » pour u2",
+        "pays.yaml : indicatif téléphonique invalide « 241 »",
       ]),
     );
   });

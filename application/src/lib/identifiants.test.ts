@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { codeValide, lireIdentifiant, masquer, normaliserTelephone } from "./identifiants";
+import {
+  codeValide,
+  lireIdentifiant,
+  masquer,
+  normaliserTelephone,
+  telephoneAutorise,
+} from "./identifiants";
 
 describe("identifiants de connexion", () => {
   it("normalise un numéro international saisi avec espaces, points ou 00", () => {
@@ -35,5 +41,18 @@ describe("identifiants de connexion", () => {
     expect(masque.startsWith("+241")).toBe(true);
     expect(masque).not.toContain("061234");
     expect(masquer({ type: "email", valeur: "parent@exemple.org" })).toBe("p•••@exemple.org");
+  });
+});
+
+describe("indicatifs autorisés", () => {
+  it("accepte un numéro dont l'indicatif est déclaré, refuse les autres", () => {
+    expect(telephoneAutorise("+99900000001", ["+999"], false)).toBe(true);
+    expect(telephoneAutorise("+33600000001", ["+999"], false)).toBe(false);
+    expect(telephoneAutorise("+99900000001", ["+998", "+999"], false)).toBe(true);
+  });
+
+  it("sans indicatif déclaré : seulement en simulation", () => {
+    expect(telephoneAutorise("+33600000001", [], true)).toBe(true);
+    expect(telephoneAutorise("+33600000001", [], false)).toBe(false);
   });
 });

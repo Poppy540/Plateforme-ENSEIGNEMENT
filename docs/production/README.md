@@ -19,7 +19,7 @@ Ce dossier dit **comment** mettre la plateforme en service. Le pilote reste soum
 
 1. **Projet** : un projet de production distinct de tout essai, région décidée avec le juriste. Plan avec sauvegardes quotidiennes (et restauration à un instant donné si le budget le permet).
 2. **API de données fermée** (revue de sécurité, D1) : dans les réglages de l'API, retirer `public` des schémas exposés ou désactiver l'API de données. L'application n'en a pas besoin : elle se connecte directement à Postgres (ADR 0015). Ouverte, elle exposerait des fonctions prévues pour le serveur.
-3. **Authentification** : connexion par téléphone (fournisseur SMS configuré **dans Supabase**, qui envoie les codes) et par email (code à 6 chiffres). Garder les limites d'envoi de Supabase ; l'application ajoute les siennes (ADR 0043).
+3. **Authentification** : connexion par téléphone (fournisseur SMS configuré **dans Supabase**, qui envoie les codes) et par email (code à 6 chiffres). Garder les limites d'envoi de Supabase ; l'application ajoute les siennes (ADR 0043). Elle n'envoie de code qu'aux indicatifs des packs importés (ADR 0049) : restreindre **aussi** les pays dans le fournisseur SMS de Supabase, car un appel direct à Supabase ne passe pas par l'application.
 4. **Rôles** : donner un mot de passe long au rôle `serveur_application` (connexion de l'application, `URL_BASE_DONNEES`). Garder une connexion d'administration séparée pour les migrations et la purge (`URL_BASE_DONNEES_ADMIN`), jamais utilisée par l'application ni par un agent.
 5. **Migrations** : appliquer `application/supabase/migrations/*.sql` dans l'ordre des noms, avec la connexion d'administration. Elles ne s'appliquent qu'en avant : une erreur se corrige par une nouvelle migration (§6).
 6. **Pack pays** : `cd application && pnpm pack:sql ../referentiels/gabon > import.sql`, puis appliquer `import.sql`. Le pack fictif `zz-fictif` est **refusé** sans `--test` : ne jamais l'importer en production.
@@ -32,6 +32,8 @@ Ce dossier dit **comment** mettre la plateforme en service. Le pilote reste soum
 
 1. **Variables d'environnement** sur l'hébergeur (jamais dans le dépôt). Le modèle est dans `secrets/commun.env.example`, avec en plus `ANTHROPIC_API_KEY`.
 2. **Vérification** avant chaque mise en service : `pnpm verifier:production` sur le serveur. La commande liste ce qui manque **sans jamais afficher une valeur**, et doit se terminer par « Configuration complète ». Elle refuse :
+   - une API de données de Supabase ouverte (§2.2) ;
+   - un `SEL_OPPOSITION` absent : le fixer **une fois pour toutes**, car le changer ferait oublier les oppositions ;
    - la simulation ;
    - une adresse non https ;
    - un secret recopié du modèle ;
@@ -40,7 +42,8 @@ Ce dossier dit **comment** mettre la plateforme en service. Le pilote reste soum
 3. **Sécurité déjà en place** :
    - la simulation n'existe que sur un poste local ;
    - cookies `Secure` ;
-   - en-têtes de sécurité ;
+   - sessions révocables, plus courtes pour les référents (7 jours) et l'administration (12 heures) ;
+   - en-têtes de sécurité, politique de contenu à nonce ;
    - limites de connexion et quotas en base ;
    - journaux sans contenu ni identifiant (ADR 0043).
 4. **Surveillance** : `GET /api/sante` répond 200 si l'application et la base répondent, 503 sinon. Il ne donne ni détail ni donnée. À brancher sur une surveillance de disponibilité (alerte au propriétaire).
@@ -50,7 +53,7 @@ Ce dossier dit **comment** mettre la plateforme en service. Le pilote reste soum
 | Tâche | Fréquence | Commande |
 |---|---|---|
 | Exécuteur : alerte de veille et relances, file des agents, décrochage, rapports hebdomadaires | **Toutes les 5 minutes** (pilote, condition 8) | `POST /api/orchestrateur/executer` avec l'en-tête `Authorization: Bearer <JETON_EXECUTEUR>` |
-| Purge selon les durées du pack | Quotidienne, **seulement après validation des durées par le juriste** (D3) | Une semaine de `pnpm donnees:purger` (simulation, rien n'est effacé), relue ; puis `pnpm donnees:purger --confirmer` |
+| Purge selon les durées du pack (échanges, comptes ; signalements, tickets, recrutement et rapports dès que leurs durées sont fixées ; sessions closes) | Quotidienne, **seulement après validation des durées par le juriste** (D3) | Une semaine de `pnpm donnees:purger` (simulation, rien n'est effacé), relue ; puis `pnpm donnees:purger --confirmer` |
 | Sauvegarde hors de l'hébergeur | Quotidienne | `pg_dump` chiffré, gardé 30 jours (§5) |
 
 ## 5. Sauvegardes et restauration
@@ -92,8 +95,8 @@ Ce dossier dit **comment** mettre la plateforme en service. Le pilote reste soum
 ## 8. Incident de sécurité ou de données
 
 1. Couper l'accès des élèves si nécessaire ; suspendre les agents concernés.
-2. Changer les secrets touchés :
-   - `SECRET_SESSION` (déconnecte tout le monde) ;
+2. Fermer toutes les sessions depuis `/administration` (« Déconnecter toutes les sessions »), puis changer les secrets touchés :
+   - `SECRET_SESSION` (déconnecte aussi tout le monde) ;
    - `JETON_EXECUTEUR` ;
    - les clés des fournisseurs ;
    - la clé de l'API Claude ;

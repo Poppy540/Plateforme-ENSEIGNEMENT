@@ -62,6 +62,9 @@ export default async function PageReferent() {
         <Link href="/referent/conformite">Conformité au programme officiel</Link>{" "}
         <span className="note">(documents officiels et rapports d&apos;écart)</span>
       </p>
+      <p>
+        <Link href="/espace/mes-donnees">Mes données</Link>
+      </p>
 
       <h2>Coordinateur de famille</h2>
       <p className="note">

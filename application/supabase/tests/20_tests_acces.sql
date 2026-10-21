@@ -193,11 +193,12 @@ do $$ begin
 end $$;
 \echo OK T12 signalements de l’agent
 
--- T13 Le référent de la famille lit le signalement ; l'élève B ne le lit pas.
+-- T13 Ni le référent de la famille (revue de sécurité D7 : la file humaine est réservée à l'administration) ni
+-- l'élève B ne lisent le signalement.
 select pg_temp.connecter('33333333-3333-3333-3333-333333333333');
 set role authenticated;
 do $$ begin
-  assert (select count(*) from signalements) = 1, 'T13 : le référent ne voit pas le signalement';
+  assert (select count(*) from signalements) = 0, 'T13 : le référent voit un signalement';
 end $$;
 reset role;
 select pg_temp.connecter('22222222-2222-2222-2222-222222222222');

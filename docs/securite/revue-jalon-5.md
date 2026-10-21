@@ -33,7 +33,9 @@
 - Exécuteur planifié protégé par jeton (comparaison à temps constant) ; aucune redirection ouverte, aucune requête vers une adresse saisie.
 - Les prompts du Professeur, du Tuteur, du Support et des rapports aux parents ne contiennent ni nom, ni téléphone, ni email ; les journaux ne contiennent ni contenu ni identifiant.
 
-## 3. Points laissés à votre décision (non corrigés)
+## 3. Points laissés à votre décision
+
+**Mise à jour du 2026-10-21** : les propositions ci-dessous sont appliquées (Jalon 6, étape 1 ; ADR 0049). D2 et D3 attendent les durées du juriste (mécanisme prêt, rien n'est effacé).
 
 | # | Point | Proposition |
 |---|---|---|

@@ -63,8 +63,12 @@ test("un référent ne peut pas supprimer son compte lui-même", async ({ page }
   await page.getByLabel("Code d'invitation").fill("TEST-SUPP-0001");
   await page.getByRole("button", { name: "Activer mon accès" }).click();
   await expect(page).toHaveURL(/\/referent$/);
-  await page.goto("/espace/mes-donnees");
-  await page.getByLabel("Pour confirmer, écris SUPPRIMER").fill("SUPPRIMER");
-  await page.getByRole("button", { name: "Supprimer définitivement mon compte" }).click();
-  await expect(page.locator(".erreur")).toContainText("avec l'équipe");
+  // Le formulaire n'est pas proposé (l'action du serveur refuse aussi) ; l'export, si (ADR 0049).
+  await page.getByRole("link", { name: "Mes données" }).click();
+  await expect(page.getByText("se fait avec le propriétaire")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Supprimer définitivement mon compte" }),
+  ).toHaveCount(0);
+  const donnees = await (await page.request.get("/api/mes-donnees")).json();
+  expect(donnees.familles_validees).toEqual([{ referentiel: "ga-general", famille: "sciences" }]);
 });

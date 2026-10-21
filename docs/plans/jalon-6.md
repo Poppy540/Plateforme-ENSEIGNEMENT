@@ -1,6 +1,6 @@
 # Plan du Jalon 6 — sécurité finale, contenus et préparation du pilote
 
-**Statut** : validé par le propriétaire le 2026-10-20 (décisions ci-dessous, ADR 0048). **Rien n'est commencé.**
+**Statut** : validé par le propriétaire le 2026-10-20 (décisions ci-dessous, ADR 0048). Étape 1 faite (décisions D1 à D9 de la revue de sécurité, ADR 0049).
 
 **Objectif** : rendre la plateforme prête pour le pilote, pour tout ce qui ne dépend que de Claude Code :
 - les décisions de la revue de sécurité (D1 à D9) ;

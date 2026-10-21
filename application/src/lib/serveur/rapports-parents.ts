@@ -1,4 +1,5 @@
 import "server-only";
+import { contactAccepte, MESSAGE_INDICATIF } from "./indicatifs";
 import { DatabaseError } from "pg";
 import { composerPrompt } from "@/lib/agents/chargeur-prompt";
 import {
@@ -53,6 +54,7 @@ export async function demanderAccordRapports(
   contact: string | null,
   urlDuSite: string,
 ): Promise<string | null> {
+  if (!(await contactAccepte(contact))) return MESSAGE_INDICATIF;
   try {
     const demande = await avecUtilisateur(eleve, (client) =>
       client

@@ -5,8 +5,10 @@ import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import {
   changerAccesEleves,
   reactiverAgent,
+  supprimerDocumentOfficiel,
   traiterFileHumaine,
 } from "@/lib/serveur/administration";
+import { fermerToutesLesSessions } from "@/lib/serveur/session";
 
 export async function reactiver(donnees: FormData): Promise<void> {
   const administrateur = await exigerAdministrateur();
@@ -32,5 +34,20 @@ export async function basculerAccesEleves(donnees: FormData): Promise<void> {
     donnees.get("ouvert") === "oui",
     String(donnees.get("motif") ?? "").trim() || null,
   );
+  revalidatePath("/administration");
+}
+
+export async function supprimerDocument(donnees: FormData): Promise<void> {
+  const administrateur = await exigerAdministrateur();
+  if (donnees.get("confirmation") !== "oui") return;
+  await supprimerDocumentOfficiel(administrateur, String(donnees.get("document") ?? ""));
+  revalidatePath("/administration");
+}
+
+/** Incident (dossier de production §8) : toutes les sessions fermées, sauf celle du propriétaire. */
+export async function deconnecterTout(donnees: FormData): Promise<void> {
+  const administrateur = await exigerAdministrateur();
+  if (donnees.get("confirmation") !== "oui") return;
+  await fermerToutesLesSessions(administrateur);
   revalidatePath("/administration");
 }

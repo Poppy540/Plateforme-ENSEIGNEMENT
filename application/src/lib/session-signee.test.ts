@@ -4,6 +4,7 @@ import { signerSession, verifierSession } from "./session-signee";
 const secret = "a".repeat(40);
 const contenu = {
   utilisateur: "11111111-1111-1111-1111-111111111111",
+  session: "33333333-3333-3333-3333-333333333333",
   expire: Date.now() + 60_000,
 };
 
@@ -29,5 +30,12 @@ describe("session signée", () => {
     ).toBeNull();
     expect(verifierSession(undefined, secret)).toBeNull();
     expect(verifierSession("pas-un-jeton", secret)).toBeNull();
+  });
+
+  it("refuse une ancienne session sans identifiant de session", () => {
+    const { utilisateur, expire } = contenu;
+    expect(
+      verifierSession(signerSession({ utilisateur, expire } as typeof contenu, secret), secret),
+    ).toBeNull();
   });
 });

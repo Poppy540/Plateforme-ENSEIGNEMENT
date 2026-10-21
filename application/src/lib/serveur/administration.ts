@@ -149,3 +149,40 @@ export async function changerAccesEleves(
     return (rowCount ?? 0) > 0;
   });
 }
+
+export interface DocumentAdministration {
+  id: string;
+  referentiel: string;
+  titre: string;
+  origine: string;
+  format: string;
+  deposeLe: string;
+  rapports: number;
+}
+
+/** Documents officiels déposés (sans leur contenu), pour la suppression par le propriétaire (D9). */
+export function documentsOfficiels(administrateur: string): Promise<DocumentAdministration[]> {
+  return avecUtilisateur(administrateur, (client) =>
+    client
+      .query(
+        `select d.id, r.code as referentiel, d.titre, d.origine, d.format, d.depose_le as "deposeLe",
+           (select count(*)::int from rapports_conformite rc where rc.document_id = d.id) as rapports
+         from documents_officiels d join referentiels r on r.id = d.referentiel_id
+         order by d.depose_le desc limit 100`,
+      )
+      .then((r) => r.rows as DocumentAdministration[]),
+  );
+}
+
+/** Suppression d'un document officiel et de ses rapports d'écart (administration seulement, tracée). */
+export function supprimerDocumentOfficiel(administrateur: string, id: string): Promise<boolean> {
+  if (!/^[0-9a-f-]{36}$/.test(id)) return Promise.resolve(false);
+  return avecUtilisateur(administrateur, (client) =>
+    client
+      .query("select supprimer_document_officiel($1, $2) as ok", [
+        id,
+        empreinteActeur(administrateur),
+      ])
+      .then((r) => r.rows[0].ok === true),
+  );
+}
