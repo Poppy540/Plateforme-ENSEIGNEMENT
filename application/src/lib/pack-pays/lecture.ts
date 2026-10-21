@@ -83,6 +83,22 @@ export interface Chapitre {
   coefficient: number | null;
 }
 
+export interface QuestionQuestionnaire {
+  id: string;
+  public: "eleve" | "parent";
+  type: "echelle" | "choix";
+  texte: string;
+  /** Choix possibles (type « choix ») ; « 1 » à « 5 » pour une échelle. */
+  options: string[];
+}
+
+export interface Questionnaire {
+  version: string;
+  /** Montré seulement une fois « valide » (relu par le propriétaire). */
+  statut: "a_valider" | "valide";
+  questions: QuestionQuestionnaire[];
+}
+
 export interface PackPays {
   pays: Pays;
   referentiel: Referentiel;
@@ -94,6 +110,8 @@ export interface PackPays {
   programmes: Record<string, Chapitre[]>;
   /** Liens de prérequis proposés (`prerequis/*.yaml`), toujours « à valider » à l'import. */
   prerequis: LienPrerequis[];
+  /** Questionnaire anonyme du pilote (`questionnaire.yaml`, facultatif ; ADR 0052). */
+  questionnaire: Questionnaire | null;
 }
 
 export interface LienPrerequis {
@@ -343,9 +361,20 @@ export function lirePack(dossier: string): PackPays {
   }
 
   const prerequis = lirePrerequis(dossier, programmes, unites, niveaux, erreurs);
+  const questionnaire = lireQuestionnaire(dossier, erreurs);
 
   if (erreurs.length > 0) throw new ErreurPack(erreurs);
-  return { pays, referentiel, niveaux, series, matieres, unites, programmes, prerequis };
+  return {
+    pays,
+    referentiel,
+    niveaux,
+    series,
+    matieres,
+    unites,
+    programmes,
+    prerequis,
+    questionnaire,
+  };
 }
 
 /**
@@ -449,4 +478,49 @@ export function libellesFamilles(dossier: string): Record<string, string> {
       .filter((f) => typeof f.code === "string" && typeof f.libelle === "string")
       .map((f) => [f.code as string, f.libelle as string]),
   );
+}
+
+/**
+ * Questionnaire anonyme (`questionnaire.yaml`, facultatif) : réponses fermées seulement, identifiants uniques,
+ * un public (élève ou parent) par question.
+ */
+function lireQuestionnaire(dossier: string, erreurs: string[]): Questionnaire | null {
+  const chemin = join(dossier, "questionnaire.yaml");
+  if (!existsSync(chemin)) return null;
+  const brut = lireYaml(chemin);
+  const version = texte(brut.version);
+  const statut = texte(brut.statut) === "valide" ? "valide" : "a_valider";
+  if (!version) erreurs.push("questionnaire.yaml : version manquante");
+  if (!["valide", "a_valider"].includes(texte(brut.statut)))
+    erreurs.push("questionnaire.yaml : statut « valide » ou « a_valider »");
+  const questions: QuestionQuestionnaire[] = liste(brut.questions).map((q) => {
+    const type = texte(q.type) === "choix" ? "choix" : "echelle";
+    const id = texte(q.id);
+    if (!/^[a-z][a-z0-9_]{0,19}$/.test(id))
+      erreurs.push(`questionnaire.yaml : identifiant invalide « ${id} »`);
+    if (!["eleve", "parent"].includes(texte(q.public)))
+      erreurs.push(`questionnaire.yaml : public inconnu pour ${id}`);
+    if (!["echelle", "choix"].includes(texte(q.type)))
+      erreurs.push(
+        `questionnaire.yaml : type inconnu pour ${id} (echelle ou choix, jamais de texte libre)`,
+      );
+    const options =
+      type === "echelle" ? ["1", "2", "3", "4", "5"] : liste(q.options).map((o) => texte(o));
+    if (type === "choix" && (options.length < 2 || options.some((o) => !o)))
+      erreurs.push(`questionnaire.yaml : au moins deux options pour ${id}`);
+    if (!texte(q.texte)) erreurs.push(`questionnaire.yaml : texte manquant pour ${id}`);
+    return {
+      id,
+      public: texte(q.public) === "parent" ? "parent" : "eleve",
+      type,
+      texte: texte(q.texte),
+      options,
+    };
+  });
+  verifierUnicite(
+    questions.map((q) => q.id),
+    "question",
+    erreurs,
+  );
+  return { version, statut, questions };
 }

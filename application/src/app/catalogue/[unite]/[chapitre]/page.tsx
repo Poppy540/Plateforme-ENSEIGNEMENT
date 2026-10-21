@@ -28,6 +28,7 @@ export default async function PageChapitre({ params }: PageProps<"/catalogue/[un
       <h1>{contexte.chapitreTitre}</h1>
       {video ? (
         <LecteurVideo
+          chapitreId={contexte.chapitreId}
           videoId={video.id}
           sources={sourcesLecture(video.reference, video.versions)}
           dureeSecondes={video.dureeSecondes}
@@ -40,7 +41,7 @@ export default async function PageChapitre({ params }: PageProps<"/catalogue/[un
           {lecon ? "Lis la leçon écrite" : "En attendant, pose tes questions au professeur"}.
         </p>
       )}
-      {lecon && <LeconEcrite lecon={lecon} ouverte={!video} />}
+      {lecon && <LeconEcrite lecon={lecon} ouverte={!video} chapitreId={contexte.chapitreId} />}
       {quiz && (
         <p>
           <Link href={`/catalogue/${unite}/${chapitre}/quiz`}>

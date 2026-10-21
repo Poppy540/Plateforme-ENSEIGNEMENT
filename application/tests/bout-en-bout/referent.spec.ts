@@ -66,7 +66,11 @@ test("un chapitre modifié pendant la relecture ne peut pas être validé sans n
 }) => {
   await seConnecter(page, REFERENT);
   await page.getByRole("link", { name: /Fonctions linéaires et affines/ }).click();
-  await expect(page.getByText("version 1").first()).toBeVisible();
+  // Attendre la page du chapitre elle-même (« version 1 » figure aussi sur la liste d'où l'on vient).
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Fonctions linéaires et affines",
+  );
+  await expect(page.getByRole("button", { name: /Valider la version 1/ })).toBeVisible();
 
   await executerSql(
     `update chapitres set sous_themes = array['Modifié pendant la relecture']

@@ -1,4 +1,7 @@
 import { rapportPourParent } from "@/lib/serveur/rapports-parents";
+import { FormulaireQuestionnaire } from "../../composants/formulaire-questionnaire";
+import { questionnairePourParent } from "@/lib/serveur/mesures";
+import { repondreQuestionnaire } from "./actions";
 import { ActionsParent } from "./formulaires";
 
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "long" });
@@ -28,6 +31,7 @@ export default async function PageRapportParent({ searchParams }: PageProps<"/pa
         <p role="status">Ce lien n&apos;est pas valide.</p>
       </main>
     );
+  const questionnaire = r.accordActif ? await questionnairePourParent(jeton as string) : null;
   return (
     <main className="conteneur">
       <h1>Rapport sur la progression de {r.prenom}</h1>
@@ -50,6 +54,21 @@ export default async function PageRapportParent({ searchParams }: PageProps<"/pa
         </p>
       )}
       <ActionsParent jeton={jeton as string} actif={r.accordActif} />
+      {questionnaire && (
+        <section>
+          <h2>Votre avis (questionnaire anonyme)</h2>
+          <p className="note">
+            Facultatif. Vos réponses ne sont pas rattachées à votre enfant ni à ce lien ;
+            l&apos;équipe ne voit que des totaux.
+          </p>
+          <FormulaireQuestionnaire
+            questionnaire={questionnaire}
+            action={repondreQuestionnaire}
+            jeton={jeton as string}
+            tutoiement={false}
+          />
+        </section>
+      )}
     </main>
   );
 }

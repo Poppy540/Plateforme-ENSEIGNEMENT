@@ -119,6 +119,18 @@ describe("lecture d'un pack pays", () => {
     expect(lirePack(packFictif).pays.conservation.inscription_non_confirmee_jours).toBe(7);
   });
 
+  it("lit le questionnaire anonyme : fermé, à valider pour le pilote, validé pour le pays fictif", () => {
+    const q = lirePack(packGabon).questionnaire!;
+    expect(q.statut).toBe("a_valider");
+    expect(q.questions.filter((x) => x.public === "eleve")).toHaveLength(5);
+    expect(q.questions.filter((x) => x.public === "parent")).toHaveLength(4);
+    expect(q.questions.every((x) => x.options.length >= 2)).toBe(true);
+    expect(lirePack(resolve(racine, "../referentiels/zz-fictif")).questionnaire?.statut).toBe(
+      "valide",
+    );
+    expect(lirePack(packFictif).questionnaire).toBeNull();
+  });
+
   it("lit les indicatifs téléphoniques autorisés du pack", () => {
     expect(lirePack(packGabon).pays.indicatifsTelephone).toHaveLength(1);
     expect(lirePack(packGabon).pays.indicatifsTelephone[0]).toMatch(/^\+\d{1,4}$/);

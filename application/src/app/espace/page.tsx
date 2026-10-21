@@ -7,6 +7,7 @@ import { profilEleve } from "@/lib/serveur/requetes";
 import { roleCompte } from "@/lib/serveur/referent";
 import { exigerAccesEleves } from "@/lib/serveur/disponibilite";
 import { noterActivite } from "@/lib/serveur/mes-donnees";
+import { questionnairePourEleve } from "@/lib/serveur/mesures";
 import { utilisateurConnecte } from "@/lib/serveur/session";
 
 export default async function PageEspace() {
@@ -19,6 +20,8 @@ export default async function PageEspace() {
   if (!profil) redirect("/inscription");
   await exigerAccesEleves();
   await noterActivite(utilisateur);
+  const questionnaire =
+    profil.statut === "actif" ? await questionnairePourEleve(utilisateur) : null;
 
   return (
     <main className="conteneur">
@@ -50,6 +53,11 @@ export default async function PageEspace() {
           <p>
             <Link href="/espace/plan">Mon plan de révision</Link>
           </p>
+          {questionnaire && (
+            <p>
+              <Link href="/espace/questionnaire">Donne ton avis (questionnaire anonyme)</Link>
+            </p>
+          )}
         </>
       )}
       {profil.statut === "suspendu" && (

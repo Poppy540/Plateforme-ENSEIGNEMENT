@@ -20,6 +20,7 @@ referentiels/<code-pays>/
   agents/<agent>/<unite>.yaml  valeurs injectées dans les prompts des agents (voir _modele/agents/README.md)
   faq.yaml                FAQ du Support (seules réponses possibles)
   recrutement.yaml        sources autorisées, canaux, relance, conditions, FAQ de recrutement (agent Recruteur)
+  questionnaire.yaml      questionnaire anonyme du pilote (réponses fermées), montré seulement une fois « valide »
   SOURCES.md              origine et statut (validé / à valider / manquant) de chaque donnée
 ```
 

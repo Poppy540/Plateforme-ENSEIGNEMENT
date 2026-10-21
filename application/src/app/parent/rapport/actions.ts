@@ -1,6 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { EtatQuestionnaire } from "../../composants/formulaire-questionnaire";
+import { lireReponses } from "@/lib/exploitation/mesures";
+import { questionnairePourParent, repondreQuestionnaireParent } from "@/lib/serveur/mesures";
 import { adresseDuSite } from "@/lib/serveur/origine";
 import {
   arreterRapports,
@@ -35,4 +38,21 @@ export async function poserQuestion(_etat: EtatParent, donnees: FormData): Promi
     String(donnees.get("question") ?? ""),
   );
   return r.ok ? { reponse: r.reponse.reponse } : { erreur: r.erreur };
+}
+
+/** Questionnaire anonyme du parent (ADR 0052) : une fois par accord ; rien ne relie la réponse au rapport. */
+export async function repondreQuestionnaire(
+  _etat: EtatQuestionnaire,
+  donnees: FormData,
+): Promise<EtatQuestionnaire> {
+  const jeton = String(donnees.get("jeton") ?? "");
+  const questionnaire = await questionnairePourParent(jeton);
+  if (!questionnaire) return { merci: true };
+  const reponses = lireReponses(questionnaire.questions, (n) => {
+    const v = donnees.get(n);
+    return typeof v === "string" ? v : null;
+  });
+  if (!reponses) return { erreur: "Merci de répondre à chaque question." };
+  await repondreQuestionnaireParent(jeton, reponses);
+  return { merci: true };
 }

@@ -1,0 +1,6 @@
+# Modèle : questionnaire de satisfaction anonyme (voir referentiels/gabon/questionnaire.yaml et l'ADR 0052).
+# Facultatif. Statut « a_valider » tant que le propriétaire ne l'a pas relu : il n'est alors montré à personne.
+# Réponses fermées uniquement (echelle 1-5 ou choix), jamais de texte libre.
+version: ""
+statut: a_valider
+questions: []

@@ -3,17 +3,21 @@
 import { useRef, useState } from "react";
 import { formaterDuree } from "@/lib/format";
 import { megaOctetsParMinute, type SourceLecture } from "@/lib/production-video/lecture";
+import { signalerLecture } from "./compteur";
 
 // Lecteur adapté aux connexions lentes (ADR 0026) : rien n'est téléchargé avant « lecture » (preload="none"),
 // version la plus légère par défaut, consommation affichée, sous-titres français activés.
 
 export function LecteurVideo({
+  chapitreId,
   videoId,
   sources,
   dureeSecondes,
   sousTitres,
   simulation,
 }: {
+  /** Chapitre, pour le compteur de visionnage agrégé (ADR 0052) ; absent hors de l'espace élève. */
+  chapitreId?: string;
   videoId: string;
   sources: SourceLecture[] | null;
   dureeSecondes: number;
@@ -22,6 +26,8 @@ export function LecteurVideo({
 }) {
   const video = useRef<HTMLVideoElement>(null);
   const [indice, setIndice] = useState(0);
+  // Une fois par page : changer de qualité relance la lecture sans compter un nouveau démarrage.
+  const compte = useRef({ demarree: false, terminee: false });
 
   if (!sources || sources.length === 0)
     return (
@@ -53,6 +59,16 @@ export function LecteurVideo({
         width={426}
         height={240}
         aria-label="Vidéo du cours"
+        onPlay={() => {
+          if (!chapitreId || compte.current.demarree) return;
+          compte.current.demarree = true;
+          signalerLecture(chapitreId, "video_demarree");
+        }}
+        onEnded={() => {
+          if (!chapitreId || compte.current.terminee) return;
+          compte.current.terminee = true;
+          signalerLecture(chapitreId, "video_terminee");
+        }}
       >
         {source.fichiers.map((f) => (
           <source key={f.url} src={f.url} type={f.type} />

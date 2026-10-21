@@ -272,3 +272,14 @@ button.danger {
 .lecon dd {
   margin: 0 0 0.5rem 1rem;
 }
+
+/* Questionnaire anonyme (ADR 0052) : une réponse par ligne, facile à toucher sur téléphone. */
+.questionnaire fieldset {
+  border: 1px solid var(--discret);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+}
+.questionnaire label {
+  display: block;
+  padding: 0.25rem 0;
+}

@@ -1,10 +1,19 @@
 import type { LeconEcrite as Lecon } from "@/lib/lecon";
+import { LeconDepliable } from "./lecon-ouverture";
 
 // Leçon écrite (ADR 0051) : texte du script validé, sans image ni script, lisible hors ligne avec la page du
 // chapitre. Ouverte d'emblée quand la vidéo n'est pas disponible.
-export function LeconEcrite({ lecon, ouverte }: { lecon: Lecon; ouverte: boolean }) {
+export function LeconEcrite({
+  lecon,
+  ouverte,
+  chapitreId,
+}: {
+  lecon: Lecon;
+  ouverte: boolean;
+  chapitreId: string;
+}) {
   return (
-    <details className="lecon" open={ouverte}>
+    <LeconDepliable chapitreId={chapitreId} ouverte={ouverte}>
       <summary>
         <strong>Leçon écrite</strong>{" "}
         <span className="note">(texte de la vidéo, lisible sans réseau une fois ouvert)</span>
@@ -50,6 +59,6 @@ export function LeconEcrite({ lecon, ouverte }: { lecon: Lecon; ouverte: boolean
           </dl>
         </section>
       )}
-    </details>
+    </LeconDepliable>
   );
 }

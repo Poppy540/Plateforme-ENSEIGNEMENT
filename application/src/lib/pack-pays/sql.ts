@@ -92,6 +92,14 @@ on conflict (chapitre_id, prerequis_id) do nothing;`,
     );
   }
 
+  // Questionnaire anonyme (ADR 0052) : une version déjà répondue ne change plus (refusé par la base).
+  if (pack.questionnaire) {
+    const q = pack.questionnaire;
+    lignes.push(`insert into questionnaires (referentiel_id, version, statut, questions)
+values (${ref}, ${texteSql(q.version)}, ${texteSql(q.statut)}, ${texteSql(JSON.stringify(q.questions))}::jsonb)
+on conflict (referentiel_id, version) do update set statut = excluded.statut, questions = excluded.questions;`);
+  }
+
   lignes.push("commit;");
   return lignes.join("\n") + "\n";
 }
