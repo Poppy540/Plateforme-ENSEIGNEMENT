@@ -252,3 +252,23 @@ button.danger {
   opacity: 0.75;
   border-style: dashed;
 }
+
+/* Leçon écrite (ADR 0051) : lecture confortable sur petit écran. */
+.lecon {
+  margin: 1rem 0;
+  line-height: 1.6;
+}
+.lecon summary {
+  cursor: pointer;
+  padding: 0.5rem 0;
+}
+.lecon h3 {
+  font-size: 1.05rem;
+  margin: 1rem 0 0.25rem;
+}
+.lecon dt {
+  font-weight: bold;
+}
+.lecon dd {
+  margin: 0 0 0.5rem 1rem;
+}

@@ -5,6 +5,8 @@ import { estSimulee, sourcesLecture } from "@/lib/production-video/lecture";
 import { quizPourEleve } from "@/lib/serveur/evaluateur";
 import { videoDuChapitre } from "@/lib/serveur/videos";
 import { LecteurVideo } from "../../../composants/lecteur-video";
+import { LeconEcrite } from "../../../composants/lecon-ecrite";
+import { leconDuChapitre } from "@/lib/serveur/lecons";
 import { contexteChapitre, echangesDuChapitre, nomProfesseur } from "@/lib/serveur/professeur";
 import { cleHorsLigne } from "@/lib/serveur/cle-hors-ligne";
 import { Conversation } from "./conversation";
@@ -16,7 +18,7 @@ export default async function PageChapitre({ params }: PageProps<"/catalogue/[un
   if (!contexte) notFound();
   const echanges = await echangesDuChapitre(utilisateur, contexte.chapitreId);
   const quiz = await quizPourEleve(contexte);
-  const video = await videoDuChapitre(contexte);
+  const [video, lecon] = await Promise.all([videoDuChapitre(contexte), leconDuChapitre(contexte)]);
 
   return (
     <main className="conteneur">
@@ -34,10 +36,11 @@ export default async function PageChapitre({ params }: PageProps<"/catalogue/[un
         />
       ) : (
         <p className="note">
-          La vidéo de ce chapitre n&apos;est pas encore publiée. En attendant, pose tes questions au
-          professeur.
+          La vidéo de ce chapitre n&apos;est pas encore publiée.{" "}
+          {lecon ? "Lis la leçon écrite" : "En attendant, pose tes questions au professeur"}.
         </p>
       )}
+      {lecon && <LeconEcrite lecon={lecon} ouverte={!video} />}
       {quiz && (
         <p>
           <Link href={`/catalogue/${unite}/${chapitre}/quiz`}>
