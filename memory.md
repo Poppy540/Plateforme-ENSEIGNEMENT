@@ -24,6 +24,7 @@
 | 2026-10-04 | Pilote gratuit, pas de paiement | ADR 0013 |
 | 2026-10-04 | Plan du Jalon 1 validé | docs/plans/jalon-1.md |
 | 2026-10-20 | Plan du Jalon 6 validé : sécurité (D1-D9, propositions de la revue) d'abord, Sciences 3e, leçons écrites, compteur agrégé + questionnaire anonyme, préparation du pilote | ADR 0048, docs/plans/jalon-6.md |
+| 2026-10-21 | Lien de prérequis entre deux familles : décidé par le référent de la famille du chapitre qui dépend, seul (il lit le chapitre visé sans l'ouvrir) | ADR 0050 |
 | 2026-10-04 | Fichier commun de secrets nommé `secrets/commun.env.example` (et non `.env.example`), car les `.env*` sont interdits en lecture | `secrets/README.md` |
 
 ## Hypothèses à vérifier
@@ -56,6 +57,8 @@
 5. Séries techniques F/G : à définir avec des enseignants techniques.
 
 ## État d'avancement
+
+- 2026-10-21 : Jalon 6, étape 3 faite (ADR 0050, migration 0031, tests M01-M03, `sciences-3e.test.ts`, `sciences-3e.spec.ts`) — `ga-3e-svt` (5 ch.) et `ga-3e-physique-chimie` (4 ch.), intitulés du cadrage, PROVISOIRES ; `prerequis/sciences.yaml` (15 liens dont 6 vers Maths 4e) ; valeurs des 4 agents par unité ; règle des liens entre familles en base (`peut_decider_prerequis`, lecture du chapitre visé par `est_prerequis_de_mes_chapitres`) et dans l'espace référent (matière, « Autre famille de matières », pas de lien vers la page). Coordinateur inchangé (sa famille seulement). Programmes Sciences 6e-4e absents du pack. Tests : 211 unitaires, 104 scénarios de base, 69 de bout en bout.
 
 - 2026-10-21 : Jalon 6, étape 1 faite (ADR 0049, migrations 0029-0030, tests D01-D07, `decisions-securite.spec.ts`) — D1 contrôle de l'API de données dans `verifier:production` ; D2 `resumes_apres_suppression` (pack, null = garder) ; D3 purge étendue `purger_donnees_etendues` (durées null en attendant le juriste ; `pays_code` noté sur signalements et tickets) ; D4 `SEL_OPPOSITION` transmis par transaction (`app.sel_opposition`, rôles authenticated, agent_recruteur, service_messagerie), anciennes empreintes `salee = false` reconnues ; D5 `indicatifs_telephone` dans `pays.yaml` (Gabon +241, zz +999), contrôlés à la connexion, à l'inscription et pour les rapports ; D6 table `sessions_ouvertes`, cookie avec identifiant de session, durées par rôle (720/168/12 h), « tous mes appareils », révocation générale par l'administration ; D7 approbations limitées aux familles, signalements à l'administration seule ; D8 `src/proxy.ts` (nonce, `strict-dynamic`), `connection()` dans la disposition racine ; D9 suppression des documents officiels (`/administration`), export « Mes données » pour l'équipe. Piège : `session_active` n'est accordée qu'à `anon` (le serveur vérifie la session en visiteur) ; un test SQL qui calcule une empreinte d'opposition doit poser `app.sel_opposition`. Tests : 206 unitaires, 101 scénarios de base, 67 de bout en bout.
 
@@ -129,6 +132,6 @@
 
 ## Prochaine étape
 
-Jalon 6, étape 3 (Sciences 3e), seulement après accord du propriétaire. Étape 2 (passages réels) dès la clé API et l'accord sur le coût. À fixer par le propriétaire : `SEL_OPPOSITION` en production ; D2 et durées D3 avec le juriste.
+Jalon 6, étape 4 (leçons écrites), seulement après accord du propriétaire. Étape 2 (passages réels) dès la clé API et l'accord sur le coût. À fixer par le propriétaire : `SEL_OPPOSITION` en production ; D2 et durées D3 avec le juriste.
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).

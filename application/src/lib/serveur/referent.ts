@@ -187,7 +187,8 @@ export async function activerReferent(
 
 // ---------------------------------------------------------------------------------------------------------
 // Graphe de prérequis (ADR 0037) : liens proposés par le pack, décidés par un référent de la famille des deux
-// chapitres (vérifié par la base). Seuls les liens validés servent aux agents.
+// chapitres ; un lien entre deux familles, par le référent du chapitre qui dépend (ADR 0050). Vérifié par la base.
+// Seuls les liens validés servent aux agents.
 // ---------------------------------------------------------------------------------------------------------
 
 export interface LienPrerequis {
@@ -196,6 +197,10 @@ export interface LienPrerequis {
   prerequisId: string;
   prerequisTitre: string;
   prerequisNiveau: string;
+  prerequisMatiere: string;
+  prerequisSousThemes: string[];
+  /** Prérequis d'une autre famille (lecture seule : sa page reste à ses référents). */
+  autreFamille: boolean;
   nature: "strict" | "souple";
   statut: "a_valider" | "valide" | "rejete";
   commentaire: string | null;
@@ -203,12 +208,13 @@ export interface LienPrerequis {
 
 const SELECTION_LIENS = `select p.chapitre_id as "chapitreId", a.titre as "chapitreTitre",
     p.prerequis_id as "prerequisId", b.titre as "prerequisTitre", nb.libelle as "prerequisNiveau",
-    p.nature, p.statut, p.commentaire
+    coalesce(ub.libelle_local, mb.libelle) as "prerequisMatiere", b.sous_themes as "prerequisSousThemes",
+    not est_referent_du_chapitre(p.prerequis_id) as "autreFamille", p.nature, p.statut, p.commentaire
   from prerequis_chapitres p
   join chapitres a on a.id = p.chapitre_id
   join chapitres b on b.id = p.prerequis_id join unites ub on ub.id = b.unite_id
-  join niveaux nb on nb.id = ub.niveau_id
-  where est_referent_du_chapitre(p.chapitre_id) and est_referent_du_chapitre(p.prerequis_id)`;
+  join niveaux nb on nb.id = ub.niveau_id join matieres mb on mb.id = ub.matiere_id
+  where peut_decider_prerequis(p.chapitre_id, p.prerequis_id)`;
 
 /** Liens dont ce chapitre dépend (ses prérequis), pour sa page. */
 export function prerequisDuChapitre(utilisateur: string, id: string): Promise<LienPrerequis[]> {

@@ -73,10 +73,25 @@ export default async function PageChapitreReferent({
         <ul>
           {prerequis.map((p) => (
             <li key={p.prerequisId}>
-              <Link href={`/referent/chapitres/${p.prerequisId}`}>{p.prerequisTitre}</Link> (
-              {p.prerequisNiveau}, {p.nature === "strict" ? "indispensable" : "utile"}) :{" "}
+              {p.autreFamille ? (
+                <>
+                  {p.prerequisTitre} — {p.prerequisMatiere}
+                </>
+              ) : (
+                <Link href={`/referent/chapitres/${p.prerequisId}`}>{p.prerequisTitre}</Link>
+              )}{" "}
+              ({p.prerequisNiveau}, {p.nature === "strict" ? "indispensable" : "utile"}) :{" "}
               <strong>{LIBELLES[p.statut]}</strong>
               {p.commentaire && <> — {p.commentaire}</>}
+              {p.autreFamille && (
+                <p className="note">
+                  Autre famille de matières : vous décidez de ce lien pour vos élèves, sans modifier
+                  ce chapitre.
+                  {p.prerequisSousThemes.length > 0 && (
+                    <> Contenu : {p.prerequisSousThemes.join(", ")}.</>
+                  )}
+                </p>
+              )}
               {p.statut === "a_valider" && (
                 <FormulaireLien
                   chapitre={chapitre.id}

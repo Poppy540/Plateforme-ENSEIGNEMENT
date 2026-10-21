@@ -28,7 +28,12 @@ export default async function PagePrerequis() {
         {[...parChapitre].map(([id, groupe]) => (
           <li key={id}>
             <Link href={`/referent/chapitres/${id}`}>{groupe.titre}</Link> :{" "}
-            {groupe.prerequis.map((p) => `${p.prerequisTitre} (${p.prerequisNiveau})`).join(" ; ")}
+            {groupe.prerequis
+              .map(
+                (p) =>
+                  `${p.prerequisTitre} (${p.autreFamille ? `${p.prerequisMatiere}, ` : ""}${p.prerequisNiveau})`,
+              )
+              .join(" ; ")}
           </li>
         ))}
       </ul>

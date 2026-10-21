@@ -1,6 +1,6 @@
 # Plan du Jalon 6 — sécurité finale, contenus et préparation du pilote
 
-**Statut** : validé par le propriétaire le 2026-10-20 (décisions ci-dessous, ADR 0048). Étape 1 faite (décisions D1 à D9 de la revue de sécurité, ADR 0049).
+**Statut** : validé par le propriétaire le 2026-10-20 (décisions ci-dessous, ADR 0048). Étape 1 faite (décisions D1 à D9 de la revue de sécurité, ADR 0049). Étape 3 faite (Sciences 3e, liens entre familles, ADR 0050).
 
 **Objectif** : rendre la plateforme prête pour le pilote, pour tout ce qui ne dépend que de Claude Code :
 - les décisions de la revue de sécurité (D1 à D9) ;
@@ -32,6 +32,7 @@ L'étape 2 s'insère dès que la clé arrive.
 2. **Contenus** : Sciences 3e (physique-chimie et SVT), deuxième famille de matières.
 3. **Revue de sécurité** : les propositions de la revue sont appliquées, réglables ensuite ; D2 et D3 attendent le juriste.
 4. **Mesures** : compteur de visionnage agrégé et questionnaire anonyme.
+5. **Liens entre familles** (2026-10-21) : décidés par le référent de la famille du chapitre qui dépend (ADR 0050).
 
 ## Hors Jalon 6
 

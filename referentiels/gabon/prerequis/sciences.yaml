@@ -1,0 +1,26 @@
+# Graphe de prérequis proposé — famille Sciences (SVT, Physique-Chimie), classe de 3e (Gabon).
+# PROPOSITION de Claude Code (2026-10-21) à partir des programmes provisoires du pack : chaque lien est « à valider ».
+# Les programmes de Sciences de 6e à 4e ne sont pas encore dans le pack : seuls des liens de 3e, et des liens vers les
+# Mathématiques (famille voisine), sont proposés. Lien entre deux familles : décidé par le référent de la famille du
+# chapitre qui dépend (ici Sciences), qui lit le chapitre de Mathématiques visé sans pouvoir le modifier (ADR 0050).
+# Format : <unité>/<chapitre> ; nature : strict (indispensable) ou souple (utile).
+famille: sciences
+statut: a_valider
+liens:
+  # Dans la famille
+  - {chapitre: ga-3e-svt/evolution,                         prerequis: ga-3e-svt/genetique-heredite,                    nature: strict}
+  - {chapitre: ga-3e-svt/revisions-bepc,                    prerequis: ga-3e-svt/genetique-heredite,                    nature: souple}
+  - {chapitre: ga-3e-svt/revisions-bepc,                    prerequis: ga-3e-svt/evolution,                             nature: souple}
+  - {chapitre: ga-3e-svt/revisions-bepc,                    prerequis: ga-3e-svt/sante-responsabilite,                  nature: souple}
+  - {chapitre: ga-3e-svt/revisions-bepc,                    prerequis: ga-3e-svt/terre-astre-singulier,                 nature: souple}
+  - {chapitre: ga-3e-physique-chimie/electricite,           prerequis: ga-3e-physique-chimie/energie-transformations,   nature: souple}
+  - {chapitre: ga-3e-physique-chimie/revisions-bepc,        prerequis: ga-3e-physique-chimie/energie-transformations,   nature: souple}
+  - {chapitre: ga-3e-physique-chimie/revisions-bepc,        prerequis: ga-3e-physique-chimie/electricite,               nature: souple}
+  - {chapitre: ga-3e-physique-chimie/revisions-bepc,        prerequis: ga-3e-physique-chimie/chimie-solutions,          nature: souple}
+  # Vers les Mathématiques
+  - {chapitre: ga-3e-physique-chimie/energie-transformations, prerequis: ga-4e-mathematiques/calcul-litteral,            nature: souple}
+  - {chapitre: ga-3e-physique-chimie/electricite,           prerequis: ga-4e-mathematiques/equations-premier-degre,     nature: strict}
+  - {chapitre: ga-3e-physique-chimie/electricite,           prerequis: ga-4e-mathematiques/fonction-lineaire,           nature: strict}
+  - {chapitre: ga-3e-physique-chimie/chimie-solutions,      prerequis: ga-4e-mathematiques/puissances,                  nature: souple}
+  - {chapitre: ga-3e-svt/genetique-heredite,                prerequis: ga-4e-mathematiques/statistiques-probabilites,   nature: souple}
+  - {chapitre: ga-3e-svt/terre-astre-singulier,             prerequis: ga-4e-mathematiques/puissances,                  nature: souple}
