@@ -25,6 +25,7 @@
 | 2026-10-04 | Plan du Jalon 1 validé | docs/plans/jalon-1.md |
 | 2026-10-20 | Plan du Jalon 6 validé : sécurité (D1-D9, propositions de la revue) d'abord, Sciences 3e, leçons écrites, compteur agrégé + questionnaire anonyme, préparation du pilote | ADR 0048, docs/plans/jalon-6.md |
 | 2026-10-21 | Lien de prérequis entre deux familles : décidé par le référent de la famille du chapitre qui dépend, seul (il lit le chapitre visé sans l'ouvrir) | ADR 0050 |
+| 2026-10-21 | Plan du Jalon 7 validé : accessibilité d'abord (`@axe-core/playwright` en dépendance de test acceptée), vidéo prête à brancher (Cloudflare Stream + avatar générique), journal d'erreurs sans donnée personnelle, Français 3e ; pas de WhatsApp | ADR 0053, docs/plans/jalon-7.md |
 | 2026-10-04 | Fichier commun de secrets nommé `secrets/commun.env.example` (et non `.env.example`), car les `.env*` sont interdits en lecture | `secrets/README.md` |
 
 ## Hypothèses à vérifier
@@ -57,6 +58,8 @@
 5. Séries techniques F/G : à définir avec des enseignants techniques.
 
 ## État d'avancement
+
+- 2026-10-21 : Jalon 7, étape 0 faite — plan `docs/plans/jalon-7.md` et ADR 0053 validés. **Rien d'autre n'est commencé.**
 
 - 2026-10-21 : Jalon 6, étape 7 faite — bilan `docs/bilans/jalon-6.md` (toutes les étapes faites sauf la 2, passages réels) ; 7 captures `docs/demo/jalon-6/` (`tests/demo/jalon-6.spec.ts`). Batteries d'agents en simulation inchangées. Tests : 217 unitaires, 111 scénarios de base, 77 de bout en bout.
 
@@ -140,6 +143,6 @@
 
 ## Prochaine étape
 
-Jalon 6 fait en simulation, sauf l'étape 2 (passages réels : mini-essais dès la clé API et l'accord sur le coût). Attendre les décisions du propriétaire (bilan du Jalon 6, §6 : questionnaire, clé API, `SEL_OPPOSITION`, juriste, référents, fournisseurs) ; proposer ensuite la suite sans rien commencer avant validation.
+Jalon 7, étape 1 (accessibilité et téléphones modestes), seulement après accord du propriétaire pour la commencer. Étape 5 (passages réels) dès la clé API et l'accord sur le coût. Toujours attendus du propriétaire (bilan du Jalon 6, §6) : questionnaire, clé API, `SEL_OPPOSITION`, juriste, référents, fournisseurs.
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).
