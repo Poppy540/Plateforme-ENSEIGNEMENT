@@ -116,7 +116,12 @@ export default async function PageRapportCoordinateur({
       <h2>Glossaire et notations proposés ({c.glossaire.length})</h2>
       {c.glossaire.length > 0 && (
         <>
-          <div className="tableau-defilant">
+          <div
+            className="tableau-defilant"
+            role="region"
+            aria-label="Glossaire et notations proposés"
+            tabIndex={0}
+          >
             <table>
               <thead>
                 <tr>

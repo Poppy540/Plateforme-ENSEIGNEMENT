@@ -14,6 +14,8 @@ export function FormulaireCode() {
         type="text"
         inputMode="numeric"
         autoComplete="one-time-code"
+        // Seul champ de la page : prêt à recevoir le code (clavier, remplissage automatique du SMS ; ADR 0054).
+        autoFocus
         pattern="[0-9 ]*"
         maxLength={7}
         required

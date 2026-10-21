@@ -88,7 +88,12 @@ export default async function PageRapportConformite({
       )}
 
       <h2>Extraction du document ({c.extraction.length})</h2>
-      <div className="tableau-defilant">
+      <div
+        className="tableau-defilant"
+        role="region"
+        aria-label="Extraction du document"
+        tabIndex={0}
+      >
         <table>
           <thead>
             <tr>
@@ -128,7 +133,12 @@ export default async function PageRapportConformite({
       )}
 
       <h2>Comparaison avec la plateforme ({c.comparaison.length})</h2>
-      <div className="tableau-defilant">
+      <div
+        className="tableau-defilant"
+        role="region"
+        aria-label="Comparaison avec la plateforme"
+        tabIndex={0}
+      >
         <table>
           <thead>
             <tr>

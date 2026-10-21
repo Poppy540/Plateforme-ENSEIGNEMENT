@@ -36,6 +36,8 @@ body {
     sans-serif;
   font-size: 1rem;
   line-height: 1.5;
+  /* Texte agrandi sur petit écran (ADR 0054) : un mot long passe à la ligne au lieu de déborder. */
+  overflow-wrap: anywhere;
 }
 
 a {
@@ -92,6 +94,34 @@ button:disabled {
   opacity: 0.6;
 }
 
+/* Accessibilité (ADR 0054) : focus toujours visible au clavier, y compris sur les boutons pleins et les régions
+   défilantes ; zones à toucher d'au moins 44 px sur téléphone ; aucune animation si l'utilisateur les refuse. */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+button,
+.bouton,
+select,
+input:not([type="checkbox"], [type="radio"]) {
+  min-height: 2.75rem;
+}
+input[type="checkbox"],
+input[type="radio"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--accent);
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 .case {
   display: flex;
   gap: 0.5rem;
@@ -117,6 +147,7 @@ button:disabled {
   list-style: none;
   padding: 0;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.75rem;
 }
 
@@ -141,10 +172,15 @@ button:disabled {
 
 .chapitres li {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.25rem 0.75rem;
   padding: 0.5rem 0;
   border-bottom: 1px solid color-mix(in srgb, var(--discret) 30%, transparent);
+}
+
+.chapitres li > * {
+  min-width: 0;
 }
 
 .statut {

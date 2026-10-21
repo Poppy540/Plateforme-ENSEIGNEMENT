@@ -1,5 +1,11 @@
 import { expect, test } from "@playwright/test";
-import { executerSql, inscrireEleveActif, seConnecter, validerChapitresFictifs } from "./outils";
+import {
+  executerSql,
+  identifiantSimule,
+  inscrireEleveActif,
+  seConnecter,
+  validerChapitresFictifs,
+} from "./outils";
 
 test.beforeAll(async () => {
   // 3 des 7 chapitres de l'unité pilote sont validés ; les autres restent « à valider » et invisibles.
@@ -32,9 +38,9 @@ test("la progression de l'élève apparaît dans le catalogue", async ({ page })
   await executerSql(
     `insert into progression (eleve_id, chapitre_id, statut)
      select e.id, c.id, 'termine' from eleves e, chapitres c join unites u on u.id = c.unite_id
-     where u.code = 'ga-3e-mathematiques' and c.ordre = 1
-       and e.id = (select id from profils where prenom_ou_pseudo = 'Élève fictif' order by cree_le limit 1)
+     where u.code = 'ga-3e-mathematiques' and c.ordre = 1 and e.id = $1
      on conflict (eleve_id, chapitre_id) do update set statut = 'termine'`,
+    [identifiantSimule("+999 000 001 01")],
   );
   await page.goto("/catalogue");
   await expect(page.getByRole("link", { name: /Mathématiques/ })).toContainText(

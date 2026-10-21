@@ -36,7 +36,7 @@ export default async function PageRecrutement({
       {candidats.length === 0 ? (
         <p role="status">Aucun candidat.</p>
       ) : (
-        <div className="tableau-defilant">
+        <div className="tableau-defilant" role="region" aria-label="Candidats" tabIndex={0}>
           <table>
             <thead>
               <tr>
