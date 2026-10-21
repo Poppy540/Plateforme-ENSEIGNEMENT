@@ -58,6 +58,8 @@
 
 ## État d'avancement
 
+- 2026-10-21 : Jalon 6, étape 7 faite — bilan `docs/bilans/jalon-6.md` (toutes les étapes faites sauf la 2, passages réels) ; 7 captures `docs/demo/jalon-6/` (`tests/demo/jalon-6.spec.ts`). Batteries d'agents en simulation inchangées. Tests : 217 unitaires, 111 scénarios de base, 77 de bout en bout.
+
 - 2026-10-21 : Jalon 6, étape 6 faite — `docs/pilote/README.md` : point sur les 12 conditions (prêt dans la plateforme / reste et qui ; aucune remplie) ; `docs/pilote/repetition.md` (déroulé réel en 12 lignes, sur le site déployé, avec les numéros de l'équipe) et `tests/bout-en-bout/repetition-pilote.spec.ts` (répétition automatique, unité 6e : référent → chapitre et quiz validés, inscription avec accord parental, cours, quiz, plan, détresse → alerte de veille → traitement, fermeture de l'accès et de toutes les sessions, réouverture, pilotage sans identifiant) ; `docs/pilote/guide-referent.md` ; `retour-experience.md` et `fiche-information.md` mis à jour (compteur, questionnaire). Piège : la file humaine contient les détresses des autres tests, viser le signalement par son identifiant. Tests : 217 unitaires, 111 scénarios de base, 77 de bout en bout.
 
 - 2026-10-21 : Jalon 6, étape 5 faite (ADR 0052, migration 0033, tests Q01-Q04, `mesures-pilote.spec.ts`) — `visionnages_jour` (chapitre × jour : vidéos démarrées/terminées, leçons ouvertes ; quota « visionnage »), `POST /api/mesures/visionnage`, `LecteurVideo` (prop `chapitreId`, absent côté référent) et `LeconDepliable` ; questionnaire `questionnaire.yaml` (Gabon : 5 questions élèves + 4 parents, **à valider**, donc inactif ; zz : fictif validé), tables `questionnaires`, `reponses_questionnaire` (sans compte, semaine), `questionnaires_remplis` (empreinte), version répondue figée ; `/espace/questionnaire`, formulaire sur `/parent/rapport` ; pilotage : visionnage et résultats masqués (<5, groupes sous 5 absents), exports `?type=visionnages|questionnaire`. Test `referent.spec.ts` (chapitre modifié pendant la relecture) rendu robuste : il attend la page du chapitre avant de modifier la base. Tests : 217 unitaires, 111 scénarios de base, 72 de bout en bout.
@@ -138,6 +140,6 @@
 
 ## Prochaine étape
 
-Jalon 6, étape 7 (captures de démonstration et bilan du Jalon 6), seulement après accord du propriétaire. Questions du questionnaire (`referentiels/gabon/questionnaire.yaml`) à faire valider par le propriétaire. Étape 2 (passages réels) dès la clé API et l'accord sur le coût. À fixer par le propriétaire : `SEL_OPPOSITION` en production ; D2 et durées D3 avec le juriste.
+Jalon 6 fait en simulation, sauf l'étape 2 (passages réels : mini-essais dès la clé API et l'accord sur le coût). Attendre les décisions du propriétaire (bilan du Jalon 6, §6 : questionnaire, clé API, `SEL_OPPOSITION`, juriste, référents, fournisseurs) ; proposer ensuite la suite sans rien commencer avant validation.
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).
