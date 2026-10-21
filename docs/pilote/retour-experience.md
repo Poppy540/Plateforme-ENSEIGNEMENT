@@ -23,28 +23,24 @@
 | Signalements par motif et source, délai de traitement | `signalements` (`cree_le`, `traite_le`) |
 | Tickets par catégorie, délai de résolution | `tickets_support` |
 | Coût des agents par jour (tous les appels au modèle), tâches échouées, suspensions | `consommation_agents`, `taches`, `etat_agents`, `journal_audit` |
+| Vidéos démarrées et vues jusqu'au bout, leçons écrites ouvertes, par chapitre et par jour (sans élève) | `visionnages_jour` (ADR 0052) |
 
 Ces indicateurs sont réunis sur `/administration/exploitation` et dans l'export CSV agrégé, qui applique déjà le seuil de diffusion ci-dessous (ADR 0046).
-
-**Non mesuré aujourd'hui** : visionnage des vidéos (aucune trace de lecture). À ajouter avant le pilote si le propriétaire le souhaite (compteur agrégé par vidéo, sans suivi individuel).
 
 Seuil de diffusion : aucun chiffre n'est publié pour un groupe de **moins de 5 élèves** (même règle que les statistiques de quiz).
 
 ## Questionnaires (anonymes, facultatifs)
 
-**Élèves — début et fin** (5 minutes, échelle de 1 à 5 sauf mention) :
-1. Sur quel appareil et avec quelle connexion utilises-tu la plateforme ? (choix)
-2. Les vidéos se chargent-elles correctement ?
-3. Les explications t'aident-elles à comprendre ?
-4. Le professeur IA répond-il à tes questions de façon claire ? T'a-t-il déjà semblé se tromper ? (oui / non, exemple facultatif sans donnée personnelle)
-5. Te sens-tu à l'aise avec le fait que le professeur est une IA ?
-6. Qu'est-ce qui t'a manqué ? (texte libre court)
-
-**Parents volontaires — fin** : compréhension de la fiche d'information, utilité des rapports (s'ils les ont reçus), confiance, remarques.
+**Élèves et parents — dans la plateforme** (ADR 0052) : les questions sont dans `referentiels/gabon/questionnaire.yaml`, **à valider par le propriétaire** ; d'ici là, le questionnaire n'est montré à personne.
+- Élèves : 5 questions, depuis leur espace.
+- Parents : 4 questions, depuis le lien d'un rapport.
+- Réponses fermées seulement (échelle de 1 à 5 ou choix), **sans texte libre** : aucune donnée personnelle ne peut y entrer.
+- Une réponse par personne, jamais rattachée à un compte.
+- Résultats et export CSV sur `/administration/exploitation`, à partir de 5 réponses.
 
 **Enseignant de la classe et référent — fin** (entretien de 30 minutes) : qualité et exactitude des contenus, effet observé en classe, charge de validation, signalements reçus, conditions pour continuer.
 
-Les réponses libres sont relues avant analyse pour retirer toute donnée personnelle.
+Les notes d'entretien sont relues avant analyse pour retirer toute donnée personnelle.
 
 ## Réunion de bilan
 

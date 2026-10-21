@@ -40,5 +40,6 @@ Les messages de l'élève au professeur IA sont traités par **un fournisseur d'
 ## Pendant l'essai
 
 - Durée : du [date] au [date].
-- À la fin, un court questionnaire **facultatif et anonyme** vous sera proposé, ainsi qu'à votre enfant.
+- Un court questionnaire **facultatif et anonyme** vous sera proposé, ainsi qu'à votre enfant. Les réponses se font en cochant des cases, sans texte libre, et ne sont jamais rattachées à un compte.
+- Pour savoir si les cours sont suivis, la plateforme compte, chapitre par chapitre, les vidéos regardées et les leçons écrites ouvertes. Ce sont des totaux, sans le nom ni le compte de personne.
 - Contact : [nom ou fonction, téléphone, email].

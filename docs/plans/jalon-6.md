@@ -1,6 +1,6 @@
 # Plan du Jalon 6 — sécurité finale, contenus et préparation du pilote
 
-**Statut** : validé par le propriétaire le 2026-10-20 (décisions ci-dessous, ADR 0048). Étape 1 faite (décisions D1 à D9 de la revue de sécurité, ADR 0049). Étape 3 faite (Sciences 3e, liens entre familles, ADR 0050). Étape 4 faite (leçons écrites, ADR 0051). Étape 5 faite (compteur de lecture agrégé, questionnaire anonyme à valider, ADR 0052).
+**Statut** : validé par le propriétaire le 2026-10-20 (décisions ci-dessous, ADR 0048). Étape 1 faite (décisions D1 à D9 de la revue de sécurité, ADR 0049). Étape 3 faite (Sciences 3e, liens entre familles, ADR 0050). Étape 4 faite (leçons écrites, ADR 0051). Étape 5 faite (compteur de lecture agrégé, questionnaire anonyme à valider, ADR 0052). Étape 6 faite (état des 12 conditions, répétition automatique et déroulé réel, guide du référent ; `docs/pilote/`).
 
 **Objectif** : rendre la plateforme prête pour le pilote, pour tout ce qui ne dépend que de Claude Code :
 - les décisions de la revue de sécurité (D1 à D9) ;
