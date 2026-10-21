@@ -47,8 +47,8 @@ Ce dossier dit **comment** mettre la plateforme en service. Le pilote reste soum
    - sessions révocables, plus courtes pour les référents (7 jours) et l'administration (12 heures) ;
    - en-têtes de sécurité, politique de contenu à nonce ;
    - limites de connexion et quotas en base ;
-   - journaux sans contenu ni identifiant (ADR 0043).
-4. **Surveillance** : `GET /api/sante` répond 200 si l'application et la base répondent, 503 sinon. Il ne donne ni détail ni donnée. À brancher sur une surveillance de disponibilité (alerte au propriétaire).
+   - journaux sans contenu ni identifiant (ADR 0043), toute la console du serveur nettoyée, erreurs de requête suivies (ADR 0056).
+4. **Surveillance** : `GET /api/sante` répond 200 si l'application et la base répondent, 503 sinon. Il ne donne ni détail ni donnée. À brancher sur une surveillance de disponibilité (alerte au propriétaire). Pour recevoir les erreurs ailleurs que dans les journaux de l'hébergeur : `JOURNAL_HTTP_URL` (https) et `JOURNAL_HTTP_JETON` (ADR 0056).
 
 ## 3 bis. Vidéo réelle (quand les fournisseurs sont choisis)
 

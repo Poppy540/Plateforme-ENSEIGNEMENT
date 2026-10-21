@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { journaliser } from "@/lib/journal";
 import { fournisseurAuthentification } from "@/lib/serveur/authentification/fournisseur";
 import { roleCompte } from "@/lib/serveur/referent";
 import { fermerSession, fermerToutesMesSessions, utilisateurConnecte } from "@/lib/serveur/session";
@@ -28,7 +29,7 @@ export async function supprimerMonCompte(
     };
   }
   await (await fournisseurAuthentification()).supprimerCompte(utilisateur);
-  console.info(JSON.stringify({ evenement: "compte_supprime_par_son_titulaire" }));
+  await journaliser("info", "compte_supprime_par_son_titulaire");
   await fermerSession();
   redirect("/?compte=supprime");
 }

@@ -95,6 +95,16 @@ export function verifierConfiguration(env: Env): Constat[] {
     );
   }
 
+  // Journal des erreurs (ADR 0056) : service de surveillance facultatif, mais complet s'il est déclaré.
+  if (valeur(env, "JOURNAL_HTTP_URL")) {
+    exiger(
+      "JOURNAL_HTTP_URL",
+      valeur(env, "JOURNAL_HTTP_URL").startsWith("https://"),
+      "adresse https du service de surveillance",
+    );
+    present("JOURNAL_HTTP_JETON", "jeton du service de surveillance");
+  }
+
   const video = valeur(env, "MODE_VIDEO") || "aucun";
   exiger(
     "MODE_VIDEO",

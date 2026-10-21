@@ -1,4 +1,5 @@
 import "server-only";
+import { journaliser } from "@/lib/journal";
 import type { Modele } from "@/lib/agents/modele";
 import { controlerCout } from "@/lib/orchestrateur/regles";
 import { coutUSD } from "@/lib/tests-agents/cout";
@@ -64,7 +65,9 @@ export async function noterAppel(agent: AgentFacture, modele: string, usage: Usa
     });
     if (suspendu) await alerterVeilleSansAttendre();
   } catch (erreur) {
-    console.error(`Registre des consommations indisponible (${(erreur as Error).name}).`);
+    await journaliser("erreur", "registre_consommations_indisponible", {
+      type: (erreur as Error).name,
+    });
   }
 }
 

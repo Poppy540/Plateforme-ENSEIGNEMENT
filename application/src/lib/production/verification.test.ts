@@ -99,6 +99,19 @@ describe("vidéo réelle (ADR 0055)", () => {
   });
 });
 
+describe("journal des erreurs (ADR 0056)", () => {
+  it("service de surveillance facultatif, en https et avec un jeton s'il est déclaré", () => {
+    expect(verifierConfiguration(COMPLETE).some((c) => c.point === "JOURNAL_HTTP_URL")).toBe(false);
+    const enEchec = verifierConfiguration({
+      ...COMPLETE,
+      JOURNAL_HTTP_URL: "http://surveillance.exemple",
+    })
+      .filter((c) => !c.ok)
+      .map((c) => c.point);
+    expect(enEchec).toEqual(["JOURNAL_HTTP_URL", "JOURNAL_HTTP_JETON"]);
+  });
+});
+
 describe("API de données de Supabase (D1)", () => {
   const reponse = (statut: number, corps: unknown) =>
     (async () => new Response(JSON.stringify(corps), { status: statut })) as typeof fetch;

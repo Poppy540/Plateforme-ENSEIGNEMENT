@@ -1,4 +1,5 @@
 import "server-only";
+import { journaliser } from "@/lib/journal";
 import type { BetaMessageParam } from "@anthropic-ai/sdk/resources/beta/messages/messages";
 import {
   composerPrompt,
@@ -228,22 +229,16 @@ export async function poserQuestion(
             ),
           );
         }
-        console.info(
-          JSON.stringify({
-            evenement: "reponse_professeur",
-            unite: contexte.uniteCode,
-            arret: sortie.arret,
-            outils: sortie.appels.map((a) => a.nom),
-          }),
-        );
+        await journaliser("info", "reponse_professeur", {
+          unite: contexte.uniteCode,
+          arret: sortie.arret,
+          outils: sortie.appels.map((a) => a.nom),
+        });
       } catch (erreur) {
-        console.error(
-          JSON.stringify({
-            evenement: "erreur_professeur",
-            unite: contexte.uniteCode,
-            type: (erreur as Error).name,
-          }),
-        );
+        await journaliser("erreur", "erreur_professeur", {
+          unite: contexte.uniteCode,
+          type: (erreur as Error).name,
+        });
         controleur.enqueue(
           encodeur.encode(
             "\n\nLe professeur n'est pas disponible pour le moment. Réessaie plus tard.",

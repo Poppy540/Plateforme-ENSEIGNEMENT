@@ -1,4 +1,5 @@
 import "server-only";
+import { journaliser } from "@/lib/journal";
 import { avecServiceMessagerie } from "./base";
 import { simulationAutorisee, urlPublique } from "./configuration";
 import { envoyerMessage } from "./messagerie";
@@ -59,7 +60,7 @@ export async function alerterVeille(): Promise<number> {
   const contacts = contactsVeille();
   if (contacts.length === 0) {
     // Les alertes restent visibles dans /administration ; l'absence de contacts est une erreur de configuration.
-    console.error("Alerte de veille : aucun contact configuré (CONTACTS_VEILLE).");
+    await journaliser("erreur", "veille_sans_contact", { variable: "CONTACTS_VEILLE" });
     return 0;
   }
   let adresse = "/administration";
@@ -81,6 +82,6 @@ export async function alerterVeilleSansAttendre(): Promise<void> {
   try {
     await alerterVeille();
   } catch (erreur) {
-    console.error(`Alerte de veille : envoi impossible (${(erreur as Error).name}).`);
+    await journaliser("erreur", "veille_envoi_impossible", { type: (erreur as Error).name });
   }
 }
