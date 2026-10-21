@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { exigerEleveActif } from "@/lib/serveur/acces-eleve";
 import { estSimulee, sourcesLecture } from "@/lib/production-video/lecture";
+import { sousDomaineStream } from "@/lib/serveur/production-video";
 import { quizPourEleve } from "@/lib/serveur/evaluateur";
 import { videoDuChapitre } from "@/lib/serveur/videos";
 import { LecteurVideo } from "../../../composants/lecteur-video";
@@ -30,7 +31,9 @@ export default async function PageChapitre({ params }: PageProps<"/catalogue/[un
         <LecteurVideo
           chapitreId={contexte.chapitreId}
           videoId={video.id}
-          sources={sourcesLecture(video.reference, video.versions)}
+          sources={sourcesLecture(video.reference, video.versions, {
+            sousDomaineStream: sousDomaineStream(),
+          })}
           dureeSecondes={video.dureeSecondes}
           sousTitres={video.aDesSousTitres}
           simulation={estSimulee(video.reference)}

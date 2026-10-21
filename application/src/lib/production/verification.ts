@@ -96,7 +96,33 @@ export function verifierConfiguration(env: Env): Constat[] {
   }
 
   const video = valeur(env, "MODE_VIDEO") || "aucun";
-  exiger("MODE_VIDEO", video !== "simulation", "jamais « simulation » en production");
+  exiger(
+    "MODE_VIDEO",
+    ["aucun", "reel"].includes(video),
+    "« aucun » ou « reel » (jamais « simulation » en production)",
+  );
+  if (video === "reel") {
+    // Vidéo réelle (ADR 0055) : passerelle d'avatar et Cloudflare Stream.
+    ["AVATAR_HTTP_JETON", "CLOUDFLARE_COMPTE", "CLOUDFLARE_JETON_STREAM"].forEach((n) =>
+      present(n),
+    );
+    exiger(
+      "AVATAR_HTTP_URL",
+      valeur(env, "AVATAR_HTTP_URL").startsWith("https://"),
+      "adresse https de la passerelle d'avatar",
+    );
+    const tarif = Number(valeur(env, "AVATAR_COUT_MINUTE_USD"));
+    exiger(
+      "AVATAR_COUT_MINUTE_USD",
+      Number.isFinite(tarif) && tarif > 0,
+      "tarif par minute annoncé par le fournisseur d'avatar",
+    );
+    exiger(
+      "STREAM_SOUS_DOMAINE",
+      /^customer-[a-z0-9]+\.cloudflarestream\.com$/.test(valeur(env, "STREAM_SOUS_DOMAINE")),
+      "sous-domaine de lecture « customer-<code>.cloudflarestream.com »",
+    );
+  }
   if (video !== "aucun") {
     const budget = Number(valeur(env, "BUDGET_VIDEO_USD"));
     exiger(

@@ -9,6 +9,7 @@ Ce dossier dit **comment** mettre la plateforme en service. Le pilote reste soum
 | Décision | Proposition | Référence |
 |---|---|---|
 | Hébergement de l'application | Vercel Pro (le plus simple) ou Cloudflare Workers (gratuit au départ, à essayer : la connexion Postgres directe y demande un relais) | `docs/fournisseurs-2026-10.md` §5 |
+| Vidéo | Cloudflare Stream pour l'hébergement (stack validée) ; fournisseur d'avatar **synthétique** à choisir, branché par la passerelle du §3 bis ; budget par vidéo `BUDGET_VIDEO_USD` | ADR 0025, 0055 |
 | SMS (codes de connexion, parents, veille) | Twilio au démarrage (seul fournisseur relevé pour le Gabon), puis un agrégateur local par la passerelle HTTP | §4 ; ADR 0045 |
 | Email | Brevo (ou un autre, par la passerelle HTTP) | ADR 0045 |
 | Région des données (Supabase) | À fixer avec le juriste (transferts hors du Gabon) | Revue de sécurité D3 |
@@ -38,7 +39,8 @@ Ce dossier dit **comment** mettre la plateforme en service. Le pilote reste soum
    - une adresse non https ;
    - un secret recopié du modèle ;
    - un fournisseur de messages absent ;
-   - une vidéo simulée.
+   - une vidéo simulée ;
+   - une vidéo réelle (`MODE_VIDEO=reel`) sans passerelle d'avatar en https, sans tarif, sans compte ou jeton Stream, sans sous-domaine de lecture.
 3. **Sécurité déjà en place** :
    - la simulation n'existe que sur un poste local ;
    - cookies `Secure` ;
@@ -47,6 +49,26 @@ Ce dossier dit **comment** mettre la plateforme en service. Le pilote reste soum
    - limites de connexion et quotas en base ;
    - journaux sans contenu ni identifiant (ADR 0043).
 4. **Surveillance** : `GET /api/sante` répond 200 si l'application et la base répondent, 503 sinon. Il ne donne ni détail ni donnée. À brancher sur une surveillance de disponibilité (alerte au propriétaire).
+
+## 3 bis. Vidéo réelle (quand les fournisseurs sont choisis)
+
+1. **Cloudflare Stream** :
+   - créer un jeton d'API limité à « Stream : modifier » sur le compte ;
+   - renseigner `CLOUDFLARE_COMPTE`, `CLOUDFLARE_JETON_STREAM` et `STREAM_SOUS_DOMAINE` (sous-domaine de lecture `customer-<code>.cloudflarestream.com`, visible dans le tableau de bord Stream).
+   - Les vidéos sont lisibles sans adresse signée : ce sont des cours publiés, sans donnée d'élève.
+2. **Fournisseur d'avatar** : avatar et voix **de synthèse** du catalogue, jamais une personne réelle sans autorisation enregistrée. La plateforme lui parle par une **passerelle HTTPS** (`AVATAR_HTTP_URL`, jeton `AVATAR_HTTP_JETON`). Un petit service, chez le fournisseur ou écrit pour lui, doit offrir :
+
+   | Requête | Corps | Réponse |
+   |---|---|---|
+   | `POST /videos` | `{texte, avatar, voix, langue, indications}` | `{id}` |
+   | `GET /videos/{id}` | — | `{statut: en_cours \| pret \| echec, url (https), duree_secondes, cout_usd}` |
+   | `POST /transcriptions` | `{url_video, langue}` | `{texte, cout_usd}` |
+   | `POST /assemblages` | `{videos: [url, …]}` | `{id}` |
+   | `GET /assemblages/{id}` | — | `{statut, url, duree_secondes, cout_usd}` |
+
+   `AVATAR_COUT_MINUTE_USD` : tarif annoncé, utilisé pour estimer chaque segment **avant** la dépense ; le budget par vidéo arrête la production dès qu'il serait dépassé.
+3. `MODE_VIDEO=reel`, puis `pnpm verifier:production`.
+4. Essai : un script de test validé, une vidéo produite « à relire », regardée en entier par le référent, avec la version « économie de données ». Le coût est noté dans le journal de production.
 
 ## 4. Tâches planifiées
 

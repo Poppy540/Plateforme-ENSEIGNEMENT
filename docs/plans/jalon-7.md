@@ -1,6 +1,6 @@
 # Plan du Jalon 7 — élèves d'abord, vidéo prête à brancher, Français 3e
 
-**Statut** : validé par le propriétaire le 2026-10-21 (décisions ci-dessous, ADR 0053). Étape 1 faite (accessibilité, ADR 0054).
+**Statut** : validé par le propriétaire le 2026-10-21 (décisions ci-dessous, ADR 0053). Étape 1 faite (accessibilité, ADR 0054). Étape 2 faite (vidéo prête à brancher, ADR 0055).
 
 **Objectif** : le pilote attend surtout des décisions et des personnes : juriste, référents, fournisseurs, clé API. En attendant, ce jalon :
 - renforce ce que les élèves vivront vraiment (accessibilité, téléphones modestes) ;

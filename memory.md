@@ -59,6 +59,8 @@
 
 ## État d'avancement
 
+- 2026-10-21 : Jalon 7, étape 2 faite (ADR 0055) — `src/lib/production-video/fournisseurs.ts` : `servicesReels` (passerelle d'avatar HTTPS + jeton : /videos, /transcriptions, /assemblages, tâches interrogées ; Cloudflare Stream : /stream/copy, attente `readyToStream`, /downloads), erreurs `ErreurFournisseurVideo` sans secret ; `MODE_VIDEO=reel` (`servicesVideo`), `sousDomaineStream()` ; `sourcesLecture(ref, versions, {sousDomaineStream})` : HLS `clientBandwidthHint` + MP4 de secours ; `verifier:production` étendu ; contrat de la passerelle dans `docs/production/README.md` §3 bis ; tests de contrat sans réseau et chaîne complète. Rien de souscrit, aucun appel réel. Tests : 226 unitaires, 111 scénarios de base, 85 de bout en bout.
+
 - 2026-10-21 : Jalon 7, étape 1 faite (ADR 0054, `accessibilite.spec.ts`) — `@axe-core/playwright` 4.13.0 épinglé (4.14.0 écartée : moins de deux semaines) ; audit WCAG 2.0/2.1/2.2 A+AA et bonnes pratiques de toutes les pages des 5 publics (thème sombre compris), aucune violation admise (`expect.soft`, toutes les pages listées) ; reflow 320 px et texte à 200 %, zones à toucher ≥ 44 px, connexion au clavier. Corrigé : tableaux défilants (role region, aria-label, tabIndex), `:focus-visible`, `min-height` 2,75rem, cases agrandies, `prefers-reduced-motion`, `overflow-wrap: anywhere`, grilles et listes de chapitres repliables, `autoFocus` du champ de code. Test du catalogue rendu robuste (élève visé par son identifiant, plus par « le premier Élève fictif »). Tests : 217 unitaires, 111 scénarios de base, 85 de bout en bout.
 
 - 2026-10-21 : Jalon 7, étape 0 faite — plan `docs/plans/jalon-7.md` et ADR 0053 validés. **Rien d'autre n'est commencé.**
@@ -145,6 +147,6 @@
 
 ## Prochaine étape
 
-Jalon 7, étape 2 (vidéo prête à brancher : Cloudflare Stream et avatar générique), seulement après accord du propriétaire. Étape 5 (passages réels) dès la clé API et l'accord sur le coût. Toujours attendus du propriétaire (bilan du Jalon 6, §6) : questionnaire, clé API, `SEL_OPPOSITION`, juriste, référents, fournisseurs.
+Jalon 7, étape 3 (journal d'erreurs sans donnée personnelle), seulement après accord du propriétaire. Étape 5 (passages réels) dès la clé API et l'accord sur le coût. Toujours attendus du propriétaire (bilan du Jalon 6, §6) : questionnaire, clé API, `SEL_OPPOSITION`, juriste, référents, fournisseurs.
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).

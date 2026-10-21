@@ -67,6 +67,38 @@ describe("vérification de la configuration de production", () => {
   });
 });
 
+describe("vidéo réelle (ADR 0055)", () => {
+  const REEL = {
+    ...COMPLETE,
+    MODE_VIDEO: "reel",
+    BUDGET_VIDEO_USD: "15",
+    AVATAR_HTTP_URL: "https://avatar.exemple/v1",
+    AVATAR_HTTP_JETON: "jeton-avatar-fictif",
+    AVATAR_COUT_MINUTE_USD: "1.2",
+    CLOUDFLARE_COMPTE: "compte-fictif",
+    CLOUDFLARE_JETON_STREAM: "jeton-stream-fictif",
+    STREAM_SOUS_DOMAINE: "customer-abc123.cloudflarestream.com",
+  };
+
+  it("accepte une configuration complète, sans afficher de valeur", () => {
+    const constats = verifierConfiguration(REEL);
+    expect(constats.filter((c) => !c.ok)).toEqual([]);
+    expect(JSON.stringify(constats)).not.toContain("jeton-stream-fictif");
+  });
+
+  it("signale ce qui manque", () => {
+    const enEchec = verifierConfiguration({
+      ...REEL,
+      AVATAR_HTTP_URL: "http://avatar.exemple",
+      CLOUDFLARE_JETON_STREAM: "",
+      STREAM_SOUS_DOMAINE: "evil.example",
+    })
+      .filter((c) => !c.ok)
+      .map((c) => c.point);
+    expect(enEchec).toEqual(["CLOUDFLARE_JETON_STREAM", "AVATAR_HTTP_URL", "STREAM_SOUS_DOMAINE"]);
+  });
+});
+
 describe("API de données de Supabase (D1)", () => {
   const reponse = (statut: number, corps: unknown) =>
     (async () => new Response(JSON.stringify(corps), { status: statut })) as typeof fetch;

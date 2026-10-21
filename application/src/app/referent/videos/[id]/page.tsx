@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { estSimulee, sourcesLecture } from "@/lib/production-video/lecture";
+import { sousDomaineStream } from "@/lib/serveur/production-video";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { formaterDuree, formaterUSD } from "@/lib/format";
 import { videoPourReferent } from "@/lib/serveur/videos";
@@ -54,7 +55,9 @@ export default async function PageVideoReferent({ params }: PageProps<"/referent
 
       <LecteurVideo
         videoId={v.id}
-        sources={sourcesLecture(v.reference, r.fichiers?.versions ?? [])}
+        sources={sourcesLecture(v.reference, r.fichiers?.versions ?? [], {
+          sousDomaineStream: sousDomaineStream(),
+        })}
         dureeSecondes={v.dureeSecondes}
         sousTitres={!!r.sousTitresVtt}
         simulation={estSimulee(v.reference)}

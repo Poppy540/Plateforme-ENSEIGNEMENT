@@ -1,6 +1,6 @@
 // Sources de lecture d'une vidéo hébergée, pour un lecteur adapté au faible débit (ADR 0026) :
-// versions triées par débit croissant, la plus légère par défaut. Seules les vidéos simulées sont lisibles
-// tant qu'aucun hébergeur n'est branché.
+// versions triées par débit croissant, la plus légère par défaut. Vidéos simulées (développement) et vidéos
+// Cloudflare Stream (ADR 0055) : HLS adaptatif plafonné au débit de la version choisie, MP4 en secours.
 import type { VersionHebergee } from "./services.ts";
 
 export interface SourceLecture {
@@ -20,17 +20,40 @@ export function estSimulee(reference: string): boolean {
   return reference.startsWith("simulation://");
 }
 
-/** Sources lisibles, de la plus légère à la plus lourde ; null si l'hébergeur n'est pas pris en charge. */
+const STREAM = /^cloudflare-stream:\/\/([0-9a-f]{32})$/;
+/** Sous-domaine de lecture propre au compte Stream (« customer-<code>.cloudflarestream.com »). */
+export const SOUS_DOMAINE_STREAM = /^customer-[a-z0-9]+\.cloudflarestream\.com$/;
+
+/**
+ * Sources lisibles, de la plus légère à la plus lourde ; null si l'hébergeur n'est pas pris en charge (ou, pour
+ * Stream, si le sous-domaine de lecture n'est pas configuré).
+ */
 export function sourcesLecture(
   reference: string,
   versions: VersionHebergee[],
+  options: { sousDomaineStream?: string | null } = {},
 ): SourceLecture[] | null {
-  if (!estSimulee(reference)) return null;
   const triees = [...versions].sort((a, b) => a.debitKbps - b.debitKbps);
+  if (estSimulee(reference))
+    return triees.map((v) => ({
+      qualite: v.qualite,
+      debitKbps: v.debitKbps,
+      fichiers: FICHIERS_SIMULES,
+    }));
+  const uid = STREAM.exec(reference)?.[1];
+  const domaine = options.sousDomaineStream;
+  if (!uid || !domaine || !SOUS_DOMAINE_STREAM.test(domaine)) return null;
   return triees.map((v) => ({
     qualite: v.qualite,
     debitKbps: v.debitKbps,
-    fichiers: FICHIERS_SIMULES,
+    fichiers: [
+      {
+        // Plafond de débit indiqué au lecteur (Mbit/s) : la version « économie de données » reste légère.
+        url: `https://${domaine}/${uid}/manifest/video.m3u8?clientBandwidthHint=${v.debitKbps / 1000}`,
+        type: "application/x-mpegURL",
+      },
+      { url: `https://${domaine}/${uid}/downloads/default.mp4`, type: "video/mp4" },
+    ],
   }));
 }
 

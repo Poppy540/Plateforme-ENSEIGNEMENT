@@ -4,6 +4,8 @@ import { lireSortie } from "@/lib/agents/scenariste/script";
 import { ErreurFiche, lireFicheAvatar } from "@/lib/production-video/fiche";
 import { produireVideo, type RapportProduction } from "@/lib/production-video/chaine";
 import type { FicheAvatar, ServicesVideo } from "@/lib/production-video/services";
+import { servicesReels } from "@/lib/production-video/fournisseurs";
+import { SOUS_DOMAINE_STREAM } from "@/lib/production-video/lecture";
 import { servicesSimules } from "@/lib/production-video/simulation";
 import { avecAgentProductionVideo, avecUtilisateur } from "./base";
 import { simulationAutorisee } from "./configuration";
@@ -14,7 +16,16 @@ import { simulationAutorisee } from "./configuration";
 
 const UUID = /^[0-9a-f-]{36}$/;
 
-/** Services vidéo : simulés en développement et test ; aucun fournisseur réel n'est encore branché. */
+function lire(nom: string): string {
+  const v = process.env[nom]?.trim();
+  if (!v) throw new ErreurProduction(`Production vidéo : ${nom} manquante.`);
+  return v;
+}
+
+/**
+ * Services vidéo (MODE_VIDEO) : « simulation » en développement et test ; « reel » = passerelle d'avatar et
+ * Cloudflare Stream (ADR 0055), une fois les fournisseurs choisis par le propriétaire ; « aucun » par défaut.
+ */
 export function servicesVideo(): ServicesVideo {
   const mode = process.env.MODE_VIDEO ?? "aucun";
   if (mode === "simulation") {
@@ -22,9 +33,27 @@ export function servicesVideo(): ServicesVideo {
       throw new Error("MODE_VIDEO=simulation est interdit hors développement et test.");
     return servicesSimules();
   }
+  if (mode === "reel") {
+    const url = lire("AVATAR_HTTP_URL");
+    const coutMinuteUSD = Number(lire("AVATAR_COUT_MINUTE_USD"));
+    if (!url.startsWith("https://"))
+      throw new ErreurProduction("AVATAR_HTTP_URL doit être une adresse https.");
+    if (!Number.isFinite(coutMinuteUSD) || coutMinuteUSD <= 0)
+      throw new ErreurProduction("AVATAR_COUT_MINUTE_USD invalide.");
+    return servicesReels(
+      { url, jeton: lire("AVATAR_HTTP_JETON"), coutMinuteUSD },
+      { compte: lire("CLOUDFLARE_COMPTE"), jeton: lire("CLOUDFLARE_JETON_STREAM") },
+    );
+  }
   throw new ErreurProduction(
     "Aucun fournisseur vidéo n'est encore choisi : la production réelle n'est pas disponible.",
   );
+}
+
+/** Sous-domaine de lecture Stream (« customer-<code>.cloudflarestream.com »), ou null s'il n'est pas configuré. */
+export function sousDomaineStream(): string | null {
+  const v = process.env.STREAM_SOUS_DOMAINE?.trim() ?? "";
+  return SOUS_DOMAINE_STREAM.test(v) ? v : null;
 }
 
 /** Budget par vidéo (USD) : fixé par le propriétaire ; en simulation seulement, une valeur par défaut. */
