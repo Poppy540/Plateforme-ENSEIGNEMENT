@@ -16,6 +16,7 @@ Pays pilote : Gabon. Unité pilote : Mathématiques 3e (`ga-3e-mathematiques`).
 | [criteres-arret.md](criteres-arret.md) | Propriétaire, équipe | Quand suspendre ou arrêter le pilote |
 | [repetition.md](repetition.md) | Propriétaire, équipe | Répétition complète avant le pilote : déroulé, résultats attendus |
 | [guide-referent.md](guide-referent.md) | Enseignant-référent | Utiliser l'espace référent : valider, rejeter, publier, signaler |
+| [../juridique/dossier-juriste.md](../juridique/dossier-juriste.md) | Juriste | Registre des traitements, sous-traitants, risques pour les mineurs, 18 questions (condition 1) |
 
 ## Conditions préalables (toutes obligatoires)
 
@@ -23,7 +24,7 @@ Le pilote ne commence qu'une fois chaque ligne cochée par le propriétaire, ave
 
 | # | Condition | Preuve | Prêt dans la plateforme | Reste (qui) | État |
 |---|---|---|---|---|---|
-| 1 | **Avis écrit du juriste au Gabon** : protection des données, consentement des mineurs, âge de la majorité, durées de conservation (et D2, D3 de la revue de sécurité), IA hors du pays, textes de ce dossier, mention d'information du questionnaire | Avis daté, versé au dossier | Durées et résumés réglables dans `pays.yaml` ; purge étendue prête, sans effacement tant que les durées sont vides (ADR 0049) | Trouver le juriste, lui transmettre ce dossier et `docs/securite/revue-jalon-5.md` (propriétaire) | ☐ |
+| 1 | **Avis écrit du juriste au Gabon** : protection des données, consentement des mineurs, âge de la majorité, durées de conservation (et D2, D3 de la revue de sécurité), IA hors du pays, textes de ce dossier, mention d'information du questionnaire | Avis daté, versé au dossier | Durées et résumés réglables dans `pays.yaml` ; purge étendue prête, sans effacement tant que les durées sont vides (ADR 0049) | Trouver le juriste, lui transmettre le [dossier pour le juriste](../juridique/dossier-juriste.md), qui renvoie aux autres pièces (propriétaire) | ☐ |
 | 2 | **Accord de l'établissement** (chef d'établissement) et, si le juriste l'exige, de l'autorité académique | Lettre ou convention signée | Fiche d'information et consentements rédigés | Choisir l'établissement, signer (propriétaire) | ☐ |
 | 3 | **Enseignant-référent validé** pour Mathématiques 3e (invitation activée) | Compte référent actif | Invitation (`pnpm referent:invitation`), activation, [guide du référent](guide-referent.md) | Recruter le référent (propriétaire, avec l'agent Recruteur après l'avis du juriste) | ☐ |
 | 4 | **Premier contenu validé** : 3 à 5 chapitres avec vidéo, quiz et script validés et publiés par le référent | Statuts « publié » dans l'espace référent | Validation des chapitres, scripts, quiz, vidéos, liens de prérequis ; leçons écrites tirées des scripts validés (lisibles sans vidéo, ADR 0051) | Programmes IPN, travail du référent ; fournisseur vidéo, sinon le pilote peut s'appuyer sur les leçons écrites (décision du propriétaire) | ☐ |
