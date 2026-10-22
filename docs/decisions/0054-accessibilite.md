@@ -23,7 +23,7 @@ Les élèves du pilote utilisent surtout des smartphones, parfois anciens, avec 
    - le focus est visible partout (contour de 3 px) ;
    - boutons et champs font au moins 44 px de haut, les cases à cocher sont agrandies ;
    - aucune animation si le téléphone les refuse ;
-   - les mots longs passent à la ligne et les listes de chapitres et de cartes se replient : plus de débordement avec le texte agrandi ;
+   - les listes de chapitres et de cartes se replient, et un mot plus large que la ligne est coupé (`overflow-wrap: break-word`, césure française là où le téléphone la connaît) : plus de débordement avec le texte agrandi. Un mot qui tient sur la ligne n'est jamais coupé. Ce réglage a été corrigé à l'étape 6 : `anywhere` coupait trop tôt ;
    - le champ du code de connexion reçoit le focus à l'arrivée sur sa page, où il est le seul champ. Cela aide au clavier et au remplissage automatique du code reçu par SMS.
 
 ## Conséquences
