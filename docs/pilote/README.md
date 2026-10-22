@@ -2,6 +2,8 @@
 
 **Statut** : PRÉPARATION SEULEMENT (Jalon 3, étape 7). Rédigé par Claude Code ; **à relire par le propriétaire, puis par le juriste au Gabon** avant toute utilisation. Aucun élève réel n'est inscrit tant que toutes les conditions ci-dessous ne sont pas remplies.
 
+**Par où commencer** : le [guide de mise en route du propriétaire](../mise-en-route.md) met toutes ces démarches dans l'ordre.
+
 Pays pilote : Gabon. Unité pilote : Mathématiques 3e (`ga-3e-mathematiques`).
 
 ## Documents

@@ -1,6 +1,6 @@
 # Plan du Jalon 8 — débloquer le réel
 
-**Statut** : validé par le propriétaire le 2026-10-22 (décisions ci-dessous, ADR 0058). Étape 1 faite (`docs/juridique/dossier-juriste.md`).
+**Statut** : validé par le propriétaire le 2026-10-22 (décisions ci-dessous, ADR 0058). Étape 1 faite (`docs/juridique/dossier-juriste.md`). Étape 2 faite (`docs/mise-en-route.md`).
 
 **Objectif** : ce qui retarde le pilote ne dépend plus du code : clé API, juriste, référents, fournisseurs, hébergement. Ce jalon court prépare ces démarches (un dossier pour le juriste, un guide de mise en route pour le propriétaire). Il vérifie aussi ce qui ne l'a jamais été : la tenue de la plateforme quand beaucoup d'élèves l'utilisent en même temps.
 

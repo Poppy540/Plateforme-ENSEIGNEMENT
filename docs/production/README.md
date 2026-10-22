@@ -2,7 +2,7 @@
 
 **Statut** : rédigé par Claude Code (Jalon 5, étape 2 ; ADR 0045). **Rien n'est déployé ni souscrit** : chaque étape se fait par le propriétaire, ou avec son accord explicite.
 
-Ce dossier dit **comment** mettre la plateforme en service. Le pilote reste soumis aux 12 conditions de [`docs/pilote/README.md`](../pilote/README.md) (juriste, établissement, référent, contenus validés, essais réels, veille). Ce dossier couvre surtout les conditions 6, 7, 8 et 12.
+Ce dossier dit **comment** mettre la plateforme en service ; le [guide de mise en route](../mise-en-route.md) dit **dans quel ordre**. Le pilote reste soumis aux 12 conditions de [`docs/pilote/README.md`](../pilote/README.md) (juriste, établissement, référent, contenus validés, essais réels, veille). Ce dossier couvre surtout les conditions 6, 7, 8 et 12.
 
 ## 1. Décisions préalables (propriétaire)
 
