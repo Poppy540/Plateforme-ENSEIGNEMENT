@@ -1,0 +1,15 @@
+# Graphe de prérequis proposé — famille Français, classe de 3e (Gabon).
+# PROPOSITION de Claude Code (2026-10-22) à partir du programme provisoire : chaque lien est « à valider » par un
+# enseignant-référent de Français. Les programmes de Français de 6e à 4e ne sont pas encore dans le pack : seuls des
+# liens de 3e sont proposés. Format : <unité>/<chapitre> ; nature : strict (indispensable) ou souple (utile).
+famille: francais
+statut: a_valider
+liens:
+  # L'autobiographie s'appuie sur les outils du récit vus avec la nouvelle (narrateur, point de vue, temps).
+  - {chapitre: ga-3e-francais/autobiographie,   prerequis: ga-3e-francais/nouvelle-realiste-fantastique, nature: souple}
+  # La préparation du BEPC mobilise les lectures de l'année (résumé, questions, rédaction).
+  - {chapitre: ga-3e-francais/preparation-bepc, prerequis: ga-3e-francais/nouvelle-realiste-fantastique, nature: souple}
+  - {chapitre: ga-3e-francais/preparation-bepc, prerequis: ga-3e-francais/dialogue-argumentatif,         nature: strict}
+  - {chapitre: ga-3e-francais/preparation-bepc, prerequis: ga-3e-francais/poesie-engagee,                nature: souple}
+  - {chapitre: ga-3e-francais/preparation-bepc, prerequis: ga-3e-francais/theatre-classique,             nature: souple}
+  - {chapitre: ga-3e-francais/preparation-bepc, prerequis: ga-3e-francais/autobiographie,                nature: souple}

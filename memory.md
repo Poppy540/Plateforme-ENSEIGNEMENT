@@ -59,6 +59,8 @@
 
 ## État d'avancement
 
+- 2026-10-22 : Jalon 7, étape 4 faite (ADR 0057, `francais-3e.test.ts`, `francais-3e.spec.ts`) — `ga-3e-francais` (6 ch., intitulés du cadrage, PROVISOIRE), `prerequis/francais.yaml` (6 liens en 3e), valeurs des 4 agents (jamais rédiger à la place de l'élève, aucune citation inventée). Tests adaptés : l'unité « non configurée » des tests est maintenant `ga-3e-anglais` ; K01 (Coordinateur Français voit ses chapitres, seulement eux). Batterie d'agents propre au Français à prévoir avec le référent. Test du quiz de `referent.spec.ts` restreint à son chapitre. Tests : 238 unitaires, 111 scénarios de base, 87 de bout en bout.
+
 - 2026-10-21 : Jalon 7, étape 3 faite (ADR 0056) — `src/lib/journal.ts` (`journaliser`, `nettoyer` : numéros, emails, adresses de tout protocole, UUID, hex ≥ 24, JWT, clés, Bearer/Basic ; empreinte numérique Next.js gardée ; `installerNettoyageConsole`) ; `src/instrumentation.ts` (`register` nettoie la console ; `onRequestError` : chemin sans paramètres, route, type, message nettoyé ; requête interrompue = avertissement) ; envoi facultatif `JOURNAL_HTTP_URL`/`JOURNAL_HTTP_JETON` (erreurs seulement) ; garde : aucun `console.*` direct dans src ; journaux réels relus pendant un passage complet : aucune donnée personnelle (5 requêtes interrompues, en avertissement). Tests : 233 unitaires, 111 scénarios de base, 85 de bout en bout.
 
 - 2026-10-21 : Jalon 7, étape 2 faite (ADR 0055) — `src/lib/production-video/fournisseurs.ts` : `servicesReels` (passerelle d'avatar HTTPS + jeton : /videos, /transcriptions, /assemblages, tâches interrogées ; Cloudflare Stream : /stream/copy, attente `readyToStream`, /downloads), erreurs `ErreurFournisseurVideo` sans secret ; `MODE_VIDEO=reel` (`servicesVideo`), `sousDomaineStream()` ; `sourcesLecture(ref, versions, {sousDomaineStream})` : HLS `clientBandwidthHint` + MP4 de secours ; `verifier:production` étendu ; contrat de la passerelle dans `docs/production/README.md` §3 bis ; tests de contrat sans réseau et chaîne complète. Rien de souscrit, aucun appel réel. Tests : 226 unitaires, 111 scénarios de base, 85 de bout en bout.
@@ -149,6 +151,6 @@
 
 ## Prochaine étape
 
-Jalon 7, étape 4 (Français 3e), seulement après accord du propriétaire. Étape 5 (passages réels) dès la clé API et l'accord sur le coût. Toujours attendus du propriétaire (bilan du Jalon 6, §6) : questionnaire, clé API, `SEL_OPPOSITION`, juriste, référents, fournisseurs.
+Jalon 7, étape 6 (captures et bilan du Jalon 7), seulement après accord du propriétaire ; étape 5 (passages réels) dès la clé API. Étape 5 (passages réels) dès la clé API et l'accord sur le coût. Toujours attendus du propriétaire (bilan du Jalon 6, §6) : questionnaire, clé API, `SEL_OPPOSITION`, juriste, référents, fournisseurs.
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).

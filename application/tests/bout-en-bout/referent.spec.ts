@@ -249,11 +249,15 @@ test("quiz : l'Évaluateur crée un brouillon (modèle simulé), le référent l
   ).toBeVisible();
   await expect(eleve.getByText("Ton score : 67 / 100 (enregistré).")).toBeVisible();
 
+  // Tentatives et contestations du quiz de CE chapitre (d'autres tests passent d'autres quiz).
   const traces = await executerSql(
-    `select (select count(*)::int from tentatives_quiz) as tentatives,
-       (select score::int from tentatives_quiz limit 1) as score,
-       (select count(*)::int from contestations_quiz) as contestations,
-       (select count(*)::int from signalements where source = 'agent_evaluateur' and motif = 'erreur_contenu') as signalements`,
+    `with t as (select t.* from tentatives_quiz t join quiz q on q.id = t.quiz_id where q.chapitre_id = $1)
+     select (select count(*)::int from t) as tentatives,
+       (select score::int from t limit 1) as score,
+       (select count(*)::int from contestations_quiz c join t on t.id = c.tentative_id) as contestations,
+       (select count(*)::int from signalements where source = 'agent_evaluateur' and motif = 'erreur_contenu'
+          and chapitre_id = $1) as signalements`,
+    [chapitre.id],
   );
   expect(traces).toEqual([{ tentatives: 1, score: 67, contestations: 2, signalements: 1 }]);
   await eleve.close();

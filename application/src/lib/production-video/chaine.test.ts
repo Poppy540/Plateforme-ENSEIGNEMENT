@@ -246,6 +246,6 @@ describe("fiche de l'avatar (pack pays)", () => {
     const pack = resolve(__dirname, "../../../../referentiels/gabon");
     const f = lireFicheAvatar(pack, "ga-3e-mathematiques");
     expect(f).toMatchObject({ personne_reelle: false, autorisation_voix: null, langue: "fr" });
-    expect(() => lireFicheAvatar(pack, "ga-3e-francais")).toThrow(ErreurFiche);
+    expect(() => lireFicheAvatar(pack, "ga-3e-anglais")).toThrow(ErreurFiche);
   });
 });

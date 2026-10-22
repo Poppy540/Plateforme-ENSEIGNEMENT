@@ -48,8 +48,11 @@ reset role;
 select pg_temp.famille('francais');
 set role agent_coordinateur;
 do $$ begin
-  assert (select count(*) from chapitres where id in (
-    select c.id from chapitres c)) = 0, 'K01 : chapitres de Maths visibles pour la famille Français';
+  -- Depuis le Jalon 7 (Français 3e), la famille Français a ses chapitres : elle ne voit qu'eux.
+  assert (select count(*) from chapitres) > 0, 'K01 : aucun chapitre de Français';
+  assert not exists (
+    select 1 from chapitres c join unites u on u.id = c.unite_id join matieres m on m.id = u.matiere_id
+    where m.famille <> 'francais'), 'K01 : chapitres de Maths visibles pour la famille Français';
 end $$;
 reset role;
 \echo OK K01 aucune donnée d élève, seulement sa famille

@@ -55,7 +55,7 @@ describe("chargeur de prompt", () => {
   });
 
   it("refuse une unité non configurée ou une variable vide", () => {
-    expect(() => composerPrompt({ ...configuration, unite: "ga-3e-francais" }, racine)).toThrow(
+    expect(() => composerPrompt({ ...configuration, unite: "ga-3e-anglais" }, racine)).toThrow(
       ErreurConfigurationAgent,
     );
     expect(() =>
