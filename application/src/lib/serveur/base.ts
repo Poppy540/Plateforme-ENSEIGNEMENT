@@ -8,8 +8,19 @@ import { selOpposition, urlBaseDeDonnees } from "./configuration";
 
 const globalPourPool = globalThis as unknown as { poolBase?: Pool };
 
+/** Connexions ouvertes au plus par instance du serveur (ADR 0059) ; à garder sous la limite de la base. */
+function taillePool(): number {
+  const n = Number(process.env.TAILLE_POOL_BASE);
+  return Number.isInteger(n) && n >= 1 && n <= 100 ? n : 10;
+}
+
 function pool(): Pool {
-  globalPourPool.poolBase ??= new Pool({ connectionString: urlBaseDeDonnees(), max: 10 });
+  globalPourPool.poolBase ??= new Pool({
+    connectionString: urlBaseDeDonnees(),
+    max: taillePool(),
+    // Une requête n'attend pas indéfiniment une connexion libre : erreur franche plutôt qu'une page figée.
+    connectionTimeoutMillis: 10_000,
+  });
   return globalPourPool.poolBase;
 }
 

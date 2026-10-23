@@ -59,6 +59,7 @@ pnpm referent:invitation <référentiel> <famille[,famille]> [jours] > invitatio
 bash scripts/base-locale.sh demarrer   # base locale (données fictives) pour pnpm dev ; voir application/README.md
 pnpm verifier:production   # sur le serveur : configuration de production complète ? (n'affiche aucune valeur ; voir docs/production/)
 CHEMIN_CHROMIUM=/opt/pw-browsers/chromium-1194/chrome-linux/chrome pnpm test:e2e   # bout en bout (Playwright, base locale réinitialisée)
+pnpm charge [--eleves 200]   # tenue en charge, base LOCALE seulement, serveur lancé en simulation sur le port 3100 (ADR 0059)
 pnpm test:agents [--agent scenariste|evaluateur|tuteur|support|coordinateur|conformite|recruteur]   # tests des agents, simulés (sans coût) ; passage réel : voir tests/README.md (payant, accord du propriétaire)
 ```
 

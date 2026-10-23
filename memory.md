@@ -60,6 +60,8 @@
 
 ## État d'avancement
 
+- 2026-10-23 : Jalon 8, étape 3 faite (ADR 0059) — `scripts/tenue-en-charge.mts` (`pnpm charge`) : élèves, chapitres, quiz et sessions fictifs préparés en base locale (refus de toute base non locale), cookies signés avec le secret de développement, parcours espace → catalogue → unité → chapitre + compteur → Professeur simulé → quiz ; médiane, 95e centile, max, erreurs par page ; seuils 95e centile ≤ 2 s, erreurs ≤ 1 %. Mesures (4 cœurs, une instance) : 200 élèves à une page / ~5 s : 95e centile 59 ms ; à une page / ~1 s : 1,8 s ; sans pause : 3,1 s ; 0 erreur partout. Goulot : processeur du serveur Next.js (~100 pages dynamiques/s), pas la base (pool 5, 10 ou 20 : même débit). `TAILLE_POOL_BASE` (défaut 10) et délai d'attente de connexion de 10 s dans `base.ts`. Le Professeur ne garde aucune connexion pendant l'appel au modèle. Dossier de production §3.5. Tests : 238 unitaires (inchangés).
+
 - 2026-10-22 : Jalon 8, étape 2 faite — `docs/mise-en-route.md` : chemin le plus court (3 fils : droit, contenus, technique), étapes A (cette semaine) à H (pilote), avec qui, commandes, durées indicatives, ce qui bloque, conditions couvertes ; aide possible de Claude Code par étape ; liens vérifiés ; renvois depuis `docs/pilote/README.md`, `docs/production/README.md` et `CLAUDE.md`.
 
 - 2026-10-22 : Jalon 8, étape 1 faite — `docs/juridique/dossier-juriste.md` : rôles, registre des traitements (T1 à T10 : données, finalité, durée, accès, références), sous-traitants envisagés et transferts, droits, mesures de sécurité, 10 risques pour les mineurs, 18 questions (Q1-Q18), pièces jointes ; lien depuis `docs/pilote/README.md` (condition 1). Constat noté pour le juriste (Q8) : le texte libre des élèves n'est pas masqué avant l'envoi au Professeur (il l'est pour Support et Recruteur). Loi gabonaise citée « à confirmer » (n° 001/2011, CNPDCP).
@@ -160,6 +162,6 @@
 
 ## Prochaine étape
 
-Jalon 8, étape 3 (tenue en charge, 200 élèves simultanés), seulement après accord du propriétaire. Le dossier pour le juriste est à relire par le propriétaire avant transmission. Étape 5 (passages réels) dès la clé API et l'accord sur le coût. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6.
+Jalon 8, étape 4 (tests des agents pour le Français, simulation), seulement après accord du propriétaire. Le dossier pour le juriste est à relire par le propriétaire avant transmission. Étape 5 (passages réels) dès la clé API et l'accord sur le coût. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6.
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).
