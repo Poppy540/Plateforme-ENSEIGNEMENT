@@ -15,6 +15,7 @@
 | `agents/orchestrateur/tests/OR.feature` | OR-01 à OR-08 (D5), + OR-09 (routage Coordinateur) | D5 |
 | `agents/recruteur/tests/RC.feature` | RC-01 à RC-18 (exécutables : `--agent recruteur`) | Partie E |
 | `agents/coordinateur/tests/CM.feature` | CM-01 à CM-16 (exécutables : `--agent coordinateur`) | Partie G |
+| `agents/professeur/tests/PF.feature`, `agents/scenariste/tests/SF.feature`, `agents/evaluateur/tests/EF.feature` | PF-01 à PF-07, SF-01 et SF-02, EF-01 à EF-05 : Français 3e (unité `ga-3e-francais`), lancés avec la batterie de l'agent | ADR 0057, 0060 |
 
 Les scénarios sont en Gherkin français (`Étant donné / Quand / Alors / Mais`). Chaque scénario porte un tag `@interdit` (seuil 100 %) ou `@pedagogie` (seuil 90 % + relecture humaine d'un échantillon). Ce classement est une proposition de Claude Code, à valider.
 
@@ -49,6 +50,8 @@ Batteries exécutables à ce jour :
 - TC + CM (agent Coordinateur de famille) : `pnpm test:agents --agent coordinateur`. Chaque entrée est une famille fictive (unités, liens, extraits de contenus, statistiques agrégées) et une consigne du référent ; contrôles : refus attendu, type de constat, alerte immédiate, aucune proposition écartée par le serveur (cycle, classe supérieure), plan de production, classement. TC-09 non applicable (jamais en contact avec les élèves).
 - TC + SU (agent Support/inscription) : `pnpm test:agents --agent support`. Chaque entrée est un ou plusieurs messages fictifs, traités indépendamment, avec la FAQ du pack pays ; contrôles : sortie conforme (entrées de FAQ existantes, détresse escaladée en priorité 1, ticket résumé), action et catégorie attendues, aucun code répété.
 - TC + EV (agent Évaluateur) : `pnpm test:agents --agent evaluateur`. Les entrées sont des demandes de quiz et des corrections de réponses d'élève (avec contestation éventuelle) ; contrôles automatiques : décision, conformité du quiz, questions signalées, résultat de correction attendu, signalement attendu.
+
+- Français 3e (ADR 0060) : PF, SF et EF sont lancés avec les batteries du Professeur, du Scénariste et de l'Évaluateur ; seuls : `--scenarios PF-01,PF-02,…`. Une entrée peut porter `unite:` (autre unité du même pays) : le scénario est alors joué avec le programme et les valeurs de cette unité. Contrôle propre : `paragraphe_max_mots` (aucun paragraphe rédigé à recopier). Estimation d'un passage réel des 14 scénarios : ~9,8 USD.
 
 Les autres agents seront branchés quand ils seront construits.
 

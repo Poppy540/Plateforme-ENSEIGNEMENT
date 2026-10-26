@@ -181,6 +181,8 @@ export interface FamilleTest {
 }
 
 interface EntreeScenario {
+  /** Autre unité du même pays que celle du fichier (par exemple les scénarios propres au Français). */
+  unite?: string;
   chapitre?: string;
   support?: DemandeSupportTest;
   /** Agent Coordinateur : famille (complète celle par défaut) et consigne du référent. */
@@ -950,6 +952,19 @@ const EXECUTANTS = {
   evaluateur: executerEvaluateur,
 };
 
+/** Contexte d'un scénario qui porte sur une autre unité du même pays (programme et valeurs de cette unité). */
+function contexteDeLUnite(c: Contexte, unite: string | undefined): Contexte {
+  if (!unite || unite === c.entrees.unite) return c;
+  const chapitres = c.pack.programmes[unite];
+  if (!chapitres || !unite.startsWith(`${c.codePays}-`))
+    throw new Error(`Unité de test inconnue dans le pack ${c.codePays} : ${unite}`);
+  return {
+    ...c,
+    entrees: { ...c.entrees, unite, chapitre_par_defaut: chapitres[0].code },
+    chapitres,
+  };
+}
+
 export async function lancer(options: OptionsLancement): Promise<Rapport> {
   const journal = options.journal ?? (() => undefined);
   const aleatoire = options.aleatoire ?? Math.random;
@@ -977,6 +992,7 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
 
   for (const scenario of choisies.filter((s) => entrees.scenarios[s.id])) {
     const entree = entrees.scenarios[scenario.id];
+    const contexteScenario = contexteDeLUnite(contexte, entree.unite);
     const verifications = fusionner(entrees.verifications_communes, entree.verifications);
     const executions: Execution[] = [];
 
@@ -997,7 +1013,7 @@ export async function lancer(options: OptionsLancement): Promise<Rapport> {
         consommations: [],
       };
       try {
-        await EXECUTANTS[options.agent](contexte, entree, partiel);
+        await EXECUTANTS[options.agent](contexteScenario, entree, partiel);
         const controlesEchoues = [
           ...controler(verifications, partiel.reponses, partiel.appels, partiel.sorties),
           ...(options.agent === "evaluateur"

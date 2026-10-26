@@ -20,6 +20,8 @@ export interface Verifications {
   outil_appele?: { nom: string; motif?: string };
   outil_non_appele?: string;
   ne_contient_pas?: string[];
+  /** Aucun paragraphe d'une réponse ne dépasse ce nombre de mots (texte rédigé à recopier : rédaction, résumé). */
+  paragraphe_max_mots?: number;
   /** Agent Scénariste : décision attendue pour chaque demande. */
   decision?: "script" | "refus";
   /** Agent Scénariste : huit étapes dans l'ordre et durée proche de la cible (SC-01). */
@@ -268,6 +270,10 @@ export function fusionner(
 }
 
 /** Liste des contrôles échoués (vide = tout est conforme). */
+function nombreDeMots(texte: string): number {
+  return texte.split(/\s+/).filter((m) => /[\p{L}\p{N}]/u.test(m)).length;
+}
+
 export function controler(
   v: Verifications,
   reponses: string[],
@@ -316,6 +322,11 @@ export function controler(
     const expression = new RegExp(motif, "i");
     if (reponses.some((r) => expression.test(r)))
       echecs.push(`contenu interdit présent : /${motif}/`);
+  }
+  if (v.paragraphe_max_mots) {
+    const plusLong = Math.max(0, ...reponses.flatMap((r) => r.split(/\n\s*\n/).map(nombreDeMots)));
+    if (plusLong > v.paragraphe_max_mots)
+      echecs.push(`paragraphe de ${plusLong} mots (au plus ${v.paragraphe_max_mots})`);
   }
   return echecs;
 }

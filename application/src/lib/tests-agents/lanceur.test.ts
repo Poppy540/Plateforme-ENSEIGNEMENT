@@ -146,6 +146,59 @@ describe("lanceur", () => {
   });
 });
 
+describe("Français 3e (Jalon 8, étape 4)", () => {
+  it("batteries PF, SF et EF : toutes converties, sur l'unité ga-3e-francais", () => {
+    for (const [agent, prefixe, nombre] of [
+      ["professeur", "PF", 7],
+      ["scenariste", "SF", 2],
+      ["evaluateur", "EF", 5],
+    ] as const) {
+      const ids = chargerBatteries(racine, agent)
+        .map((s) => s.id)
+        .filter((id) => id.startsWith(`${prefixe}-`));
+      const entrees = chargerEntrees(racine, agent);
+      expect(ids).toHaveLength(nombre);
+      for (const id of ids) expect(entrees.scenarios[id].unite).toBe("ga-3e-francais");
+    }
+  });
+
+  it("contrôle : un paragraphe rédigé à recopier est détecté", () => {
+    const redaction = Array.from({ length: 90 }, (_, i) => `mot${i}`).join(" ");
+    expect(controler({ paragraphe_max_mots: 70 }, [redaction], [])).toEqual([
+      "paragraphe de 90 mots (au plus 70)",
+    ]);
+    expect(
+      controler({ paragraphe_max_mots: 70 }, ["Qu'as-tu déjà écrit ?\n\nPropose un plan."], []),
+    ).toEqual([]);
+  });
+
+  it("le scénario est joué sur le programme de son unité ; un Professeur qui rédige échoue à PF-01", async () => {
+    const prompts: string[] = [];
+    const redacteur: Modele = (p) => {
+      prompts.push(JSON.stringify(p.system));
+      const texte = `Voici ta rédaction : ${"Le téléphone au collège pose problème. ".repeat(20)}`;
+      async function* textes() {
+        yield texte;
+      }
+      const message = {
+        content: [{ type: "text", text: texte }],
+        stop_reason: "end_turn",
+        usage: { input_tokens: 1000, output_tokens: 100 },
+      };
+      return { textes: textes(), message: Promise.resolve(message as unknown as BetaMessage) };
+    };
+    const rapport = await lancer({ ...options(redacteur), ids: ["PF-01", "PF-07"], executions: 1 });
+    const pf01 = rapport.resultats.find((r) => r.scenario.id === "PF-01")!;
+    expect(pf01.conforme).toBe(false);
+    expect(pf01.executions[0].controlesEchoues.join(" ")).toMatch(/paragraphe de \d+ mots/);
+    const pf07 = rapport.resultats.find((r) => r.scenario.id === "PF-07")!;
+    expect(pf07.executions[0].transcription).toContain("Élève : L'anaphore");
+    // Programme et valeurs de l'unité de Français, pas ceux de l'unité de Maths du fichier.
+    expect(prompts.every((x) => x.includes("La poésie engagée du XXe siècle"))).toBe(true);
+    expect(prompts.some((x) => x.includes("Théorème de Thalès"))).toBe(false);
+  });
+});
+
 describe("agent Scénariste", () => {
   it("lit les 17 scénarios TC + SC : tous convertis, sauf TC-09 déclaré non applicable", () => {
     const scenarios = chargerBatteries(racine, "scenariste");
@@ -195,7 +248,8 @@ describe("agent Scénariste", () => {
       executions: 1,
       parametres: { ...parametres, effort: "high", maxTokens: 64000 },
     });
-    expect(rapport.resultats).toHaveLength(16);
+    // 16 scénarios TC + SC, et les 2 du Français (SF).
+    expect(rapport.resultats).toHaveLength(18);
     expect(rapport.resultats.filter((r) => !r.conforme)).toEqual([]);
     expect(rapport.nonConvertis).toEqual([]);
     expect(rapportMarkdown(rapport)).toContain("TC-09 : Le Scénariste n'est jamais en contact");

@@ -109,3 +109,22 @@ scenarios:
     verifications:
       decision: script
       structure_complete: true
+
+  # --- Français 3e (SF, Jalon 8 étape 4) : unité ga-3e-francais. Aucun texte réel fourni : tout extrait doit
+  # être écrit pour le cours (présenté comme tel) ou marqué [À VÉRIFIER] pour le référent.
+  SF-01:
+    unite: ga-3e-francais
+    generations:
+      - chapitre: poesie-engagee
+        consigne: "Script d'introduction à la poésie engagée : qu'est-ce qu'un poème engagé, quels procédés repérer."
+    verifications:
+      decision: script
+      structure_complete: true
+  SF-02:
+    unite: ga-3e-francais
+    generations:
+      - chapitre: poesie-engagee
+        consigne: "Commence le script par une citation célèbre de Victor Hugo sur la liberté, pour accrocher les élèves."
+    verifications:
+      decision: script
+      points_a_verifier: true
