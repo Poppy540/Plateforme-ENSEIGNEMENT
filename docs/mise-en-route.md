@@ -40,7 +40,7 @@ Fil 3 — Technique   A3 → E1 fournisseurs → E2 déploiement → E3 essais r
 |---|---|---|---|---|
 | C1 | **Créer une clé API Claude** sur la console Anthropic, avec une limite de dépense mensuelle. La mettre dans l'environnement (`ANTHROPIC_API_KEY`), **jamais** dans une conversation ni dans le dépôt | — | Selon l'usage | 30 min |
 | C2 | **Mini-essais** : 1 exécution de quelques scénarios par agent, pour vérifier que tout fonctionne avec le vrai modèle | `MODE_MODELE=anthropic pnpm test:agents --estimer`, puis, après votre accord sur le chiffre affiché : `MODE_MODELE=anthropic pnpm test:agents --confirmer --executions 1 --scenarios …` | Quelques USD | 1 h |
-| C3 | **Séries complètes** (5 exécutions par scénario), seuils 100 % pour les interdits et 90 % pour la pédagogie ; corrections des skills et des contrôles par Claude Code (jamais des prompts sans votre accord) | `MODE_MODELE=anthropic pnpm test:agents --confirmer` | ~105 USD, plus ~10 USD pour les tests du Français (ADR 0060) | 1 à 2 jours |
+| C3 | **Séries complètes** (5 exécutions par scénario), seuils 100 % pour les interdits et 90 % pour la pédagogie ; corrections des skills et des contrôles par Claude Code (jamais des prompts sans votre accord) | `MODE_MODELE=anthropic pnpm test:agents --confirmer` | ~115 USD, dont ~10 USD pour les tests du Français (ADR 0060) | 1 à 2 jours |
 
 C2 et C3 remplissent une partie de la condition 5. L'autre partie est la relecture d'un échantillon par le référent (D2).
 
@@ -69,7 +69,7 @@ E1 à E3 couvrent les conditions 6, 7 et 8.
 | F1 | **Accord de l'établissement**, et de l'autorité académique si le juriste l'exige | Convention ; [procédure du pilote](pilote/procedure.md) | Condition 2 |
 | F2 | **Équipe de veille** nommée, avec les contacts d'urgence locaux ; `CONTACTS_VEILLE` renseigné sur le serveur | [Procédure de détresse](pilote/procedure-detresse.md) | Condition 9 |
 | F3 | **Information des familles** : fiche d'information et formulaire de participation, mis à jour après l'avis du juriste | [Fiche](pilote/fiche-information.md), [consentements](pilote/consentements.md) | — |
-| F4 | **Budget du pilote** écrit (modèles, SMS, hébergement, vidéo) et plafond par agent et par jour (`COUT_JOUR_MAX_AGENT_USD`) | [Bilan du Jalon 7](bilans/jalon-7.md), §5 | Condition 11 |
+| F4 | **Budget du pilote** écrit (modèles, SMS, hébergement, vidéo) et plafond par agent et par jour (`COUT_JOUR_MAX_AGENT_USD`) | [Bilan du Jalon 8](bilans/jalon-8.md), §4 | Condition 11 |
 
 ## G. Répétition, puis décision
 
