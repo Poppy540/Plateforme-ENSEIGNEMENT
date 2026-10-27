@@ -101,10 +101,12 @@ test("à partir de 5 élèves, l'enseignant voit l'avancement agrégé, sans auc
   await seConnecter(page, ENSEIGNANT);
   await expect(page).toHaveURL(/\/enseignant$/);
   await expect(page.getByText("Élèves inscrits dans la classe : 6")).toBeVisible();
-  const tableau = page.getByRole("region", { name: `Avancement de la classe ${NOM}` });
+  const tableau = page.getByRole("list", { name: `Avancement de la classe ${NOM}` });
   await expect(tableau).toBeVisible();
-  // Premier chapitre : 5 élèves l'ont terminé ; le second, personne (0) ou moins de 5.
-  await expect(tableau.locator("tbody tr").first()).toContainText("5");
+  // Premier chapitre : 5 élèves l'ont terminé (deuxième chiffre de la carte).
+  await expect(tableau.getByRole("listitem").first().getByRole("definition").nth(1)).toHaveText(
+    "5",
+  );
   await expect(page.locator("main")).not.toContainText("Élève fictif");
   await expect(page.locator("main")).not.toContainText("+999");
   await auditer(page, "enseignant, tableau de la classe");

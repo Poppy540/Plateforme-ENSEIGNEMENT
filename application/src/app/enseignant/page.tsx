@@ -26,41 +26,36 @@ function Tableau({ t, nom }: { t: TableauClasse; nom: string }) {
         Élèves inscrits dans la classe : <strong>{t.eleves}</strong> ; venus sur la plateforme ces 7
         derniers jours : <strong>{nombre(t.actifs_7_jours)}</strong>.
       </p>
-      <h3>Avancement par chapitre</h3>
+      <h3>Avancement par chapitre (nombre d&apos;élèves)</h3>
       {(t.chapitres ?? []).length === 0 ? (
         <p>Aucun chapitre n&apos;est encore ouvert aux élèves pour cette classe.</p>
       ) : (
-        <div
-          className="tableau-defilant"
-          role="region"
-          aria-label={`Avancement de la classe ${nom}`}
-          tabIndex={0}
-        >
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">Matière</th>
-                <th scope="col">Chapitre</th>
-                <th scope="col">Commencé</th>
-                <th scope="col">Terminé</th>
-                <th scope="col">Quiz passé</th>
-                <th scope="col">Score moyen</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(t.chapitres ?? []).map((c) => (
-                <tr key={`${c.matiere}-${c.chapitre}`}>
-                  <td>{c.matiere}</td>
-                  <th scope="row">{c.chapitre}</th>
-                  <td>{nombre(c.commence)}</td>
-                  <td>{nombre(c.termine)}</td>
-                  <td>{nombre(c.quiz)}</td>
-                  <td>{c.score_moyen === null ? "—" : `${c.score_moyen} / 100`}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ul className="liste-cartes" aria-label={`Avancement de la classe ${nom}`}>
+          {(t.chapitres ?? []).map((c) => (
+            <li key={`${c.matiere}-${c.chapitre}`} className="carte">
+              <strong>{c.chapitre}</strong>
+              <span className="note">{c.matiere}</span>
+              <dl className="chiffres">
+                <div>
+                  <dt>Commencé</dt>
+                  <dd>{nombre(c.commence)}</dd>
+                </div>
+                <div>
+                  <dt>Terminé</dt>
+                  <dd>{nombre(c.termine)}</dd>
+                </div>
+                <div>
+                  <dt>Quiz passé</dt>
+                  <dd>{nombre(c.quiz)}</dd>
+                </div>
+                <div>
+                  <dt>Score moyen</dt>
+                  <dd>{c.score_moyen === null ? "—" : `${c.score_moyen} / 100`}</dd>
+                </div>
+              </dl>
+            </li>
+          ))}
+        </ul>
       )}
       <h3>Notions les plus souvent manquées aux quiz</h3>
       {(t.notions ?? []).length === 0 ? (
@@ -103,7 +98,7 @@ export default async function PageEnseignant() {
             {c.nom} — {c.etablissement}
           </h2>
           <p>
-            {c.niveau}
+            Niveau : {c.niveau}
             {c.serie ? `, série ${c.serie}` : ""}
           </p>
           <Tableau t={tableaux[i]} nom={c.nom} />

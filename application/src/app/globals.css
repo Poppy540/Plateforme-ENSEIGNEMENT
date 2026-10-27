@@ -321,3 +321,21 @@ button.danger {
   display: block;
   padding: 0.25rem 0;
 }
+
+/* Chiffres d'ensemble d'une classe (ADR 0063) : deux colonnes sur téléphone, quatre sur un écran large. */
+.chiffres {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.5rem 1rem;
+  margin: 0.5rem 0 0;
+}
+
+.chiffres dt {
+  color: var(--discret);
+  font-size: 0.9rem;
+}
+
+.chiffres dd {
+  margin: 0;
+  font-weight: 700;
+}
