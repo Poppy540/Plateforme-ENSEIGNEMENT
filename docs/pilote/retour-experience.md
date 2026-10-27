@@ -12,26 +12,27 @@
 
 ## Indicateurs mesurés dans la plateforme (hebdomadaires, agrégés)
 
-| Indicateur | Source en base |
-|---|---|
-| Élèves inscrits, dont accord du parent reçu | `eleves.statut`, `consentements` (type `inscription`) |
-| Élèves actifs dans la semaine | `profils.derniere_activite` |
-| Chapitres commencés, terminés | `progression` |
-| Quiz passés, score moyen par chapitre, contestations | `tentatives_quiz`, `contestations_quiz`, `statistiques_quiz` (dès 5 tentatives) |
-| Questions posées au professeur IA (nombre, par chapitre) | `echanges_professeur` |
-| Plans de révision demandés, accords et rapports aux parents | `recommandations_tuteur`, `consentements` (`rapport_parents`), `rapports_parents` |
-| Signalements par motif et source, délai de traitement | `signalements` (`cree_le`, `traite_le`) |
-| Tickets par catégorie, délai de résolution | `tickets_support` |
-| Coût des agents par jour (tous les appels au modèle), tâches échouées, suspensions | `consommation_agents`, `taches`, `etat_agents`, `journal_audit` |
-| Vidéos démarrées et vues jusqu'au bout, leçons écrites ouvertes, par chapitre et par jour (sans élève) | `visionnages_jour` (ADR 0052) |
+| Indicateur                                                                                             | Source en base                                                                    |
+| ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| Élèves inscrits, dont accord du parent reçu                                                            | `eleves.statut`, `consentements` (type `inscription`)                             |
+| Élèves actifs dans la semaine                                                                          | `profils.derniere_activite`                                                       |
+| Chapitres commencés, terminés                                                                          | `progression`                                                                     |
+| Quiz passés, score moyen par chapitre, contestations                                                   | `tentatives_quiz`, `contestations_quiz`, `statistiques_quiz` (dès 5 tentatives)   |
+| Questions posées au professeur IA (nombre, par chapitre)                                               | `echanges_professeur`                                                             |
+| Plans de révision demandés, accords et rapports aux parents                                            | `recommandations_tuteur`, `consentements` (`rapport_parents`), `rapports_parents` |
+| Signalements par motif et source, délai de traitement                                                  | `signalements` (`cree_le`, `traite_le`)                                           |
+| Tickets par catégorie, délai de résolution                                                             | `tickets_support`                                                                 |
+| Coût des agents par jour (tous les appels au modèle), tâches échouées, suspensions                     | `consommation_agents`, `taches`, `etat_agents`, `journal_audit`                   |
+| Vidéos démarrées et vues jusqu'au bout, leçons écrites ouvertes, par chapitre et par jour (sans élève) | `visionnages_jour` (ADR 0052)                                                     |
 
-Ces indicateurs sont réunis sur `/administration/exploitation` et dans l'export CSV agrégé, qui applique déjà le seuil de diffusion ci-dessous (ADR 0046).
+Ces indicateurs sont réunis sur `/administration/exploitation` et dans l'export CSV agrégé, qui applique déjà le seuil de diffusion ci-dessous (ADR 0046). **Pour le point hebdomadaire**, la page « Semaine du pilote » (`/administration/semaine`, ADR 0082) répond aux 5 questions, avec la semaine précédente en regard, en version équipe ou en version pour l'établissement (sans coûts ni détail des agents) ; elle s'imprime et se télécharge en texte.
 
 Seuil de diffusion : aucun chiffre n'est publié pour un groupe de **moins de 5 élèves** (même règle que les statistiques de quiz).
 
 ## Questionnaires (anonymes, facultatifs)
 
 **Élèves et parents — dans la plateforme** (ADR 0052) : les questions sont dans `referentiels/gabon/questionnaire.yaml`, **à valider par le propriétaire** ; d'ici là, le questionnaire n'est montré à personne.
+
 - Élèves : 5 questions, depuis leur espace.
 - Parents : 4 questions, depuis le lien d'un rapport.
 - Réponses fermées seulement (échelle de 1 à 5 ou choix), **sans texte libre** : aucune donnée personnelle ne peut y entrer.

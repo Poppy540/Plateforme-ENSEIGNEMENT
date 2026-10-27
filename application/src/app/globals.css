@@ -418,3 +418,18 @@ button.danger {
 .entree-journal p {
   margin: 0;
 }
+
+/* Rapport de la semaine du pilote (ADR 0082) : imprimable sur papier. */
+@media print {
+  .ne-pas-imprimer {
+    display: none;
+  }
+
+  .rapport-semaine .tableau-defilant {
+    overflow: visible;
+  }
+
+  .rapport-semaine section {
+    break-inside: avoid;
+  }
+}
