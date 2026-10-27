@@ -22,7 +22,7 @@ Ce dossier dit **comment** mettre la plateforme en service ; le [guide de mise e
 2. **API de données fermée** (revue de sécurité, D1) : dans les réglages de l'API, retirer `public` des schémas exposés ou désactiver l'API de données. L'application n'en a pas besoin : elle se connecte directement à Postgres (ADR 0015). Ouverte, elle exposerait des fonctions prévues pour le serveur.
 3. **Authentification** : connexion par téléphone (fournisseur SMS configuré **dans Supabase**, qui envoie les codes) et par email (code à 6 chiffres). Garder les limites d'envoi de Supabase ; l'application ajoute les siennes (ADR 0043). Elle n'envoie de code qu'aux indicatifs des packs importés (ADR 0049) : restreindre **aussi** les pays dans le fournisseur SMS de Supabase, car un appel direct à Supabase ne passe pas par l'application.
 4. **Rôles** : donner un mot de passe long au rôle `serveur_application` (connexion de l'application, `URL_BASE_DONNEES`). Garder une connexion d'administration séparée pour les migrations et la purge (`URL_BASE_DONNEES_ADMIN`), jamais utilisée par l'application ni par un agent.
-5. **Migrations** : appliquer `application/supabase/migrations/*.sql` dans l'ordre des noms, avec la connexion d'administration. Elles ne s'appliquent qu'en avant : une erreur se corrige par une nouvelle migration (§6).
+5. **Migrations** (ADR 0075) : `URL_BASE_DONNEES_ADMIN=… pnpm base:migrer --simuler` pour voir ce qui sera appliqué, puis `pnpm base:migrer`. La commande applique les migrations qui manquent, dans l'ordre et chacune dans sa transaction, et note en base celles déjà passées. Elle refuse une migration déjà appliquée dont le fichier a changé. Les migrations ne s'appliquent qu'en avant : une erreur se corrige par une nouvelle migration (§6). Une base migrée à la main avant cet outil : vérifier la dernière migration appliquée, puis `pnpm base:migrer --marquer-jusqu-a <nom du fichier>`.
 6. **Pack pays** : `cd application && pnpm pack:sql ../referentiels/gabon > import.sql`, puis appliquer `import.sql`. Le pack fictif `zz-fictif` est **refusé** sans `--test` : ne jamais l'importer en production.
 7. **Compte du propriétaire** : se connecter une fois sur le site (le compte d'authentification est créé), puis, avec la connexion d'administration :
    `insert into profils (id, role, prenom_ou_pseudo) values ('<identifiant de votre compte>', 'administrateur', 'Propriétaire');`
@@ -155,12 +155,12 @@ L'essai automatique `pnpm test:sauvegarde`, lancé à chaque changement de code,
 
 1. Tous les contrôles verts sur la branche :
    - `pnpm lint`, `pnpm format:verifier`, `pnpm typecheck` ;
-   - `pnpm test`, `pnpm test:base`, `pnpm test:e2e` ;
+   - `pnpm test`, `pnpm test:base`, `pnpm test:migrations`, `pnpm test:sauvegarde`, `pnpm test:e2e` ;
    - et les batteries réelles des agents dont le prompt ou les skills ont changé.
 2. Relecture du changement et accord du propriétaire.
-3. Sauvegarde manuelle de la base juste avant.
-4. **Migrations d'abord**, seulement si elles sont compatibles avec la version en service : ajout de tables ou de colonnes, nouvelles fonctions. Sinon, couper l'accès des élèves pendant la mise à jour (interrupteur de `/administration`).
-5. Déploiement de l'application, puis `pnpm verifier:production`.
+3. Sauvegarde juste avant (`pnpm base:sauvegarder`, §5).
+4. **Migrations d'abord** (`pnpm base:migrer --simuler`, puis `pnpm base:migrer`), seulement si elles sont compatibles avec la version en service : ajout de tables ou de colonnes, nouvelles fonctions. Sinon, couper l'accès des élèves pendant la mise à jour (interrupteur de `/administration`). Une migration en échec est annulée entièrement : corriger, puis relancer.
+5. Déploiement de l'application, puis `pnpm verifier:production` sur le serveur et `pnpm verifier:site https://<adresse>` depuis un autre poste.
 6. Vérifications à la main :
    - `/api/sante` ;
    - connexion avec un numéro de l'équipe ;

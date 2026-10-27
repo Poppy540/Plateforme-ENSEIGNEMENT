@@ -27,7 +27,8 @@ demarrer() {
   fi
   if [ "${nouvelle:-0}" = "1" ]; then
     psql_admin -f "$racine/supabase/tests/00_simulation_supabase.sql"
-    for migration in "$racine"/supabase/migrations/*.sql; do psql_admin -f "$migration"; done
+    URL_BASE_DONNEES_ADMIN="postgresql://postgres@127.0.0.1:$port/postgres" DOSSIER_MIGRATIONS="$racine/supabase/migrations" \
+      node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/migrer.mts" > /dev/null
     node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/pack-en-sql.mts" "$racine/../referentiels/gabon" | psql_admin -o /dev/null
     # Pays FICTIF « zz » (statut test) : essai de portabilité, développement et tests seulement (ADR 0041).
     node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/pack-en-sql.mts" "$racine/../referentiels/zz-fictif" --test | psql_admin -o /dev/null

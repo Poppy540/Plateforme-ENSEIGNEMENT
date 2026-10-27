@@ -33,7 +33,8 @@ psql_cible() { psql --dbname="$cible" -X -q -v ON_ERROR_STOP=1 "$@"; }
 
 # 1. Base d'origine : comme en production (migrations, pack pilote), plus des données fictives.
 psql_origine -f "$racine/supabase/tests/00_simulation_supabase.sql"
-for migration in "$racine"/supabase/migrations/*.sql; do psql_origine -f "$migration"; done
+URL_BASE_DONNEES_ADMIN="$origine" DOSSIER_MIGRATIONS="$racine/supabase/migrations" \
+  node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/migrer.mts" > /dev/null
 node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/pack-en-sql.mts" "$racine/../referentiels/gabon" \
   | psql_origine -o /dev/null
 psql_origine -f "$racine/supabase/tests/10_donnees_fictives.sql" -o /dev/null

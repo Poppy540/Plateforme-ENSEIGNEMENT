@@ -22,9 +22,10 @@ executer "'$bin/pg_ctl' -D '$dossier/donnees' -o '-p $port -k $dossier -c listen
 psql_test() { psql -h "$dossier" -p "$port" -U postgres -d postgres -v ON_ERROR_STOP=1 -q "$@"; }
 
 psql_test -f "$racine/supabase/tests/00_simulation_supabase.sql"
-for migration in "$racine"/supabase/migrations/*.sql; do
-  psql_test -f "$migration"
-done
+# Migrations appliquées par l'outil de production (ADR 0075), suivies en base.
+URL_BASE_DONNEES_ADMIN="postgresql://postgres@/postgres?host=$dossier&port=$port" \
+  DOSSIER_MIGRATIONS="$racine/supabase/migrations" \
+  node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/migrer.mts" > /dev/null
 psql_test -f "$racine/supabase/tests/10_donnees_fictives.sql"
 psql_test -f "$racine/supabase/tests/20_tests_acces.sql"
 psql_test -f "$racine/supabase/tests/41_tests_echanges.sql"

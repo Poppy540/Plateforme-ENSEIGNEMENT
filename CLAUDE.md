@@ -55,6 +55,8 @@ pnpm typecheck        # types Next.js + TypeScript
 pnpm test             # tests unitaires (Vitest)
 pnpm test:base        # migrations Supabase, règles d'accès et import des packs sur un Postgres local jetable
 pnpm test:sauvegarde  # sauvegarde puis restauration sur deux Postgres locaux jetables (ADR 0072)
+pnpm test:migrations  # migrations suivies : base neuve, en retard, fichier modifié, migration en échec (ADR 0075)
+pnpm base:migrer [--simuler]   # applique les migrations qui manquent, suivies en base (connexion d'administration)
 pnpm base:sauvegarder [dossier] ; pnpm base:restaurer <dossier> --confirmer   # copie de secours (voir docs/production/ §5)
 pnpm pack:sql ../referentiels/<pays>   # contrôle un pack pays et génère son SQL d'import
 pnpm referent:invitation <référentiel> <famille[,famille]> [jours] > invitation.sql   # invitation de référent en secours (sinon : /administration/invitations)

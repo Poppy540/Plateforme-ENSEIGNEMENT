@@ -1,6 +1,6 @@
 # Plan du Jalon 12 — prêt à déployer
 
-**Statut** : validé par le propriétaire le 2026-10-28 (décisions ci-dessous, ADR 0074). **Rien n'est commencé.**
+**Statut** : validé par le propriétaire le 2026-10-28 (décisions ci-dessous, ADR 0074). Étape 1 faite (ADR 0075).
 
 **Objectif** : que le premier déploiement soit une suite de gestes sûrs et vérifiés, pas une improvisation, et que la décision de démarrer le pilote repose sur un tableau objectif. **Rien n'est déployé ni souscrit dans ce jalon** : tout est préparé et essayé en local.
 

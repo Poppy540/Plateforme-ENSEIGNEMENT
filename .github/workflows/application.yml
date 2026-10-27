@@ -35,5 +35,7 @@ jobs:
         run: pnpm test:base
       - name: Sauvegarde et restauration (deux Postgres locaux)
         run: pnpm test:sauvegarde
+      - name: Migrations suivies (base neuve, en retard, modifiée, en échec)
+        run: pnpm test:migrations
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e

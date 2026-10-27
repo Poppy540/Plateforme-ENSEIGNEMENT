@@ -64,6 +64,8 @@
 
 ## État d'avancement
 
+- 2026-10-28 : Jalon 12, étape 1 faite (ADR 0075) — `pnpm base:migrer [--simuler] [--marquer-jusqu-a <nom>]` (`scripts/migrer.mts`, logique pure `src/lib/exploitation/migrations.ts`) : migrations manquantes dans l'ordre, une transaction chacune, suivies dans `public.migrations_appliquees` (nom, empreinte SHA-256 fins de ligne normalisées) illisible pour l'application ; verrou consultatif ; refus : fichier modifié, migration disparue, plus ancienne que la dernière, nom invalide ; base migrée à la main refusée puis reprise avec --marquer-jusqu-a. `pnpm test:migrations` (M01-M06) dans l'intégration continue ; `test:base`, base locale et essai de sauvegarde passent par `base:migrer`. Production §2.5 et §6, CLAUDE.md. Tests : 259 unitaires, 125 de base.
+
 - 2026-10-28 : Jalon 12, étape 0 faite — plan `docs/plans/jalon-12.md` et ADR 0074 validés. **Rien d'autre n'est commencé.**
 
 - 2026-10-28 : Jalon 11, étape 6 faite — bilan `docs/bilans/jalon-11.md` ; 5 captures `docs/demo/jalon-11/` (`tests/demo/jalon-11.spec.ts`). Corrections vues sur les captures : accueil capturé avant chargement (attente du titre), file « À valider » hors écran (scroll en haut), « » » orphelin (espaces insécables). Tests : 255 unitaires, 125 de base, sauvegarde réussie, 99 de bout en bout ; batteries simulées : FA conforme, non conformes connus inchangés. Jalon 11 clos quand l'étape 5 (passages réels) aura atteint les seuils.
@@ -204,6 +206,6 @@
 
 ## Prochaine étape
 
-Jalon 12, étape 1 (migrations suivies, `pnpm base:migrer`), seulement après accord du propriétaire. Passages réels (Jalon 12, étape 5) dès la clé API, la relecture des skills « élèves mineurs » et « files d'approbation » et l'accord sur le coût (~121 USD ; mini-essais d'abord). Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, du Jalon 8, §5, du Jalon 9, §6 (Q19, enseignant de la classe), du Jalon 10, §6, et du Jalon 11, §6 (relire les skills « élèves mineurs » et « files d'approbation », désigner les chapitres du pilote, vérifications après déploiement).
+Jalon 12, étape 2 (paquet de déploiement, `pnpm paquet`), seulement après accord du propriétaire. Passages réels (Jalon 12, étape 5) dès la clé API, la relecture des skills « élèves mineurs » et « files d'approbation » et l'accord sur le coût (~121 USD ; mini-essais d'abord). Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, du Jalon 8, §5, du Jalon 9, §6 (Q19, enseignant de la classe), du Jalon 10, §6, et du Jalon 11, §6 (relire les skills « élèves mineurs » et « files d'approbation », désigner les chapitres du pilote, vérifications après déploiement).
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC, et PF, SF, EF pour le Français) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).
