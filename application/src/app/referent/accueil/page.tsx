@@ -69,7 +69,7 @@ export default async function PageAccueilReferent() {
         </li>
         <li>
           Un doute sur le programme officiel ? Rejetez avec un commentaire, ou déposez le document
-          dans « Conformité ».
+          dans «&nbsp;Conformité&nbsp;».
         </li>
       </ul>
       {dejaVu ? (
