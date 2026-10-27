@@ -65,6 +65,9 @@ test("l'administration crée une invitation, le code s'affiche une fois et sert 
   await seConnecter(page, ADMIN);
   await page.goto("/administration/invitations");
   await expect(page.locator(".carte").first()).toContainText("utilisée par Référent fictif invité");
+  // Libellé de la famille pris dans le pack du référentiel de l'invitation, pas dans un autre pack.
+  await expect(page.locator(".carte").first()).toContainText("Mathématiques");
+  await expect(page.locator(".carte").first()).not.toContainText("pays Z");
 });
 
 test("une invitation annulée ne permet plus de s'activer", async ({ page }) => {

@@ -20,7 +20,10 @@ export default async function PageInvitations() {
     optionsInvitation(administrateur),
     invitationsReferents(administrateur),
   ]);
-  const libelle = new Map(options.flatMap((o) => o.familles.map((f) => [f.code, f.libelle])));
+  // Libellé d'une famille dans SON référentiel : deux packs peuvent nommer différemment le même code.
+  const libelle = new Map(
+    options.flatMap((o) => o.familles.map((f) => [`${o.referentiel}:${f.code}`, f.libelle])),
+  );
 
   return (
     <main className="conteneur">
@@ -45,7 +48,9 @@ export default async function PageInvitations() {
       <ul className="liste-cartes">
         {invitations.map((i) => (
           <li key={i.id} className="carte">
-            <strong>{i.familles.map((f) => libelle.get(f) ?? f).join(", ")}</strong>
+            <strong>
+              {i.familles.map((f) => libelle.get(`${i.referentiel}:${f}`) ?? f).join(", ")}
+            </strong>
             <span>
               {i.referentiel} — <strong>{ETATS[i.etat] ?? i.etat}</strong>
               {i.referent ? ` par ${i.referent}` : ""}
