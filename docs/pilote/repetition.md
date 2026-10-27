@@ -12,7 +12,7 @@
 
 | # | Qui | Action | Résultat attendu | Automatique |
 |---|---|---|---|---|
-| 1 | Propriétaire | `pnpm verifier:production`, puis ouvrir `/api/sante` | « Configuration complète » ; réponse 200 | — |
+| 1 | Propriétaire | `pnpm verifier:production` sur le serveur, puis `pnpm verifier:site https://<adresse>` depuis un autre poste | « Configuration complète », puis « Site conforme » (aucun contrôle en échec) | — |
 | 2 | Référent | Activer l'invitation ; valider un chapitre, puis un quiz de ce chapitre | Le chapitre et le quiz sont « validés » ; la décision apparaît dans « Mes dernières décisions » | ✔ 1 |
 | 3 | « Élève » | S'inscrire (classe du chapitre) avec le numéro du « parent » | Le parent reçoit un **SMS réel** avec un lien ; après son accord, le compte de l'élève est actif | ✔ 2 (message simulé) |
 | 4 | « Élève » | Ouvrir le chapitre, poser une question, passer le quiz, demander un plan | Réponse qui guide sans donner la solution ; score enregistré ; trois priorités au plus | ✔ 2 |
@@ -23,7 +23,7 @@
 | 9 | Propriétaire | **Déconnecter toutes les sessions** | L'élève et le référent doivent redemander un code ; le propriétaire reste connecté | ✔ 4 |
 | 10 | Propriétaire | Suspendre un agent dans l'administration, puis le réactiver | L'agent ne répond plus pendant la suspension, puis reprend | (test `disponibilite`) |
 | 11 | Propriétaire | **Rouvrir l'accès**, puis ouvrir le pilotage de l'exploitation et les exports | Activité visible, petits nombres masqués « <5 », aucun numéro ni identifiant dans les CSV | ✔ 4, 5 |
-| 12 | Propriétaire | Restaurer la sauvegarde du jour dans une base jetable ([dossier de production](../production/README.md) §5) | Restauration réussie ; durée notée | — |
+| 12 | Propriétaire | Restaurer la sauvegarde du jour dans une base jetable (`pnpm base:restaurer`, [dossier de production](../production/README.md) §5) | « Restauration vérifiée » ; durée notée | (essai `pnpm test:sauvegarde`) |
 
 ## Compte rendu
 

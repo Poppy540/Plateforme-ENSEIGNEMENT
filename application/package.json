@@ -23,6 +23,7 @@
     "charge": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/tenue-en-charge.mts",
     "classe:creer": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/classe-creer.mts",
     "donnees:purger": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/purger-donnees.mts",
+    "verifier:site": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verifier-site.mts",
     "verifier:production": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verifier-production.mts"
   },
   "dependencies": {
