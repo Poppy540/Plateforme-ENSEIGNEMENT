@@ -2,6 +2,8 @@
 
 **Statut** : proposition de Claude Code, à valider par le propriétaire. Toute personne de l'équipe peut **demander** une suspension ; le propriétaire décide.
 
+**Suivi dans la plateforme** (ADR 0080) : la page « Critères de suspension » de l'administration (`/administration/criteres`) montre l'état de chaque critère ci-dessous. Elle calcule ceux que la base permet de voir (détresse hors délai, erreur de contenu non traitée, contestations répétées, coût au-delà du budget) avec les seuils du pack pays (`pilote` dans `pays.yaml`), et vous y déclarez les autres. Une alerte rejoint la file des signalements quand un critère calculé bouge ; la décision reste la vôtre.
+
 **Moyens de suspension** (ADR 0034), dans `/administration` :
 
 - **Suspendre un agent** (l'Orchestrateur le fait aussi seul en cas de coût anormal) : il ne répond plus à personne, avec un message neutre ; « Réactiver » le remet en service.

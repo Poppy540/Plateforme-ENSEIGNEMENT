@@ -9,6 +9,7 @@ Statuts : **validé** (confirmé par un enseignant-référent sur le programme o
 | `pays.yaml` | Langue, monnaie, fuseau, moyens de paiement | Cadrage (connaissances générales) | à valider |
 | `pays.yaml` | Durées de conservation (365 / 30 / 730 jours) | Proposition de Claude Code (ADR 0019) | à valider par un juriste |
 | `pays.yaml` | Indicatif téléphonique (+241), seul autorisé pour la connexion par SMS et le contact du parent | Plan de numérotation de l'UIT (connaissances générales) | à valider |
+| `pays.yaml` | Seuils du suivi du pilote (délais de détresse 2 h / 12 h, erreur de contenu 7 jours, 2 contestations, budget + 50 %) ; budget hebdomadaire vide | Proposition de Claude Code d'après `docs/pilote/criteres-arret.md` et `procedure-detresse.md` (ADR 0080) | à valider par le propriétaire |
 | `pays.yaml` | Âge de la majorité | — (inconnu : tout élève traité comme mineur) | manquant, à vérifier par un juriste |
 | `structure.yaml` | Cycles, niveaux, examens (BEPC, Bac) | Cadrage, « Cadre général » | à valider |
 | `structure.yaml` | Séries A1, A2, B, C, D | Cadrage, « Filières du lycée » | à valider |

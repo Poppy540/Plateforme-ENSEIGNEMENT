@@ -33,6 +33,15 @@ cadre_legal:
     # Résumés des signalements et tickets à la suppression d'un compte (D2) : garder | effacer ; null = garder.
     resumes_apres_suppression: null
   points: [protection_des_donnees, consentement_des_mineurs, prospection, activite_annexe_des_enseignants_publics, propriete_intellectuelle]
+# Suivi du pilote : seuils des critères de suspension (docs/pilote/criteres-arret.md ; ADR 0080). PROPOSITIONS de
+# Claude Code, à valider par le propriétaire. null = critère non surveillé (et affiché comme tel).
+pilote:
+  detresse_delai_heures: 2            # détresse non prise en charge au-delà : « à examiner » (délai des jours scolaires)
+  detresse_delai_max_heures: 12       # au-delà : critère « atteint », suspension immédiate à décider (délai maximal)
+  erreur_contenu_delai_jours: 7       # erreur de contenu signalée et non traitée au-delà : « à examiner »
+  contestations_max_par_question: 2   # plus de contestations que cela sur une même question, en 7 jours : « à examiner »
+  depassement_budget_pourcent: 50     # coût des 7 derniers jours au-delà du budget plus ce pourcentage : « à examiner »
+  budget_hebdomadaire_usd: null       # budget des agents par semaine, décidé par le propriétaire (condition 11)
 calendrier_scolaire: a_definir
 equipe_locale:
   referents: []          # aucun recruté à ce jour

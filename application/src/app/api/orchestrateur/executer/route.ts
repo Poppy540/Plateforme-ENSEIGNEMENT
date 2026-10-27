@@ -1,4 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
+import { surveillerCriteres } from "@/lib/serveur/criteres-pilote";
 import { executerFile } from "@/lib/serveur/orchestrateur";
 import { jetonExecuteur, urlPublique } from "@/lib/serveur/configuration";
 import { envoyerRapportsHebdomadaires } from "@/lib/serveur/rapports-parents";
@@ -21,8 +22,10 @@ export async function POST(requete: Request): Promise<Response> {
   const decrochages = await detecterDecrochages();
   // Rapports hebdomadaires aux parents (adresse publique obligatoire pour les liens).
   const rapports = await envoyerRapportsHebdomadaires(urlPublique(null));
+  // Critères de suspension du pilote : alertes dans la file humaine, jamais de suspension (ADR 0080).
+  const criteres = await surveillerCriteres();
   return Response.json(
-    { alertes, traitees: traitees.length, decrochages, rapports },
+    { alertes, traitees: traitees.length, decrochages, rapports, criteres },
     { headers: { "cache-control": "no-store" } },
   );
 }

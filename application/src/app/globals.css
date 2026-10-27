@@ -382,3 +382,29 @@ button.danger {
 .decompte.pret {
   border: 2px solid var(--accent);
 }
+
+/* Critères de suspension (ADR 0080) : l'état est toujours écrit ; la bordure n'est qu'un repère en plus. */
+.critere h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.critere p {
+  margin: 0;
+}
+
+.critere.atteint {
+  border-left: 0.4rem solid var(--texte);
+}
+
+.critere.a_examiner {
+  border-left: 0.4rem dashed var(--texte);
+}
+
+.critere.non_surveille {
+  border-style: dashed;
+}
+
+.decompte.alerte-critere {
+  border: 2px solid var(--texte);
+}

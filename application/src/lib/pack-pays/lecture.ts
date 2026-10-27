@@ -34,6 +34,17 @@ export interface Pays {
    * (le compte n'y est plus rattaché) ou « effacer » ; null = garder, en attendant le juriste.
    */
   resumesApresSuppression: "garder" | "effacer" | null;
+  /** Seuils du suivi du pilote (critères de suspension, ADR 0080) ; null = critère non surveillé. */
+  pilote: SeuilsPilote;
+}
+
+export interface SeuilsPilote {
+  detresse_delai_heures: number | null;
+  detresse_delai_max_heures: number | null;
+  erreur_contenu_delai_jours: number | null;
+  contestations_max_par_question: number | null;
+  depassement_budget_pourcent: number | null;
+  budget_hebdomadaire_usd: number | null;
 }
 
 export interface Referentiel {
@@ -200,6 +211,17 @@ export function lirePack(dossier: string): PackPays {
       const c = (((brutPays.cadre_legal ?? {}) as Brut).conservation ?? {}) as Brut;
       return texteOuNul(c.resumes_apres_suppression) as Pays["resumesApresSuppression"];
     })(),
+    pilote: (() => {
+      const p = (brutPays.pilote ?? {}) as Brut;
+      return {
+        detresse_delai_heures: nombreOuNul(p.detresse_delai_heures),
+        detresse_delai_max_heures: nombreOuNul(p.detresse_delai_max_heures),
+        erreur_contenu_delai_jours: nombreOuNul(p.erreur_contenu_delai_jours),
+        contestations_max_par_question: nombreOuNul(p.contestations_max_par_question),
+        depassement_budget_pourcent: nombreOuNul(p.depassement_budget_pourcent),
+        budget_hebdomadaire_usd: nombreOuNul(p.budget_hebdomadaire_usd),
+      };
+    })(),
     indicatifsTelephone: Array.isArray(brutPays.indicatifs_telephone)
       ? (brutPays.indicatifs_telephone as unknown[]).map((i) => String(i).trim())
       : [],
@@ -223,6 +245,17 @@ export function lirePack(dossier: string): PackPays {
       erreurs.push(`pays.yaml : durée de conservation invalide (${cle})`);
     }
   }
+  for (const [cle, valeur] of Object.entries(pays.pilote)) {
+    const entier = cle !== "budget_hebdomadaire_usd";
+    if (valeur !== null && (valeur < 0 || (entier && !Number.isInteger(valeur))))
+      erreurs.push(`pays.yaml : seuil du pilote invalide (${cle})`);
+  }
+  if (
+    pays.pilote.detresse_delai_heures !== null &&
+    pays.pilote.detresse_delai_max_heures !== null &&
+    pays.pilote.detresse_delai_max_heures < pays.pilote.detresse_delai_heures
+  )
+    erreurs.push("pays.yaml : detresse_delai_max_heures doit être au moins detresse_delai_heures");
   if (
     pays.resumesApresSuppression !== null &&
     !["garder", "effacer"].includes(pays.resumesApresSuppression)

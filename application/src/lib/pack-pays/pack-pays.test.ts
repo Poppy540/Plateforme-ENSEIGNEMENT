@@ -119,6 +119,39 @@ describe("lecture d'un pack pays", () => {
     expect(lirePack(packFictif).pays.conservation.inscription_non_confirmee_jours).toBe(7);
   });
 
+  it("lit les seuils du suivi du pilote (provisoires) ; absents = non surveillés", () => {
+    expect(lirePack(packGabon).pays.pilote).toEqual({
+      detresse_delai_heures: 2,
+      detresse_delai_max_heures: 12,
+      erreur_contenu_delai_jours: 7,
+      contestations_max_par_question: 2,
+      depassement_budget_pourcent: 50,
+      budget_hebdomadaire_usd: null,
+    });
+    expect(Object.values(lirePack(packFictif).pays.pilote).every((v) => v === null)).toBe(true);
+  });
+
+  it("refuse des seuils du pilote incohérents", () => {
+    const dossier = mkdtempSync(join(tmpdir(), "pack-"));
+    cpSync(packFictif, dossier, { recursive: true });
+    const pays = readFileSync(join(dossier, "pays.yaml"), "utf8");
+    writeFileSync(
+      join(dossier, "pays.yaml"),
+      `${pays}\npilote:\n  detresse_delai_heures: 6\n  detresse_delai_max_heures: 3\n  contestations_max_par_question: 1.5\n  budget_hebdomadaire_usd: -1\n`,
+    );
+    let erreurs: string[] = [];
+    try {
+      lirePack(dossier);
+    } catch (e) {
+      erreurs = (e as ErreurPack).erreurs;
+    }
+    expect(erreurs).toEqual([
+      "pays.yaml : seuil du pilote invalide (contestations_max_par_question)",
+      "pays.yaml : seuil du pilote invalide (budget_hebdomadaire_usd)",
+      "pays.yaml : detresse_delai_max_heures doit être au moins detresse_delai_heures",
+    ]);
+  });
+
   it("lit le questionnaire anonyme : fermé, à valider pour le pilote, validé pour le pays fictif", () => {
     const q = lirePack(packGabon).questionnaire!;
     expect(q.statut).toBe("a_valider");
