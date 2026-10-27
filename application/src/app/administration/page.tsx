@@ -78,9 +78,16 @@ function ChampsReprise({ id }: { id: string }) {
   return (
     <>
       <label htmlFor={`cause-${id}`}>Cause identifiée</label>
-      <input id={`cause-${id}`} name="cause" required minLength={3} maxLength={300} />
+      <textarea id={`cause-${id}`} name="cause" required minLength={3} maxLength={300} rows={2} />
       <label htmlFor={`correction-${id}`}>Correction faite et testée (quel test ?)</label>
-      <input id={`correction-${id}`} name="correction" required minLength={3} maxLength={300} />
+      <textarea
+        id={`correction-${id}`}
+        name="correction"
+        required
+        minLength={3}
+        maxLength={300}
+        rows={2}
+      />
       <label className="case">
         <input type="checkbox" name="accord" value="oui" required /> J&apos;ai donné mon accord
         écrit à la reprise

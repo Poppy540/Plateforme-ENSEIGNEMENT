@@ -433,3 +433,13 @@ button.danger {
     break-inside: avoid;
   }
 }
+
+.rapport-semaine th[scope="row"] {
+  text-align: left;
+  font-weight: 600;
+}
+
+.rapport-semaine td {
+  text-align: right;
+  white-space: nowrap;
+}

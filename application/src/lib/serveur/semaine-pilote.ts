@@ -47,7 +47,13 @@ export async function semaineDuPilote(administrateur: string, fin: string, versi
     journalDuPilote(administrateur, 500),
   ]);
   const dansLaSemaine: EntreeJournalSemaine[] = journal
-    .map((e) => ({ ...e, cree_le: new Date(e.cree_le).toISOString() }))
+    .map((e) => ({
+      type: e.type,
+      agent: e.agent,
+      // Une reprise se résume par sa cause et sa correction (les 4 points sont exigés par la base).
+      texte: e.cause ? `cause : ${e.cause} ; correction : ${e.correction}` : e.texte,
+      cree_le: new Date(e.cree_le).toISOString(),
+    }))
     .filter((e) => e.cree_le.slice(0, 10) >= semaine.debut && e.cree_le.slice(0, 10) <= semaine.fin)
     .reverse();
   return rapportSemaine(version, semaine, precedente, criteres, dansLaSemaine);

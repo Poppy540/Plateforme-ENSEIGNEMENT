@@ -79,7 +79,8 @@ export default async function PageJournal({ searchParams }: PageProps<"/administ
               {e.agent ? ` : ${e.agent}` : ""}
             </h3>
             <p className="note">{formatDate.format(new Date(e.cree_le))} (UTC)</p>
-            <p>{e.texte}</p>
+            {/* Une reprise est décrite par ses 4 points ci-dessous. */}
+            {!e.cause && <p>{e.texte}</p>}
             {e.critere && <p>Critère : {TITRES.get(e.critere) ?? e.critere}</p>}
             {e.cause && (
               <ul>
