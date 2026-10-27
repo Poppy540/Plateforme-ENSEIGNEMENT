@@ -361,6 +361,10 @@ button.danger {
   margin: 0;
 }
 
+.condition p {
+  margin: 0;
+}
+
 .condition.remplie {
   border-left: 0.4rem solid var(--accent);
 }

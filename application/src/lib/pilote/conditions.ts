@@ -181,7 +181,7 @@ function verificationEnBase(numero: number, f: FaitsPilote): { ok: boolean; deta
     detail:
       f.classes === 0
         ? "Aucune classe du pilote créée (Classes du pilote)."
-        : `${pluriel(f.classes, "classe")} créée(s), ${f.classes_avec_enseignant} avec un enseignant activé.`,
+        : `${pluriel(f.classes, "classe")} du pilote, dont ${f.classes_avec_enseignant} avec un enseignant activé.`,
   };
 }
 
