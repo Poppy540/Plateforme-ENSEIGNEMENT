@@ -26,6 +26,7 @@
 | 2026-10-20 | Plan du Jalon 6 validé : sécurité (D1-D9, propositions de la revue) d'abord, Sciences 3e, leçons écrites, compteur agrégé + questionnaire anonyme, préparation du pilote | ADR 0048, docs/plans/jalon-6.md |
 | 2026-10-21 | Lien de prérequis entre deux familles : décidé par le référent de la famille du chapitre qui dépend, seul (il lit le chapitre visé sans l'ouvrir) | ADR 0050 |
 | 2026-10-21 | Plan du Jalon 7 validé : accessibilité d'abord (`@axe-core/playwright` en dépendance de test acceptée), vidéo prête à brancher (Cloudflare Stream + avatar générique), journal d'erreurs sans donnée personnelle, Français 3e ; pas de WhatsApp | ADR 0053, docs/plans/jalon-7.md |
+| 2026-10-28 | Plan du Jalon 12 validé : migrations suivies (`base:migrer`), paquet de déploiement autonome sans secret, répétition générale en local (simulation coupée), tableau des 12 conditions du pilote dans l'administration ; écartés : skill « faible débit », nouvelle matière | ADR 0074, docs/plans/jalon-12.md |
 | 2026-10-28 | Plan du Jalon 11 validé : accueil du premier référent (chapitres du pilote en tête, choisis dans l'administration) et skill « files d'approbation », sauvegarde et restauration essayées, vérification d'un site déployé ; écartés : skill « faible débit », nouvelle matière | ADR 0069, docs/plans/jalon-11.md |
 | 2026-10-27 | Plan du Jalon 10 validé : outiller le propriétaire d'abord (invitations de référents et classes depuis /administration, codes affichés une fois), puis skill commune « élèves mineurs » (Professeur, Évaluateur, Tuteur, Support) ; aucune nouvelle matière | ADR 0065, docs/plans/jalon-10.md |
 | 2026-10-26 | Plan du Jalon 9 validé : pilote d'abord — masquage du texte des élèves avant le Professeur (Q8), vue agrégée de l'enseignant de la classe (masquée sous 5 élèves, aucune donnée individuelle), pages plus légères ; aucune nouvelle matière (masquage et contenus : choix par défaut, pas de préférence exprimée) | ADR 0061, docs/plans/jalon-9.md |
@@ -62,6 +63,8 @@
 5. Séries techniques F/G : à définir avec des enseignants techniques.
 
 ## État d'avancement
+
+- 2026-10-28 : Jalon 12, étape 0 faite — plan `docs/plans/jalon-12.md` et ADR 0074 validés. **Rien d'autre n'est commencé.**
 
 - 2026-10-28 : Jalon 11, étape 6 faite — bilan `docs/bilans/jalon-11.md` ; 5 captures `docs/demo/jalon-11/` (`tests/demo/jalon-11.spec.ts`). Corrections vues sur les captures : accueil capturé avant chargement (attente du titre), file « À valider » hors écran (scroll en haut), « » » orphelin (espaces insécables). Tests : 255 unitaires, 125 de base, sauvegarde réussie, 99 de bout en bout ; batteries simulées : FA conforme, non conformes connus inchangés. Jalon 11 clos quand l'étape 5 (passages réels) aura atteint les seuils.
 
@@ -201,6 +204,6 @@
 
 ## Prochaine étape
 
-Proposer le plan de la suite (Jalon 12) quand le propriétaire le demande. Passages réels (Jalon 11, étape 5) dès la clé API, la relecture des skills « élèves mineurs » et « files d'approbation » et l'accord sur le coût (~121 USD ; mini-essais d'abord). Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, du Jalon 8, §5, du Jalon 9, §6 (Q19, enseignant de la classe), du Jalon 10, §6, et du Jalon 11, §6 (relire les skills « élèves mineurs » et « files d'approbation », désigner les chapitres du pilote, vérifications après déploiement).
+Jalon 12, étape 1 (migrations suivies, `pnpm base:migrer`), seulement après accord du propriétaire. Passages réels (Jalon 12, étape 5) dès la clé API, la relecture des skills « élèves mineurs » et « files d'approbation » et l'accord sur le coût (~121 USD ; mini-essais d'abord). Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, du Jalon 8, §5, du Jalon 9, §6 (Q19, enseignant de la classe), du Jalon 10, §6, et du Jalon 11, §6 (relire les skills « élèves mineurs » et « files d'approbation », désigner les chapitres du pilote, vérifications après déploiement).
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC, et PF, SF, EF pour le Français) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).
