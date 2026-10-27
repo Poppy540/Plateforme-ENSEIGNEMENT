@@ -37,5 +37,7 @@ jobs:
         run: pnpm test:sauvegarde
       - name: Migrations suivies (base neuve, en retard, modifiée, en échec)
         run: pnpm test:migrations
+      - name: Répétition générale du déploiement (simulation coupée)
+        run: pnpm repetition
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e

@@ -160,6 +160,7 @@ L'essai automatique `pnpm test:sauvegarde`, lancé à chaque changement de code,
 1. Tous les contrôles verts sur la branche :
    - `pnpm lint`, `pnpm format:verifier`, `pnpm typecheck` ;
    - `pnpm test`, `pnpm test:base`, `pnpm test:migrations`, `pnpm test:sauvegarde`, `pnpm test:e2e` ;
+   - `pnpm repetition` : répétition générale du déploiement en local, simulation coupée (ADR 0077) ;
    - et les batteries réelles des agents dont le prompt ou les skills ont changé.
 2. Relecture du changement et accord du propriétaire.
 3. Sauvegarde juste avant (`pnpm base:sauvegarder`, §5).

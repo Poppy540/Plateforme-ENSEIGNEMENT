@@ -65,6 +65,7 @@ bash scripts/base-locale.sh demarrer   # base locale (données fictives) pour pn
 pnpm verifier:production   # sur le serveur : configuration de production complète ? (n'affiche aucune valeur ; voir docs/production/)
 pnpm verifier:site https://<adresse>   # site en ligne : en-têtes, simulation fermée, accès refusés sans session (lecture seule ; ADR 0073)
 pnpm paquet [dossier]   # paquet de déploiement autonome dans ../paquet (sans secret, test ni pack fictif ; ADR 0076)
+pnpm repetition   # répétition générale du déploiement en local, simulation coupée : base neuve → migrations → pack → configuration → paquet → site → sauvegarde (ADR 0077)
 CHEMIN_CHROMIUM=/opt/pw-browsers/chromium-1194/chrome-linux/chrome pnpm test:e2e   # bout en bout (Playwright, base locale réinitialisée)
 pnpm charge [--eleves 200]   # tenue en charge, base LOCALE seulement, serveur lancé en simulation sur le port 3100 (ADR 0059)
 pnpm test:agents [--agent scenariste|evaluateur|tuteur|support|coordinateur|conformite|recruteur]   # tests des agents, simulés (sans coût) ; passage réel : voir tests/README.md (payant, accord du propriétaire)
