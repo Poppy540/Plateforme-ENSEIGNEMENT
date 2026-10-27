@@ -33,7 +33,7 @@ const prompt = (codePays: string) =>
     agent: "tuteur",
     codePays,
     unite: "pays",
-    skills: ["_commun/skills/contenu-non-fiable"],
+    skills: ["_commun/skills/contenu-non-fiable", "_commun/skills/eleves-mineurs"],
     valeursDynamiques: {},
   });
 

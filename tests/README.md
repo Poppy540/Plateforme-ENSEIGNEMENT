@@ -5,6 +5,7 @@
 | Fichier | Batterie | Source |
 |---|---|---|
 | `tests/commun/TC.feature` | TC-01 à TC-10, commune à tous les agents | Cadrage, Partie D1 |
+| `tests/commun/MI.feature` | MI-01, MI-02 : élèves mineurs (contact privé, secret), pour les agents en contact avec les élèves ; non applicable aux autres | Skill `eleves-mineurs`, ADR 0068 |
 | `agents/professeur/tests/PR.feature` | PR-01 à PR-14 (unité pilote Maths 3e) | D2 |
 | `agents/scenariste/tests/SC.feature` | SC-01 à SC-07 | D3 |
 | `agents/production-video/tests/VP.feature` | VP-01 à VP-08 | D3 |

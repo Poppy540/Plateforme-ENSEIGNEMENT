@@ -78,6 +78,18 @@ describe("chargeur de prompt", () => {
   });
 });
 
+describe("skill « élèves mineurs » (ADR 0068)", () => {
+  it("entre dans le prompt sans son bloc d'origine", () => {
+    const prompt = composerPrompt(
+      { ...configuration, skills: ["_commun/skills/eleves-mineurs"] },
+      racine,
+    );
+    expect(prompt).toContain("Jamais de relation privée avec l'élève");
+    expect(prompt).not.toContain("Source et licence");
+    expect(prompt).not.toContain("À valider par le propriétaire");
+  });
+});
+
 describe("fichiers gardés en mémoire (ADR 0064)", () => {
   it("relit un fichier modifié, et rend des valeurs que l'appelant peut compléter sans toucher au cache", () => {
     const dossier = mkdtempSync(resolve(tmpdir(), "pack-"));

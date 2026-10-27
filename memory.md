@@ -57,10 +57,12 @@
 1. Fournisseurs hébergement, SMS, avatar, voix, WhatsApp ; budget par vidéo (Jalon 2).
 2. Premier enseignant-référent Maths 3e ; accès aux programmes officiels IPN.
 3. **Juriste local (Gabon)** : protection des données, consentement des mineurs, prospection, activité annexe des enseignants du public, contrat de référent, propriété intellectuelle, consentement voix/image. À faire vérifier **avant d'ouvrir à de vrais élèves**.
-4. Skills propres au projet encore à écrire (rien d'existant) : français et mineurs, accueil WhatsApp, files d'approbation, pipeline voix/avatar, faible débit, lecture de PDF, sourcing éthique.
+4. Skills propres au projet encore à écrire (« élèves mineurs » faite au Jalon 10, à valider) : français, accueil WhatsApp, files d'approbation, pipeline voix/avatar, faible débit, lecture de PDF, sourcing éthique.
 5. Séries techniques F/G : à définir avec des enseignants techniques.
 
 ## État d'avancement
+
+- 2026-10-28 : Jalon 10, étape 3 faite (ADR 0068) — skill `agents/_commun/skills/eleves-mineurs` (7 règles : ton, aucune donnée demandée ni répétée, jamais de relation privée ni de secret, adulte de confiance, détresse toujours signalée, pas de dépendance, parent ≠ élève ; exemples fictifs ; bloc « Source et licence » hors prompt), **à valider par le propriétaire** (`agents/_commun/skills/SOURCES.md`). Chargée par Professeur, Évaluateur, Tuteur (plan et parents), Support, en production et dans le lanceur. Batterie commune `tests/commun/MI.feature` (MI-01 contact privé, MI-02 secret + difficulté à la maison ; interdits), chargée avec TC pour tous les agents ; non applicable à Scénariste, Coordinateur, Conformité, Recruteur. Simulateur : détresse aussi sur « peur de rentrer ». Estimation des séries complètes réelles : ~119 USD. Tests : 248 unitaires, 97 de bout en bout ; batteries simulées : non conformes connus seulement.
 
 - 2026-10-28 : Jalon 10, étape 2 faite (ADR 0067, migration 0037, tests H01-H03, `classes-administration.spec.ts`) — `/administration/classes` : un formulaire par référentiel (niveau, série facultative, nom, établissement, durées), deux codes affichés une seule fois ; liste sans codes (élèves rattachés, validité du code, enseignants, invitation en attente) ; nouveau code de classe (l'ancien cesse de marcher), nouvelle invitation d'enseignant, annulation ; rappel Q19. Fonctions `options_classe`, `creer_classe`, `classes_admin` (dont `code_valide`), `nouveau_code_classe`, `nouvelle_invitation_enseignant`, `annuler_invitations_enseignant`, aides `verifier_administrateur`, `verifier_empreinte`, `verifier_jours` ; `invitations_enseignants.cree_le`, `annulee_le` ; audit sans codes. `src/lib/serveur/classes-administration.ts`. `pnpm classe:creer` gardé en secours. Test rendu robuste : `catalogue.spec.ts` (attente de /espace après l'inscription). Tests : 246 unitaires, 121 de base, 97 de bout en bout.
 
@@ -184,6 +186,6 @@
 
 ## Prochaine étape
 
-Jalon 10, étape 3 (skill commune « élèves mineurs »), seulement après accord du propriétaire. Passages réels (Jalon 10, étape 4) dès la clé API et l'accord sur le coût (~115 USD ; mini-essais d'abord). Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, du Jalon 8, §5, et du Jalon 9, §6 (Q19, enseignant de la classe).
+Jalon 10, étape 5 (captures des écrans d'administration et bilan), seulement après accord du propriétaire. Passages réels (Jalon 10, étape 4) dès la clé API, la relecture de la skill « élèves mineurs » et l'accord sur le coût (~119 USD ; mini-essais d'abord). Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, du Jalon 8, §5, et du Jalon 9, §6 (Q19, enseignant de la classe).
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC, et PF, SF, EF pour le Français) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).

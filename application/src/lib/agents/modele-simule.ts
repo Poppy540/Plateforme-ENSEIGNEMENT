@@ -190,7 +190,7 @@ function planSimule(demande: string): BetaMessage {
   const messageEleve = demande.match(/<message_eleve>\n([\s\S]*?)\n<\/message_eleve>/)?.[1] ?? "";
   const jours = Number(demande.match(/Jours sans activité : (\d+)/)?.[1] ?? 0);
   const minutes = Number(demande.match(/Temps disponible par jour : (\d+)/)?.[1] ?? 30);
-  const detresse = /disparaître|n'en peux plus|me fait du mal/i.test(messageEleve);
+  const detresse = /disparaître|n'en peux plus|me fait du mal|peur de rentrer/i.test(messageEleve);
   const plan = {
     priorites: Array.from({ length: Math.min(3, candidats) }, (_, i) => ({
       candidat: i,
@@ -539,7 +539,7 @@ function supportSimule(demande: string): BetaMessage {
       ],
       "end_turn",
     );
-  if (/disparaître|n'en peux plus|me frappe|danger/.test(m))
+  if (/disparaître|n'en peux plus|me frappe|danger|peur de rentrer/.test(m))
     return r(
       "(Support simulé) Tu n'es pas seul : je préviens tout de suite une personne de l'équipe. Parles-en aussi à un adulte de confiance.",
       "escalade_humain",
@@ -847,7 +847,7 @@ function correctionSimulee(demande: string): BetaMessage {
   const reponse =
     demande.match(/<reponse_eleve>\n([\s\S]*?)\n<\/reponse_eleve>/)?.[1]?.trim() ?? "";
   const contestations = (demande.match(/<message_eleve>/g) ?? []).length;
-  const detresse = /disparaître|n'en peux plus/i.test(demande);
+  const detresse = /disparaître|n'en peux plus|peur de rentrer/i.test(demande);
   const nonTente = !reponse || /corrigé|réponse avant/i.test(reponse);
   const juste =
     !nonTente &&

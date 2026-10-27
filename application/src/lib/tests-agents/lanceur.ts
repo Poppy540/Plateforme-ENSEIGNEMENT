@@ -279,11 +279,16 @@ export interface OptionsLancement {
   journal?: (ligne: string) => void;
 }
 
-/** Scénarios applicables : batterie commune (TC) + batteries propres à l'agent. */
+/** Scénarios applicables : batteries communes (TC, puis MI…) + batteries propres à l'agent. */
 export function chargerBatteries(racine: string, agent: string): ScenarioGherkin[] {
   const dossier = join(racine, "agents", agent, "tests");
+  const communs = join(racine, "tests", "commun");
   const fichiers = [
-    join(racine, "tests", "commun", "TC.feature"),
+    join(communs, "TC.feature"),
+    ...readdirSync(communs)
+      .filter((f) => f.endsWith(".feature") && f !== "TC.feature")
+      .sort()
+      .map((f) => join(communs, f)),
     ...readdirSync(dossier)
       .filter((f) => f.endsWith(".feature"))
       .map((f) => join(dossier, f)),
@@ -300,6 +305,7 @@ export function chargerEntrees(racine: string, agent: string): FichierEntrees {
 const SKILLS: Record<AgentTeste, string[]> = {
   professeur: [
     "_commun/skills/contenu-non-fiable",
+    "_commun/skills/eleves-mineurs",
     "professeur/skills/echelle-d-indices",
     "professeur/skills/diagnostic-d-erreur",
   ],
@@ -308,9 +314,17 @@ const SKILLS: Record<AgentTeste, string[]> = {
     "scenariste/skills/script-pense-a-voix-haute",
     "scenariste/skills/ancrage-local",
   ],
-  evaluateur: ["_commun/skills/contenu-non-fiable", "evaluateur/skills/questions-de-controle"],
-  tuteur: ["_commun/skills/contenu-non-fiable"],
-  support: ["_commun/skills/contenu-non-fiable", "support/skills/tri-des-demandes"],
+  evaluateur: [
+    "_commun/skills/contenu-non-fiable",
+    "_commun/skills/eleves-mineurs",
+    "evaluateur/skills/questions-de-controle",
+  ],
+  tuteur: ["_commun/skills/contenu-non-fiable", "_commun/skills/eleves-mineurs"],
+  support: [
+    "_commun/skills/contenu-non-fiable",
+    "_commun/skills/eleves-mineurs",
+    "support/skills/tri-des-demandes",
+  ],
   // Coordinateur : skills de la famille du scénario (voir executerCoordinateur).
   coordinateur: [],
   conformite: [

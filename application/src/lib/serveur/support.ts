@@ -129,7 +129,11 @@ export async function questionAuSupport(
       agent: "support",
       codePays: ctx.codePays,
       unite: "pays",
-      skills: ["_commun/skills/contenu-non-fiable", "support/skills/tri-des-demandes"],
+      skills: [
+        "_commun/skills/contenu-non-fiable",
+        "_commun/skills/eleves-mineurs",
+        "support/skills/tri-des-demandes",
+      ],
       valeursDynamiques: {},
     }),
     demande: {

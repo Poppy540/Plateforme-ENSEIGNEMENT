@@ -146,6 +146,21 @@ describe("lanceur", () => {
   });
 });
 
+describe("élèves mineurs (Jalon 10, étape 3)", () => {
+  it("MI est jouée par les agents en contact avec les élèves, non applicable aux autres", () => {
+    for (const agent of ["professeur", "evaluateur", "tuteur", "support"])
+      for (const id of ["MI-01", "MI-02"])
+        expect(chargerEntrees(racine, agent).scenarios[id], `${agent} ${id}`).toBeTruthy();
+    for (const agent of ["scenariste", "coordinateur", "conformite", "recruteur"])
+      expect(Object.keys(chargerEntrees(racine, agent).non_applicables ?? {})).toEqual(
+        expect.arrayContaining(["MI-01", "MI-02"]),
+      );
+    expect(chargerBatteries(racine, "tuteur").map((s) => s.id)).toEqual(
+      expect.arrayContaining(["TC-01", "MI-01", "MI-02"]),
+    );
+  });
+});
+
 describe("Français 3e (Jalon 8, étape 4)", () => {
   it("batteries PF, SF et EF : toutes converties, sur l'unité ga-3e-francais", () => {
     for (const [agent, prefixe, nombre] of [
@@ -200,11 +215,15 @@ describe("Français 3e (Jalon 8, étape 4)", () => {
 });
 
 describe("agent Scénariste", () => {
-  it("lit les 17 scénarios TC + SC : tous convertis, sauf TC-09 déclaré non applicable", () => {
+  it("lit les 17 scénarios TC + SC : tous convertis, sauf TC-09 et MI déclarés non applicables", () => {
     const scenarios = chargerBatteries(racine, "scenariste");
     const entrees = chargerEntrees(racine, "scenariste");
     expect(scenarios.map((s) => s.id).filter((id) => /^(TC|SC)-/.test(id))).toHaveLength(17);
-    expect(scenarios.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id)).toEqual(["TC-09"]);
+    expect(scenarios.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id)).toEqual([
+      "TC-09",
+      "MI-01",
+      "MI-02",
+    ]);
     expect(entrees.non_applicables?.["TC-09"]).toBeTruthy();
   });
 
@@ -437,11 +456,15 @@ describe("agent Support", () => {
 });
 
 describe("agent Coordinateur", () => {
-  it("lit les 26 scénarios TC + CM : tous convertis, sauf TC-09 déclaré non applicable", () => {
+  it("lit les 26 scénarios TC + CM : tous convertis, sauf TC-09 et MI déclarés non applicables", () => {
     const scenarios = chargerBatteries(racine, "coordinateur");
     const entrees = chargerEntrees(racine, "coordinateur");
     expect(scenarios.map((s) => s.id).filter((id) => /^(TC|CM)-/.test(id))).toHaveLength(26);
-    expect(scenarios.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id)).toEqual(["TC-09"]);
+    expect(scenarios.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id)).toEqual([
+      "TC-09",
+      "MI-01",
+      "MI-02",
+    ]);
     expect(entrees.non_applicables?.["TC-09"]).toMatch(/jamais en contact avec les élèves/);
   });
 
@@ -491,11 +514,15 @@ describe("agent Coordinateur", () => {
 });
 
 describe("agent Conformité", () => {
-  it("lit les 17 scénarios TC + CO : tous convertis, sauf TC-09 déclaré non applicable", () => {
+  it("lit les 17 scénarios TC + CO : tous convertis, sauf TC-09 et MI déclarés non applicables", () => {
     const scenarios = chargerBatteries(racine, "conformite");
     const entrees = chargerEntrees(racine, "conformite");
     expect(scenarios.map((s) => s.id).filter((id) => /^(TC|CO)-/.test(id))).toHaveLength(17);
-    expect(scenarios.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id)).toEqual(["TC-09"]);
+    expect(scenarios.filter((s) => !entrees.scenarios[s.id]).map((s) => s.id)).toEqual([
+      "TC-09",
+      "MI-01",
+      "MI-02",
+    ]);
   });
 
   it("contrôles : source absente, coefficient inventé, source non officielle, alerte, refus", () => {

@@ -36,6 +36,7 @@ import { deciderContenu } from "./validation";
 
 const SKILLS_EVALUATEUR = [
   "_commun/skills/contenu-non-fiable",
+  "_commun/skills/eleves-mineurs",
   "evaluateur/skills/questions-de-controle",
 ];
 export const LONGUEUR_CONSIGNE_MAX = 1000;

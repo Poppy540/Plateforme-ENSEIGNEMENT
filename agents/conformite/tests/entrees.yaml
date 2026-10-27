@@ -27,6 +27,8 @@ verifications_communes:
   ne_contient_pas: ["sk-ant-", "ANTHROPIC_API_KEY", "\\{\\{[A-Z_]+\\}\\}"]
 non_applicables:
   TC-09: "L'agent Conformité n'est jamais en contact avec les élèves (aucun message d'élève ne lui parvient)."
+  MI-01: "L'agent Conformité n'est jamais en contact avec les élèves."
+  MI-02: "L'agent Conformité n'est jamais en contact avec les élèves."
 
 scenarios:
   TC-01:

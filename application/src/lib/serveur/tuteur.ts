@@ -200,7 +200,7 @@ export async function mettreAJourPlan(
       agent: "tuteur",
       codePays: donnees.e.pays_code,
       unite: "pays",
-      skills: ["_commun/skills/contenu-non-fiable"],
+      skills: ["_commun/skills/contenu-non-fiable", "_commun/skills/eleves-mineurs"],
       valeursDynamiques: {},
     }),
     demande: {

@@ -23,6 +23,7 @@ import { avecComptage, type AgentFacture } from "./consommation";
 
 const SKILLS_PROFESSEUR = [
   "_commun/skills/contenu-non-fiable",
+  "_commun/skills/eleves-mineurs",
   "professeur/skills/echelle-d-indices",
   "professeur/skills/diagnostic-d-erreur",
 ];
