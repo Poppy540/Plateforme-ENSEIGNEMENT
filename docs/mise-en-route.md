@@ -77,7 +77,7 @@ E1 à E3 couvrent les conditions 6, 7 et 8.
 | # | Quoi | Document |
 |---|---|---|
 | G1 | **Répétition réelle** sur le site déployé, avec les numéros de l'équipe, en 12 lignes ; toute ligne en échec est corrigée et refaite | [Répétition](pilote/repetition.md) |
-| G2 | **Décision de démarrer** : les 12 conditions cochées, chacune avec sa preuve | [Conditions du pilote](pilote/README.md) |
+| G2 | **Décision de démarrer** : les 12 conditions remplies, chacune avec sa preuve (page « Conditions du pilote » de l'administration : « 12 / 12 conditions remplies ») | [Conditions du pilote](pilote/README.md) |
 
 ## H. Pendant et après le pilote
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { masquerTexteEleve } from "./masquage";
+import { masquerCoordonnees, masquerTexteEleve } from "./masquage";
 
 // Numéros FICTIFS (indicatif « +999 » du pack fictif, ou formes génériques) : données de test uniquement.
 describe("masquage du texte d'un élève avant un agent pédagogique (ADR 0062)", () => {
@@ -28,5 +28,17 @@ describe("masquage du texte d'un élève avant un agent pédagogique (ADR 0062)"
       "-5 + 3 = -2",
     ])
       expect(masquerTexteEleve(texte)).toBe(texte);
+  });
+});
+
+describe("masquage des coordonnées seulement (preuve d'une condition du pilote, ADR 0078)", () => {
+  it("masque emails et numéros, garde les liens et les dates", () => {
+    expect(
+      masquerCoordonnees(
+        "Envoi testé le 2026-10-28 au +999 77 12 34 56 et à equipe@exemple.test ; site https://exemple.test",
+      ),
+    ).toBe(
+      "Envoi testé le 2026-10-28 au [numéro masqué] et à [email masqué] ; site https://exemple.test",
+    );
   });
 });

@@ -354,3 +354,27 @@ button.danger {
   letter-spacing: 0.05em;
   overflow-wrap: anywhere;
 }
+
+/* Conditions du pilote (ADR 0078) : l'état est toujours écrit ; la bordure n'est qu'un repère en plus. */
+.condition h2 {
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.condition.remplie {
+  border-left: 0.4rem solid var(--accent);
+}
+
+.condition.a_revoir {
+  border-left: 0.4rem dashed var(--texte);
+}
+
+.decompte {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--discret);
+  border-radius: 0.75rem;
+}
+
+.decompte.pret {
+  border: 2px solid var(--accent);
+}

@@ -22,7 +22,7 @@ Pays pilote : Gabon. Unité pilote : Mathématiques 3e (`ga-3e-mathematiques`).
 
 ## Conditions préalables (toutes obligatoires)
 
-Le pilote ne commence qu'une fois chaque ligne cochée par le propriétaire, avec la preuve indiquée. **Point au 2026-10-21 (Jalon 6, étape 6) : aucune condition n'est encore remplie.** La colonne « Prêt » dit ce que la plateforme fait déjà ; la colonne « Reste » dit ce qui manque, et qui le fournit.
+Le pilote ne commence qu'une fois chaque ligne remplie, avec la preuve indiquée. **L'état à jour se lit dans l'administration, page « Conditions du pilote »** (`/administration/conditions`, ADR 0078) : les conditions 3 et 4 y sont vérifiées par la plateforme, les autres cochées par le propriétaire avec une preuve datée, et la configuration du serveur y est contrôlée pour les conditions 5 à 8 et 11. **Point au 2026-10-28 : aucune condition n'est encore remplie** ; la colonne « État » ci-dessous n'est plus tenue à jour, la page de l'administration fait foi. La colonne « Prêt » dit ce que la plateforme fait déjà ; la colonne « Reste » dit ce qui manque, et qui le fournit.
 
 | # | Condition | Preuve | Prêt dans la plateforme | Reste (qui) | État |
 |---|---|---|---|---|---|
