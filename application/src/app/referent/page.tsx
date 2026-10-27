@@ -8,11 +8,15 @@ import { FormulaireRevue } from "./coordinateur/formulaires";
 import { quizARelire } from "@/lib/serveur/evaluateur";
 import { scriptsARelire } from "@/lib/serveur/scenariste";
 import { videosPourTableau } from "@/lib/serveur/videos";
+import { accueilVu, chapitresPiloteDuReferent } from "@/lib/serveur/pilote";
+import { commencer } from "./accueil/actions";
 
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "medium", timeStyle: "short" });
 
 export default async function PageReferent() {
   const utilisateur = await exigerReferent();
+  const premiereVisite = !(await accueilVu(utilisateur));
+  const pilote = await chapitresPiloteDuReferent(utilisateur);
   const tableau = await tableauReferent(utilisateur);
   const scripts = await scriptsARelire(utilisateur);
   const quiz = await quizARelire(utilisateur);
@@ -32,6 +36,54 @@ export default async function PageReferent() {
         Rien n&apos;est montré aux élèves sans votre validation. Une validation porte sur la version
         que vous avez lue : si le chapitre change, il revient ici.
       </p>
+
+      {premiereVisite ? (
+        <section aria-labelledby="bienvenue" className="encadre">
+          <h2 id="bienvenue">Bienvenue</h2>
+          <p>
+            Commencez par les <strong>chapitres du pilote</strong> ci-dessous : pour chacun, la
+            prochaine action est indiquée. L&apos;accueil explique l&apos;ordre (programme,
+            prérequis, script, quiz, vidéo) et le temps à prévoir.
+          </p>
+          <p>
+            <Link href="/referent/accueil">Lire l&apos;accueil (2 minutes)</Link>
+          </p>
+          <form action={commencer}>
+            <button type="submit" className="secondaire">
+              J&apos;ai compris, ne plus afficher
+            </button>
+          </form>
+        </section>
+      ) : (
+        <p>
+          <Link href="/referent/accueil">
+            Revoir l&apos;accueil : par où commencer, dans quel ordre
+          </Link>
+        </p>
+      )}
+
+      <h2>Chapitres du pilote ({pilote.length})</h2>
+      {pilote.length === 0 ? (
+        <p>Aucun chapitre du pilote dans vos familles pour l&apos;instant.</p>
+      ) : (
+        <ul className="liste-cartes" aria-label="Chapitres du pilote">
+          {pilote.map((c) => (
+            <li key={c.chapitre_id} className="carte">
+              <strong>{c.titre}</strong>
+              <span className="note">
+                {c.unite} — {c.action.faites} étape{c.action.faites > 1 ? "s" : ""} sur 4 faites
+              </span>
+              {c.action.lien ? (
+                <Link href={c.action.lien}>Prochaine action : {c.action.libelle}</Link>
+              ) : (
+                <span>
+                  <strong>{c.action.libelle}</strong>
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
 
       <h2>À valider ({tableau.aValider.length})</h2>
       {tableau.aValider.length === 0 && <p>Aucun chapitre en attente.</p>}

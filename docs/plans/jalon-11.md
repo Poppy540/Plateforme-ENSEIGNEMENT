@@ -1,6 +1,6 @@
 # Plan du Jalon 11 — prêt à démarrer
 
-**Statut** : validé par le propriétaire le 2026-10-28 (décisions ci-dessous, ADR 0069). **Rien n'est commencé.**
+**Statut** : validé par le propriétaire le 2026-10-28 (décisions ci-dessous, ADR 0069). Étape 1 faite (ADR 0070).
 
 **Objectif** : lever trois derniers obstacles techniques avant le pilote :
 - les premières semaines du référent, qui est le goulot du pilote ;

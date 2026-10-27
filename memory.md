@@ -63,6 +63,8 @@
 
 ## État d'avancement
 
+- 2026-10-28 : Jalon 11, étape 1 faite (ADR 0070, migration 0038, tests CP01-CP03, `prochaine-action.test.ts`, `chapitres-pilote.spec.ts`) — table `chapitres_pilote` choisie sur `/administration/pilote` (unité puis cases, 10 au plus ; `unites_pour_pilote`, `chapitres_unite_pilote`, `definir_chapitres_pilote`, audit) ; `etat_chapitres_pilote()` (référents, leurs familles : statut chapitre, liens à décider, dernier script, quiz, vidéo) ; `src/lib/referent/prochaine-action.ts` (programme → prérequis → script → quiz → vidéo facultative → prêt ; étapes faites sur 4) ; en tête de `/referent` : « Chapitres du pilote » avec la prochaine action en lien ; `/referent/accueil` (rôle, ordre, temps indicatifs à ajuster avec le référent) ; encadré « Bienvenue » tant que `profils.accueil_vu_le` est vide (pas de redirection forcée). Tests : 250 unitaires, 124 de base, 99 de bout en bout.
+
 - 2026-10-28 : Jalon 11, étape 0 faite — plan `docs/plans/jalon-11.md` et ADR 0069 validés. **Rien d'autre n'est commencé.**
 
 - 2026-10-28 : Jalon 10, étape 5 faite — bilan `docs/bilans/jalon-10.md` ; 7 captures `docs/demo/jalon-10/` (`tests/demo/jalon-10.spec.ts`). Correction vue sur les captures : libellés des familles mélangés entre packs sur `/administration/invitations` (« Mathématiques (pays Z) » pour une invitation du Gabon) → clé référentiel:famille ; assertion ajoutée à `invitations-administration.spec.ts`. Tests : 248 unitaires, 121 de base, 97 de bout en bout ; batteries simulées : MI conforme, non conformes connus inchangés. Jalon 10 clos quand l'étape 4 (passages réels) aura atteint les seuils.
@@ -191,6 +193,6 @@
 
 ## Prochaine étape
 
-Jalon 11, étape 1 (accueil du premier référent), seulement après accord du propriétaire. Passages réels (Jalon 11, étape 5) dès la clé API, la relecture de la skill « élèves mineurs » et l'accord sur le coût (~119 USD ; mini-essais d'abord). Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, du Jalon 8, §5, du Jalon 9, §6 (Q19, enseignant de la classe), et du Jalon 10, §6 (relire la skill « élèves mineurs »).
+Jalon 11, étape 2 (skill « files d'approbation »), seulement après accord du propriétaire. Passages réels (Jalon 11, étape 5) dès la clé API, la relecture de la skill « élèves mineurs » et l'accord sur le coût (~119 USD ; mini-essais d'abord). Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, du Jalon 8, §5, du Jalon 9, §6 (Q19, enseignant de la classe), et du Jalon 10, §6 (relire la skill « élèves mineurs »).
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC, et PF, SF, EF pour le Français) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).

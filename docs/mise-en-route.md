@@ -25,7 +25,7 @@ Fil 3 — Technique   A3 → E1 fournisseurs → E2 déploiement → E3 essais r
 | A1 | **Relire le [dossier pour le juriste](juridique/dossier-juriste.md)**, puis le transmettre (version en ligne : la partager depuis sa page) | Corriger ce qui est inexact sur vous (rôle, structure juridique) ; vérifier la référence de la loi gabonaise | 1 h |
 | A2 | **Valider ou corriger** : <br>• les 9 questions du [questionnaire anonyme](../referentiels/gabon/questionnaire.yaml) ; <br>• les valeurs provisoires des agents (personas, noms affichés, contexte local) ; <br>• la FAQ du Support et le délai de réponse aux tickets | Dites à Claude Code ce qu'il faut changer : il met à jour le pack et `SOURCES.md` | 2 h |
 | A3 | **Ouvrir les démarches longues** : chercher un juriste au Gabon (protection des données, mineurs, droit du travail des enseignants), un établissement partenaire et des enseignants-référents | Par votre réseau ; le recrutement assisté (agent Recruteur) attend l'avis du juriste (Q16) | En continu |
-| A4 | **Choisir le cadre du pilote** : une classe de 3e, quelles matières (Maths d'abord), quelles dates | Décision ; elle fixe les contenus à faire valider en priorité | 30 min |
+| A4 | **Choisir le cadre du pilote** : une classe de 3e, quelles matières (Maths d'abord), quelles dates ; puis désigner les 3 à 5 chapitres du pilote dans `/administration` → « Chapitres du pilote » | Décision ; les chapitres choisis passent en tête de l'espace du référent | 30 min |
 
 ## B. Droit
 
