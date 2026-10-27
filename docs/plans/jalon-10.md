@@ -1,6 +1,6 @@
 # Plan du Jalon 10 — outiller le propriétaire
 
-**Statut** : validé par le propriétaire le 2026-10-27 (décisions ci-dessous, ADR 0065). Étape 1 faite (ADR 0066).
+**Statut** : validé par le propriétaire le 2026-10-27 (décisions ci-dessous, ADR 0065). Étape 1 faite (ADR 0066). Étape 2 faite (ADR 0067).
 
 **Objectif** : que le propriétaire puisse inviter les référents et créer les classes du pilote **depuis l'administration**, sans commande ni SQL. Ajouter aussi une première skill propre au projet : la protection des élèves mineurs.
 

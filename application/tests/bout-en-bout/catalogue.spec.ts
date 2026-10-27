@@ -73,6 +73,8 @@ test("un élève en attente de l'accord parental n'accède pas aux cours", async
   await page.getByLabel("Ta classe").selectOption({ label: "3e" });
   await page.getByLabel("Numéro ou email d'un parent ou tuteur").fill("+999 222 000 003");
   await page.getByRole("button", { name: "M'inscrire" }).click();
+  // Attendre l'inscription enregistrée : sinon /catalogue renvoie encore vers /inscription.
+  await expect(page).toHaveURL(/\/espace$/);
   await page.goto("/catalogue");
   await expect(page).toHaveURL(/\/espace$/);
   await page.goto("/catalogue/ga-3e-mathematiques");

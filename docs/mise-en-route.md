@@ -68,7 +68,7 @@ E1 à E3 couvrent les conditions 6, 7 et 8.
 |---|---|---|---|
 | F1 | **Accord de l'établissement**, et de l'autorité académique si le juriste l'exige | Convention ; [procédure du pilote](pilote/procedure.md) | Condition 2 |
 | F2 | **Équipe de veille** nommée, avec les contacts d'urgence locaux ; `CONTACTS_VEILLE` renseigné sur le serveur | [Procédure de détresse](pilote/procedure-detresse.md) | Condition 9 |
-| F2 bis | **Classe du pilote** : créer la classe et l'invitation de son enseignant (après l'avis du juriste, Q19) ; transmettre à l'enseignant son code personnel et le code de classe pour ses élèves | `pnpm classe:creer ga-general 3e "3e A" "<établissement>" > classe.sql`, appliquer `classe.sql` ; l'enseignant active son accès sur `/enseignant/activer` | — |
+| F2 bis | **Classe du pilote** : créer la classe et l'invitation de son enseignant (après l'avis du juriste, Q19) ; transmettre à l'enseignant son code personnel et le code de classe pour ses élèves | `/administration` → « Classes du pilote » ; noter les deux codes (affichés une seule fois) ; l'enseignant active son accès sur `/enseignant/activer` | — |
 | F3 | **Information des familles** : fiche d'information et formulaire de participation, mis à jour après l'avis du juriste | [Fiche](pilote/fiche-information.md), [consentements](pilote/consentements.md) | — |
 | F4 | **Budget du pilote** écrit (modèles, SMS, hébergement, vidéo) et plafond par agent et par jour (`COUT_JOUR_MAX_AGENT_USD`) | [Bilan du Jalon 8](bilans/jalon-8.md), §4 | Condition 11 |
 

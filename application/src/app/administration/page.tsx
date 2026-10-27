@@ -74,6 +74,7 @@ export default async function PageAdministration() {
         <Link href="/administration/exploitation">Pilotage de l&apos;exploitation</Link> ·{" "}
         <Link href="/administration/recrutement">Recrutement des enseignants-référents</Link> ·{" "}
         <Link href="/administration/invitations">Inviter un référent</Link> ·{" "}
+        <Link href="/administration/classes">Classes du pilote</Link> ·{" "}
         <Link href="/espace/mes-donnees">Mes données</Link>
       </p>
 
