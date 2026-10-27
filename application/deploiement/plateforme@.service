@@ -1,0 +1,31 @@
+# Exemple de service systemd (ADR 0076) : un processus par instance, plusieurs instances par serveur (ADR 0064).
+#   sudo cp plateforme@.service /etc/systemd/system/
+#   sudo systemctl enable --now plateforme@3001 plateforme@3002
+# Le répartiteur de charge (Caddy, nginx…) envoie le trafic https vers 127.0.0.1:3001 et 127.0.0.1:3002.
+# Les variables d'environnement sont dans /etc/plateforme/commun.env (modèle : secrets/commun.env.example),
+# lisible seulement par l'utilisateur du service. AUCUNE valeur dans ce fichier.
+[Unit]
+Description=Plateforme d'enseignement (instance %i)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=plateforme
+WorkingDirectory=/opt/plateforme/application
+EnvironmentFile=/etc/plateforme/commun.env
+Environment=NODE_ENV=production
+Environment=PORT=%i
+Environment=HOSTNAME=127.0.0.1
+Environment=CHEMIN_DEPOT=/opt/plateforme
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=5
+# Durcissement : aucun droit d'écriture hors du nécessaire, pas d'élévation de privilèges.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

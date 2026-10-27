@@ -5,6 +5,9 @@ import type { NextConfig } from "next";
 // (les liens des parents portent un jeton), pas de devinette de type de fichier. La politique de contenu, à
 // nonce, est posée par src/proxy.ts sur chaque page (ADR 0049).
 const nextConfig: NextConfig = {
+  // Paquet de déploiement (ADR 0076) : serveur autonome, construit seulement par `pnpm paquet`. Le développement,
+  // les tests et `pnpm start` gardent la construction habituelle.
+  ...(process.env.SORTIE_AUTONOME === "1" ? { output: "standalone" as const } : {}),
   async headers() {
     return [
       {

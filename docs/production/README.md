@@ -32,6 +32,10 @@ Ce dossier dit **comment** mettre la plateforme en service ; le [guide de mise e
 
 ## 3. Application
 
+0. **Construire et installer** (ADR 0076). Deux voies :
+   - **serveur Linux** : `cd application && pnpm paquet` produit `../paquet/`. Il contient le serveur autonome, les prompts et skills des agents, le pack pilote et les règles communes, **sans aucun secret, fichier de test ni pack fictif**, avec sa version (commit). Le copier sur le serveur, puis suivre `paquet/LISEZ-MOI.md` : un service systemd par processus (`deploiement/plateforme@.service`, deux instances) et un répartiteur https (`deploiement/Caddyfile.exemple`, qui pose aussi HSTS) ;
+   - **hébergement sans serveur** : l'hébergeur construit depuis le dépôt. `agents/`, `referentiels/` et `docs/prompt-claude-code.md` doivent rester lisibles par le serveur (`CHEMIN_DEPOT`).
+
 1. **Variables d'environnement** sur l'hébergeur (jamais dans le dépôt). Le modèle est dans `secrets/commun.env.example`, avec en plus `ANTHROPIC_API_KEY`.
 2. **Vérification** avant chaque mise en service : `pnpm verifier:production` sur le serveur. La commande liste ce qui manque **sans jamais afficher une valeur**, et doit se terminer par « Configuration complète ». Elle refuse :
    - une API de données de Supabase ouverte (§2.2) ;

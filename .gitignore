@@ -31,3 +31,6 @@ build/
 coverage/
 .DS_Store
 .claude/settings.local.json
+
+# Paquet de déploiement (ADR 0076)
+/paquet/

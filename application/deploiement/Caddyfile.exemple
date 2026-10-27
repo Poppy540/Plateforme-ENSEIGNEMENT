@@ -1,0 +1,11 @@
+# Exemple de répartiteur de charge Caddy (ADR 0076) : https automatique, compression, deux instances.
+# Remplacer <adresse> par le nom de domaine du site.
+<adresse> {
+	encode zstd gzip
+	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	reverse_proxy 127.0.0.1:3001 127.0.0.1:3002 {
+		lb_policy round_robin
+		health_uri /api/sante
+		health_interval 30s
+	}
+}
