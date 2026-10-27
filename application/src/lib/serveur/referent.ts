@@ -8,7 +8,7 @@ import { avecUtilisateur } from "./base";
 
 export async function roleCompte(
   utilisateur: string,
-): Promise<"eleve" | "parent" | "referent" | "administrateur" | null> {
+): Promise<"eleve" | "parent" | "referent" | "enseignant" | "administrateur" | null> {
   return avecUtilisateur(utilisateur, async (client) => {
     const { rows } = await client.query("select role from profils where id = $1", [utilisateur]);
     return rows[0]?.role ?? null;

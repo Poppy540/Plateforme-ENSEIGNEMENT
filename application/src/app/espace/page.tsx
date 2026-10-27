@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import { seDeconnecter } from "../connexion/actions";
 import { EnregistrementHorsLigne, FormulaireDeconnexion } from "../composants/hors-ligne";
 import { cleHorsLigne } from "@/lib/serveur/cle-hors-ligne";
+import { maClasse } from "@/lib/serveur/classes";
+import { quitter } from "./classe-actions";
+import { FormulaireClasse } from "./formulaire-classe";
 import { profilEleve } from "@/lib/serveur/requetes";
 import { roleCompte } from "@/lib/serveur/referent";
 import { exigerAccesEleves } from "@/lib/serveur/disponibilite";
@@ -15,6 +18,7 @@ export default async function PageEspace() {
   if (!utilisateur) redirect("/connexion");
   const role = await roleCompte(utilisateur);
   if (role === "referent") redirect("/referent");
+  if (role === "enseignant") redirect("/enseignant");
   if (role === "administrateur") redirect("/administration");
   const profil = await profilEleve(utilisateur);
   if (!profil) redirect("/inscription");
@@ -22,6 +26,7 @@ export default async function PageEspace() {
   await noterActivite(utilisateur);
   const questionnaire =
     profil.statut === "actif" ? await questionnairePourEleve(utilisateur) : null;
+  const classe = await maClasse(utilisateur);
 
   return (
     <main className="conteneur">
@@ -58,6 +63,29 @@ export default async function PageEspace() {
               <Link href="/espace/questionnaire">Donne ton avis (questionnaire anonyme)</Link>
             </p>
           )}
+        </>
+      )}
+      <h2>Ma classe</h2>
+      {classe ? (
+        <>
+          <p>
+            Tu fais partie de la classe <strong>{classe.nom}</strong> ({classe.etablissement}). Ton
+            enseignant voit seulement des chiffres d&apos;ensemble de la classe, jamais ton nom ni
+            tes réponses.
+          </p>
+          <form action={quitter}>
+            <button type="submit" className="secondaire">
+              Quitter cette classe
+            </button>
+          </form>
+        </>
+      ) : (
+        <>
+          <p>
+            Si ton établissement participe au pilote, ton enseignant t&apos;a donné un code de
+            classe. Ce n&apos;est pas obligatoire.
+          </p>
+          <FormulaireClasse />
         </>
       )}
       {profil.statut === "suspendu" && (

@@ -141,6 +141,19 @@ Pour chaque traitement : les données, la finalité, la durée de conservation, 
 | **État** | Questionnaire inactif tant que le propriétaire ne l'a pas validé (§8, Q11) |
 | **Références** | ADR 0046, 0052 |
 
+### T11. Classe du pilote et suivi par l'enseignant de la classe
+
+| | |
+|---|---|
+| **Personnes** | Élèves qui rejoignent leur classe avec le code donné par leur enseignant (facultatif) ; enseignant de la classe, invité par le propriétaire |
+| **Données** | Rattachement de l'élève à une classe (nom de la classe, établissement) ; prénom ou pseudonyme de l'enseignant et classes suivies ; codes gardés seulement sous forme d'empreinte |
+| **Finalité** | Permettre à l'enseignant de suivre l'avancement de sa classe pendant le pilote |
+| **Ce que voit l'enseignant** | Des **chiffres d'ensemble** seulement : élèves inscrits et venus dans les 7 jours, élèves ayant commencé ou terminé chaque chapitre, quiz passés et score moyen, notions les plus manquées. **Aucun nom, aucun message, aucune réponse d'élève.** Tout nombre de 1 à 4 élèves est masqué, et rien n'est montré tant que la classe compte moins de 5 élèves. Le calcul et le masquage sont faits par la base de données |
+| **Durée** | Le rattachement dure tant que l'élève reste dans la classe (il peut la quitter) ; il disparaît avec son compte |
+| **Accès** | L'élève (sa classe) ; l'enseignant (le tableau agrégé de ses classes) ; l'administration |
+| **État** | Construit et testé en simulation (Jalon 9). Aucun usage réel avant votre avis (§8, Q19) |
+| **Références** | ADR 0063 |
+
 ## 4. Sous-traitants et transferts hors du Gabon
 
 **Aucun fournisseur n'est encore choisi ni souscrit.** Le tableau donne les candidats envisagés et les données qui leur seraient confiées.
@@ -230,6 +243,9 @@ Pour chaque traitement : les données, la finalité, la durée de conservation, 
 - **Q16** Recrutement : peut-on contacter des enseignants par leur email professionnel, trouvé par recommandation ou dans un réseau professionnel ? Avec quelles mentions ?
 - **Q17** SMS applicatifs : faut-il une formalité auprès de l'ARCEP ou des opérateurs ?
 - **Q18** En cas de fuite de données : à qui notifier, et dans quel délai ? Le dossier de production prévoit de prévenir le juriste, puis l'autorité et les familles.
+
+**Suivi par l'enseignant de la classe**
+- **Q19** L'enseignant de la classe peut-il voir des chiffres d'ensemble de sa classe (T11), sans aucune donnée individuelle ? Faut-il l'accord des parents, ou une simple information suffit-elle ? Plus tard, pourrait-il voir l'avancement de chaque élève, et à quelles conditions ?
 
 ## 9. Documents joints
 

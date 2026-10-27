@@ -28,6 +28,7 @@ Ce dossier dit **comment** mettre la plateforme en service ; le [guide de mise e
    `insert into profils (id, role, prenom_ou_pseudo) values ('<identifiant de votre compte>', 'administrateur', 'Propriétaire');`
    (identifiant visible dans la liste des utilisateurs de Supabase).
 8. **Référents** : `pnpm referent:invitation ga-general mathematiques 14 > invitation.sql`, appliquer le fichier, transmettre le code à l'enseignant par un canal sûr.
+9. **Classes du pilote** (après l'avis du juriste, Q19 ; ADR 0063) : `pnpm classe:creer ga-general 3e "3e A" "<établissement>" > classe.sql`, appliquer le fichier et vérifier qu'une ligne `classe_id` est rendue (sinon le référentiel ou le niveau est mal écrit). Deux codes s'affichent : le code **personnel** de l'enseignant (valable 14 jours, usage unique) et le code de **classe** pour ses élèves (valable 120 jours). Les transmettre à l'enseignant par un canal sûr.
 
 ## 3. Application
 

@@ -7,6 +7,7 @@ import { FormulaireSuppression } from "./formulaire-suppression";
 
 const RETOUR: Record<string, [string, string]> = {
   referent: ["/referent", "Espace référent"],
+  enseignant: ["/enseignant", "Suivi de ma classe"],
   administrateur: ["/administration", "Administration"],
 };
 
@@ -14,7 +15,7 @@ export default async function PageMesDonnees() {
   const utilisateur = await utilisateurConnecte();
   if (!utilisateur) redirect("/connexion");
   const role = await roleCompte(utilisateur);
-  const equipe = role === "referent" || role === "administrateur";
+  const equipe = role === "referent" || role === "enseignant" || role === "administrateur";
   const [retour, libelleRetour] = RETOUR[role ?? ""] ?? ["/espace", "Mon espace"];
   return (
     <main className="conteneur">
@@ -24,14 +25,15 @@ export default async function PageMesDonnees() {
       <h1>Mes données</h1>
       {equipe ? (
         <p>
-          Nous gardons le minimum : votre prénom, votre rôle, les familles que vous validez, vos
-          décisions de validation et les documents que vous avez déposés.
+          {role === "enseignant"
+            ? "Nous gardons le minimum : votre prénom, votre rôle et les classes que vous suivez."
+            : "Nous gardons le minimum : votre prénom, votre rôle, les familles que vous validez, vos décisions de validation et les documents que vous avez déposés."}
         </p>
       ) : (
         <p>
           Nous gardons le minimum : ton prénom ou pseudonyme, ta classe, ta série, ton établissement
-          si tu l&apos;as donné, le contact de ton parent pour son accord, ta progression et tes
-          échanges avec le professeur.
+          si tu l&apos;as donné, ta classe du pilote si tu l&apos;as rejointe, le contact de ton
+          parent pour son accord, ta progression et tes échanges avec le professeur.
         </p>
       )}
       <h2>Télécharger mes données</h2>
@@ -54,8 +56,9 @@ export default async function PageMesDonnees() {
       <h2>Supprimer mon compte</h2>
       {equipe ? (
         <p>
-          Votre compte porte des validations tracées : sa suppression se fait avec le propriétaire
-          de la plateforme.
+          {role === "enseignant"
+            ? "La suppression de votre compte se fait avec le propriétaire de la plateforme : écrivez-lui depuis la page Aide."
+            : "Votre compte porte des validations tracées : sa suppression se fait avec le propriétaire de la plateforme."}
         </p>
       ) : (
         <>

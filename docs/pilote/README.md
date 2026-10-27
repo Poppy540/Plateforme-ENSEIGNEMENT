@@ -18,7 +18,7 @@ Pays pilote : Gabon. Unité pilote : Mathématiques 3e (`ga-3e-mathematiques`).
 | [criteres-arret.md](criteres-arret.md) | Propriétaire, équipe | Quand suspendre ou arrêter le pilote |
 | [repetition.md](repetition.md) | Propriétaire, équipe | Répétition complète avant le pilote : déroulé, résultats attendus |
 | [guide-referent.md](guide-referent.md) | Enseignant-référent | Utiliser l'espace référent : valider, rejeter, publier, signaler |
-| [../juridique/dossier-juriste.md](../juridique/dossier-juriste.md) | Juriste | Registre des traitements, sous-traitants, risques pour les mineurs, 18 questions (condition 1) |
+| [../juridique/dossier-juriste.md](../juridique/dossier-juriste.md) | Juriste | Registre des traitements, sous-traitants, risques pour les mineurs, 19 questions (condition 1) |
 
 ## Conditions préalables (toutes obligatoires)
 

@@ -18,6 +18,7 @@
     "test:agents": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/lancer-tests-agents.mts",
     "demo:captures": "playwright test --config playwright.demo.config.ts",
     "charge": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/tenue-en-charge.mts",
+    "classe:creer": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/classe-creer.mts",
     "donnees:purger": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/purger-donnees.mts",
     "verifier:production": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verifier-production.mts"
   },

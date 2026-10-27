@@ -1,6 +1,6 @@
 # Plan du Jalon 9 — prêt pour la première classe
 
-**Statut** : validé par le propriétaire le 2026-10-26 (décisions ci-dessous, ADR 0061). Étape 1 faite (ADR 0062).
+**Statut** : validé par le propriétaire le 2026-10-26 (décisions ci-dessous, ADR 0061). Étape 1 faite (ADR 0062). Étape 2 faite (ADR 0063).
 
 **Objectif** : préparer ce qui servira dès la première classe du pilote, en attendant la clé API, le juriste et les référents :
 - une vue de suivi pour l'enseignant de la classe, en chiffres agrégés seulement ;

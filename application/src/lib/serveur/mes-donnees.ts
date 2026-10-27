@@ -62,6 +62,11 @@ export function exporterDonnees(utilisateur: string) {
       tickets_support: await requete(
         "select categorie, resume, statut, cree_le, traite_le from tickets_support where demandeur_id = $1 order by cree_le",
       ),
+      // Classe du pilote (ADR 0063) : celle de l'élève, ou celles que suit l'enseignant.
+      classe: (await client.query("select nom, etablissement from ma_classe()")).rows[0] ?? null,
+      classes_suivies: (
+        await client.query("select nom, etablissement, niveau, serie from mes_classes()")
+      ).rows,
       // Comptes de l'équipe (revue de sécurité D9) : familles, décisions de validation, documents déposés.
       ...(profil && profil.role !== "eleve"
         ? {

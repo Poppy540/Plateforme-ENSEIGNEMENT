@@ -40,8 +40,8 @@ export async function seConnecter(page: Page, numero: string) {
   await expect(page.getByRole("heading", { name: "Entre ton code" })).toBeVisible();
   await page.getByLabel("Code reçu").fill("123456");
   await page.getByRole("button", { name: "Valider" }).click();
-  // Un référent ou un administrateur passe par /espace puis est redirigé : toutes ces adresses sont acceptées.
-  await expect(page).toHaveURL(/\/(espace|inscription|referent|administration)$/);
+  // Un référent, un enseignant ou un administrateur passe par /espace puis est redirigé : toutes ces adresses sont acceptées.
+  await expect(page).toHaveURL(/\/(espace|inscription|referent|enseignant|administration)$/);
 }
 
 /** Connexion, inscription et accord du parent (par la boîte de messages simulée). */

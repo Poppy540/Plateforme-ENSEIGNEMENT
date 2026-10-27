@@ -56,6 +56,7 @@ pnpm test             # tests unitaires (Vitest)
 pnpm test:base        # migrations Supabase, règles d'accès et import des packs sur un Postgres local jetable
 pnpm pack:sql ../referentiels/<pays>   # contrôle un pack pays et génère son SQL d'import
 pnpm referent:invitation <référentiel> <famille[,famille]> [jours] > invitation.sql   # invitation de référent (le propriétaire seul)
+pnpm classe:creer <référentiel> <niveau> "<nom>" "<établissement>" [--serie C] > classe.sql   # classe du pilote + invitation de son enseignant (ADR 0063)
 bash scripts/base-locale.sh demarrer   # base locale (données fictives) pour pnpm dev ; voir application/README.md
 pnpm verifier:production   # sur le serveur : configuration de production complète ? (n'affiche aucune valeur ; voir docs/production/)
 CHEMIN_CHROMIUM=/opt/pw-browsers/chromium-1194/chrome-linux/chrome pnpm test:e2e   # bout en bout (Playwright, base locale réinitialisée)

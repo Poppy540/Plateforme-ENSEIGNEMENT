@@ -31,7 +31,7 @@ Fil 3 — Technique   A3 → E1 fournisseurs → E2 déploiement → E3 essais r
 
 | # | Quoi | Qui | Bloque | Durée |
 |---|---|---|---|---|
-| B1 | **Avis du juriste** sur les 18 questions du dossier : formalités (CNPDCP), âge et forme du consentement, transferts, durées de conservation, détresse, contrats des référents, prospection, SMS | Juriste | Condition 1 ; toute inscription réelle ; le Recruteur ; la purge | 2 à 6 semaines |
+| B1 | **Avis du juriste** sur les 19 questions du dossier : formalités (CNPDCP), âge et forme du consentement, transferts, durées de conservation, détresse, contrats des référents, prospection, SMS | Juriste | Condition 1 ; toute inscription réelle ; le Recruteur ; la purge | 2 à 6 semaines |
 | B2 | **Appliquer l'avis** : <br>• durées et sort des résumés dans `referentiels/gabon/pays.yaml` (`conservation`), puis réimport du pack ; <br>• fiche d'information et consentements mis à jour ; <br>• formalités auprès de l'autorité si elles sont exigées | Claude Code pour le pack et les textes ; vous pour les formalités | Condition 10 | 1 à 3 jours |
 
 ## C. Clé API et essais réels des agents
@@ -68,6 +68,7 @@ E1 à E3 couvrent les conditions 6, 7 et 8.
 |---|---|---|---|
 | F1 | **Accord de l'établissement**, et de l'autorité académique si le juriste l'exige | Convention ; [procédure du pilote](pilote/procedure.md) | Condition 2 |
 | F2 | **Équipe de veille** nommée, avec les contacts d'urgence locaux ; `CONTACTS_VEILLE` renseigné sur le serveur | [Procédure de détresse](pilote/procedure-detresse.md) | Condition 9 |
+| F2 bis | **Classe du pilote** : créer la classe et l'invitation de son enseignant (après l'avis du juriste, Q19) ; transmettre à l'enseignant son code personnel et le code de classe pour ses élèves | `pnpm classe:creer ga-general 3e "3e A" "<établissement>" > classe.sql`, appliquer `classe.sql` ; l'enseignant active son accès sur `/enseignant/activer` | — |
 | F3 | **Information des familles** : fiche d'information et formulaire de participation, mis à jour après l'avis du juriste | [Fiche](pilote/fiche-information.md), [consentements](pilote/consentements.md) | — |
 | F4 | **Budget du pilote** écrit (modèles, SMS, hébergement, vidéo) et plafond par agent et par jour (`COUT_JOUR_MAX_AGENT_USD`) | [Bilan du Jalon 8](bilans/jalon-8.md), §4 | Condition 11 |
 

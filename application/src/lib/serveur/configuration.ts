@@ -125,7 +125,7 @@ export function dureeSessionHeures(role: string | null): number {
   const [nom, defaut] =
     role === "administrateur"
       ? ["SESSION_ADMINISTRATION_HEURES", 12]
-      : role === "referent"
+      : role === "referent" || role === "enseignant"
         ? ["SESSION_REFERENT_HEURES", 168]
         : ["SESSION_ELEVE_HEURES", 720];
   const v = Number(lire(nom));

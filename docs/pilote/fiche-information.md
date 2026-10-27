@@ -24,6 +24,7 @@ L'IA ne remplace pas un adulte : si votre enfant exprime une détresse, elle l'e
 | Progression, résultats aux quiz | Suivre les chapitres travaillés et proposer des révisions |
 | Questions posées au professeur IA | Répondre à l'élève ; conservées [365] jours puis effacées |
 | Demandes d'aide et signalements | Permettre à l'équipe de répondre et d'assurer la sécurité |
+| Classe du pilote (si l'élève la rejoint avec le code de son enseignant) | Donner à l'enseignant de la classe des **chiffres d'ensemble** (avancement par chapitre, réussite moyenne aux quiz), sans aucun nom ni aucune réponse d'élève, et rien pour un groupe de moins de 5 élèves [à confirmer par le juriste] |
 
 Nous ne collectons **jamais** de données sensibles (religion, santé, opinions, origine). Les élèves ne sont **jamais comparés** entre eux. Aucune publicité, aucune revente de données.
 
