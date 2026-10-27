@@ -54,6 +54,8 @@ pnpm format:verifier  # Prettier
 pnpm typecheck        # types Next.js + TypeScript
 pnpm test             # tests unitaires (Vitest)
 pnpm test:base        # migrations Supabase, règles d'accès et import des packs sur un Postgres local jetable
+pnpm test:sauvegarde  # sauvegarde puis restauration sur deux Postgres locaux jetables (ADR 0072)
+pnpm base:sauvegarder [dossier] ; pnpm base:restaurer <dossier> --confirmer   # copie de secours (voir docs/production/ §5)
 pnpm pack:sql ../referentiels/<pays>   # contrôle un pack pays et génère son SQL d'import
 pnpm referent:invitation <référentiel> <famille[,famille]> [jours] > invitation.sql   # invitation de référent en secours (sinon : /administration/invitations)
 pnpm classe:creer <référentiel> <niveau> "<nom>" "<établissement>" [--serie C] > classe.sql   # classe du pilote en secours (sinon : /administration/classes)

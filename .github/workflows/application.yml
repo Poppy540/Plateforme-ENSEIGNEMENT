@@ -33,5 +33,7 @@ jobs:
       - run: pnpm test
       - name: Migrations et règles d'accès (Postgres local)
         run: pnpm test:base
+      - name: Sauvegarde et restauration (deux Postgres locaux)
+        run: pnpm test:sauvegarde
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e

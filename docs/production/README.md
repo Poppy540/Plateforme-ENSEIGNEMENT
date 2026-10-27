@@ -86,13 +86,58 @@ Ce dossier dit **comment** mettre la plateforme en service ; le [guide de mise e
 
 ## 5. Sauvegardes et restauration
 
-- **Sauvegardes** : celles de Supabase (quotidiennes), plus un `pg_dump --format=custom` quotidien. Ce dernier est chiffré et gardé hors du fournisseur, 30 jours au plus : ce sont des données d'élèves, donc l'accès en est limité au propriétaire.
-- **Test de restauration**, avant le pilote puis chaque mois :
-  1. restaurer la dernière sauvegarde dans une base jetable ;
-  2. vérifier la connexion, le nombre d'unités, de chapitres et d'élèves ;
-  3. supprimer la base jetable ;
-  4. noter la date et la durée dans ce dossier.
-- **Objectifs proposés** : perte de données de 24 heures au plus, service rétabli en 4 heures au plus. À confirmer selon le budget.
+**Deux niveaux** (ADR 0072) :
+1. les sauvegardes de l'hébergeur de la base (Supabase : quotidiennes, et restauration à un instant donné si le budget le permet). C'est la voie normale de restauration ;
+2. une **copie de secours indépendante**, faite par la plateforme, pour ne pas dépendre d'un seul fournisseur.
+
+**Faire la copie de secours** (quotidienne, depuis le serveur ou un poste du propriétaire) :
+
+```
+cd application
+URL_BASE_DONNEES_ADMIN=… pnpm base:sauvegarder /chemin/des/sauvegardes
+```
+
+Elle crée un dossier `sauvegarde-<date>` contenant :
+- la copie complète ;
+- les rôles, **sans aucun mot de passe** ;
+- le nombre de lignes de chaque table ;
+- les empreintes des fichiers.
+
+La copie contient des **données d'élèves**. Il faut donc :
+- la chiffrer, ou la garder sur un disque chiffré ;
+- la garder hors du dépôt (`sauvegardes/` et `*.dump` sont ignorés par git) ;
+- en limiter l'accès au propriétaire ;
+- la garder 30 jours au plus.
+
+**Restaurer** dans une base **vide** (serveur de secours ou base d'essai). La commande refuse une base qui contient déjà des tables, une sauvegarde dont les empreintes ne correspondent plus, et toute exécution sans `--confirmer` :
+
+```
+URL_BASE_DONNEES_CIBLE=… pnpm base:restaurer /chemin/des/sauvegardes/sauvegarde-<date> --confirmer
+```
+
+Elle recrée les rôles et restaure. Elle vérifie ensuite que chaque table a le même nombre de lignes qu'au moment de la sauvegarde. Il reste ensuite à :
+- redonner un mot de passe au rôle `serveur_application` ;
+- pointer `URL_BASE_DONNEES` vers la base restaurée ;
+- lancer `pnpm verifier:production`.
+
+Sur Supabase, préférer la restauration du fournisseur : la copie de secours sert si le fournisseur est indisponible, ou pour une vérification indépendante.
+
+**Essai de restauration**, avant le pilote puis chaque mois :
+1. restaurer la dernière copie dans une base jetable ;
+2. ouvrir le site d'essai sur cette base, se connecter, compter les unités, les chapitres et les élèves ;
+3. supprimer la base jetable ;
+4. noter la date, la durée et le résultat ci-dessous.
+
+L'essai automatique `pnpm test:sauvegarde`, lancé à chaque changement de code, fait la même chose sur des données fictives :
+- deux Postgres locaux, sauvegarde puis restauration dans un serveur vide ;
+- vérification des nombres de lignes, des règles d'accès, des droits des agents et des rôles ;
+- refus d'une base non vide et d'une sauvegarde altérée.
+
+| Date | Sauvegarde restaurée | Durée | Résultat | Par |
+|---|---|---|---|---|
+| 2026-10-28 | Données fictives (essai automatique) | < 1 min | Réussi | Claude Code |
+
+**Objectifs proposés** : perte de données de 24 heures au plus, service rétabli en 4 heures au plus. À confirmer selon le budget.
 
 ## 6. Déploiement d'une nouvelle version
 

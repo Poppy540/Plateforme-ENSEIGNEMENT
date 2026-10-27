@@ -46,3 +46,7 @@ next-env.d.ts
 
 # base locale de développement
 /.base-locale
+
+# Sauvegardes de la base (données personnelles en production) : jamais dans le dépôt (ADR 0072)
+/sauvegardes/
+*.dump
