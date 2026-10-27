@@ -370,6 +370,8 @@ export function quizPourReferent(referent: string, id: string): Promise<QuizDeta
 }
 
 export interface QuizARelire {
+  /** Chapitre du pilote : en tête de la file (ADR 0071). */
+  pilote: boolean;
   id: string;
   version: number;
   chapitreTitre: string;
@@ -381,10 +383,12 @@ export function quizARelire(referent: string): Promise<QuizARelire[]> {
   return avecUtilisateur(referent, async (client) => {
     const { rows } = await client.query(
       `select q.id, q.version, c.titre as "chapitreTitre", u.code as unite,
-         coalesce(jsonb_array_length(q.notes -> 'questions_signalees'), 0) as "questionsSignalees"
+         coalesce(jsonb_array_length(q.notes -> 'questions_signalees'), 0) as "questionsSignalees",
+         est_chapitre_pilote(c.id) as pilote
        from quiz q join chapitres c on c.id = q.chapitre_id join unites u on u.id = c.unite_id
        where q.statut = 'brouillon'
-       order by "questionsSignalees" desc, q.cree_le`,
+       order by coalesce(jsonb_array_length(q.notes -> 'questions_signalees'), 0) > 0 desc, pilote desc,
+         "questionsSignalees" desc, q.cree_le`,
     );
     return rows as QuizARelire[];
   });

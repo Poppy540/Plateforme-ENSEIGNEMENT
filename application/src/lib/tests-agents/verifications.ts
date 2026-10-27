@@ -62,6 +62,8 @@ export interface Verifications {
   sans_probleme_de_controle?: boolean;
   /** Agent Coordinateur : un plan de production (conforme aux prérequis) est rendu. */
   plan_production?: boolean;
+  /** Agent Coordinateur : la première ligne du plan de production est l'un de ces chapitres (pilote, ADR 0071). */
+  pilote_en_tete?: string[];
   /** Agent Coordinateur : un classement universel / adaptable / local est rendu. */
   classement?: boolean;
   /** Agent Conformité : la demande doit être refusée (true) ou traitée sans refus (false). */
@@ -155,6 +157,11 @@ export function controlerCoordinateur(
       echecs.push(`propositions écartées par le serveur : ${problemes.join(" ; ")}`);
     if (v.plan_production && sortie.plan_production.length === 0)
       echecs.push("aucun plan de production");
+    if (v.pilote_en_tete) {
+      const premier = sortie.plan_production[0]?.chapitre ?? "(aucun)";
+      if (!v.pilote_en_tete.some((ref) => premier.includes(ref)))
+        echecs.push(`plan ouvert par ${premier}, pas par un chapitre du pilote ou son prérequis`);
+    }
     if (v.classement && sortie.classement.length === 0) echecs.push("aucun classement");
   }
   return echecs;

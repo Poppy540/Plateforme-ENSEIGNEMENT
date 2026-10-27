@@ -56,7 +56,7 @@ export async function donneesFamille(referentielId: string, famille: string) {
         `select u.code as unite, n.libelle as niveau, n.ordre as ordre_niveau,
            coalesce((select array_agg(s.code order by s.code) from unites_series us join series s on s.id = us.serie_id
                      where us.unite_id = u.id), '{}') as series,
-           c.id, c.code, c.titre, c.statut, c.sous_themes
+           c.id, c.code, c.titre, c.statut, c.sous_themes, est_chapitre_pilote(c.id) as pilote
          from chapitres c join unites u on u.id = c.unite_id join niveaux n on n.id = u.niveau_id
          order by n.ordre, u.code, c.ordre`,
       )
@@ -76,6 +76,7 @@ export async function donneesFamille(referentielId: string, famille: string) {
         titre: l.titre,
         statut: l.statut,
         sousThemes: l.sous_themes ?? [],
+        pilote: l.pilote === true,
       });
       unites.set(l.unite, u);
     }

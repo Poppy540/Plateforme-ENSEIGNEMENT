@@ -12,6 +12,8 @@ import { deciderContenu } from "./validation";
 const UUID = /^[0-9a-f-]{36}$/;
 
 export interface VideoResume {
+  /** Chapitre du pilote : en tête de la file (ADR 0071). */
+  pilote: boolean;
   id: string;
   statut: "a_relire" | "validee" | "rejetee" | "publiee";
   chapitreTitre: string;
@@ -25,10 +27,10 @@ export function videosPourTableau(referent: string): Promise<VideoResume[]> {
   return avecUtilisateur(referent, async (client) => {
     const { rows } = await client.query(
       `select v.id, v.statut, c.titre as "chapitreTitre", u.code as unite, v.script_version as "scriptVersion",
-         v.cree_le as "creeLe"
+         v.cree_le as "creeLe", est_chapitre_pilote(c.id) as pilote
        from videos v join scripts s on s.id = v.script_id join chapitres c on c.id = s.chapitre_id
        join unites u on u.id = c.unite_id
-       where v.statut in ('a_relire', 'validee') order by v.cree_le`,
+       where v.statut in ('a_relire', 'validee') order by pilote desc, v.cree_le`,
     );
     return rows as VideoResume[];
   });

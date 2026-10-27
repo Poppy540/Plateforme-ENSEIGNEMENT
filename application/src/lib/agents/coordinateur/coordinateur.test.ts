@@ -75,6 +75,20 @@ describe("Coordinateur : analyse déterministe", () => {
     expect(ordre).toHaveLength(4);
   });
 
+  it("met les chapitres du pilote en tête, chacun après ses prérequis (ADR 0071)", () => {
+    const f = famille();
+    f.unites[1].chapitres = f.unites[1].chapitres.map((c) =>
+      c.ref === "u5/c" ? { ...c, pilote: true } : c,
+    );
+    // u5/c (pilote) dépend de u6/b, qui dépend de u6/a : la chaîne passe avant u5/d, hors pilote.
+    expect(ordreCompatible(f).slice(0, 3)).toEqual(["u6/a", "u6/b", "u5/c"]);
+    const g = famille();
+    g.unites[1].chapitres = g.unites[1].chapitres.map((c) =>
+      c.ref === "u5/d" ? { ...c, pilote: true } : c,
+    );
+    expect(ordreCompatible(g)[0]).toBe("u5/d");
+  });
+
   it("signale un chapitre isolé et les quiz trop petits pour rester anonymes", () => {
     const constats = constatsAutomatiques(famille({ quizTropPetits: 2 }));
     expect(constats.join("\n")).toMatch(/Chapitre isolé .* u5\/d/);

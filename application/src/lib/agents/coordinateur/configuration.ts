@@ -11,6 +11,7 @@ export const SKILLS_COMMUNES_COORDINATEUR = [
   "cartographie-curriculaire-verticale",
   "coherence-terminologique",
   "comparaison-referentiels-pays",
+  "files-d-approbation",
   "graphe-prerequis",
   "planification-production",
   "progression-d-apprentissage",

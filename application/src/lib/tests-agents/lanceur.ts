@@ -172,7 +172,12 @@ export interface FamilleTest {
     niveau: string;
     ordre: number;
     series?: string[];
-    chapitres: { code: string; titre: string; statut?: "a_valider" | "valide" | "rejete" }[];
+    chapitres: {
+      code: string;
+      titre: string;
+      statut?: "a_valider" | "valide" | "rejete";
+      pilote?: boolean;
+    }[];
   }[];
   /** Liens [chapitre, prérequis, nature?, statut?] (références « <unité>/<code> »). */
   liens?: [string, string, ("strict" | "souple")?, ("a_valider" | "valide" | "rejete")?][];
@@ -756,6 +761,7 @@ export function familleDuScenario(
         titre: c.titre,
         statut: c.statut ?? "valide",
         sousThemes: [],
+        pilote: c.pilote === true,
       })),
     })),
     liens: (f.liens ?? []).map(([chapitre, prerequis, nature, statut]) => ({

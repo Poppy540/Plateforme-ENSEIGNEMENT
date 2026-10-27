@@ -271,7 +271,7 @@ export function messageDemandeRevue(d: DonneesFamille, consigne: string | null):
         u.chapitres
           .map(
             (c) =>
-              `- ${c.ref} « ${c.titre} » [${c.statut}]${c.sousThemes.length ? ` : ${c.sousThemes.join(", ")}` : ""}`,
+              `- ${c.ref} « ${c.titre} » [${c.statut}]${c.pilote ? " [pilote]" : ""}${c.sousThemes.length ? ` : ${c.sousThemes.join(", ")}` : ""}`,
           )
           .join("\n"),
     )

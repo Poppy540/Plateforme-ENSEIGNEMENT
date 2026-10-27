@@ -269,6 +269,8 @@ export function scriptPourReferent(referent: string, id: string): Promise<Script
 }
 
 export interface ScriptARelire {
+  /** Chapitre du pilote : en tête de la file (ADR 0071). */
+  pilote: boolean;
   id: string;
   version: number;
   chapitreTitre: string;
@@ -282,10 +284,11 @@ export function scriptsARelire(referent: string): Promise<ScriptARelire[]> {
   return avecUtilisateur(referent, async (client) => {
     const { rows } = await client.query(
       `select s.id, s.version, c.titre as "chapitreTitre", u.code as unite, s.cree_le as "creeLe",
-         coalesce((s.contenu ->> 'a_relire_en_priorite')::boolean, false) as "aRelireEnPriorite"
+         coalesce((s.contenu ->> 'a_relire_en_priorite')::boolean, false) as "aRelireEnPriorite",
+         est_chapitre_pilote(c.id) as pilote
        from scripts s join chapitres c on c.id = s.chapitre_id join unites u on u.id = c.unite_id
        where s.statut = 'brouillon'
-       order by "aRelireEnPriorite" desc, s.cree_le`,
+       order by "aRelireEnPriorite" desc, pilote desc, s.cree_le`,
     );
     return rows as ScriptARelire[];
   });

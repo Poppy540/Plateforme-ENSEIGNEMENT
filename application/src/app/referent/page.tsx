@@ -95,6 +95,7 @@ export default async function PageReferent() {
                 {c.matiere} — {c.niveau}
                 {c.series.length > 0 && ` ${c.series.join("/")}`} · chapitre {c.ordre} · version{" "}
                 {c.version}
+                {c.pilote && " · pilote"}
               </span>
               <strong>{c.titre}</strong>
             </Link>
@@ -154,6 +155,7 @@ export default async function PageReferent() {
               <span className="note">
                 {s.unite} · version {s.version}
                 {s.aRelireEnPriorite && " · à relire en priorité"}
+                {s.pilote && " · pilote"}
               </span>
               <strong>Script : {s.chapitreTitre}</strong>
             </Link>
@@ -170,6 +172,7 @@ export default async function PageReferent() {
               <span className="note">
                 {v.unite} · script version {v.scriptVersion} ·{" "}
                 {v.statut === "a_relire" ? "à relire" : "validée, à publier"}
+                {v.pilote && " · pilote"}
               </span>
               <strong>Vidéo : {v.chapitreTitre}</strong>
             </Link>
@@ -186,6 +189,7 @@ export default async function PageReferent() {
               <span className="note">
                 {q.unite} · version {q.version}
                 {q.questionsSignalees > 0 && ` · ${q.questionsSignalees} question(s) signalée(s)`}
+                {q.pilote && " · pilote"}
               </span>
               <strong>Quiz : {q.chapitreTitre}</strong>
             </Link>

@@ -8,6 +8,8 @@ export interface ChapitreFamille {
   titre: string;
   statut: "a_valider" | "valide" | "rejete";
   sousThemes: string[];
+  /** Chapitre du pilote, désigné par le propriétaire (ADR 0070, 0071). */
+  pilote?: boolean;
 }
 
 export interface UniteFamille {
@@ -81,7 +83,10 @@ export function creeUnCycle(
   return false;
 }
 
-/** Ordre de tous les chapitres compatible avec les prérequis (non rejetés) : niveau, puis ordre du programme. */
+/**
+ * Ordre de tous les chapitres compatible avec les prérequis (non rejetés) : d'abord les chapitres du pilote, chacun
+ * précédé de ses prérequis (ADR 0071), puis les autres par niveau et ordre du programme.
+ */
 export function ordreCompatible(d: DonneesFamille): string[] {
   const ordre = new Map(
     d.unites
@@ -103,7 +108,11 @@ export function ordreCompatible(d: DonneesFamille): string[] {
     places.add(ref);
     resultat.push(ref);
   };
-  for (const ref of [...ordre.keys()]) placer(ref);
+  const pilotes = tousLesChapitres(d)
+    .filter((c) => c.pilote && ordre.has(c.ref))
+    .map((c) => c.ref)
+    .sort((a, b) => ordre.get(a)! - ordre.get(b)!);
+  for (const ref of [...pilotes, ...ordre.keys()]) placer(ref);
   return resultat;
 }
 

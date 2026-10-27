@@ -69,9 +69,30 @@ do $$ declare v timestamptz; begin
   assert v is not null, 'CP03 : accueil marqué';
 end $$;
 
+-- CP04 Files d'approbation : on sait si un chapitre est au pilote (sans rien d'autre) ; le Coordinateur aussi.
+select pg_temp.connecter('33333333-3333-3333-3333-333333333333');
+set role authenticated;
+do $$ begin
+  assert est_chapitre_pilote('00000000-0000-0000-0000-0000000000f1'), 'CP04 : chapitre du pilote';
+  assert not est_chapitre_pilote('00000000-0000-0000-0000-0000000000f3'), 'CP04 : chapitre hors pilote';
+end $$;
+reset role;
+set role agent_coordinateur;
+do $$ begin
+  assert (select count(*) from chapitres_pilote) = 2, 'CP04 : le Coordinateur lit les chapitres du pilote';
+end $$;
+reset role;
+set role anon;
+do $$ begin
+  begin perform est_chapitre_pilote('00000000-0000-0000-0000-0000000000f1'); raise exception 'CP04 : visiteur';
+  exception when insufficient_privilege then null; end;
+end $$;
+reset role;
+
 delete from chapitres_pilote;
 
 \o
 \echo 'OK CP01 chapitres du pilote choisis par l''administration, contrôlés et tracés'
 \echo 'OK CP02 le référent voit les chapitres du pilote de ses familles, avec leur état'
 \echo 'OK CP03 accueil du référent marqué comme vu'
+\echo 'OK CP04 files d''approbation : chapitre du pilote reconnu, par le référent et le Coordinateur'

@@ -1,6 +1,6 @@
 # Plan du Jalon 11 — prêt à démarrer
 
-**Statut** : validé par le propriétaire le 2026-10-28 (décisions ci-dessous, ADR 0069). Étape 1 faite (ADR 0070).
+**Statut** : validé par le propriétaire le 2026-10-28 (décisions ci-dessous, ADR 0069). Étape 1 faite (ADR 0070). Étape 2 faite (ADR 0071 ; l'Orchestrateur étant programmé, la priorité y est une règle, la skill va au Coordinateur).
 
 **Objectif** : lever trois derniers obstacles techniques avant le pilote :
 - les premières semaines du référent, qui est le goulot du pilote ;

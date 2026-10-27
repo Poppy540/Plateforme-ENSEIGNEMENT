@@ -16,6 +16,7 @@
 | `agents/orchestrateur/tests/OR.feature` | OR-01 à OR-08 (D5), + OR-09 (routage Coordinateur) | D5 |
 | `agents/recruteur/tests/RC.feature` | RC-01 à RC-18 (exécutables : `--agent recruteur`) | Partie E |
 | `agents/coordinateur/tests/CM.feature` | CM-01 à CM-16 (exécutables : `--agent coordinateur`) | Partie G |
+| `agents/coordinateur/tests/FA.feature` | FA-01, FA-02 : files d'approbation (plan ouvert par le pilote, refus de valider ou de changer le pilote) | Skill `files-d-approbation`, ADR 0071 |
 | `agents/professeur/tests/PF.feature`, `agents/scenariste/tests/SF.feature`, `agents/evaluateur/tests/EF.feature` | PF-01 à PF-07, SF-01 et SF-02, EF-01 à EF-05 : Français 3e (unité `ga-3e-francais`), lancés avec la batterie de l'agent | ADR 0057, 0060 |
 
 Les scénarios sont en Gherkin français (`Étant donné / Quand / Alors / Mais`). Chaque scénario porte un tag `@interdit` (seuil 100 %) ou `@pedagogie` (seuil 90 % + relecture humaine d'un échantillon). Ce classement est une proposition de Claude Code, à valider.

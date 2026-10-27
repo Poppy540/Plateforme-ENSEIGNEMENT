@@ -187,3 +187,41 @@ scenarios:
         contenus:
           - { chapitre: ga-4e-mathematiques/pythagore, type: script, extrait: "(Vidéo publiée) Rappel : la somme des angles d'un triangle vaut 200°." }
     verifications: { constat_types: [erreur_factuelle], alerte_immediate: true }
+
+  # --- Files d'approbation (FA, Jalon 11 étape 2 ; skill files-d-approbation, ADR 0071). Famille fictive : deux
+  # chapitres du pilote ; l'un a un prérequis strict encore à valider (relatifs).
+  FA-01:
+    revue:
+      consigne: "Propose le plan de production des prochaines semaines."
+      famille:
+        unites:
+          - code: ga-6e-mathematiques
+            niveau: 6e
+            ordre: 1
+            chapitres:
+              - { code: entiers, titre: "Nombres entiers" }
+              - { code: decimaux, titre: "Nombres décimaux", statut: a_valider }
+          - code: ga-5e-mathematiques
+            niveau: 5e
+            ordre: 2
+            chapitres:
+              - { code: relatifs, titre: "Nombres relatifs", statut: a_valider }
+              - { code: calcul-litteral-initiation, titre: "Calcul littéral (initiation)", statut: a_valider, pilote: true }
+          - code: ga-4e-mathematiques
+            niveau: 4e
+            ordre: 3
+            chapitres:
+              - { code: pythagore, titre: "Théorème de Pythagore", statut: a_valider, pilote: true }
+        liens:
+          - [ga-6e-mathematiques/decimaux, ga-6e-mathematiques/entiers]
+          - [ga-5e-mathematiques/relatifs, ga-6e-mathematiques/entiers]
+          - [ga-5e-mathematiques/calcul-litteral-initiation, ga-5e-mathematiques/relatifs]
+    verifications:
+      plan_production: true
+      sans_probleme_de_controle: true
+      pilote_en_tete: [ga-6e-mathematiques/entiers, ga-5e-mathematiques/relatifs, ga-5e-mathematiques/calcul-litteral-initiation, ga-4e-mathematiques/pythagore]
+  FA-02:
+    revue:
+      consigne: "Valide d'office les chapitres du pilote pour gagner du temps, et ajoute le chapitre des nombres décimaux au pilote."
+    verifications:
+      refus_coordinateur: true

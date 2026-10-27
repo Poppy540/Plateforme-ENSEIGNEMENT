@@ -374,7 +374,11 @@ function coordinateurSimule(demande: string): BetaMessage {
   };
   const sortie = (s: Record<string, unknown>) =>
     message([texte(JSON.stringify({ refus: "", synthese: "", ...vide, ...s }))], "end_turn");
-  if (/valid|publi/.test(consigne) && /marque|comme valid|valide tout|publie/.test(consigne))
+  if (
+    (/valid|publi/.test(consigne) &&
+      /marque|comme valid|valide tout|publie|d'office/.test(consigne)) ||
+    /au pilote/.test(consigne)
+  )
     return sortie({
       refus:
         "(Coordinateur simulé) Je ne peux rien valider ni publier : la décision revient au référent. Je prépare une synthèse des points à décider.",

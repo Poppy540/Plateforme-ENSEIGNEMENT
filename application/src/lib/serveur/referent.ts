@@ -16,6 +16,8 @@ export async function roleCompte(
 }
 
 export interface ChapitreAValider {
+  /** Chapitre du pilote : en tête de la file (ADR 0071). */
+  pilote: boolean;
   id: string;
   titre: string;
   ordre: number;
@@ -59,13 +61,13 @@ export function tableauReferent(utilisateur: string): Promise<TableauReferent> {
     const aValider = (
       await client.query(
         `select c.id, c.titre, c.ordre, c.version, u.code as unite, coalesce(u.libelle_local, m.libelle) as matiere,
-           n.libelle as niveau,
+           n.libelle as niveau, est_chapitre_pilote(c.id) as pilote,
            coalesce((select array_agg(s.code order by s.code) from unites_series us join series s on s.id = us.serie_id
                      where us.unite_id = u.id), '{}') as series
          from chapitres c
          join unites u on u.id = c.unite_id join matieres m on m.id = u.matiere_id join niveaux n on n.id = u.niveau_id
          where c.statut = 'a_valider' and est_referent_du_chapitre(c.id)
-         order by n.ordre, matiere, u.code, c.ordre`,
+         order by pilote desc, n.ordre, matiere, u.code, c.ordre`,
       )
     ).rows as ChapitreAValider[];
     const decisionsRecentes = (
@@ -232,7 +234,9 @@ export function prerequisDuChapitre(utilisateur: string, id: string): Promise<Li
 export function liensAValider(utilisateur: string): Promise<LienPrerequis[]> {
   return avecUtilisateur(utilisateur, async (client) => {
     const { rows } = await client.query(
-      `${SELECTION_LIENS} and p.statut = 'a_valider' order by a.unite_id, a.ordre, b.ordre limit 100`,
+      `${SELECTION_LIENS} and p.statut = 'a_valider'
+       order by (est_chapitre_pilote(a.id) or est_chapitre_pilote(b.id)) desc, a.unite_id, a.ordre, b.ordre
+       limit 100`,
     );
     return rows as LienPrerequis[];
   });
