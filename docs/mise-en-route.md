@@ -48,7 +48,7 @@ C2 et C3 remplissent une partie de la condition 5. L'autre partie est la relectu
 
 | # | Quoi | Commandes, documents | Bloque | Durée |
 |---|---|---|---|---|
-| D1 | **Recruter les référents** : Maths 3e d'abord, puis Sciences et Français. Leur transmettre le [guide du référent](pilote/guide-referent.md) | Invitation : `pnpm referent:invitation ga-general mathematiques 14 > invitation.sql`, appliquer `invitation.sql` sur la base, transmettre le code par un canal sûr | Condition 3 | Variable (le plus long) |
+| D1 | **Recruter les référents** : Maths 3e d'abord, puis Sciences et Français. Leur transmettre le [guide du référent](pilote/guide-referent.md) | Invitation : `/administration` → « Inviter un référent » ; cocher la famille, noter le code (affiché une seule fois), le transmettre par un canal sûr | Condition 3 | Variable (le plus long) |
 | D2 | **Faire valider les contenus du pilote** : 3 à 5 chapitres (programme confronté à celui de l'IPN, liens de prérequis, scripts, quiz) ; relecture d'un échantillon des essais réels | Espace référent ; outil Conformité pour les documents officiels | Condition 4 | 2 à 4 semaines |
 | D3 | **Vidéos** (facultatif pour le pilote) : choisir un fournisseur d'avatar synthétique, faire écrire sa passerelle ([dossier de production](production/README.md) §3 bis), fixer le budget par vidéo. Sans vidéo, les élèves lisent la **leçon écrite** tirée du script validé | `MODE_VIDEO=reel`, `BUDGET_VIDEO_USD` | — | 1 à 2 semaines |
 

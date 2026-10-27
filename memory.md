@@ -62,6 +62,8 @@
 
 ## État d'avancement
 
+- 2026-10-28 : Jalon 10, étape 1 faite (ADR 0066, migration 0036, tests U01-U03, `invitations-administration.spec.ts`) — `/administration/invitations` : un formulaire par référentiel (familles en base, libellés du pack, durée 1-60 j), code tiré par le serveur et affiché une seule fois (réponse de l'action, `.code-unique`), empreinte seule en base ; liste sans codes (en attente, utilisée par <prénom>, expirée, annulée), annulation d'une invitation en attente (`annulee_le`, expire aussitôt). Fonctions `options_invitation_referent`, `creer_invitation_referent`, `invitations_referents_admin`, `annuler_invitation_referent` (administrateur seulement, audit sans code). `src/lib/serveur/invitations.ts`. Lien depuis `/administration`. Commande `pnpm referent:invitation` gardée en secours. Docs : production §2.8, mise en route D1, conditions du pilote, CLAUDE.md. Tests : 246 unitaires, 118 de base, 94 de bout en bout.
+
 - 2026-10-27 : Jalon 10, étape 0 faite — plan `docs/plans/jalon-10.md` et ADR 0065 validés. **Rien d'autre n'est commencé.**
 
 - 2026-10-27 : Jalon 9, étape 5 faite — bilan `docs/bilans/jalon-9.md` ; 6 captures `docs/demo/jalon-9/` (`tests/demo/jalon-9.spec.ts`). Correction vue sur les captures : le tableau à 6 colonnes de `/enseignant` débordait sur téléphone → une carte par chapitre (`.chiffres`, `dl` en grille) ; tests adaptés (liste nommée « Avancement de la classe … »). Tests : 246 unitaires, 115 de base, 91 de bout en bout ; batteries simulées inchangées. Jalon 9 clos quand l'étape 4 (passages réels) aura atteint les seuils.
@@ -180,6 +182,6 @@
 
 ## Prochaine étape
 
-Jalon 10, étape 1 (invitations de référents depuis l'administration), seulement après accord du propriétaire. Passages réels (Jalon 10, étape 4) dès la clé API et l'accord sur le coût (~115 USD ; mini-essais d'abord). Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, du Jalon 8, §5, et du Jalon 9, §6 (Q19, enseignant de la classe).
+Jalon 10, étape 2 (classes depuis l'administration), seulement après accord du propriétaire. Passages réels (Jalon 10, étape 4) dès la clé API et l'accord sur le coût (~115 USD ; mini-essais d'abord). Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, du Jalon 8, §5, et du Jalon 9, §6 (Q19, enseignant de la classe).
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC, et PF, SF, EF pour le Français) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).
