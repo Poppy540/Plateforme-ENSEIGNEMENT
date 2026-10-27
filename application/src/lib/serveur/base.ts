@@ -47,20 +47,28 @@ async function enTransaction<T>(
 ): Promise<T> {
   const client = await pool().connect();
   try {
-    await client.query("begin");
-    await client.query(`set local role ${role}`);
+    // Ouverture en un seul aller-retour (ADR 0064) : début de transaction, rôle, identité et contexte, au lieu de
+    // quatre. Requête simple sans paramètres : chaque valeur passe par escapeLiteral ; le rôle vient d'une liste
+    // fermée (type ci-dessus), jamais d'une saisie.
+    if (!/^[a-z_]+$/.test(role)) throw new Error("Rôle de base de données invalide.");
+    const valeur = (v: string) => client.escapeLiteral(v);
     // Sel de la liste d'opposition (revue de sécurité D4) : pour la transaction seulement, et seulement pour les
     // rôles qui créent ou suppriment une fiche de candidat, enregistrent une opposition ou envoient un message.
+    const reglages = [
+      ["request.jwt.claim.sub", utilisateur ?? ""],
+      ["app.sel_opposition", ROLES_OPPOSITION.has(role) ? selOpposition() : ""],
+      ...(contexteAgent
+        ? [
+            ["app.eleve_id", contexteAgent.eleveId ?? ""],
+            ["app.unite_id", contexteAgent.uniteId],
+          ]
+        : []),
+    ];
     await client.query(
-      "select set_config('request.jwt.claim.sub', $1, true), set_config('app.sel_opposition', $2, true)",
-      [utilisateur ?? "", ROLES_OPPOSITION.has(role) ? selOpposition() : ""],
+      `begin; set local role ${role}; select ${reglages
+        .map(([nom, v]) => `set_config(${valeur(nom)}, ${valeur(v)}, true)`)
+        .join(", ")}`,
     );
-    if (contexteAgent) {
-      await client.query(
-        "select set_config('app.eleve_id', $1, true), set_config('app.unite_id', $2, true)",
-        [contexteAgent.eleveId ?? "", contexteAgent.uniteId],
-      );
-    }
     const resultat = await traitement(client);
     await client.query("commit");
     return resultat;

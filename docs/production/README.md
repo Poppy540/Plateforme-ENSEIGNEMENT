@@ -50,10 +50,11 @@ Ce dossier dit **comment** mettre la plateforme en service ; le [guide de mise e
    - limites de connexion et quotas en base ;
    - journaux sans contenu ni identifiant (ADR 0043), toute la console du serveur nettoyée, erreurs de requête suivies (ADR 0056).
 4. **Surveillance** : `GET /api/sante` répond 200 si l'application et la base répondent, 503 sinon. Il ne donne ni détail ni donnée. À brancher sur une surveillance de disponibilité (alerte au propriétaire). Pour recevoir les erreurs ailleurs que dans les journaux de l'hébergeur : `JOURNAL_HTTP_URL` (https) et `JOURNAL_HTTP_JETON` (ADR 0056).
-5. **Tenue en charge** (ADR 0059) : une instance tient 200 élèves simultanés au rythme d'une classe (95e centile 59 ms ; environ 100 pages dynamiques par seconde à saturation, sans erreur). Le goulot est le processeur du serveur web, pas la base. Donc :
+5. **Tenue en charge** (ADR 0059, 0064) : un processus du serveur tient 200 élèves simultanés au rythme d'une classe (95e centile 67 ms ; environ 115 pages dynamiques par seconde à saturation, sans erreur). Le goulot est le processeur du serveur web, pas la base. Donc :
+   - sur un serveur à plusieurs cœurs, lancer **plusieurs processus** derrière le répartiteur de charge (mesuré : 2 processus sur 4 cœurs ≈ 165 pages par seconde) ; avec un hébergement sans serveur, l'hébergeur multiplie les instances lui-même ;
    - prévoir **plusieurs instances** dès que le pilote dépasse quelques classes ;
    - garder `TAILLE_POOL_BASE` à 10 par instance (connexions à la base), avec instances × 10 sous la limite de connexions de Supabase, en passant par son regroupeur de connexions ;
-   - relancer la mesure avant le pilote, **sur une base locale de données fictives seulement** (le script refuse toute autre base) : `bash scripts/base-locale.sh reinitialiser`, `pnpm build`, serveur lancé en simulation sur le port 3100, puis `pnpm charge` (options `--eleves`, `--parcours`, `--pause` en ms, `--seuil-p95`, `--seuil-erreurs`). Seuils : 95e centile ≤ 2 s, erreurs ≤ 1 %.
+   - relancer la mesure avant le pilote, **sur une base locale de données fictives seulement** (le script refuse toute autre base) : `bash scripts/base-locale.sh reinitialiser`, `pnpm build`, serveur lancé en simulation sur le port 3100, puis `pnpm charge` (options `--eleves`, `--parcours`, `--pause` en ms, `--seuil-p95`, `--seuil-erreurs` ; `URL_CHARGE` peut lister plusieurs adresses séparées par des virgules, une par processus). Seuils : 95e centile ≤ 2 s, erreurs ≤ 1 %.
 
 ## 3 bis. Vidéo réelle (quand les fournisseurs sont choisis)
 

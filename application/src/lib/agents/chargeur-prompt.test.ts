@@ -1,7 +1,14 @@
-import { readFileSync } from "node:fs";
+import { cpSync, mkdtempSync, readFileSync, utimesSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { composerPrompt, ErreurConfigurationAgent, lireModele, remplir } from "./chargeur-prompt";
+import {
+  composerPrompt,
+  ErreurConfigurationAgent,
+  lireModele,
+  lireValeurs,
+  remplir,
+} from "./chargeur-prompt";
 
 const racine = resolve(__dirname, "../../../..");
 const configuration = {
@@ -68,5 +75,29 @@ describe("chargeur de prompt", () => {
     expect(() => composerPrompt({ ...configuration, codePays: "xx" }, racine)).toThrow(
       /Aucun pack/,
     );
+  });
+});
+
+describe("fichiers gardés en mémoire (ADR 0064)", () => {
+  it("relit un fichier modifié, et rend des valeurs que l'appelant peut compléter sans toucher au cache", () => {
+    const dossier = mkdtempSync(resolve(tmpdir(), "pack-"));
+    cpSync(
+      resolve(racine, "referentiels/gabon/agents/professeur"),
+      resolve(dossier, "agents/professeur"),
+      {
+        recursive: true,
+      },
+    );
+    const fichier = resolve(dossier, "agents/professeur/ga-3e-mathematiques.yaml");
+    const premieres = lireValeurs(dossier, "professeur", "ga-3e-mathematiques");
+    premieres.NOM_AVATAR = "modifié par l'appelant";
+    expect(lireValeurs(dossier, "professeur", "ga-3e-mathematiques").NOM_AVATAR).not.toBe(
+      "modifié par l'appelant",
+    );
+    writeFileSync(fichier, "variables:\n  NOM_AVATAR: Professeur fictif\n");
+    utimesSync(fichier, new Date(), new Date(Date.now() + 5000));
+    expect(lireValeurs(dossier, "professeur", "ga-3e-mathematiques")).toEqual({
+      NOM_AVATAR: "Professeur fictif",
+    });
   });
 });

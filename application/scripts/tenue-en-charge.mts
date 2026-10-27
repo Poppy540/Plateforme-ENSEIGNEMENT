@@ -26,7 +26,10 @@ const PAUSE_MS = option("pause", 1000); // temps de lecture moyen entre deux pag
 const SEUIL_P95_MS = option("seuil-p95", 2000);
 const SEUIL_ERREURS = option("seuil-erreurs", 0.01);
 const UNITE = process.env.UNITE_CHARGE ?? "ga-3e-mathematiques";
-const SITE = process.env.URL_CHARGE ?? "http://localhost:3100";
+// Plusieurs adresses séparées par des virgules : un processus du serveur par adresse ; chaque élève reste sur la
+// même (comme derrière un répartiteur de charge).
+const SITES = (process.env.URL_CHARGE ?? "http://localhost:3100").split(",").map((s) => s.trim());
+const siteDe = new Map<string, string>();
 const BASE = process.env.URL_BASE_DONNEES_ADMIN ?? "postgresql://postgres@127.0.0.1:54330/postgres";
 const SECRET =
   process.env.SECRET_SESSION ?? "secret-de-developpement-uniquement-jamais-en-production";
@@ -130,16 +133,21 @@ try {
      where u.code = $2 on conflict do nothing`,
     [ids, UNITE],
   );
+  // Élèves de charge réutilisés d'un passage à l'autre : leurs quotas du jour repartent de zéro (sinon la limite de
+  // questions au Professeur, voulue, compterait comme une erreur). Seulement ces comptes fictifs, en base locale.
+  await base.query("delete from echanges_professeur where eleve_id = any($1)", [ids]);
+  await base.query("delete from quotas_eleves where eleve_id = any($1)", [ids]);
   const expire = Date.now() + 24 * 3600 * 1000;
   const sessions = await base.query(
     `insert into sessions_ouvertes (utilisateur, expire_le)
      select unnest($1::uuid[]), now() + interval '1 day' returning id, utilisateur`,
     [ids],
   );
-  for (const s of sessions.rows)
-    cookies.push(
-      `session=${signerSession({ utilisateur: s.utilisateur, session: s.id, expire }, SECRET)}`,
-    );
+  for (const s of sessions.rows) {
+    const cookie = `session=${signerSession({ utilisateur: s.utilisateur, session: s.id, expire }, SECRET)}`;
+    siteDe.set(cookie, SITES[cookies.length % SITES.length]);
+    cookies.push(cookie);
+  }
 } finally {
   await base.end();
 }
@@ -154,7 +162,7 @@ async function appel(page: string, cookie: string, chemin: string, corps?: unkno
   const debut = performance.now();
   let statut = 0;
   try {
-    const reponse = await fetch(`${SITE}${chemin}`, {
+    const reponse = await fetch(`${siteDe.get(cookie)}${chemin}`, {
       method: corps ? "POST" : "GET",
       headers: { cookie, ...(corps ? { "content-type": "application/json" } : {}) },
       body: corps ? JSON.stringify(corps) : undefined,
@@ -214,7 +222,7 @@ async function idChapitre(code: string): Promise<string> {
 for (const c of chapitres) await idChapitre(c);
 
 console.log(
-  `Tenue en charge : ${ELEVES} élèves fictifs simultanés, ${PARCOURS} parcours chacun, pause ~${PAUSE_MS} ms, ${SITE}`,
+  `Tenue en charge : ${ELEVES} élèves fictifs simultanés, ${PARCOURS} parcours chacun, pause ~${PAUSE_MS} ms, ${SITES.join(" + ")}`,
 );
 const debut = performance.now();
 await Promise.all(Array.from({ length: ELEVES }, (_, i) => eleve(i)));

@@ -2,11 +2,27 @@
 //   prompt recopié du cadrage (agents/<agent>/prompt.md, sans la section des valeurs pilote)
 //   + valeurs de l'unité tirées du pack pays + règles communes (§5.1) + skills de l'agent.
 // Aucune valeur propre à un pays dans ce code : tout vient des fichiers.
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { parse } from "yaml";
 
 export class ErreurConfigurationAgent extends Error {}
+
+// Fichiers du dépôt relus à chaque page ou question (pack pays, prompts, skills) : gardés en mémoire tant que leur
+// date de modification ne change pas (ADR 0064). Une modification du fichier est donc prise en compte aussitôt.
+// Les valeurs rendues sont gelées : un appelant ne peut pas modifier le contenu partagé.
+const fichiersLus = new Map<string, { date: number; valeur: unknown }>();
+
+function lireEnCache<T>(chemin: string, transformer: (texte: string) => T): T {
+  const date = statSync(chemin).mtimeMs;
+  const connu = fichiersLus.get(chemin);
+  if (connu && connu.date === date) return connu.valeur as T;
+  const valeur = Object.freeze(transformer(readFileSync(chemin, "utf8")));
+  fichiersLus.set(chemin, { date, valeur });
+  return valeur;
+}
+
+const lireTexte = (chemin: string) => lireEnCache(chemin, (texte) => texte);
 
 /** Racine du dépôt (dossiers agents/, referentiels/, docs/). */
 export function racineDepot(): string {
@@ -19,7 +35,7 @@ export function dossierPack(racine: string, codePays: string): string {
   for (const nom of readdirSync(base)) {
     const fichier = join(base, nom, "pays.yaml");
     if (nom.startsWith("_") || !existsSync(fichier)) continue;
-    const pays = parse(readFileSync(fichier, "utf8")) as { code?: string };
+    const pays = lireEnCache(fichier, (texte) => parse(texte) as { code?: string } | null);
     if (pays?.code === codePays) return join(base, nom);
   }
   throw new ErreurConfigurationAgent(`Aucun pack pays pour le code « ${codePays} ».`);
@@ -27,7 +43,7 @@ export function dossierPack(racine: string, codePays: string): string {
 
 /** Modèle de prompt : la section « VALEURS POUR L'UNITÉ PILOTE » est ignorée (les valeurs vivent dans le pack). */
 export function lireModele(racine: string, agent: string): string {
-  const texte = readFileSync(join(racine, "agents", agent, "prompt.md"), "utf8");
+  const texte = lireTexte(join(racine, "agents", agent, "prompt.md"));
   const coupe = texte.search(/^# VALEURS POUR L'UNITÉ PILOTE/m);
   return (coupe >= 0 ? texte.slice(0, coupe) : texte).trimEnd();
 }
@@ -43,13 +59,18 @@ export function lireValeurs(
       `Pas de configuration de l'agent ${agent} pour l'unité ${unite}.`,
     );
   }
-  const contenu = parse(readFileSync(fichier, "utf8")) as { variables?: Record<string, unknown> };
-  return Object.fromEntries(
-    Object.entries(contenu.variables ?? {}).map(([cle, valeur]) => [
-      cle,
-      valeur === null ? null : String(valeur),
-    ]),
-  );
+  // Copie : l'appelant peut compléter les valeurs (valeurs dynamiques) sans toucher au cache.
+  return {
+    ...lireEnCache(fichier, (texte) => {
+      const contenu = parse(texte) as { variables?: Record<string, unknown> } | null;
+      return Object.fromEntries(
+        Object.entries(contenu?.variables ?? {}).map(([cle, valeur]) => [
+          cle,
+          valeur === null ? null : String(valeur),
+        ]),
+      ) as Record<string, string | null>;
+    }),
+  };
 }
 
 /** Remplace les {{VARIABLES}} ; refuse toute variable manquante ou vide (unité non configurée). */
@@ -73,7 +94,7 @@ export function remplir(modele: string, valeurs: Record<string, string | null>):
 
 /** Règles communes à tous les agents (prompt maître, §5.1), recopiées telles quelles. */
 export function lireReglesCommunes(racine: string): string {
-  const texte = readFileSync(join(racine, "docs", "prompt-claude-code.md"), "utf8");
+  const texte = lireTexte(join(racine, "docs", "prompt-claude-code.md"));
   const debut = texte.indexOf("## 5.1");
   const fin = texte.indexOf("## 5.2");
   if (debut < 0 || fin < 0)
@@ -83,7 +104,7 @@ export function lireReglesCommunes(racine: string): string {
 
 /** Corps d'une skill, sans en-tête YAML ni bloc « Source et licence » (la licence reste dans le dossier). */
 export function lireSkill(racine: string, chemin: string): string {
-  const texte = readFileSync(join(racine, "agents", chemin, "SKILL.md"), "utf8");
+  const texte = lireTexte(join(racine, "agents", chemin, "SKILL.md"));
   const sansEntete = texte.replace(/^---\n[\s\S]*?\n---\n/, "");
   return sansEntete.replace(/^## Source et licence\n[\s\S]*?(?=^## )/m, "").trim();
 }
