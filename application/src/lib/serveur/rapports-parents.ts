@@ -2,6 +2,7 @@ import "server-only";
 import { contactAccepte, MESSAGE_INDICATIF } from "./indicatifs";
 import { DatabaseError } from "pg";
 import { composerPrompt } from "@/lib/agents/chargeur-prompt";
+import { masquerTexteEleve } from "@/lib/agents/masquage";
 import {
   controlerRapport,
   genererRapport,
@@ -302,7 +303,7 @@ export async function questionDuParent(
   if (!donnees) return { ok: false, erreur: "Lien invalide." };
   const resultat = await repondreAuParent({
     systeme: prompt(donnees.codePays),
-    question: texte,
+    question: masquerTexteEleve(texte),
     accordActif: l.accord_actif,
     faits: l.accord_actif ? donnees.faits : null,
     modele: modeleDesAgents("tuteur"),

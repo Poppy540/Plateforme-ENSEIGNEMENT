@@ -6,6 +6,7 @@ import { join } from "node:path";
 import type { BetaMessageParam } from "@anthropic-ai/sdk/resources/beta/messages/messages";
 import { parse } from "yaml";
 import { composerPrompt, dossierPack } from "../agents/chargeur-prompt.ts";
+import { masquerTexteEleve } from "../agents/masquage.ts";
 import type { Modele } from "../agents/modele.ts";
 import { repondre, type ParametresModele } from "../agents/professeur/boucle.ts";
 import type { AppelOutil } from "../agents/professeur/outils.ts";
@@ -379,7 +380,8 @@ async function executerProfesseur(
         systeme,
         contexteSession: `# CONTEXTE DE LA SESSION\nChapitre en cours : « ${titreChapitre} ».`,
         historique,
-        question: tour,
+        // Même masquage qu'en production (ADR 0062).
+        question: masquerTexteEleve(tour),
         modele: c.options.modele,
         parametres: c.options.parametres,
         // Aucune écriture réelle : les appels d'outils sont seulement enregistrés.
@@ -548,9 +550,9 @@ async function executerEvaluateur(
           signalement: "aucun" as const,
           motif_signalement: "",
         },
-        messages: t.contestation.messages,
+        messages: t.contestation.messages.map(masquerTexteEleve),
       };
-      const demande = { question, reponseEleve: t.reponse, contestation };
+      const demande = { question, reponseEleve: masquerTexteEleve(t.reponse), contestation };
       const resultat = await corrigerReponse({
         systeme,
         demande,
@@ -599,7 +601,7 @@ async function executerTuteur(
       preferences: { minutesParJour: p.minutes ?? null, connexion: p.connexion ?? null },
       joursSansActivite: p.jours_sans_activite ?? 0,
       examen: null,
-      message: p.message,
+      message: p.message ? masquerTexteEleve(p.message) : p.message,
     };
     const systeme = composerPrompt(
       {
@@ -626,7 +628,7 @@ async function executerTuteur(
         : null;
       const reponse = await repondreAuParent({
         systeme,
-        question: p.question_parent,
+        question: masquerTexteEleve(p.question_parent),
         accordActif: accord,
         faits,
         modele: c.options.modele,

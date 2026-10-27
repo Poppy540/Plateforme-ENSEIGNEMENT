@@ -9,6 +9,7 @@ import {
 } from "@/lib/agents/chargeur-prompt";
 import { modeleAnthropic, type Modele } from "@/lib/agents/modele";
 import { modeleSimule } from "@/lib/agents/modele-simule";
+import { masquerTexteEleve } from "@/lib/agents/masquage";
 import { repondre, type ParametresModele } from "@/lib/agents/professeur/boucle";
 import { prioriteSignalement, type AppelOutil } from "@/lib/agents/professeur/outils";
 import { avecAgentProfesseur, avecUtilisateur } from "./base";
@@ -120,8 +121,10 @@ export type ResultatQuestion =
 
 export async function poserQuestion(
   contexte: ContexteChapitre,
-  question: string,
+  questionSaisie: string,
 ): Promise<ResultatQuestion> {
+  // Numéros, emails, liens et identifiants masqués avant le modèle et dans l'historique (ADR 0062, juriste Q8).
+  const question = masquerTexteEleve(questionSaisie);
   if (!(await accesElevesOuvert()) || (await agentSuspendu("professeur")))
     return { ok: false, statut: 503, erreur: MESSAGE_AGENT_SUSPENDU };
   const agent = { eleveId: contexte.eleveId, uniteId: contexte.uniteId };

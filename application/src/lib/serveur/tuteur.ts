@@ -1,5 +1,6 @@
 import "server-only";
 import { composerPrompt } from "@/lib/agents/chargeur-prompt";
+import { masquerTexteEleve } from "@/lib/agents/masquage";
 import type { ParametresModele } from "@/lib/agents/professeur/boucle";
 import { candidatsDeRevision, type ChapitreParcours } from "@/lib/agents/tuteur/analyse";
 import { controlerPlan, genererPlan, type PlanTuteur } from "@/lib/agents/tuteur/plan";
@@ -207,7 +208,7 @@ export async function mettreAJourPlan(
       preferences,
       joursSansActivite: donnees.jours,
       examen: null,
-      message: message ?? undefined,
+      message: message ? masquerTexteEleve(message) : undefined,
     },
     modele: modeleDesAgents("tuteur"),
     parametres: parametresTuteur(),

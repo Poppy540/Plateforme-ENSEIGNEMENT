@@ -80,7 +80,7 @@ Pour chaque traitement : les données, la finalité, la durée de conservation, 
 | | |
 |---|---|
 | **Données envoyées** | La question de l'élève, l'historique récent de ses échanges **sur ce chapitre** et le programme validé du chapitre ; pour le Tuteur, la progression de l'élève. **Ni prénom, ni identifiant, ni contact** |
-| **Point d'attention** | Le texte libre de l'élève part tel quel au Professeur : un élève pourrait y écrire spontanément son nom ou son numéro. Les numéros, emails et liens sont déjà masqués pour le Support et le Recruteur, mais **pas encore pour le Professeur** (§8, Q8) |
+| **Point d'attention** | Un élève pourrait écrire spontanément son nom ou son numéro dans une question. Depuis le Jalon 9 (ADR 0062), les numéros de téléphone, emails, liens et identifiants techniques sont masqués avant l'envoi au Professeur, à l'Évaluateur et au Tuteur (et dans l'historique des questions), comme pour le Support et le Recruteur. Les nombres des exercices restent intacts. Les **noms** ne sont pas masqués : ils ne se repèrent pas de façon fiable (§8, Q8) |
 | **Fournisseur** | Anthropic (modèle Claude), hors du Gabon (§4) |
 | **Durée chez le fournisseur** | Selon ses conditions (à confirmer, §8, Q6) |
 | **Références** | ADR 0017, 0043 |
@@ -183,7 +183,7 @@ Pour chaque traitement : les données, la finalité, la durée de conservation, 
 | # | Risque | Mesures en place | Risque restant, question |
 |---|---|---|---|
 | R1 | Un élève exprime une détresse (tristesse, idées noires, violence subie) | L'agent oriente vers un adulte de confiance, ne conseille rien lui-même, crée un signalement prioritaire ; l'équipe de veille est alertée sans délai ; procédure écrite | Obligation de signaler à une autorité, et à laquelle ? Délai ? (Q10) |
-| R2 | L'élève écrit spontanément des données personnelles ou sensibles dans une question | Les agents ne demandent jamais de données ; échanges effacés à 365 jours une fois la purge planifiée | Masquer aussi pour le Professeur avant l'envoi au modèle ? Durée de 365 jours acceptable ? (Q8, Q7) |
+| R2 | L'élève écrit spontanément des données personnelles ou sensibles dans une question | Les agents ne demandent jamais de données ; échanges effacés à 365 jours une fois la purge planifiée | Masquage fait pour le Professeur, l'Évaluateur et le Tuteur (numéros, emails, liens ; pas les noms) : suffisant ? Durée de 365 jours acceptable ? (Q8, Q7) |
 | R3 | Faux accord parental (l'élève saisit son propre numéro) | Lien envoyé au contact saisi ; formulaire papier de participation signé par le parent et gardé par l'établissement | Le papier suffit-il à couvrir ce risque ? Faut-il les deux parents ? (Q4) |
 | R4 | Âge de la majorité ou de consentement numérique inconnu | Tout élève est traité comme mineur | Quel âge retenir ? (Q4) |
 | R5 | Contenu inexact ou inadapté (santé, reproduction, histoire récente) | Validation humaine de chaque contenu ; garde-fous par matière ; signalement d'erreur par les élèves et par l'Évaluateur | Responsabilité en cas d'erreur pédagogique ? (Q13) |
@@ -213,7 +213,7 @@ Pour chaque traitement : les données, la finalité, la durée de conservation, 
   - inscription non confirmée : 30 jours ;
   - compte inactif : 730 jours ;
   - à fixer : signalements traités, tickets résolus, candidats clos, rapports aux parents.
-- **Q8** Faut-il masquer les numéros et emails dans les questions des élèves avant l'envoi au modèle d'IA, comme c'est déjà le cas pour le Support ?
+- **Q8** Les numéros, emails, liens et identifiants écrits par les élèves sont maintenant masqués avant l'envoi au modèle d'IA (Professeur, Évaluateur, Tuteur, Support, Recruteur) ; les noms ne le sont pas. Ce masquage est-il suffisant, ou faut-il aller plus loin (par exemple, avertir l'élève avant l'envoi) ?
 - **Q9** À la suppression d'un compte, le résumé d'un signalement (parfois une détresse) doit-il être effacé ou gardé, détaché du compte ? Et combien de temps ?
 
 **Détresse**

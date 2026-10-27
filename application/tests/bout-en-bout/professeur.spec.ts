@@ -35,6 +35,26 @@ test("l'élève pose une question et reçoit une réponse qui guide sans donner 
   );
 });
 
+test("numéro et email écrits par l'élève masqués avant le Professeur ; les nombres de l'exercice restent", async ({
+  page,
+}) => {
+  await ouvrirThales(page);
+  // Coordonnées FICTIVES (ADR 0062, question Q8 du juriste).
+  await demander(
+    page,
+    "AM = 3 et AB = 1250, appelle-moi au +999 77 12 34 56 ou eleve.fictif@exemple.test",
+  );
+  await page.reload();
+  const dernier = page.locator(".echange-eleve").last();
+  await expect(dernier).toContainText("AM = 3 et AB = 1250");
+  await expect(dernier).toContainText("[numéro masqué]");
+  await expect(dernier).toContainText("[email masqué]");
+  const [echange] = await executerSql(
+    "select contenu from echanges_professeur where auteur = 'eleve' order by id desc limit 1",
+  );
+  expect(echange.contenu).not.toMatch(/77 12 34 56|exemple\.test/);
+});
+
 test("un message de détresse crée un signalement prioritaire pour un humain", async ({ page }) => {
   await ouvrirThales(page);
   await demander(page, "Je suis triste et j'ai peur de l'examen");

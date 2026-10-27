@@ -61,6 +61,8 @@
 
 ## État d'avancement
 
+- 2026-10-27 : Jalon 9, étape 1 faite (ADR 0062) — `masquerTexteEleve` (`src/lib/agents/masquage.ts`) : liens, emails, UUID, numéros de téléphone (indicatif +, groupes de 2-3 chiffres, 0 + 7 chiffres ou plus) ; nombres d'exercice intacts (tranches de 3 chiffres comprises). Appliqué : question du Professeur (modèle et historique enregistré), réponse courte et contestations de l'Évaluateur (modèle seulement), message de l'élève et question du parent au Tuteur ; même masquage dans le lanceur des tests d'agents. Noms non masqués (limite). Dossier du juriste Q8, R2 et §3 mis à jour (en ligne aussi, version 2). Batteries simulées inchangées. Tests : 243 unitaires, 88 de bout en bout.
+
 - 2026-10-26 : Jalon 9, étape 0 faite — plan `docs/plans/jalon-9.md` et ADR 0061 validés. **Rien d'autre n'est commencé.**
 
 - 2026-10-26 : Jalon 8, étape 6 faite — bilan `docs/bilans/jalon-8.md` (aucune capture : aucun écran changé). Tests : 241 unitaires, 111 scénarios de base, 87 de bout en bout, tous passés ; tenue en charge tenue ; batteries d'agents simulées : non conformes connus seulement (PR : TC-02, TC-09, TC-10, PR-03, PR-06 ; EV-02 à 04, EF-01, EF-02 ; CM-02, CM-12, CM-16). Passages réels complets estimés à ~115 USD (dont ~9,8 pour le Français). Jalon 8 clos quand l'étape 5 aura atteint les seuils.
@@ -169,6 +171,6 @@
 
 ## Prochaine étape
 
-Jalon 9, étape 1 (masquage du texte des élèves avant le Professeur), seulement après accord du propriétaire. Passages réels (Jalon 9, étape 4) dès la clé API et l'accord sur le coût (~115 USD pour les séries complètes ; mini-essais d'abord). Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, et du Jalon 8, §5.
+Jalon 9, étape 2 (vue agrégée de l'enseignant de la classe), seulement après accord du propriétaire. Passages réels (Jalon 9, étape 4) dès la clé API et l'accord sur le coût (~115 USD pour les séries complètes ; mini-essais d'abord). Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, et du Jalon 8, §5.
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC, et PF, SF, EF pour le Français) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).

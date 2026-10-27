@@ -10,6 +10,7 @@ import {
   type Correction,
 } from "@/lib/agents/evaluateur/correction";
 import { genererQuiz } from "@/lib/agents/evaluateur/generation";
+import { masquerTexteEleve } from "@/lib/agents/masquage";
 import {
   controlerQuiz,
   lireQuiz,
@@ -544,7 +545,8 @@ export async function soumettreQuiz(
       } else {
         const resultat = await corrigerReponse({
           systeme,
-          demande: { question: q, reponseEleve: texte },
+          // Seul le texte envoyé au modèle est masqué (ADR 0062) ; la réponse enregistrée reste celle de l'élève.
+          demande: { question: q, reponseEleve: masquerTexteEleve(texte) },
           modele: modeleDesAgents("evaluateur"),
           parametres: parametresCorrection(),
         });
@@ -653,10 +655,10 @@ export async function contesterCorrection(
     systeme: promptEvaluateur(contexte.codePays, contexte.uniteCode),
     demande: {
       question: q,
-      reponseEleve,
+      reponseEleve: masquerTexteEleve(reponseEleve),
       contestation: {
         correction: reponse.correction,
-        messages: [...precedentes.map((c) => c.message), texte],
+        messages: [...precedentes.map((c) => c.message), texte].map(masquerTexteEleve),
       },
     },
     modele: modeleDesAgents("evaluateur"),
