@@ -26,6 +26,7 @@
 | 2026-10-20 | Plan du Jalon 6 validé : sécurité (D1-D9, propositions de la revue) d'abord, Sciences 3e, leçons écrites, compteur agrégé + questionnaire anonyme, préparation du pilote | ADR 0048, docs/plans/jalon-6.md |
 | 2026-10-21 | Lien de prérequis entre deux familles : décidé par le référent de la famille du chapitre qui dépend, seul (il lit le chapitre visé sans l'ouvrir) | ADR 0050 |
 | 2026-10-21 | Plan du Jalon 7 validé : accessibilité d'abord (`@axe-core/playwright` en dépendance de test acceptée), vidéo prête à brancher (Cloudflare Stream + avatar générique), journal d'erreurs sans donnée personnelle, Français 3e ; pas de WhatsApp | ADR 0053, docs/plans/jalon-7.md |
+| 2026-10-27 | Plan du Jalon 10 validé : outiller le propriétaire d'abord (invitations de référents et classes depuis /administration, codes affichés une fois), puis skill commune « élèves mineurs » (Professeur, Évaluateur, Tuteur, Support) ; aucune nouvelle matière | ADR 0065, docs/plans/jalon-10.md |
 | 2026-10-26 | Plan du Jalon 9 validé : pilote d'abord — masquage du texte des élèves avant le Professeur (Q8), vue agrégée de l'enseignant de la classe (masquée sous 5 élèves, aucune donnée individuelle), pages plus légères ; aucune nouvelle matière (masquage et contenus : choix par défaut, pas de préférence exprimée) | ADR 0061, docs/plans/jalon-9.md |
 | 2026-10-22 | Plan du Jalon 8 validé : dossier pour le juriste et guide de mise en route d'abord, puis tenue en charge (200 élèves simultanés), tests des agents pour le Français ; aucun nouveau contenu | ADR 0058, docs/plans/jalon-8.md |
 | 2026-10-04 | Fichier commun de secrets nommé `secrets/commun.env.example` (et non `.env.example`), car les `.env*` sont interdits en lecture | `secrets/README.md` |
@@ -60,6 +61,8 @@
 5. Séries techniques F/G : à définir avec des enseignants techniques.
 
 ## État d'avancement
+
+- 2026-10-27 : Jalon 10, étape 0 faite — plan `docs/plans/jalon-10.md` et ADR 0065 validés. **Rien d'autre n'est commencé.**
 
 - 2026-10-27 : Jalon 9, étape 5 faite — bilan `docs/bilans/jalon-9.md` ; 6 captures `docs/demo/jalon-9/` (`tests/demo/jalon-9.spec.ts`). Correction vue sur les captures : le tableau à 6 colonnes de `/enseignant` débordait sur téléphone → une carte par chapitre (`.chiffres`, `dl` en grille) ; tests adaptés (liste nommée « Avancement de la classe … »). Tests : 246 unitaires, 115 de base, 91 de bout en bout ; batteries simulées inchangées. Jalon 9 clos quand l'étape 4 (passages réels) aura atteint les seuils.
 
@@ -177,6 +180,6 @@
 
 ## Prochaine étape
 
-Passages réels (Jalon 9, étape 4) dès la clé API et l'accord sur le coût (~115 USD ; mini-essais d'abord). Sinon, proposer le plan de la suite (Jalon 10) quand le propriétaire le demande. Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, du Jalon 8, §5, et du Jalon 9, §6 (Q19, enseignant de la classe).
+Jalon 10, étape 1 (invitations de référents depuis l'administration), seulement après accord du propriétaire. Passages réels (Jalon 10, étape 4) dès la clé API et l'accord sur le coût (~115 USD ; mini-essais d'abord). Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, du Jalon 8, §5, et du Jalon 9, §6 (Q19, enseignant de la classe).
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC, et PF, SF, EF pour le Français) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).
