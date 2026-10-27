@@ -5,6 +5,7 @@
 ## Contexte
 
 `docs/pilote/criteres-arret.md` exige, pour une reprise après suspension, quatre conditions : cause identifiée, correction faite et testée, accord écrit du propriétaire, établissement informé. La décision doit être notée « au journal du pilote ». Or :
+
 - ce journal n'existait pas ;
 - « Réactiver » et « Rouvrir l'accès » agissaient en un clic, sans rien exiger ;
 - l'administration ne pouvait pas **suspendre** un agent elle-même, alors que le document le prévoit : seul l'Orchestrateur le faisait, sur un coût anormal.
@@ -13,15 +14,16 @@
 
 1. **Journal du pilote** (`journal_pilote`, page `/administration/journal`) : chaque entrée est datée, avec un texte de 3 à 500 caractères dont les numéros et emails sont masqués. Six types d'entrées :
 
-   | Type | Origine |
-   |---|---|
-   | Suspension d'un agent | Volet « Suspendre … » de l'administration |
-   | Reprise d'un agent | Volet « Réactiver … (reprise) » de l'administration |
-   | Fermeture de l'accès des élèves | Formulaire de l'administration |
-   | Réouverture de l'accès | Volet « Rouvrir l'accès des élèves (reprise) » |
-   | Point hebdomadaire, note | Ajoutés à la main sur la page du journal |
+   | Type                            | Origine                                             |
+   | ------------------------------- | --------------------------------------------------- |
+   | Suspension d'un agent           | Volet « Suspendre … » de l'administration           |
+   | Reprise d'un agent              | Volet « Réactiver … (reprise) » de l'administration |
+   | Fermeture de l'accès des élèves | Formulaire de l'administration                      |
+   | Réouverture de l'accès          | Volet « Rouvrir l'accès des élèves (reprise) »      |
+   | Point hebdomadaire, note        | Ajoutés à la main sur la page du journal            |
 
    Chaque entrée est aussi tracée au journal d'audit (`journal_pilote_<type>`), sans le texte. Le journal ne se lit que par une fonction d'administration.
+
 2. **Suspendre un agent depuis l'administration** : volet « Suspendre … » dans la section Agents. Un motif est exigé et le critère en cause peut être choisi.
 3. **Fermer l'accès des élèves** : le motif devient obligatoire (3 caractères au moins) ; le critère en cause peut être choisi.
 4. **Reprise exigeante** : réactiver un agent, y compris un agent suspendu par l'Orchestrateur, ou rouvrir l'accès demande les 4 points.
@@ -31,6 +33,7 @@
    - Case « L'établissement est informé ».
 
    Le navigateur les exige, et **la base refuse** la reprise sans eux. Les tâches suspendues de l'agent repartent ensuite dans la file, comme avant.
+
 5. **Critère d'arrêt calculé** : « Deux suspensions immédiates pour la même cause » se calcule désormais sur le journal. Il est atteint dès que deux suspensions (agent ou accès) portent le même critère en cause. Il ne se déclare plus : une ancienne déclaration est retirée par la migration.
 6. **Base** (migration 0042) :
    - fonctions d'administration `suspendre_agent_pilote`, `reprendre_agent_pilote`, `fermer_acces_pilote`, `rouvrir_acces_pilote`, `noter_journal_pilote` et `journal_pilote_liste` ;

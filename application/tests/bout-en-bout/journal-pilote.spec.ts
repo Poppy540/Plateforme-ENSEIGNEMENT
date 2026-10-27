@@ -27,11 +27,9 @@ test("suspendre un agent avec un motif, puis le réactiver avec les 4 points : t
     .getByLabel("Motif de la suspension")
     .last()
     .fill("Rapport sans accord, joignable au +999 77 12 34 56");
-  await page
-    .locator("#critere-tuteur")
-    .selectOption({
-      label: "Sortie de périmètre d'un agent (hors programme, rapport sans accord)",
-    });
+  await page.locator("#critere-tuteur").selectOption({
+    label: "Sortie de périmètre d'un agent (hors programme, rapport sans accord)",
+  });
   await page.getByRole("button", { name: "Suspendre tuteur", exact: true }).click();
   await expect(page.getByRole("status").first()).toContainText("Agent tuteur suspendu");
   await expect(page.getByText("tuteur : suspendu")).toBeVisible();

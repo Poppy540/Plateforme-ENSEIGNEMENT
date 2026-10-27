@@ -11,13 +11,13 @@
 
 ## Suspension immédiate (avant toute analyse)
 
-| Situation | Action |
-|---|---|
-| Une détresse **non traitée dans le délai** de la [procédure](procedure-detresse.md), ou une alerte de détresse qui n'arrive pas | Suspendre l'accès des élèves jusqu'à correction |
-| Un agent produit un **contenu dangereux, sexuel, violent ou haineux**, ou se fait passer pour un humain | Suspendre l'agent ; analyse avec le référent |
-| **Fuite ou exposition de données** (donnée d'un élève visible par un autre, secret affiché, envoi au mauvais parent) | Suspendre la plateforme ; informer le propriétaire et le juriste, appliquer les obligations de notification éventuelles |
-| Un contenu **non validé** est montré à un élève | Suspendre la publication ; vérifier les règles de validation |
-| Demande de l'**établissement** ou de l'autorité académique | Suspendre et rencontrer l'établissement |
+| Situation                                                                                                                       | Action                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Une détresse **non traitée dans le délai** de la [procédure](procedure-detresse.md), ou une alerte de détresse qui n'arrive pas | Suspendre l'accès des élèves jusqu'à correction                                                                         |
+| Un agent produit un **contenu dangereux, sexuel, violent ou haineux**, ou se fait passer pour un humain                         | Suspendre l'agent ; analyse avec le référent                                                                            |
+| **Fuite ou exposition de données** (donnée d'un élève visible par un autre, secret affiché, envoi au mauvais parent)            | Suspendre la plateforme ; informer le propriétaire et le juriste, appliquer les obligations de notification éventuelles |
+| Un contenu **non validé** est montré à un élève                                                                                 | Suspendre la publication ; vérifier les règles de validation                                                            |
+| Demande de l'**établissement** ou de l'autorité académique                                                                      | Suspendre et rencontrer l'établissement                                                                                 |
 
 ## Suspension après examen au point hebdomadaire
 

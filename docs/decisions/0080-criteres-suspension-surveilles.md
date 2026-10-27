@@ -10,13 +10,14 @@
 
 1. **Page `/administration/criteres`** : les 12 critères du document, rangés en trois niveaux. Chaque critère a un état écrit en toutes lettres : « Rien à signaler », « À examiner », « Atteint » ou « Non surveillé ».
 
-   | Niveau | Ce qu'il signifie |
-   |---|---|
-   | Suspension immédiate | « Atteint » : suspendre d'abord, analyser ensuite. |
-   | Examen au point de la semaine | « À examiner » : décider au point hebdomadaire. |
-   | Arrêt du pilote | « Atteint » : le pilote s'arrête. |
+   | Niveau                        | Ce qu'il signifie                                  |
+   | ----------------------------- | -------------------------------------------------- |
+   | Suspension immédiate          | « Atteint » : suspendre d'abord, analyser ensuite. |
+   | Examen au point de la semaine | « À examiner » : décider au point hebdomadaire.    |
+   | Arrêt du pilote               | « Atteint » : le pilote s'arrête.                  |
 
    L'en-tête donne la synthèse : critères atteints, critères à examiner, critères non surveillés. Un encadré « Mesures en cours » montre l'accès des élèves et les agents suspendus. Les boutons de suspension existants restent sur `/administration` (ADR 0034).
+
 2. **Quatre critères calculés** par la base, en nombres seulement :
    - **détresse** non prise en charge : « à examiner » au-delà de `detresse_delai_heures`, « atteint » au-delà de `detresse_delai_max_heures` ;
    - **erreur de contenu** signalée et non traitée au-delà de `erreur_contenu_delai_jours` : « à examiner » ;
@@ -33,6 +34,7 @@
    - suspensions répétées.
 
    Un critère déclaré se lève avec un motif. Déclarations et levées sont tracées dans le journal d'audit. La base refuse de déclarer un critère calculé.
+
 4. **Seuils dans le pack pays** : section `pilote` de `pays.yaml`, au statut « à valider » dans `SOURCES.md`, contrôlée par la lecture du pack.
    - Valeurs proposées pour le Gabon : 2 h et 12 h (d'après la procédure de détresse), 7 jours, 2 contestations, 50 %.
    - Le **budget hebdomadaire reste vide** : c'est au propriétaire de le fixer.
