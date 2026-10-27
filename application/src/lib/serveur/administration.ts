@@ -1,7 +1,6 @@
 import "server-only";
-import { avecAgentOrchestrateur, avecUtilisateur } from "./base";
-import { modeFile } from "./configuration";
-import { empreinteActeur, executerFile } from "./orchestrateur";
+import { avecUtilisateur } from "./base";
+import { empreinteActeur } from "./orchestrateur";
 
 // Suivi de l'Orchestrateur par l'administration (ADR 0029) : état des agents, file humaine, tâches récentes.
 // Les règles d'accès de la base réservent ces lectures et la réactivation d'un agent à l'administration.
@@ -67,32 +66,6 @@ export function tableauAdministration(administrateur: string): Promise<TableauAd
 }
 
 /** Réactivation d'un agent (administration seulement, vérifié par la base) ; ses tâches suspendues repartent. */
-export async function reactiverAgent(administrateur: string, agent: string): Promise<boolean> {
-  const fait = await avecUtilisateur(administrateur, async (client) => {
-    const { rowCount } = await client.query(
-      "update etat_agents set suspendu = false, motif = null where agent = $1 and suspendu",
-      [agent],
-    );
-    if (rowCount)
-      await client.query(
-        `insert into journal_audit (acteur, acteur_empreinte, action, objet_type, details)
-         values ('administrateur', $1, 'reactivation_agent', 'agent', $2)`,
-        [empreinteActeur(administrateur), { agent }],
-      );
-    return (rowCount ?? 0) > 0;
-  });
-  if (fait) {
-    await avecAgentOrchestrateur((client) =>
-      client.query(
-        "update taches set statut = 'en_attente', motif = null where agent = $1 and statut = 'suspendue'",
-        [agent],
-      ),
-    );
-    if (modeFile() === "immediat") await executerFile();
-  }
-  return fait;
-}
-
 /**
  * Traitement d'un élément de la file humaine (ADR 0033) : un signalement est marqué traité ; un ticket est pris
  * en charge puis résolu. La base vérifie le rôle, le traitant et l'absence de réouverture.
@@ -126,30 +99,6 @@ export async function traiterFileHumaine(
 }
 
 /** Interrupteur d'accès des élèves (ADR 0034) : administration seulement (vérifié par la base), audité. */
-export async function changerAccesEleves(
-  administrateur: string,
-  ouvert: boolean,
-  motif: string | null,
-): Promise<boolean> {
-  return avecUtilisateur(administrateur, async (client) => {
-    const { rowCount } = await client.query(
-      `update acces_eleves set ouvert = $1, motif = $2, maj_le = now(), maj_par = $3
-       where ouvert is distinct from $1`,
-      [ouvert, ouvert ? null : (motif?.slice(0, 500) ?? null), administrateur],
-    );
-    if (rowCount)
-      await client.query(
-        `insert into journal_audit (acteur, acteur_empreinte, action, objet_type, details)
-         values ('administrateur', $1, $2, 'acces_eleves', '{}')`,
-        [
-          empreinteActeur(administrateur),
-          ouvert ? "ouverture_acces_eleves" : "fermeture_acces_eleves",
-        ],
-      );
-    return (rowCount ?? 0) > 0;
-  });
-}
-
 export interface DocumentAdministration {
   id: string;
   referentiel: string;

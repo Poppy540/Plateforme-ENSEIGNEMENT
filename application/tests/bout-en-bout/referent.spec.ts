@@ -4,6 +4,7 @@ import {
   creerInvitationFictive,
   executerSql,
   identifiantSimule,
+  reprendre,
   seConnecter,
 } from "./outils";
 
@@ -415,7 +416,7 @@ test("Orchestrateur : agent suspendu, production mise en attente ; l'administrat
     admin.getByText(/production_video → production_video : suspendue \(agent\)/),
   ).toBeVisible();
   await expect(admin.getByRole("heading", { name: /File humaine/ })).toBeVisible();
-  await admin.getByRole("button", { name: "Réactiver production_video" }).click();
+  await reprendre(admin, "Réactiver production_video (reprise)", "Réactiver production_video");
   await expect(admin.getByText("production_video : actif")).toBeVisible();
   await expect(
     admin.getByText(/production_video → production_video : terminée/).first(),
@@ -428,7 +429,7 @@ test("Orchestrateur : agent suspendu, production mise en attente ; l'administrat
   expect(taches).toEqual([{ statut: "terminee", approuvee: true }]);
   // Journal d'audit pseudonymisé : aucune trace de l'identifiant en clair.
   const audit = await executerSql(
-    "select acteur, acteur_empreinte from journal_audit where action = 'reactivation_agent' and details->>'agent' = 'production_video'",
+    "select acteur, acteur_empreinte from journal_audit where action = 'journal_pilote_reprise_agent' and details->>'agent' = 'production_video'",
   );
   expect(audit).toHaveLength(1);
   expect(audit[0].acteur).toBe("administrateur");

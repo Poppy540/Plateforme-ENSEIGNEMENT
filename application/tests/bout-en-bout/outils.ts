@@ -100,3 +100,19 @@ export async function creerAdministrateurFictif(numero: string) {
     [id],
   );
 }
+
+/**
+ * Reprise depuis l'administration (ADR 0081) : ouvre le volet « … (reprise) », remplit les 4 points exigés
+ * (cause, correction testée, accord, établissement informé ; textes FICTIFS) et valide.
+ */
+export async function reprendre(page: Page, volet: string, bouton: string) {
+  await page.getByText(volet, { exact: true }).click();
+  const formulaire = page
+    .locator("form")
+    .filter({ has: page.getByRole("button", { name: bouton, exact: true }) });
+  await formulaire.getByLabel("Cause identifiée").fill("Cause fictive identifiée");
+  await formulaire.getByLabel(/Correction faite et testée/).fill("Test fictif ajouté et passé");
+  await formulaire.getByLabel(/accord écrit/).check();
+  await formulaire.getByLabel(/établissement est informé/).check();
+  await formulaire.getByRole("button", { name: bouton, exact: true }).click();
+}

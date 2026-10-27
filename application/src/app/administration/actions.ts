@@ -1,19 +1,51 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
+import { supprimerDocumentOfficiel, traiterFileHumaine } from "@/lib/serveur/administration";
 import {
-  changerAccesEleves,
-  reactiverAgent,
-  supprimerDocumentOfficiel,
-  traiterFileHumaine,
-} from "@/lib/serveur/administration";
+  fermerAcces,
+  reprendreAgent,
+  rouvrirAcces,
+  suspendreAgent,
+  type Reprise,
+} from "@/lib/serveur/journal-pilote";
 import { fermerToutesLesSessions } from "@/lib/serveur/session";
+
+const champ = (donnees: FormData, nom: string) => String(donnees.get(nom) ?? "");
+
+/** Les 4 points d'une reprise (docs/pilote/criteres-arret.md), vérifiés aussi par la base. */
+const reprise = (donnees: FormData): Reprise => ({
+  cause: champ(donnees, "cause"),
+  correction: champ(donnees, "correction"),
+  accord: donnees.get("accord") === "oui",
+  etablissement: donnees.get("etablissement") === "oui",
+});
+
+function retour(ancre: string, erreur: string | null, message: string): never {
+  revalidatePath("/administration");
+  const parametres = new URLSearchParams(erreur ? { erreur } : { ok: message });
+  redirect(`/administration?${parametres}#${ancre}`);
+}
+
+export async function suspendre(donnees: FormData): Promise<void> {
+  const administrateur = await exigerAdministrateur();
+  const agent = champ(donnees, "agent");
+  const erreur = await suspendreAgent(
+    administrateur,
+    agent,
+    champ(donnees, "motif"),
+    champ(donnees, "critere"),
+  );
+  retour("agents", erreur, `Agent ${agent} suspendu ; décision notée au journal du pilote.`);
+}
 
 export async function reactiver(donnees: FormData): Promise<void> {
   const administrateur = await exigerAdministrateur();
-  await reactiverAgent(administrateur, String(donnees.get("agent") ?? ""));
-  revalidatePath("/administration");
+  const agent = champ(donnees, "agent");
+  const erreur = await reprendreAgent(administrateur, agent, reprise(donnees));
+  retour("agents", erreur, `Agent ${agent} réactivé ; reprise notée au journal du pilote.`);
 }
 
 export async function traiter(donnees: FormData): Promise<void> {
@@ -27,14 +59,20 @@ export async function traiter(donnees: FormData): Promise<void> {
   revalidatePath("/administration");
 }
 
-export async function basculerAccesEleves(donnees: FormData): Promise<void> {
+export async function fermerAccesEleves(donnees: FormData): Promise<void> {
   const administrateur = await exigerAdministrateur();
-  await changerAccesEleves(
+  const erreur = await fermerAcces(
     administrateur,
-    donnees.get("ouvert") === "oui",
-    String(donnees.get("motif") ?? "").trim() || null,
+    champ(donnees, "motif"),
+    champ(donnees, "critere"),
   );
-  revalidatePath("/administration");
+  retour("acces", erreur, "Accès des élèves fermé ; décision notée au journal du pilote.");
+}
+
+export async function rouvrirAccesEleves(donnees: FormData): Promise<void> {
+  const administrateur = await exigerAdministrateur();
+  const erreur = await rouvrirAcces(administrateur, reprise(donnees));
+  retour("acces", erreur, "Accès des élèves rouvert ; reprise notée au journal du pilote.");
 }
 
 export async function supprimerDocument(donnees: FormData): Promise<void> {

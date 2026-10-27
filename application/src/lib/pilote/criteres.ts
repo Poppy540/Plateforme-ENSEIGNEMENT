@@ -26,6 +26,8 @@ export interface FaitsCriteres {
   cout_7_jours: number;
   agents_suspendus: string[];
   acces_eleves_ouvert: boolean;
+  /** Plus grand nombre de suspensions (agent ou accès des élèves) notées au journal pour un même critère. */
+  suspensions_meme_cause_max: number;
 }
 
 export interface Declaration {
@@ -124,7 +126,7 @@ export const CRITERES: readonly DefinitionCritere[] = [
     code: "suspensions_repetees",
     titre: "Deux suspensions immédiates pour la même cause",
     niveau: "arret",
-    source: "declare",
+    source: "calcule",
     action: "Arrêter le pilote.",
   },
 ];
@@ -201,6 +203,16 @@ function calculer(
           detail: `Au plus ${f.contestations_max_question} contestation(s) sur une même question en 7 jours.`,
         };
   }
+  if (code === "suspensions_repetees")
+    return f.suspensions_meme_cause_max >= 2
+      ? {
+          etat: "atteint",
+          detail: `${f.suspensions_meme_cause_max} suspensions notées au journal du pilote pour une même cause.`,
+        }
+      : {
+          etat: "rien_a_signaler",
+          detail: "Pas deux suspensions pour une même cause au journal du pilote.",
+        };
   // depassement_budget
   if (s.budget_hebdomadaire_usd === null || s.depassement_budget_pourcent === null)
     return nonSurveille(

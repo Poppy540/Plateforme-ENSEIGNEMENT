@@ -1,6 +1,6 @@
 # Plan du Jalon 13 — suivre le pilote en cours
 
-**Statut** : validé par le propriétaire le 2026-10-28 (décisions ci-dessous, ADR 0079). Étape 1 faite (ADR 0080).
+**Statut** : validé par le propriétaire le 2026-10-28 (décisions ci-dessous, ADR 0079). Étape 1 faite (ADR 0080). Étape 2 faite (ADR 0081).
 
 **Objectif** : qu'une fois le pilote lancé, le propriétaire voie chaque semaine, sans rien calculer à la main, si un critère de suspension est atteint, et qu'il ait un rapport agrégé pour le point hebdomadaire. Toute décision (suspension, reprise) doit être tracée. **Rien n'est déployé ni souscrit dans ce jalon** : tout est construit et essayé avec des données fictives.
 

@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { creerAdministrateurFictif, executerSql, seConnecter } from "./outils";
+import { creerAdministrateurFictif, executerSql, reprendre, seConnecter } from "./outils";
 
 // Suspension effective des agents et interrupteur d'accès des élèves (ADR 0034).
 const ELEVE = "+999 000 001 01"; // élève de 3e inscrit par les tests du catalogue
@@ -53,7 +53,7 @@ test("un agent suspendu ne répond plus aux élèves ; il reprend une fois réac
   const admin = await browser.newPage();
   await seConnecter(admin, ADMIN);
   await admin.goto("/administration");
-  await admin.getByRole("button", { name: "Réactiver professeur" }).click();
+  await reprendre(admin, "Réactiver professeur (reprise)", "Réactiver professeur");
   await expect(admin.getByText("professeur : actif")).toBeVisible();
   await admin.close();
   const reprise = await question();
@@ -69,7 +69,9 @@ test("accès des élèves fermé par l'administration : message neutre, « Mes d
   const admin = await browser.newPage();
   await seConnecter(admin, ADMIN);
   await admin.goto("/administration");
-  await admin.getByLabel(/Motif/).fill("Détresse non traitée dans le délai (test)");
+  await admin
+    .getByLabel("Motif (interne, jamais montré aux élèves)")
+    .fill("Détresse non traitée dans le délai (test)");
   await admin.getByRole("button", { name: "Fermer l'accès des élèves" }).click();
   await expect(admin.getByRole("status").first()).toContainText("fermé");
 
@@ -96,14 +98,14 @@ test("accès des élèves fermé par l'administration : message neutre, « Mes d
   await expect(nouveau).toHaveURL(/\/indisponible$/);
   await nouveau.close();
 
-  await admin.getByRole("button", { name: "Rouvrir l'accès des élèves" }).click();
+  await reprendre(admin, "Rouvrir l'accès des élèves (reprise)", "Rouvrir l'accès des élèves");
   await expect(admin.getByRole("status").first()).toContainText("ouvert");
   await admin.close();
   await page.goto("/espace");
   await expect(page).toHaveURL(/\/espace$/);
   const [audit] = await executerSql(
-    `select count(*) filter (where action = 'fermeture_acces_eleves')::int as fermetures,
-            count(*) filter (where action = 'ouverture_acces_eleves')::int as ouvertures
+    `select count(*) filter (where action = 'journal_pilote_fermeture_acces')::int as fermetures,
+            count(*) filter (where action = 'journal_pilote_reprise_acces')::int as ouvertures
      from journal_audit`,
   );
   expect(audit).toEqual({ fermetures: 1, ouvertures: 1 });

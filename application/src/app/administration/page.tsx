@@ -4,11 +4,14 @@ import { FormulaireDeconnexion } from "../composants/hors-ligne";
 import { formaterUSD } from "@/lib/format";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import { documentsOfficiels, tableauAdministration } from "@/lib/serveur/administration";
+import { CRITERES } from "@/lib/pilote/criteres";
 import {
-  basculerAccesEleves,
   deconnecterTout,
+  fermerAccesEleves,
   reactiver,
+  rouvrirAccesEleves,
   supprimerDocument,
+  suspendre,
   traiter,
 } from "./actions";
 
@@ -53,8 +56,48 @@ const SOURCES: Record<string, string> = {
   agent_recruteur: "Recruteur",
 };
 
-export default async function PageAdministration() {
+/** Critère en cause d'une suspension (facultatif) : sert au critère « deux suspensions pour la même cause ». */
+function ChoixCritere({ id }: { id: string }) {
+  return (
+    <>
+      <label htmlFor={id}>Critère en cause (facultatif)</label>
+      <select id={id} name="critere" defaultValue="">
+        <option value="">Aucun ou autre</option>
+        {CRITERES.filter((c) => c.niveau !== "arret").map((c) => (
+          <option key={c.code} value={c.code}>
+            {c.titre}
+          </option>
+        ))}
+      </select>
+    </>
+  );
+}
+
+/** Les 4 points exigés pour une reprise (docs/pilote/criteres-arret.md). */
+function ChampsReprise({ id }: { id: string }) {
+  return (
+    <>
+      <label htmlFor={`cause-${id}`}>Cause identifiée</label>
+      <input id={`cause-${id}`} name="cause" required minLength={3} maxLength={300} />
+      <label htmlFor={`correction-${id}`}>Correction faite et testée (quel test ?)</label>
+      <input id={`correction-${id}`} name="correction" required minLength={3} maxLength={300} />
+      <label className="case">
+        <input type="checkbox" name="accord" value="oui" required /> J&apos;ai donné mon accord
+        écrit à la reprise
+      </label>
+      <label className="case">
+        <input type="checkbox" name="etablissement" value="oui" required /> L&apos;établissement est
+        informé
+      </label>
+    </>
+  );
+}
+
+export default async function PageAdministration({ searchParams }: PageProps<"/administration">) {
   const administrateur = await exigerAdministrateur();
+  const parametres = await searchParams;
+  const erreur = typeof parametres.erreur === "string" ? parametres.erreur.slice(0, 200) : null;
+  const ok = typeof parametres.ok === "string" ? parametres.ok.slice(0, 120) : null;
   const [t, documents] = await Promise.all([
     tableauAdministration(administrateur),
     documentsOfficiels(administrateur),
@@ -78,10 +121,17 @@ export default async function PageAdministration() {
         <Link href="/administration/pilote">Chapitres du pilote</Link> ·{" "}
         <Link href="/administration/conditions">Conditions du pilote</Link> ·{" "}
         <Link href="/administration/criteres">Critères de suspension</Link> ·{" "}
+        <Link href="/administration/journal">Journal du pilote</Link> ·{" "}
         <Link href="/espace/mes-donnees">Mes données</Link>
       </p>
 
-      <h2>Accès des élèves</h2>
+      {ok && <p role="status">{ok}</p>}
+      {erreur && (
+        <p role="alert" className="erreur">
+          {erreur}
+        </p>
+      )}
+      <h2 id="acces">Accès des élèves</h2>
       <p role="status">
         {t.accesEleves.ouvert ? (
           <>
@@ -95,44 +145,66 @@ export default async function PageAdministration() {
           </>
         )}
       </p>
-      <form action={basculerAccesEleves} className="formulaire">
-        {t.accesEleves.ouvert ? (
-          <>
-            <input type="hidden" name="ouvert" value="non" />
-            <label htmlFor="motif">Motif (interne, jamais montré aux élèves)</label>
-            <input id="motif" name="motif" maxLength={500} />
-            <div className="actions">
-              <button type="submit">Fermer l&apos;accès des élèves</button>
-            </div>
-          </>
-        ) : (
-          <>
-            <input type="hidden" name="ouvert" value="oui" />
+      {t.accesEleves.ouvert ? (
+        <form action={fermerAccesEleves} className="formulaire">
+          <label htmlFor="motif">Motif (interne, jamais montré aux élèves)</label>
+          <input id="motif" name="motif" required minLength={3} maxLength={500} />
+          <ChoixCritere id="critere-acces" />
+          <div className="actions">
+            <button type="submit">Fermer l&apos;accès des élèves</button>
+          </div>
+        </form>
+      ) : (
+        <details>
+          <summary>Rouvrir l&apos;accès des élèves (reprise)</summary>
+          <form action={rouvrirAccesEleves} className="formulaire">
+            <ChampsReprise id="acces" />
             <div className="actions">
               <button type="submit">Rouvrir l&apos;accès des élèves</button>
             </div>
-          </>
-        )}
-      </form>
+          </form>
+        </details>
+      )}
       <p className="note">
         Fermé : espace élève, cours, quiz, plan, assistant d&apos;aide et inscriptions affichent un
         message neutre ; « Mes données » reste accessible. Un agent suspendu ne répond plus à
         personne.
       </p>
 
-      <h2>Agents</h2>
+      <h2 id="agents">Agents</h2>
       <ul>
         {t.agents.map((a) => (
           <li key={a.agent}>
             {a.agent} : <strong>{a.suspendu ? "suspendu" : "actif"}</strong>
             {a.motif && <> — {a.motif}</>}
-            {a.suspendu && (
-              <form action={reactiver} style={{ display: "inline" }}>
-                <input type="hidden" name="agent" value={a.agent} />{" "}
-                <button type="submit" className="secondaire">
-                  Réactiver {a.agent}
-                </button>
-              </form>
+            {a.suspendu ? (
+              <details>
+                <summary>Réactiver {a.agent} (reprise)</summary>
+                <form action={reactiver} className="formulaire">
+                  <input type="hidden" name="agent" value={a.agent} />
+                  <ChampsReprise id={a.agent} />
+                  <button type="submit" className="secondaire">
+                    Réactiver {a.agent}
+                  </button>
+                </form>
+              </details>
+            ) : (
+              <details>
+                <summary>Suspendre {a.agent}</summary>
+                <form action={suspendre} className="formulaire">
+                  <input type="hidden" name="agent" value={a.agent} />
+                  <label htmlFor={`motif-${a.agent}`}>Motif de la suspension</label>
+                  <input
+                    id={`motif-${a.agent}`}
+                    name="motif"
+                    required
+                    minLength={3}
+                    maxLength={500}
+                  />
+                  <ChoixCritere id={`critere-${a.agent}`} />
+                  <button type="submit">Suspendre {a.agent}</button>
+                </form>
+              </details>
             )}
           </li>
         ))}

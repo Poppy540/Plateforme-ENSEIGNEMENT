@@ -21,8 +21,8 @@
 | 7 | Propriétaire | Ne rien traiter pendant 2 h sur un second signalement d'essai | Relance reçue (exécuteur planifié toutes les 5 minutes) | — |
 | 8 | Propriétaire | **Fermer l'accès des élèves** avec un motif | L'élève voit un message neutre ; « Mes données » reste ouvert | ✔ 4 |
 | 9 | Propriétaire | **Déconnecter toutes les sessions** | L'élève et le référent doivent redemander un code ; le propriétaire reste connecté | ✔ 4 |
-| 10 | Propriétaire | Suspendre un agent dans l'administration, puis le réactiver | L'agent ne répond plus pendant la suspension, puis reprend | (test `disponibilite`) |
-| 11 | Propriétaire | **Rouvrir l'accès**, puis ouvrir le pilotage de l'exploitation et les exports | Activité visible, petits nombres masqués « <5 », aucun numéro ni identifiant dans les CSV | ✔ 4, 5 |
+| 10 | Propriétaire | Suspendre un agent dans l'administration (motif), puis le réactiver avec les 4 points de la reprise ; vérifier le journal du pilote | L'agent ne répond plus pendant la suspension, puis reprend | (test `disponibilite`) |
+| 11 | Propriétaire | **Rouvrir l'accès** (les 4 points de la reprise), puis ouvrir le pilotage de l'exploitation et les exports | Activité visible, petits nombres masqués « <5 », aucun numéro ni identifiant dans les CSV | ✔ 4, 5 |
 | 12 | Propriétaire | Restaurer la sauvegarde du jour dans une base jetable (`pnpm base:restaurer`, [dossier de production](../production/README.md) §5) | « Restauration vérifiée » ; durée notée | (essai `pnpm test:sauvegarde`) |
 
 ## Compte rendu

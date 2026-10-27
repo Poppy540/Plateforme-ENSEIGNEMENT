@@ -52,7 +52,7 @@
 
 ## Écarts avec le plan
 
-« Agent suspendu » et « accès des élèves fermé » ne sont pas des critères, mais des mesures déjà prises. Ils apparaissent dans l'encadré « Mesures en cours ». « Deux suspensions immédiates pour la même cause » est déclaré pour l'instant ; il pourra se calculer à partir du journal du pilote (étape 2).
+« Agent suspendu » et « accès des élèves fermé » ne sont pas des critères, mais des mesures déjà prises. Ils apparaissent dans l'encadré « Mesures en cours ». « Deux suspensions immédiates pour la même cause » était déclaré ; il se calcule depuis le journal du pilote (ADR 0081).
 
 ## Tests
 

@@ -33,6 +33,7 @@ const CALME: FaitsCriteres = {
   cout_7_jours: 12.5,
   agents_suspendus: [],
   acces_eleves_ouvert: true,
+  suspensions_meme_cause_max: 1,
 };
 const etat = (liste: ReturnType<typeof evaluerCriteres>, code: string) =>
   liste.find((c) => c.code === code)!;
@@ -47,6 +48,7 @@ describe("critères de suspension du pilote (ADR 0080)", () => {
       "erreur_contenu_non_corrigee",
       "contestations_repetees",
       "depassement_budget",
+      "suspensions_repetees",
     ]);
   });
 
@@ -140,6 +142,15 @@ describe("critères de suspension du pilote (ADR 0080)", () => {
     expect(etat(criteres, "equipe_indisponible").etat).toBe("a_examiner");
     expect(synthese(criteres)).toMatchObject({ atteints: 2, aExaminer: 1, arret: true });
     expect(alertesASignaler(criteres)).toEqual([]);
+  });
+
+  it("deux suspensions pour une même cause au journal : critère d'arrêt atteint, alerte en priorité 1", () => {
+    const criteres = evaluerCriteres({ ...CALME, suspensions_meme_cause_max: 2 }, SEUILS, []);
+    expect(etat(criteres, "suspensions_repetees").etat).toBe("atteint");
+    expect(synthese(criteres).arret).toBe(true);
+    expect(alertesASignaler(criteres)).toEqual([
+      expect.objectContaining({ critere: "suspensions_repetees_atteint", priorite: 1 }),
+    ]);
   });
 
   it("plusieurs pays au pilote : le seuil le plus prudent de chacun", () => {

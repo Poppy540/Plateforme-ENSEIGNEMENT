@@ -5,6 +5,7 @@ import {
   executerSql,
   identifiantSimule,
   inscrireEleveActif,
+  reprendre,
   seConnecter,
 } from "./outils";
 
@@ -130,7 +131,9 @@ test("4. incident : accès des élèves fermé, toutes les sessions fermées, pu
   const admin = await browser.newPage();
   await seConnecter(admin, ADMIN);
   await admin.goto("/administration");
-  await admin.getByLabel(/Motif/).fill("Répétition d'incident (fictif)");
+  await admin
+    .getByLabel("Motif (interne, jamais montré aux élèves)")
+    .fill("Répétition d'incident (fictif)");
   await admin.getByRole("button", { name: "Fermer l'accès des élèves" }).click();
   await expect(admin.getByRole("status").first()).toContainText("fermé");
   await page.goto("/espace");
@@ -143,7 +146,7 @@ test("4. incident : accès des élèves fermé, toutes les sessions fermées, pu
   await page.goto("/espace/mes-donnees");
   await expect(page).toHaveURL(/\/connexion$/);
 
-  await admin.getByRole("button", { name: "Rouvrir l'accès des élèves" }).click();
+  await reprendre(admin, "Rouvrir l'accès des élèves (reprise)", "Rouvrir l'accès des élèves");
   await expect(admin.getByRole("status").first()).toContainText("ouvert");
   await seConnecter(page, ELEVE);
   await page.goto("/catalogue/ga-6e-mathematiques");

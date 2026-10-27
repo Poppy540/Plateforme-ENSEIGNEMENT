@@ -408,3 +408,13 @@ button.danger {
 .decompte.alerte-critere {
   border: 2px solid var(--texte);
 }
+
+/* Journal du pilote (ADR 0081). */
+.entree-journal h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.entree-journal p {
+  margin: 0;
+}

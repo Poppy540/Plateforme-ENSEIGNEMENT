@@ -6,7 +6,7 @@
 
 **Moyens de suspension** (ADR 0034), dans `/administration` :
 
-- **Suspendre un agent** (l'Orchestrateur le fait aussi seul en cas de coût anormal) : il ne répond plus à personne, avec un message neutre ; « Réactiver » le remet en service.
+- **Suspendre un agent** (volet « Suspendre … » de la section Agents, avec un motif et le critère en cause ; l'Orchestrateur le fait aussi seul en cas de coût anormal) : il ne répond plus à personne, avec un message neutre ; « Réactiver … (reprise) » le remet en service, avec les 4 points de la reprise ci-dessous.
 - **Fermer l'accès des élèves** : espace élève, cours, quiz, plan, aide et inscriptions affichent « La plateforme est momentanément indisponible » ; « Mes données » reste accessible. Le motif saisi reste interne. Pour arrêter aussi les rapports aux parents, suspendre le Tuteur.
 
 ## Suspension immédiate (avant toute analyse)
@@ -35,7 +35,7 @@
 
 ## Reprise
 
-Une reprise après suspension exige : cause identifiée, correction faite **et testée** (test ajouté à la batterie de l'agent ou aux tests de bout en bout), accord écrit du propriétaire, information de l'établissement. La décision et sa justification sont notées au journal du pilote.
+Une reprise après suspension exige : cause identifiée, correction faite **et testée** (test ajouté à la batterie de l'agent ou aux tests de bout en bout), accord écrit du propriétaire, information de l'établissement. La plateforme refuse la reprise (agent réactivé, accès rouvert) tant que ces 4 points ne sont pas remplis, et la note seule au **journal du pilote** (`/administration/journal`, ADR 0081), comme chaque suspension ; les points hebdomadaires s'y ajoutent à la main.
 
 ## Garder les élèves informés
 
