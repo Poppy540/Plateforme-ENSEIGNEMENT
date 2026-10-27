@@ -177,6 +177,6 @@
 
 ## Prochaine étape
 
-Passages réels (Jalon 9, étape 4) dès la clé API et l'accord sur le coût (~115 USD ; mini-essais d'abord). Sinon, proposer le plan de la suite (Jalon 10) quand le propriétaire le demande. Passages réels (Jalon 9, étape 4) dès la clé API et l'accord sur le coût (~115 USD pour les séries complètes ; mini-essais d'abord). Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, du Jalon 8, §5, et du Jalon 9, §6 (Q19, enseignant de la classe).
+Passages réels (Jalon 9, étape 4) dès la clé API et l'accord sur le coût (~115 USD ; mini-essais d'abord). Sinon, proposer le plan de la suite (Jalon 10) quand le propriétaire le demande. Le dossier pour le juriste est à relire par le propriétaire avant transmission. Toujours attendus du propriétaire : bilans des Jalons 6 et 7, §6, du Jalon 8, §5, et du Jalon 9, §6 (Q19, enseignant de la classe).
 
 Toujours en attente du propriétaire : clé API et accord sur les coûts des passages réels (TC + PR, SC, EV, TU, SU, CM, CO, RC, et PF, SF, EF pour le Français) ; validation de la FAQ du Support et du délai de réponse aux tickets ; valeurs provisoires du recrutement (`recrutement.yaml`, conditions à fixer) ; avis du juriste avant tout usage réel du Recruteur ; fournisseurs vidéo, email et agenda ; budget par vidéo ; relecteur de la vidéo pilote ; référent, IPN, juriste (bilans des Jalons 1 et 2, §6).
