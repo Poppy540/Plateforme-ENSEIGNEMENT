@@ -133,6 +133,7 @@ export default async function PageAdministration({ searchParams }: PageProps<"/a
 
       <p>
         <Link href="/administration/tableau-de-bord">Tableau de bord du pilote</Link> ·{" "}
+        <Link href="/administration/attentes">Ce qui vous attend</Link> ·{" "}
         <Link href="/administration/exploitation">Pilotage de l&apos;exploitation</Link> ·{" "}
         <Link href="/administration/recrutement">Recrutement des enseignants-référents</Link> ·{" "}
         <Link href="/administration/invitations">Inviter un référent</Link> ·{" "}

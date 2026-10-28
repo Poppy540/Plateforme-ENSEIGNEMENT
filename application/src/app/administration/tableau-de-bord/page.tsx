@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { LIBELLES_PHASE, jour, type Phase } from "@/lib/pilote/tableau-de-bord";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
+import { decompteAttentes } from "@/lib/pilote/attentes";
+import { attentesDuProprietaire } from "@/lib/serveur/attentes-proprietaire";
 import { tableauDeBord } from "@/lib/serveur/tableau-de-bord";
 
 // Tableau de bord du pilote (ADR 0088) : phase, décompte de chaque phase et prochaine action. Ne fait que lire
@@ -10,7 +12,11 @@ const PHASES: Phase[] = ["preparation", "en_cours", "termine", "cloture"];
 
 export default async function PageTableauDeBord() {
   const administrateur = await exigerAdministrateur();
-  const t = await tableauDeBord(administrateur);
+  const [t, attentes] = await Promise.all([
+    tableauDeBord(administrateur),
+    attentesDuProprietaire(administrateur),
+  ]);
+  const { aFaire, aConfirmer } = decompteAttentes(attentes);
 
   return (
     <main className="conteneur">
@@ -28,6 +34,14 @@ export default async function PageTableauDeBord() {
         <p>{t.action.texte}</p>
         <p>
           <Link href={t.action.lien}>{t.action.libelleLien} →</Link>
+        </p>
+      </section>
+
+      <section aria-labelledby="vous-attend" className="encadre">
+        <h2 id="vous-attend">Ce qui vous attend</h2>
+        <p>
+          {aFaire} point{aFaire > 1 ? "s" : ""} à faire, {aConfirmer} à confirmer par vous.{" "}
+          <Link href="/administration/attentes">Voir la liste complète →</Link>
         </p>
       </section>
 
