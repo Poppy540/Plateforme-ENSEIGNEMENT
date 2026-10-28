@@ -17,7 +17,8 @@ export interface EntreeJournal {
     | "fermeture_acces"
     | "reprise_acces"
     | "point_hebdomadaire"
-    | "note";
+    | "note"
+    | "decision_finale";
   agent: string | null;
   critere: string | null;
   texte: string;

@@ -1,4 +1,5 @@
 import { rapportFinMarkdown } from "@/lib/pilote/fin";
+import { noterRapportTelecharge } from "@/lib/serveur/cloture-pilote";
 import { periodeDuPilote, rapportDeFin } from "@/lib/serveur/fin-pilote";
 import { roleCompte } from "@/lib/serveur/referent";
 import { versionDemandee } from "@/lib/serveur/semaine-pilote";
@@ -14,6 +15,8 @@ export async function GET(requete: Request): Promise<Response> {
   if (!periode) return Response.json({ erreur: "Période du pilote non saisie." }, { status: 404 });
   const version = versionDemandee(new URL(requete.url).searchParams.get("version"));
   const rapport = await rapportDeFin(utilisateur, periode, version);
+  // Geste de clôture « rapport de fin téléchargé » (ADR 0085).
+  await noterRapportTelecharge(utilisateur, version);
   return new Response(rapportFinMarkdown(rapport), {
     headers: {
       "content-type": "text/markdown; charset=utf-8",

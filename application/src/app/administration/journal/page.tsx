@@ -14,6 +14,7 @@ const TYPES: Record<EntreeJournal["type"], string> = {
   reprise_acces: "Réouverture de l'accès des élèves",
   point_hebdomadaire: "Point hebdomadaire",
   note: "Note",
+  decision_finale: "Décision finale",
 };
 const TITRES = new Map(CRITERES.map((c) => [c.code, c.titre]));
 const formatDate = new Intl.DateTimeFormat("fr-FR", {

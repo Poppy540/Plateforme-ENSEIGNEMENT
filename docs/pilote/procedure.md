@@ -42,5 +42,5 @@ Aucun agent IA ne prend de décision dans le pilote : ils proposent, les humains
 
 1. Questionnaires de fin (élèves, parents volontaires, enseignant) et réunion de bilan.
 2. Rapport de pilote : indicateurs agrégés, retours, incidents, décisions (aucune donnée nominative). Sa base est la page « Rapport de fin de pilote » de l'administration (`/administration/fin-pilote`, ADR 0084) : dates du pilote, les 5 questions sur toute la période et semaine par semaine, questionnaire anonyme, critères signalés et décisions ; version équipe ou version établissement, imprimable et téléchargeable en texte.
-3. Décision du propriétaire : arrêter, prolonger, élargir.
+3. Décision du propriétaire : arrêter, prolonger, élargir, notée sur la page « Clôture du pilote » (`/administration/cloture`, ADR 0085), qui suit aussi les autres gestes de fin (questionnaires, réunion, rapport téléchargé, familles informées, mise en veille si arrêt, dernière sauvegarde).
 4. Données : les élèves gardent leur compte s'ils le souhaitent ; sinon suppression depuis « Mes données » ou par l'équipe sur demande. Les durées de conservation validées par le juriste s'appliquent ensuite (purge planifiée).

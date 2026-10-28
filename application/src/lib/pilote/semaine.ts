@@ -206,6 +206,7 @@ const TYPES_JOURNAL: Record<string, string> = {
   reprise_acces: "Réouverture de l'accès des élèves",
   point_hebdomadaire: "Point hebdomadaire",
   note: "Note",
+  decision_finale: "Décision finale",
 };
 
 export function libelleJournal(type: string): string {
