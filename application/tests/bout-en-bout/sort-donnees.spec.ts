@@ -43,14 +43,16 @@ test("la simulation montre durées et nombres par catégorie, sans rien effacer"
   await page.getByRole("link", { name: "Sort des données" }).click();
   await expect(page.getByText("Simulation seulement : rien n'est effacé ici.")).toBeVisible();
   await expect(page.getByText(/L'avis du juriste n'est pas encore coché/)).toBeVisible();
-  const tableau = page.getByRole("region", { name: /Simulation du sort des données/ }).first();
-  await expect(tableau.getByRole("row")).toHaveCount(8);
-  const echanges = tableau.getByRole("row").filter({ hasText: "Échanges avec le professeur IA" });
+  const tableau = page.getByRole("list", { name: /Simulation du sort des données/ }).first();
+  await expect(tableau.getByRole("listitem")).toHaveCount(7);
+  const echanges = tableau
+    .getByRole("listitem")
+    .filter({ hasText: "Échanges avec le professeur IA" });
   await expect(echanges).toContainText("365 jours");
   await expect(echanges).toContainText("31 octobre 2027");
-  await expect(tableau.getByRole("row").filter({ hasText: "Signalements traités" })).toContainText(
-    "Durée non fixée : rien n'est effacé",
-  );
+  await expect(
+    tableau.getByRole("listitem").filter({ hasText: "Signalements traités" }),
+  ).toContainText("Durée non fixée : rien n'est effacé");
   await expect(page.locator("main")).not.toContainText("+999");
   const resultat = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"])

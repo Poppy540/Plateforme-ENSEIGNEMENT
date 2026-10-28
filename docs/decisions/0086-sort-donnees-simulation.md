@@ -8,7 +8,7 @@ En fin de pilote, les familles gardent leur compte ou le suppriment. Les durées
 
 ## Décision
 
-1. **Page `/administration/donnees`** (lien « Sort des données ») : pour chaque pays du pilote (pays des chapitres du pilote), un tableau de 7 catégories, reprises des purges existantes :
+1. **Page `/administration/donnees`** (lien « Sort des données ») : pour chaque pays du pilote (pays des chapitres du pilote), une carte par catégorie (lisible sur téléphone), 7 catégories, reprises des purges existantes :
    - échanges avec le professeur IA ;
    - inscriptions jamais acceptées ;
    - comptes sans activité ;

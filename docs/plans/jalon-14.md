@@ -1,6 +1,6 @@
 # Plan du Jalon 14 — fin du pilote
 
-**Statut** : validé par le propriétaire le 2026-10-28 (décisions ci-dessous, ADR 0083). Étape 1 faite (ADR 0084). Étape 2 faite (ADR 0085). Étape 3 faite (ADR 0086).
+**Statut** : validé par le propriétaire le 2026-10-28 (décisions ci-dessous, ADR 0083). Étape 1 faite (ADR 0084). Étape 2 faite (ADR 0085). Étape 3 faite (ADR 0086). Étape 5 faite (bilan `docs/bilans/jalon-14.md`).
 
 **Objectif** : boucler le cycle du pilote. Après la décision de démarrer (Jalon 12) et le suivi chaque semaine (Jalon 13), la fin doit aussi être outillée :
 
