@@ -132,6 +132,7 @@ export default async function PageAdministration({ searchParams }: PageProps<"/a
         <Link href="/administration/semaine">Semaine du pilote</Link> ·{" "}
         <Link href="/administration/fin-pilote">Rapport de fin de pilote</Link> ·{" "}
         <Link href="/administration/cloture">Clôture du pilote</Link> ·{" "}
+        <Link href="/administration/donnees">Sort des données</Link> ·{" "}
         <Link href="/espace/mes-donnees">Mes données</Link>
       </p>
 

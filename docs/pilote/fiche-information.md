@@ -16,14 +16,14 @@ L'IA ne remplace pas un adulte : si votre enfant exprime une détresse, elle l'e
 
 ## Ce que nous collectons (le minimum)
 
-| Donnée | Pourquoi |
-|---|---|
-| Numéro de téléphone (ou email) de l'élève | Se connecter avec un code reçu par SMS ; pas de mot de passe |
-| Prénom ou pseudonyme, classe | Afficher les bons cours ; pas de nom de famille ni d'adresse |
-| Numéro ou email d'un parent | Vous demander votre accord ; vous envoyer les rapports si vous les acceptez |
-| Progression, résultats aux quiz | Suivre les chapitres travaillés et proposer des révisions |
-| Questions posées au professeur IA | Répondre à l'élève ; conservées [365] jours puis effacées |
-| Demandes d'aide et signalements | Permettre à l'équipe de répondre et d'assurer la sécurité |
+| Donnée                                                                  | Pourquoi                                                                                                                                                                                                                                |
+| ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Numéro de téléphone (ou email) de l'élève                               | Se connecter avec un code reçu par SMS ; pas de mot de passe                                                                                                                                                                            |
+| Prénom ou pseudonyme, classe                                            | Afficher les bons cours ; pas de nom de famille ni d'adresse                                                                                                                                                                            |
+| Numéro ou email d'un parent                                             | Vous demander votre accord ; vous envoyer les rapports si vous les acceptez                                                                                                                                                             |
+| Progression, résultats aux quiz                                         | Suivre les chapitres travaillés et proposer des révisions                                                                                                                                                                               |
+| Questions posées au professeur IA                                       | Répondre à l'élève ; conservées [365] jours puis effacées                                                                                                                                                                               |
+| Demandes d'aide et signalements                                         | Permettre à l'équipe de répondre et d'assurer la sécurité                                                                                                                                                                               |
 | Classe du pilote (si l'élève la rejoint avec le code de son enseignant) | Donner à l'enseignant de la classe des **chiffres d'ensemble** (avancement par chapitre, réussite moyenne aux quiz), sans aucun nom ni aucune réponse d'élève, et rien pour un groupe de moins de 5 élèves [à confirmer par le juriste] |
 
 Nous ne collectons **jamais** de données sensibles (religion, santé, opinions, origine). Les élèves ne sont **jamais comparés** entre eux. Aucune publicité, aucune revente de données.
@@ -43,4 +43,10 @@ Les messages de l'élève au professeur IA sont traités par **un fournisseur d'
 - Durée : du [date] au [date].
 - Un court questionnaire **facultatif et anonyme** vous sera proposé, ainsi qu'à votre enfant. Les réponses se font en cochant des cases, sans texte libre, et ne sont jamais rattachées à un compte.
 - Pour savoir si les cours sont suivis, la plateforme compte, chapitre par chapitre, les vidéos regardées et les leçons écrites ouvertes. Ce sont des totaux, sans le nom ni le compte de personne.
+
+## Après l'essai
+
+- Votre enfant peut **garder son compte** s'il le souhaite, ou le **supprimer** à tout moment depuis « Mes données ».
+- Un compte qui n'est plus utilisé est effacé, avec toutes ses données, après [730] jours sans activité ; les questions au professeur IA, après [365] jours [durées à confirmer par le juriste].
+- Le bilan de l'essai ne contient que des chiffres d'ensemble, sans aucun nom.
 - Contact : [nom ou fonction, téléphone, email].
