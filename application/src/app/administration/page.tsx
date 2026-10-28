@@ -5,6 +5,8 @@ import { formaterUSD } from "@/lib/format";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import { documentsOfficiels, tableauAdministration } from "@/lib/serveur/administration";
 import { CRITERES } from "@/lib/pilote/criteres";
+import { LIBELLES_PHASE } from "@/lib/pilote/tableau-de-bord";
+import { tableauDeBord } from "@/lib/serveur/tableau-de-bord";
 import {
   deconnecterTout,
   fermerAccesEleves,
@@ -105,14 +107,23 @@ export default async function PageAdministration({ searchParams }: PageProps<"/a
   const parametres = await searchParams;
   const erreur = typeof parametres.erreur === "string" ? parametres.erreur.slice(0, 200) : null;
   const ok = typeof parametres.ok === "string" ? parametres.ok.slice(0, 120) : null;
-  const [t, documents] = await Promise.all([
+  const [t, documents, pilote] = await Promise.all([
     tableauAdministration(administrateur),
     documentsOfficiels(administrateur),
+    tableauDeBord(administrateur),
   ]);
 
   return (
     <main className="conteneur">
       <h1>Administration</h1>
+      <section aria-labelledby="pilote-en-bref" className="encadre">
+        <h2 id="pilote-en-bref">Pilote : {LIBELLES_PHASE[pilote.phase]}</h2>
+        <p>{pilote.action.texte}</p>
+        <p>
+          <Link href={pilote.action.lien}>Faire maintenant →</Link> ({pilote.action.libelleLien}) ·{" "}
+          <Link href="/administration/tableau-de-bord">Voir le tableau de bord</Link>
+        </p>
+      </section>
       <p className="note">
         Suivi de l&apos;Orchestrateur : état des agents, file humaine (la détresse d&apos;abord),
         tâches récentes. Seule l&apos;administration réactive un agent suspendu et traite la file
@@ -121,6 +132,7 @@ export default async function PageAdministration({ searchParams }: PageProps<"/a
       </p>
 
       <p>
+        <Link href="/administration/tableau-de-bord">Tableau de bord du pilote</Link> ·{" "}
         <Link href="/administration/exploitation">Pilotage de l&apos;exploitation</Link> ·{" "}
         <Link href="/administration/recrutement">Recrutement des enseignants-référents</Link> ·{" "}
         <Link href="/administration/invitations">Inviter un référent</Link> ·{" "}
