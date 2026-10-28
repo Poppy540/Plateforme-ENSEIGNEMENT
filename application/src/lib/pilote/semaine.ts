@@ -74,7 +74,7 @@ const coutParEleve = (c: ChiffresSemaine) =>
   c.eleves_actifs >= SEUIL_DIFFUSION ? usd(c.cout_usd / c.eleves_actifs) : "—";
 const heures = (n: number | null) => (n === null ? "—" : `${Number(n).toFixed(1)} h`);
 
-type Calcul = (c: ChiffresSemaine) => string;
+export type Calcul = (c: ChiffresSemaine) => string;
 const brut =
   (cle: keyof ChiffresSemaine): Calcul =>
   (c) =>
@@ -84,16 +84,85 @@ const personnes =
   (c) =>
     effectif(Number(c[cle]));
 
-function section(
-  titre: string,
-  s: ChiffresSemaine,
-  p: ChiffresSemaine,
-  lignes: [string, Calcul][],
-): Section {
-  return {
-    titre,
-    lignes: lignes.map(([libelle, f]) => ({ libelle, semaine: f(s), precedente: f(p) })),
-  };
+export interface DefinitionSection {
+  titre: string;
+  lignes: [string, Calcul][];
+}
+
+/**
+ * Indicateurs du rapport, par question du retour d'expérience, selon la version : repris tels quels par le rapport
+ * de la semaine et par le rapport de fin de pilote (ADR 0084). « periode » ne change que le libellé des actifs.
+ */
+export function indicateurs(version: Version, periode: "semaine" | "pilote"): DefinitionSection[] {
+  const definitions: DefinitionSection[] = [
+    {
+      titre: "1. Les élèves utilisent-ils la plateforme ?",
+      lignes: [
+        ["Élèves inscrits (accord du parent reçu)", personnes("eleves_inscrits")],
+        [
+          periode === "semaine" ? "Élèves actifs dans la semaine" : "Élèves actifs sur la période",
+          personnes("eleves_actifs"),
+        ],
+        ["Chapitres terminés", brut("chapitres_termines")],
+        ["Vidéos démarrées", brut("videos_demarrees")],
+        ["Vidéos vues jusqu'au bout", brut("videos_terminees")],
+        ["Leçons écrites ouvertes", brut("lecons_ouvertes")],
+      ],
+    },
+    {
+      titre: "2. Les contenus aident-ils à comprendre ?",
+      lignes: [
+        ["Questions posées au professeur", brut("questions")],
+        ["Quiz passés", brut("quiz")],
+        ["Score moyen aux quiz (dès 5 quiz)", moyenne],
+        ["Réponses au questionnaire anonyme", brut("reponses_questionnaire")],
+      ],
+    },
+  ];
+  if (version === "etablissement")
+    return [
+      ...definitions,
+      {
+        titre: "3. Signalements",
+        lignes: [
+          ["Signalements reçus", brut("signalements")],
+          ["Signalements traités par l'équipe", brut("signalements_traites")],
+        ],
+      },
+    ];
+  return [
+    ...definitions,
+    {
+      titre: "3. Les agents restent-ils dans leur rôle ?",
+      lignes: [
+        ["Signalements reçus", brut("signalements")],
+        ["dont détresses", personnes("detresses")],
+        ["dont hors programme", brut("hors_programme")],
+        ["dont contenus inappropriés", brut("contenus_inappropries")],
+        ["dont erreurs de contenu", brut("erreurs_contenu")],
+        ["dont demandes de réponses", brut("demandes_reponses")],
+        ["Contestations de corrections de quiz", brut("contestations")],
+      ],
+    },
+    {
+      titre: "4. L'équipe tient-elle la charge ?",
+      lignes: [
+        ["Signalements traités", brut("signalements_traites")],
+        ["Signalements encore ouverts en fin de période", brut("signalements_ouverts")],
+        ["Délai médian de traitement", (c) => heures(c.delai_median_heures)],
+        ["Tickets du Support reçus", brut("tickets")],
+        ["Tickets résolus", brut("tickets_resolus")],
+        ["Chapitres validés par le référent", brut("chapitres_valides")],
+      ],
+    },
+    {
+      titre: "5. Le coût est-il soutenable ?",
+      lignes: [
+        ["Coût des agents", (c) => usd(c.cout_usd)],
+        ["Coût par élève actif (dès 5 élèves)", coutParEleve],
+      ],
+    },
+  ];
 }
 
 const ETATS: Record<string, string> = {
@@ -111,54 +180,10 @@ export function rapportSemaine(
 ): RapportSemaine {
   const s = semaine;
   const p = precedente;
-  const sections: Section[] = [
-    section("1. Les élèves utilisent-ils la plateforme ?", s, p, [
-      ["Élèves inscrits (accord du parent reçu)", personnes("eleves_inscrits")],
-      ["Élèves actifs dans la semaine", personnes("eleves_actifs")],
-      ["Chapitres terminés", brut("chapitres_termines")],
-      ["Vidéos démarrées", brut("videos_demarrees")],
-      ["Vidéos vues jusqu'au bout", brut("videos_terminees")],
-      ["Leçons écrites ouvertes", brut("lecons_ouvertes")],
-    ]),
-    section("2. Les contenus aident-ils à comprendre ?", s, p, [
-      ["Questions posées au professeur", brut("questions")],
-      ["Quiz passés", brut("quiz")],
-      ["Score moyen aux quiz (dès 5 quiz)", moyenne],
-      ["Réponses au questionnaire anonyme", brut("reponses_questionnaire")],
-    ]),
-  ];
-  if (version === "equipe") {
-    sections.push(
-      section("3. Les agents restent-ils dans leur rôle ?", s, p, [
-        ["Signalements reçus", brut("signalements")],
-        ["dont détresses", personnes("detresses")],
-        ["dont hors programme", brut("hors_programme")],
-        ["dont contenus inappropriés", brut("contenus_inappropries")],
-        ["dont erreurs de contenu", brut("erreurs_contenu")],
-        ["dont demandes de réponses", brut("demandes_reponses")],
-        ["Contestations de corrections de quiz", brut("contestations")],
-      ]),
-      section("4. L'équipe tient-elle la charge ?", s, p, [
-        ["Signalements traités", brut("signalements_traites")],
-        ["Signalements encore ouverts en fin de période", brut("signalements_ouverts")],
-        ["Délai médian de traitement", (c) => heures(c.delai_median_heures)],
-        ["Tickets du Support reçus", brut("tickets")],
-        ["Tickets résolus", brut("tickets_resolus")],
-        ["Chapitres validés par le référent", brut("chapitres_valides")],
-      ]),
-      section("5. Le coût est-il soutenable ?", s, p, [
-        ["Coût des agents", (c) => usd(c.cout_usd)],
-        ["Coût par élève actif (dès 5 élèves)", coutParEleve],
-      ]),
-    );
-  } else {
-    sections.push(
-      section("3. Signalements", s, p, [
-        ["Signalements reçus", brut("signalements")],
-        ["Signalements traités par l'équipe", brut("signalements_traites")],
-      ]),
-    );
-  }
+  const sections: Section[] = indicateurs(version, "semaine").map((d) => ({
+    titre: d.titre,
+    lignes: d.lignes.map(([libelle, f]) => ({ libelle, semaine: f(s), precedente: f(p) })),
+  }));
   return {
     version,
     debut: s.debut,

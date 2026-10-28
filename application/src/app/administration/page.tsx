@@ -130,6 +130,7 @@ export default async function PageAdministration({ searchParams }: PageProps<"/a
         <Link href="/administration/criteres">Critères de suspension</Link> ·{" "}
         <Link href="/administration/journal">Journal du pilote</Link> ·{" "}
         <Link href="/administration/semaine">Semaine du pilote</Link> ·{" "}
+        <Link href="/administration/fin-pilote">Rapport de fin de pilote</Link> ·{" "}
         <Link href="/espace/mes-donnees">Mes données</Link>
       </p>
 

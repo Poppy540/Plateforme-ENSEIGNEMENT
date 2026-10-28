@@ -11,13 +11,13 @@
 
 ## Rôles
 
-| Rôle | Qui | Responsabilités |
-|---|---|---|
-| Propriétaire | Le porteur du projet | Décide du lancement, des suspensions et de l'arrêt ; signe avec l'établissement |
-| Enseignant-référent | Enseignant de Mathématiques validé | Valide tous les contenus ; relit des échanges anonymisés si besoin ; traite les signalements de contenu |
-| Enseignant de la classe | Enseignant de la classe partenaire (peut être le référent) | Présente le pilote, accompagne les séances de découverte, fait remonter les difficultés |
-| Équipe de veille | Au moins **deux** personnes nommées | Surveille la file humaine (`/administration`), applique la [procédure de détresse](procedure-detresse.md), répond aux tickets |
-| Correspondant de l'établissement | Désigné par le chef d'établissement | Contact pour les parents et pour toute situation grave |
+| Rôle                             | Qui                                                        | Responsabilités                                                                                                               |
+| -------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Propriétaire                     | Le porteur du projet                                       | Décide du lancement, des suspensions et de l'arrêt ; signe avec l'établissement                                               |
+| Enseignant-référent              | Enseignant de Mathématiques validé                         | Valide tous les contenus ; relit des échanges anonymisés si besoin ; traite les signalements de contenu                       |
+| Enseignant de la classe          | Enseignant de la classe partenaire (peut être le référent) | Présente le pilote, accompagne les séances de découverte, fait remonter les difficultés                                       |
+| Équipe de veille                 | Au moins **deux** personnes nommées                        | Surveille la file humaine (`/administration`), applique la [procédure de détresse](procedure-detresse.md), répond aux tickets |
+| Correspondant de l'établissement | Désigné par le chef d'établissement                        | Contact pour les parents et pour toute situation grave                                                                        |
 
 Aucun agent IA ne prend de décision dans le pilote : ils proposent, les humains valident (cadrage §5.1).
 
@@ -41,6 +41,6 @@ Aucun agent IA ne prend de décision dans le pilote : ils proposent, les humains
 ## Après (2 semaines)
 
 1. Questionnaires de fin (élèves, parents volontaires, enseignant) et réunion de bilan.
-2. Rapport de pilote : indicateurs agrégés, retours, incidents, décisions (aucune donnée nominative).
+2. Rapport de pilote : indicateurs agrégés, retours, incidents, décisions (aucune donnée nominative). Sa base est la page « Rapport de fin de pilote » de l'administration (`/administration/fin-pilote`, ADR 0084) : dates du pilote, les 5 questions sur toute la période et semaine par semaine, questionnaire anonyme, critères signalés et décisions ; version équipe ou version établissement, imprimable et téléchargeable en texte.
 3. Décision du propriétaire : arrêter, prolonger, élargir.
 4. Données : les élèves gardent leur compte s'ils le souhaitent ; sinon suppression depuis « Mes données » ou par l'équipe sur demande. Les durées de conservation validées par le juriste s'appliquent ensuite (purge planifiée).

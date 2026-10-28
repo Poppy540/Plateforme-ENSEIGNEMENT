@@ -1,6 +1,7 @@
 import "server-only";
 import { DatabaseError } from "pg";
 import { masquerCoordonnees } from "@/lib/agents/masquage";
+import type { EntreeJournalSemaine } from "@/lib/pilote/semaine";
 import { avecAgentOrchestrateur, avecUtilisateur } from "./base";
 import { modeFile } from "./configuration";
 import { empreinteActeur, executerFile } from "./orchestrateur";
@@ -116,4 +117,24 @@ export function journalDuPilote(administrateur: string, limite = 100): Promise<E
     const { rows } = await client.query("select * from journal_pilote_liste($1)", [limite]);
     return rows;
   });
+}
+
+/**
+ * Décisions notées entre deux jours (inclus), des plus anciennes aux plus récentes, pour les rapports (ADR 0082,
+ * 0084). Une reprise se résume par sa cause et sa correction (les 4 points sont exigés par la base).
+ */
+export async function decisionsDuJournal(
+  administrateur: string,
+  debut: string,
+  fin: string,
+): Promise<EntreeJournalSemaine[]> {
+  return (await journalDuPilote(administrateur, 500))
+    .map((e) => ({
+      type: e.type,
+      agent: e.agent,
+      texte: e.cause ? `cause : ${e.cause} ; correction : ${e.correction}` : e.texte,
+      cree_le: new Date(e.cree_le).toISOString(),
+    }))
+    .filter((e) => e.cree_le.slice(0, 10) >= debut && e.cree_le.slice(0, 10) <= fin)
+    .reverse();
 }
