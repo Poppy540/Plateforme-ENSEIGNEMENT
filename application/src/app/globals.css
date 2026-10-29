@@ -473,3 +473,8 @@ button.danger {
     display: none;
   }
 }
+
+/* Deux encadrés qui se suivent (tableau de bord du pilote) : un espace entre eux. */
+.encadre + .encadre {
+  margin-top: 1rem;
+}

@@ -1,6 +1,6 @@
 # Plan du Jalon 15 — tableau de bord du pilote
 
-**Statut** : validé par le propriétaire le 2026-10-28 (décisions ci-dessous, ADR 0087). Étape 1 faite (ADR 0088). Étape 2 faite (ADR 0089). Étape 3 faite (ADR 0090).
+**Statut** : validé par le propriétaire le 2026-10-28 (décisions ci-dessous, ADR 0087). Étape 1 faite (ADR 0088). Étape 2 faite (ADR 0089). Étape 3 faite (ADR 0090). Étape 5 faite (bilan `docs/bilans/jalon-15.md`).
 
 **Objectif** : le cycle du pilote est outillé de bout en bout, mais il est réparti sur une dizaine de pages et les demandes faites au propriétaire sont dispersées dans dix bilans. Le Jalon 15 en fait :
 
