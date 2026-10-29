@@ -1,6 +1,6 @@
 # Plan du Jalon 16 — revue de sécurité des Jalons 9 à 15
 
-**Statut** : validé par le propriétaire le 2026-10-29 (décisions ci-dessous, ADR 0091).
+**Statut** : validé par le propriétaire le 2026-10-29 (décisions ci-dessous, ADR 0091). Étape 1 faite (`docs/securite/revue-jalon-16.md` : 0 critique, 0 élevé, 2 moyens, 5 faibles, 2 informations ; décisions D10 à D12 proposées).
 
 **Objectif** : la dernière revue de sécurité et de confidentialité date du Jalon 5 (ADR 0043, `docs/securite/revue-jalon-5.md`). Depuis, les Jalons 9 à 15 ont ajouté :
 
