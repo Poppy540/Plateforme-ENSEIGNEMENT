@@ -443,3 +443,33 @@ button.danger {
   text-align: right;
   white-space: nowrap;
 }
+
+/* Rapport de fin (ADR 0090) : sur un écran étroit, une carte par indicateur au lieu d'un tableau à défiler ;
+   le tableau reste sur grand écran et à l'impression. Une seule des deux formes est visible à la fois. */
+.rapport-cartes {
+  display: none;
+}
+
+.rapport-cartes .chiffres {
+  grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+}
+
+@media (max-width: 40rem) {
+  .tableau-large {
+    display: none;
+  }
+
+  .rapport-cartes {
+    display: grid;
+  }
+}
+
+@media print {
+  .tableau-large {
+    display: block;
+  }
+
+  .rapport-cartes {
+    display: none;
+  }
+}

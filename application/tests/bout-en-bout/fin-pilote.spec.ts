@@ -39,7 +39,19 @@ test("saisir la période, puis lire le rapport de fin, semaine par semaine", asy
   await page.getByRole("button", { name: "Enregistrer la période" }).click();
   await expect(page.getByRole("status")).toContainText("Période du pilote enregistrée");
   await expect(page.getByText("(pilote en cours)")).toBeVisible();
-  const tableau = page.getByRole("region", { name: /1\. Les élèves/ }).getByRole("table");
+  // Téléphone : une carte par indicateur (total puis une valeur par semaine) ; le tableau est masqué.
+  const cartes = page.getByRole("list", { name: /Cartes — 1\. Les élèves/ });
+  await expect(cartes.getByRole("listitem")).toHaveCount(6);
+  await expect(cartes.getByRole("listitem").first().getByRole("term")).toHaveText([
+    "Total",
+    "Sem. 1",
+    "Sem. 2",
+    "Sem. 3",
+  ]);
+  const tableau = page.getByRole("region", { name: /Tableau — 1\. Les élèves/ });
+  await expect(tableau).toBeHidden();
+  // Impression : le tableau revient, les cartes disparaissent.
+  await page.emulateMedia({ media: "print" });
   await expect(tableau.getByRole("columnheader")).toHaveText([
     "Indicateur",
     "Total",
@@ -47,6 +59,8 @@ test("saisir la période, puis lire le rapport de fin, semaine par semaine", asy
     "Sem. 2",
     "Sem. 3",
   ]);
+  await expect(cartes).toBeHidden();
+  await page.emulateMedia({ media: "screen" });
   for (const titre of [
     "5. Le coût est-il soutenable ?",
     "Questionnaire anonyme",
@@ -68,6 +82,14 @@ test("saisir la période, puis lire le rapport de fin, semaine par semaine", asy
   expect(contenu).toContain("# Rapport de fin de pilote, du ");
   expect(contenu).toContain("| | Total | Sem. 1 | Sem. 2 | Sem. 3 |");
   expect(contenu).not.toMatch(/\+999|[0-9a-f]{8}-[0-9a-f]{4}-/);
+});
+
+test("grand écran : le tableau, sans les cartes", async ({ page }) => {
+  await page.setViewportSize({ width: 1200, height: 900 });
+  await seConnecter(page, ADMIN);
+  await page.goto("/administration/fin-pilote");
+  await expect(page.getByRole("region", { name: /Tableau — 1\. Les élèves/ })).toBeVisible();
+  await expect(page.getByRole("list", { name: /Cartes — 1\. Les élèves/ })).toBeHidden();
 });
 
 test("version établissement : ni coûts, ni détail des agents, ni critères, ni journal", async ({

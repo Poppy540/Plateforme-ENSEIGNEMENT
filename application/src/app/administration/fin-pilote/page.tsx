@@ -96,7 +96,7 @@ export default async function PageFinPilote({
             <section key={s.titre}>
               <h2>{s.titre}</h2>
               <div
-                className="tableau-defilant"
+                className="tableau-defilant tableau-large"
                 tabIndex={0}
                 role="region"
                 aria-label={`Tableau — ${s.titre}`}
@@ -124,6 +124,22 @@ export default async function PageFinPilote({
                   </tbody>
                 </table>
               </div>
+              {/* Sur un écran étroit : une carte par indicateur (le tableau reste à l'impression). */}
+              <ul className="liste-cartes rapport-cartes" aria-label={`Cartes — ${s.titre}`}>
+                {s.lignes.map((l) => (
+                  <li key={l.libelle} className="carte">
+                    <strong>{l.libelle}</strong>
+                    <dl className="chiffres">
+                      {l.valeurs.map((v, i) => (
+                        <div key={r.colonnes[i]}>
+                          <dt>{r.colonnes[i]}</dt>
+                          <dd>{v}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </li>
+                ))}
+              </ul>
             </section>
           ))}
 
