@@ -147,7 +147,7 @@ test("mesure de toutes les pages en faible débit", async ({ browser }) => {
   await expect(referent.getByRole("status")).toContainText("Quiz version 1 créé");
   await referent.getByLabel(/Durée cible/).fill("8");
   await referent.getByRole("button", { name: "Générer un brouillon de script" }).click();
-  await expect(referent.getByRole("status")).toContainText("Brouillon version 1 créé");
+  await expect(referent.getByText("Brouillon version 1 créé")).toBeVisible();
   const [{ id: quiz }] = await executerSql("select id from quiz where chapitre_id = $1", [
     chapitre,
   ]);
@@ -181,9 +181,14 @@ test("mesure de toutes les pages en faible débit", async ({ browser }) => {
     ["Connexion", "/connexion"],
     ["Aide", "/aide"],
     ["Pas de connexion", "/hors-ligne"],
-    ["Service indisponible", "/indisponible"],
   ])
     await ajouter("visiteur", nom, chemin);
+  nonMesurees.push({
+    public: "visiteur",
+    chemin: "/indisponible",
+    raison:
+      "affichée seulement quand l'accès des élèves est fermé ; même gabarit que « Pas de connexion »",
+  });
 
   // --- Élève (actif) et parent ---------------------------------------------------------------------------
   const ctxEleve = await nouveauContexte(browser);
