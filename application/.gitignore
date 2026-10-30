@@ -50,3 +50,6 @@ next-env.d.ts
 # Sauvegardes de la base (données personnelles en production) : jamais dans le dépôt (ADR 0072)
 /sauvegardes/
 *.dump
+
+# Sorties du contrôle local (ADR 0094)
+/.controles/

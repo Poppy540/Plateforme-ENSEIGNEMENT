@@ -28,6 +28,7 @@
     "paquet": "bash scripts/paquet.sh",
     "repetition": "bash scripts/repetition-generale.sh",
     "verifier:site": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verifier-site.mts",
+    "controler": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/controler.mts",
     "verifier:production": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verifier-production.mts"
   },
   "dependencies": {

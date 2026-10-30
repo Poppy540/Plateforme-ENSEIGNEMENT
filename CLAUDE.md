@@ -49,6 +49,7 @@ Application dans `application/` (voir `application/README.md`) :
 ```
 cd application
 pnpm install          # dépendances
+pnpm controler [--rapide] [--liste]   # TOUS les contrôles en une commande, outils vérifiés d'abord ; --rapide = format, lint, types, unitaires (ADR 0095)
 pnpm lint             # ESLint
 pnpm format:verifier  # Prettier
 pnpm typecheck        # types Next.js + TypeScript
