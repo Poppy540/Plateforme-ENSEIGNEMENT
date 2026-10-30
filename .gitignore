@@ -11,6 +11,8 @@ id_ed25519*
 
 # --- Données réelles : élèves, parents, candidats (jamais dans git) ---
 donnees/
+# … sauf le code de l'application (page « Sort des données », ADR 0086) : un dossier de code n'est jamais une donnée.
+!application/src/**/donnees/
 data/
 exports/
 **/eleves*.csv
