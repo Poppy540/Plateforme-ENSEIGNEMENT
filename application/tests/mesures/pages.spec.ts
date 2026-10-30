@@ -41,17 +41,35 @@ async function nouveauContexte(browser: Browser, etat?: Etat) {
   return browser.newContext({ ...TELEPHONE, baseURL: BASE, storageState: etat });
 }
 
-async function ressources(page: Page): Promise<RessourceMesuree[]> {
-  return page.evaluate(() =>
-    [
-      ...(performance.getEntriesByType("navigation") as PerformanceResourceTiming[]),
-      ...(performance.getEntriesByType("resource") as PerformanceResourceTiming[]),
-    ].map((r) => ({
-      adresse: r.name,
-      initiateur: r.initiatorType,
-      octets: r.transferSize || r.encodedBodySize || 0,
-    })),
+/**
+ * Octets réellement passés par le réseau (protocole du navigateur), préchargements compris : une ressource
+ * servie par le cache ou le service worker compte pour ce qu'elle a coûté, c'est-à-dire presque rien.
+ */
+async function journalReseau(page: Page) {
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send("Network.enable");
+  let requetes = new Map<string, RessourceMesuree>();
+  cdp.on("Network.requestWillBeSent", (e) =>
+    requetes.set(e.requestId, { adresse: e.request.url, initiateur: e.type ?? "Other", octets: 0 }),
   );
+  cdp.on("Network.loadingFinished", (e) => {
+    const r = requetes.get(e.requestId);
+    if (r) r.octets = e.encodedDataLength;
+  });
+  return {
+    /** Ressources depuis le dernier appel, puis remise à zéro. */
+    relever: () => {
+      const liste = [...requetes.values()];
+      requetes = new Map();
+      return liste;
+    },
+  };
+}
+
+/** Chargement complet : réseau au repos, puis le temps des préchargements des liens visibles. */
+async function charger(page: Page, chemin: string) {
+  await page.goto(chemin, { waitUntil: "networkidle" });
+  await page.waitForTimeout(1500);
 }
 
 async function mesurer(
@@ -64,11 +82,12 @@ async function mesurer(
   // Premier chargement, puis navigation (même contexte : fichiers statiques déjà en mémoire).
   const contexte = await nouveauContexte(browser, etat);
   const page = await contexte.newPage();
-  await page.goto(chemin, { waitUntil: "networkidle" });
+  const reseau = await journalReseau(page);
+  await charger(page, chemin);
   expect(page.url(), `${nom} : redirigé`).toContain(chemin.split("?")[0]);
-  const premierChargement = octetsParNature(await ressources(page));
-  await page.goto(chemin, { waitUntil: "networkidle" });
-  const navigation = (await ressources(page)).reduce((t, r) => t + r.octets, 0);
+  const premierChargement = octetsParNature(reseau.relever());
+  await charger(page, chemin);
+  const navigation = reseau.relever().reduce((t, r) => t + r.octets, 0);
   await contexte.close();
 
   const reseaux: MesurePage["reseaux"] = {};
