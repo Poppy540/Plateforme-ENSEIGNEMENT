@@ -65,6 +65,10 @@ export URL_BASE_DONNEES="postgresql://serveur_application@127.0.0.1:$port_base/p
 export MODE_MODELE=anthropic ANTHROPIC_API_KEY="cle-fictive-de-repetition-$(aleatoire)" MODE_FILE=file MODE_VIDEO=aucun
 export CONTACTS_VEILLE="+999 900 000 01" FOURNISSEUR_SMS=http FOURNISSEUR_EMAIL=http
 export MESSAGERIE_HTTP_URL="https://messagerie.repetition.invalid" MESSAGERIE_HTTP_JETON="$(aleatoire)"
+# Sauvegardes chiffrées (D12) : clé age FICTIVE tirée pour cette répétition ; seule la clé publique est exportée.
+age-keygen -o "$dossier/cle-repetition.txt" 2> /dev/null || true
+destinataire="$(age-keygen -y "$dossier/cle-repetition.txt" 2> /dev/null || true)"
+export SAUVEGARDE_DESTINATAIRE_AGE="$destinataire"
 verifier_configuration() {
   node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/verifier-production.mts" > "$dossier/configuration" 2>&1
   # Seul point attendu en échec hors ligne : l'API de données de Supabase, injoignable ici.
@@ -89,11 +93,14 @@ if [ -f "$dossier/paquet/application/server.js" ]; then
   kill "$pid_serveur" 2>/dev/null; pid_serveur=""
 fi
 
-# 6. Sauvegarde, puis restauration dans une base vide du même serveur.
+# 6. Sauvegarde chiffrée (décision D12 : age, clé FICTIVE tirée pour cette répétition), puis restauration dans une
+#    base vide du même serveur avec la clé privée. En production, la clé privée n'est jamais sur le serveur.
 psql_admin -c "create database restauration" > /dev/null
-etape "Sauvegarde" env URL_BASE_DONNEES_ADMIN="$admin" bash "$racine/scripts/sauvegarde-base.sh" sauvegarder "$dossier/sauvegardes"
+etape "Sauvegarde chiffrée (age)" env URL_BASE_DONNEES_ADMIN="$admin" \
+  bash "$racine/scripts/sauvegarde-base.sh" sauvegarder "$dossier/sauvegardes"
 sauvegarde="$(ls -d "$dossier"/sauvegardes/sauvegarde-* 2>/dev/null | head -1)"
 etape "Restauration vérifiée" env URL_BASE_DONNEES_CIBLE="postgresql://postgres@127.0.0.1:$port_base/restauration" \
+  SAUVEGARDE_IDENTITE_AGE="$dossier/cle-repetition.txt" \
   bash "$racine/scripts/sauvegarde-base.sh" restaurer "$sauvegarde" --confirmer
 
 echo
@@ -106,6 +113,6 @@ Non essayé en local (à faire sur le vrai site, guide de mise en route E3) :
 - authentification Supabase (codes SMS et email) et fermeture de l'API de données ;
 - envoi réel des SMS et des emails (passerelle ou fournisseurs) ;
 - appels au modèle Claude (clé réelle) et vidéo (Cloudflare Stream) ;
-- sauvegardes de l'hébergeur de la base.
+- sauvegardes de l'hébergeur de la base ; clé privée age gardée hors du serveur.
 TEXTE
 if [ "$echecs" -eq 0 ]; then echo "RÉPÉTITION GÉNÉRALE RÉUSSIE"; else echo "$echecs étape(s) en échec"; exit 1; fi

@@ -74,6 +74,12 @@ export function verifierConfiguration(env: Env): Constat[] {
     "32 caractères au moins (sinon l'exécuteur planifié est désactivé)",
   );
   present("CONTACTS_VEILLE", "contacts de l'équipe de veille (alerte de détresse)");
+  // Décision D12 (ADR 0093) : sauvegardes chiffrées avec age ; seule la clé PUBLIQUE est sur le serveur.
+  exiger(
+    "SAUVEGARDE_DESTINATAIRE_AGE",
+    /^age1[02-9ac-hj-np-z]{58}$/.test(valeur(env, "SAUVEGARDE_DESTINATAIRE_AGE")),
+    "clé publique age (« age1… ») pour chiffrer les sauvegardes ; la clé privée reste hors du serveur",
+  );
 
   const sms = valeur(env, "FOURNISSEUR_SMS");
   exiger("FOURNISSEUR_SMS", ["twilio", "http"].includes(sms), "twilio ou http (jamais simulation)");

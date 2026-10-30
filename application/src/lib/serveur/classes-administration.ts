@@ -45,25 +45,36 @@ export function creerClasse(
     etablissement: string;
     joursCode: number;
     joursInvitation: number;
+    /** Effectif annoncé (D10, ADR 0093). */
+    capacite: number;
   },
 ): Promise<ResultatCodes> {
   const codeClasse = genererCodeInvitation();
   const codeEnseignant = genererCodeInvitation();
   return avecErreurMetier(async () => {
-    await avecUtilisateur(administrateur, (client) =>
-      client.query("select creer_classe($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", [
-        d.referentiel,
-        d.niveau,
-        d.serie,
-        d.nom,
-        d.etablissement,
-        empreinteCode(codeClasse),
-        empreinteCode(codeEnseignant),
-        d.joursCode,
-        d.joursInvitation,
+    // Une seule transaction : la classe n'existe jamais sans sa capacité.
+    await avecUtilisateur(administrateur, async (client) => {
+      const { rows } = await client.query(
+        "select creer_classe($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) as id",
+        [
+          d.referentiel,
+          d.niveau,
+          d.serie,
+          d.nom,
+          d.etablissement,
+          empreinteCode(codeClasse),
+          empreinteCode(codeEnseignant),
+          d.joursCode,
+          d.joursInvitation,
+          empreinteActeur(administrateur),
+        ],
+      );
+      await client.query("select definir_capacite_classe($1, $2, $3)", [
+        rows[0].id,
+        d.capacite,
         empreinteActeur(administrateur),
-      ]),
-    );
+      ]);
+    });
     return { ok: true, codeClasse, codeEnseignant };
   });
 }
@@ -80,6 +91,8 @@ export interface ClasseListee {
   code_valide: boolean;
   enseignants: string[];
   invitation_en_attente: boolean;
+  /** Effectif annoncé ; null = sans limite (classe créée avant D10). */
+  capacite: number | null;
 }
 
 export function classesAdministration(administrateur: string): Promise<ClasseListee[]> {
@@ -150,4 +163,24 @@ export async function annulerInvitationsEnseignant(
       empreinteActeur(administrateur),
     ]),
   );
+}
+
+/** Capacité d'une classe (D10, ADR 0093) : effectif annoncé, de 1 à 200. */
+export async function definirCapacite(
+  administrateur: string,
+  classe: string,
+  capacite: number,
+): Promise<string | null> {
+  if (!UUID.test(classe)) return "Classe inconnue.";
+  const resultat = await avecErreurMetier(async () => {
+    await avecUtilisateur(administrateur, (client) =>
+      client.query("select definir_capacite_classe($1, $2, $3)", [
+        classe,
+        Number.isInteger(capacite) ? capacite : -1,
+        empreinteActeur(administrateur),
+      ]),
+    );
+    return { ok: true, codeClasse: "", codeEnseignant: "" };
+  });
+  return resultat.ok ? null : resultat.erreur;
 }

@@ -1,6 +1,6 @@
 // Crée une classe du pilote et l'invitation de son enseignant (à lancer par le propriétaire ; ADR 0063).
 // Usage : pnpm classe:creer <référentiel> <niveau> "<nom de la classe>" "<établissement>" [--serie C]
-//                           [--jours-code 120] [--jours-invitation 14]  > classe.sql
+//                           [--capacite 30] [--jours-code 120] [--jours-invitation 14]  > classe.sql
 //   - les DEUX codes s'affichent à l'écran : le code de classe (que l'enseignant donne à ses élèves) et le code
 //     d'invitation (personnel, pour l'enseignant), à transmettre par un canal approuvé ;
 //   - le SQL (qui ne contient que leurs empreintes) part dans classe.sql, à appliquer avec psql. Il ne crée rien
@@ -16,12 +16,15 @@ const option = (nom: string) => {
   return valeur;
 };
 const serie = option("--serie") ?? null;
+// Capacité (D10, ADR 0093) : effectif annoncé ; au-delà, le code est refusé et l'administration alertée.
+const capaciteSaisie = option("--capacite");
+const capacite = capaciteSaisie === undefined ? null : Number(capaciteSaisie);
 const joursCode = Number(option("--jours-code") ?? "120");
 const joursInvitation = Number(option("--jours-invitation") ?? "14");
 const [referentiel, niveau, nom, etablissement] = args;
 if (!referentiel || !niveau || !nom || !etablissement) {
   console.error(
-    'Usage : pnpm classe:creer <référentiel> <niveau> "<nom de la classe>" "<établissement>" [--serie C] [--jours-code 120] [--jours-invitation 14]',
+    'Usage : pnpm classe:creer <référentiel> <niveau> "<nom de la classe>" "<établissement>" [--serie C] [--capacite 30] [--jours-code 120] [--jours-invitation 14]',
   );
   process.exit(2);
 }
@@ -39,6 +42,7 @@ process.stdout.write(
     empreinteEnseignant: empreinteCode(codeEnseignant),
     joursCodeClasse: joursCode,
     joursInvitation,
+    capacite,
   }),
 );
 console.error(`Code de la classe (pour les élèves, valable ${joursCode} jours) : ${codeClasse}`);

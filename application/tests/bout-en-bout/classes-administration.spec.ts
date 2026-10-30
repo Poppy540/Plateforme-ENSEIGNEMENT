@@ -8,8 +8,9 @@ test.describe.configure({ mode: "serial" });
 const ADMIN = "+999 000 018 01";
 const ENSEIGNANT = "+999 000 018 02";
 const ELEVE = "+999 000 018 03";
+const ELEVE_EN_TROP = "+999 000 018 04";
 const NOM = "3e C (administration)";
-const codes: { classe?: string; enseignant?: string } = {};
+const codes: { classe?: string; enseignant?: string; nouveau?: string } = {};
 
 async function auditer(page: Page, nom: string) {
   const resultat = await new AxeBuilder({ page })
@@ -37,6 +38,8 @@ test("l'administration crée une classe ; ses deux codes s'affichent une seule f
   await section.getByLabel("Niveau").selectOption({ label: "3e" });
   await section.getByLabel(/Nom de la classe/).fill(NOM);
   await section.getByLabel("Établissement").fill("Collège fictif");
+  // Capacité (décision D10) : un seul élève, pour essayer la classe pleine plus loin.
+  await section.getByLabel(/Capacité de la classe/).fill("1");
   await section.getByRole("button", { name: "Créer la classe" }).click();
   const affiches = section.locator(".code");
   await expect(affiches).toHaveCount(2);
@@ -44,7 +47,7 @@ test("l'administration crée une classe ; ses deux codes s'affichent une seule f
   await auditer(page, "classes, codes affichés");
   await page.reload();
   await expect(page.locator("main")).not.toContainText(codes.classe!);
-  await expect(carte(page)).toContainText("Élèves rattachés : 0");
+  await expect(carte(page)).toContainText("Élèves rattachés : 0 sur 1 (capacité)");
   await expect(carte(page)).toContainText("invitation en attente");
 });
 
@@ -80,6 +83,7 @@ test("nouveau code de classe (l'ancien ne marche plus), nouvelle invitation puis
     .click();
   await expect(carte(page).locator(".code")).toHaveCount(1);
   const nouveau = (await carte(page).locator(".code").textContent())!.trim();
+  codes.nouveau = nouveau;
   expect(nouveau).not.toBe(codes.classe);
 
   await carte(page)
@@ -101,6 +105,36 @@ test("nouveau code de classe (l'ancien ne marche plus), nouvelle invitation puis
   await page.getByLabel(/Code de ta classe/).fill(codes.classe!);
   await page.getByRole("button", { name: "Rejoindre ma classe" }).click();
   await expect(page.locator(".erreur")).toContainText("Code de classe inconnu");
+  await page.getByLabel(/Code de ta classe/).fill(nouveau);
+  await page.getByRole("button", { name: "Rejoindre ma classe" }).click();
+  await expect(page.getByText(`Tu fais partie de la classe ${NOM}`)).toBeVisible();
+});
+
+test("classe pleine : le code est refusé et l'administration alertée ; la capacité se relève (décision D10)", async ({
+  page,
+}) => {
+  await inscrireEleveActif(page, ELEVE_EN_TROP, "3e");
+  await page.goto("/espace");
+  const nouveau = codes.nouveau!;
+  await page.getByLabel(/Code de ta classe/).fill(nouveau);
+  await page.getByRole("button", { name: "Rejoindre ma classe" }).click();
+  await expect(page.locator(".erreur")).toContainText("Cette classe est complète");
+
+  await page.context().clearCookies();
+  await seConnecter(page, ADMIN);
+  await page.goto("/administration");
+  await expect(page.locator("main")).toContainText(`Classe « ${NOM} » (Collège fictif) complète`);
+  await page.goto("/administration/classes");
+  await carte(page)
+    .getByLabel(/Capacité de la classe/)
+    .fill("2");
+  await carte(page).getByRole("button", { name: "Enregistrer la capacité" }).click();
+  await expect(page.getByRole("status")).toContainText("Capacité enregistrée");
+  await expect(carte(page)).toContainText("Élèves rattachés : 1 sur 2 (capacité)");
+
+  await page.context().clearCookies();
+  await seConnecter(page, ELEVE_EN_TROP);
+  await page.goto("/espace");
   await page.getByLabel(/Code de ta classe/).fill(nouveau);
   await page.getByRole("button", { name: "Rejoindre ma classe" }).click();
   await expect(page.getByText(`Tu fais partie de la classe ${NOM}`)).toBeVisible();

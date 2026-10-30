@@ -12,19 +12,23 @@ import { periodeDuPilote } from "./fin-pilote";
 // Ce qui attend le propriétaire (ADR 0089) : états lus dans la plateforme (conditions, critères, période, faits du
 // pilote), dans le pack des pays du pilote (questionnaire) et dans les skills du projet (« À valider »).
 
-/** Skills écrites pour le projet et soumises à la validation du propriétaire (ADR 0068, 0071). */
+/** Skills écrites pour le projet et soumises à la validation du propriétaire (ADR 0068, 0071), sous agents/. */
 const SKILLS_A_VALIDER = [
-  "agents/_commun/skills/eleves-mineurs/SKILL.md",
-  "agents/coordinateur/skills/files-d-approbation/SKILL.md",
+  "_commun/skills/eleves-mineurs",
+  "coordinateur/skills/files-d-approbation",
 ];
 
+/**
+ * Chemin ancré dans agents/ (comme le chargeur de prompts) : le traçage du paquet de déploiement ne suit que ce
+ * dossier, déjà livré, et pas tout le dépôt (ADR 0076).
+ */
 function skillsAValider(): string[] {
   return SKILLS_A_VALIDER.filter((chemin) => {
-    const fichier = join(racineDepot(), chemin);
+    const fichier = join(racineDepot(), "agents", chemin, "SKILL.md");
     return (
       existsSync(fichier) && readFileSync(fichier, "utf8").includes("À valider par le propriétaire")
     );
-  });
+  }).map((chemin) => `agents/${chemin}/SKILL.md`);
 }
 
 export async function attentesDuProprietaire(administrateur: string) {

@@ -56,6 +56,7 @@ const SOURCES: Record<string, string> = {
   agent_coordinateur: "Coordinateur",
   agent_conformite: "Conformité",
   agent_recruteur: "Recruteur",
+  plateforme: "Plateforme",
 };
 
 /** Critère en cause d'une suspension (facultatif) : sert au critère « deux suspensions pour la même cause ». */

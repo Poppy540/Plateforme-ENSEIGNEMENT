@@ -13,7 +13,7 @@ Produit par `cd application && pnpm paquet` (ADR 0076). **Aucun secret** dedans 
 | `deploiement/`               | Exemples : service systemd (`plateforme@.service`), répartiteur Caddy. |
 | `VERSION`                    | Version (commit) et date de construction.                              |
 
-Les commandes d'exploitation (`base:migrer`, `base:sauvegarder`, `verifier:production`, `donnees:purger`…) se lancent depuis une copie du dépôt (`cd application && pnpm install`), avec les mêmes variables que le serveur.
+Les commandes d'exploitation (`base:migrer`, `base:sauvegarder`, `verifier:production`, `donnees:purger`…) se lancent depuis une copie du dépôt (`cd application && pnpm install`), avec les mêmes variables que le serveur. Les sauvegardes sont chiffrées avec `age` : l'outil doit être installé et `SAUVEGARDE_DESTINATAIRE_AGE` (clé publique) renseignée ; la clé privée reste hors du serveur (dossier de production §5).
 
 ## Serveur Linux (exemple)
 

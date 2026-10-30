@@ -15,6 +15,8 @@ const COMPLETE = {
   ANTHROPIC_API_KEY: "cle-fictive",
   JETON_EXECUTEUR: "jeton-executeur-fictif-de-plus-de-32-caracteres",
   CONTACTS_VEILLE: "+999000000001",
+  // Clé publique age FICTIVE (sa clé privée a été jetée aussitôt tirée).
+  SAUVEGARDE_DESTINATAIRE_AGE: "age1kgr96cs7zcmaxcpkntm3zas75pt8dkcj20f88jc257jk2u4amqkqu2eg0j",
   FOURNISSEUR_SMS: "twilio",
   TWILIO_COMPTE: "ACfictif",
   TWILIO_JETON: "jeton-fictif",
@@ -64,6 +66,19 @@ describe("vérification de la configuration de production", () => {
     ] as const;
     for (const nom of secrets) expect(texte).not.toContain(COMPLETE[nom]);
     expect(texte).not.toContain("remplacer-moi");
+  });
+});
+
+describe("sauvegardes chiffrées (décision D12, ADR 0093)", () => {
+  it("exige une clé publique age valide ; jamais une clé privée", () => {
+    const point = (valeur: string) =>
+      verifierConfiguration({ ...COMPLETE, SAUVEGARDE_DESTINATAIRE_AGE: valeur }).find(
+        (c) => c.point === "SAUVEGARDE_DESTINATAIRE_AGE",
+      )!;
+    expect(point(COMPLETE.SAUVEGARDE_DESTINATAIRE_AGE).ok).toBe(true);
+    expect(point("").ok).toBe(false);
+    expect(point("AGE-SECRET-KEY-1FICTIF").ok).toBe(false);
+    expect(JSON.stringify(point("AGE-SECRET-KEY-1FICTIF"))).not.toContain("AGE-SECRET-KEY");
   });
 });
 

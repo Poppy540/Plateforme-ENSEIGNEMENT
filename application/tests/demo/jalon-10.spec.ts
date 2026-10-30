@@ -66,6 +66,7 @@ test("parcours complet du Jalon 10", async ({ page }) => {
   await section.getByLabel("Niveau").selectOption({ label: "3e" });
   await section.getByLabel(/Nom de la classe/).fill("3e A (fictive)");
   await section.getByLabel("Établissement").fill("Collège fictif de démonstration");
+  await section.getByLabel(/Capacité de la classe/).fill("30");
   await capture(page, "classe-formulaire", false);
   await section.getByRole("button", { name: "Créer la classe" }).click();
   await expect(section.locator(".code")).toHaveCount(2);

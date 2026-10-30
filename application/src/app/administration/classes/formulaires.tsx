@@ -62,6 +62,10 @@ export function FormulaireClasse({ option }: { option: OptionClasse }) {
       <input id={id("nom")} name="nom" maxLength={60} required />
       <label htmlFor={id("etablissement")}>Établissement</label>
       <input id={id("etablissement")} name="etablissement" maxLength={120} required />
+      <label htmlFor={id("capacite")}>
+        Capacité de la classe (effectif annoncé, 1 à 200) : au-delà, le code est refusé
+      </label>
+      <input id={id("capacite")} name="capacite" type="number" min={1} max={200} required />
       <label htmlFor={id("jours_code")}>Code de classe valable (jours, 1 à 365)</label>
       <input
         id={id("jours_code")}

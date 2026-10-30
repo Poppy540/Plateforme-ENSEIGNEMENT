@@ -33,6 +33,8 @@ jobs:
       - run: pnpm test
       - name: Migrations et règles d'accès (Postgres local)
         run: pnpm test:base
+      - name: Outil de chiffrement des sauvegardes (age, décision D12)
+        run: sudo apt-get install -y age
       - name: Sauvegarde et restauration (deux Postgres locaux)
         run: pnpm test:sauvegarde
       - name: Migrations suivies (base neuve, en retard, modifiée, en échec)

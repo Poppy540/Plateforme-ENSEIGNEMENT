@@ -48,6 +48,8 @@ export function classeEnSql(options: {
   empreinteEnseignant: string;
   joursCodeClasse: number;
   joursInvitation: number;
+  /** Effectif annoncé (D10, ADR 0093) ; absent = sans limite. */
+  capacite?: number | null;
 }): string {
   const texte = (v: string) => `'${v.replaceAll("'", "''")}'`;
   const nom = options.nom.trim();
@@ -61,12 +63,15 @@ export function classeEnSql(options: {
   ])
     if (!Number.isInteger(jours) || jours < 1 || jours > max)
       throw new Error(`La durée de validité doit être comprise entre 1 et ${max} jours.`);
+  const capacite = options.capacite ?? null;
+  if (capacite !== null && (!Number.isInteger(capacite) || capacite < 1 || capacite > 200))
+    throw new Error("La capacité doit être comprise entre 1 et 200 élèves.");
   const serie = options.serie
     ? `(select s.id from series s where s.referentiel_id = r.id and s.code = ${texte(options.serie)})`
     : "null";
   return `with classe as (
-  insert into classes (referentiel_id, niveau_id, serie_id, nom, etablissement, empreinte_code, code_expire_le)
-  select r.id, n.id, ${serie}, ${texte(nom)}, ${texte(etablissement)}, ${texte(options.empreinteClasse)}, now() + interval '${options.joursCodeClasse} days'
+  insert into classes (referentiel_id, niveau_id, serie_id, nom, etablissement, empreinte_code, code_expire_le, capacite)
+  select r.id, n.id, ${serie}, ${texte(nom)}, ${texte(etablissement)}, ${texte(options.empreinteClasse)}, now() + interval '${options.joursCodeClasse} days', ${capacite}
   from referentiels r join niveaux n on n.referentiel_id = r.id and n.code = ${texte(options.niveau)}
   where r.code = ${texte(options.referentiel)}
   returning id

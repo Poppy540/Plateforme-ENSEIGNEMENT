@@ -30,11 +30,21 @@ export async function activerEnseignant(
   );
 }
 
+export const MESSAGE_CLASSE_COMPLETE =
+  "Cette classe est complète. Demande à ton enseignant de vérifier le code de la classe.";
+
 export async function rejoindreClasse(utilisateur: string, code: string): Promise<string | null> {
   if (!(await essaiDeCodeAutorise(utilisateur, "code_classe"))) return MESSAGE_TROP_D_ESSAIS;
-  return avecErreurMetier(() =>
-    avecUtilisateur(utilisateur, (client) => client.query("select rejoindre_classe($1)", [code])),
-  );
+  let nom: string | null = null;
+  const erreur = await avecErreurMetier(async () => {
+    const { rows } = await avecUtilisateur(utilisateur, (client) =>
+      client.query("select rejoindre_classe($1) as nom", [code]),
+    );
+    nom = rows[0].nom;
+  });
+  if (erreur) return erreur;
+  // Classe pleine (D10, ADR 0093) : rien n'est fait ; l'administration est alertée par la base.
+  return nom === null ? MESSAGE_CLASSE_COMPLETE : null;
 }
 
 export async function quitterClasse(utilisateur: string): Promise<void> {

@@ -90,4 +90,35 @@ if URL_BASE_DONNEES_CIBLE="${cible/\/postgres?/\/essai_vide?}" bash "$racine/scr
   echo "ÉCHEC : sauvegarde altérée restaurée" >&2; exit 1
 fi
 echo "OK S04 sauvegarde altérée refusée (empreintes)"
+
+# 7. Décision D12 (ADR 0093) : sauvegarde chiffrée avec age, jamais en clair sur le disque ; restauration avec la clé
+#    privée seulement. Clé FICTIVE tirée pour cet essai, effacée avec le dossier.
+if command -v age > /dev/null && command -v age-keygen > /dev/null; then
+  age-keygen -o "$dossier/cle-essai.txt" 2> /dev/null
+  destinataire="$(age-keygen -y "$dossier/cle-essai.txt")"
+  SAUVEGARDE_DESTINATAIRE_AGE="$destinataire" URL_BASE_DONNEES_ADMIN="$origine" \
+    bash "$racine/scripts/sauvegarde-base.sh" sauvegarder "$dossier/chiffrees" > /dev/null
+  chiffree="$(ls -d "$dossier"/chiffrees/sauvegarde-*)"
+  [ ! -e "$chiffree/base.dump" ] || { echo "ÉCHEC : copie en clair à côté de la copie chiffrée" >&2; exit 1; }
+  head -c 21 "$chiffree/base.dump.age" | grep -q "age-encryption.org" \
+    || { echo "ÉCHEC : base.dump.age n'est pas chiffrée par age" >&2; exit 1; }
+  psql_cible -c "create database essai_chiffre" > /dev/null
+  cible_chiffre="postgresql://postgres@/essai_chiffre?host=$dossier&port=$port_cible"
+  if URL_BASE_DONNEES_CIBLE="$cible_chiffre" bash "$racine/scripts/sauvegarde-base.sh" restaurer "$chiffree" --confirmer 2>/dev/null; then
+    echo "ÉCHEC : copie chiffrée restaurée sans clé privée" >&2; exit 1
+  fi
+  SAUVEGARDE_IDENTITE_AGE="$dossier/cle-essai.txt" URL_BASE_DONNEES_CIBLE="$cible_chiffre" \
+    bash "$racine/scripts/sauvegarde-base.sh" restaurer "$chiffree" --confirmer > /dev/null
+  echo "OK S05 sauvegarde chiffrée (age), refusée sans clé privée, restaurée avec elle"
+else
+  echo "ÉCHEC : l'outil age est requis pour l'essai du chiffrement (décision D12)" >&2; exit 1
+fi
+
+# 8. En production, une sauvegarde n'est jamais écrite en clair.
+if ENVIRONNEMENT=production URL_BASE_DONNEES_ADMIN="$origine" \
+  bash "$racine/scripts/sauvegarde-base.sh" sauvegarder "$dossier/production" 2>/dev/null; then
+  echo "ÉCHEC : sauvegarde en clair acceptée en production" >&2; exit 1
+fi
+[ -z "$(ls -A "$dossier/production" 2>/dev/null)" ] || { echo "ÉCHEC : fichier laissé par une sauvegarde refusée" >&2; exit 1; }
+echo "OK S06 en production, sauvegarde en clair refusée"
 echo "ESSAI DE SAUVEGARDE ET DE RESTAURATION RÉUSSI"

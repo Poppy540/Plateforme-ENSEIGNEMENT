@@ -1,6 +1,6 @@
 # Revue de sécurité et de confidentialité — Jalons 9 à 15
 
-**Date** : 2026-10-29 · **Jalon 16, étape 1** (ADR 0091) · **Corrections** : S1, S4, S5, S6, S7 et garde-fous appliqués le 2026-10-30 (étape 2, ADR 0092) ; D10 à D12 en attente du propriétaire. · **Auteur** : Claude Code · **À relire par** : le propriétaire.
+**Date** : 2026-10-29 · **Jalon 16, étape 1** (ADR 0091) · **Corrections** : S1, S4, S5, S6, S7 et garde-fous appliqués le 2026-10-30 (étape 2, ADR 0092) ; D10 c, D11 a, D12 a décidés par le propriétaire et appliqués le 2026-10-30 (étape 3, ADR 0093). · **Auteur** : Claude Code · **À relire par** : le propriétaire.
 
 **Périmètre** :
 

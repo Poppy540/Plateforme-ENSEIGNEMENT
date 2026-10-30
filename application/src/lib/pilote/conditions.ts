@@ -97,6 +97,7 @@ export const CONDITIONS_PILOTE: readonly DefinitionCondition[] = [
       "CLE_PUBLIQUE_SUPABASE",
       "CLE_SERVICE_SUPABASE",
       "MODE_FILE",
+      "SAUVEGARDE_DESTINATAIRE_AGE",
     ],
   },
   {

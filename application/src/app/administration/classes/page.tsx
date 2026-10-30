@@ -1,15 +1,18 @@
 import Link from "next/link";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import { classesAdministration, optionsClasse } from "@/lib/serveur/classes-administration";
-import { annulerInvitations } from "./actions";
+import { annulerInvitations, capacite } from "./actions";
 import { ActionsCode, FormulaireClasse } from "./formulaires";
 
 // Classes du pilote (ADR 0063, 0067) : création, liste sans les codes, nouveaux codes, annulation.
 
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "short" });
 
-export default async function PageClasses() {
+export default async function PageClasses({ searchParams }: PageProps<"/administration/classes">) {
   const administrateur = await exigerAdministrateur();
+  const parametres = await searchParams;
+  const erreur = typeof parametres.erreur === "string" ? parametres.erreur.slice(0, 200) : null;
+  const ok = typeof parametres.ok === "string" ? parametres.ok.slice(0, 100) : null;
   const [options, classes] = await Promise.all([
     optionsClasse(administrateur),
     classesAdministration(administrateur),
@@ -33,6 +36,12 @@ export default async function PageClasses() {
         </section>
       ))}
 
+      {ok && <p role="status">{ok}</p>}
+      {erreur && (
+        <p role="alert" className="erreur">
+          {erreur}
+        </p>
+      )}
       <h2>Classes ({classes.length})</h2>
       {classes.length === 0 && <p>Aucune classe pour l&apos;instant.</p>}
       <ul className="liste-cartes">
@@ -47,7 +56,24 @@ export default async function PageClasses() {
             </span>
             <span>
               Élèves rattachés : <strong>{c.eleves}</strong>
+              {c.capacite !== null ? ` sur ${c.capacite} (capacité)` : " (sans capacité fixée)"}
             </span>
+            <form action={capacite} className="formulaire">
+              <input type="hidden" name="classe" value={c.id} />
+              <label htmlFor={`capacite-${c.id}`}>Capacité de la classe {c.nom}</label>
+              <input
+                id={`capacite-${c.id}`}
+                name="capacite"
+                type="number"
+                min={1}
+                max={200}
+                required
+                defaultValue={c.capacite ?? undefined}
+              />
+              <button type="submit" className="secondaire">
+                Enregistrer la capacité
+              </button>
+            </form>
             <span>
               Code de classe :{" "}
               {c.code_valide ? `valable jusqu'au ${formatDate.format(c.code_expire_le)}` : "expiré"}

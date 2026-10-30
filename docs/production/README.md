@@ -6,15 +6,15 @@ Ce dossier dit **comment** mettre la plateforme en service ; le [guide de mise e
 
 ## 1. Décisions préalables (propriétaire)
 
-| Décision | Proposition | Référence |
-|---|---|---|
-| Hébergement de l'application | Vercel Pro (le plus simple) ou Cloudflare Workers (gratuit au départ, à essayer : la connexion Postgres directe y demande un relais) | `docs/fournisseurs-2026-10.md` §5 |
-| Vidéo | Cloudflare Stream pour l'hébergement (stack validée) ; fournisseur d'avatar **synthétique** à choisir, branché par la passerelle du §3 bis ; budget par vidéo `BUDGET_VIDEO_USD` | ADR 0025, 0055 |
-| SMS (codes de connexion, parents, veille) | Twilio au démarrage (seul fournisseur relevé pour le Gabon), puis un agrégateur local par la passerelle HTTP | §4 ; ADR 0045 |
-| Email | Brevo (ou un autre, par la passerelle HTTP) | ADR 0045 |
-| Région des données (Supabase) | À fixer avec le juriste (transferts hors du Gabon) | Revue de sécurité D3 |
-| Durées de conservation complètes | À fixer avec le juriste, puis à mettre dans `pays.yaml` | Revue de sécurité D2, D3 |
-| Budget | Modèles, SMS, hébergement ; plafond journalier `COUT_JOUR_MAX_AGENT_USD` | Pilote, condition 11 |
+| Décision                                  | Proposition                                                                                                                                                                      | Référence                         |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| Hébergement de l'application              | Vercel Pro (le plus simple) ou Cloudflare Workers (gratuit au départ, à essayer : la connexion Postgres directe y demande un relais)                                             | `docs/fournisseurs-2026-10.md` §5 |
+| Vidéo                                     | Cloudflare Stream pour l'hébergement (stack validée) ; fournisseur d'avatar **synthétique** à choisir, branché par la passerelle du §3 bis ; budget par vidéo `BUDGET_VIDEO_USD` | ADR 0025, 0055                    |
+| SMS (codes de connexion, parents, veille) | Twilio au démarrage (seul fournisseur relevé pour le Gabon), puis un agrégateur local par la passerelle HTTP                                                                     | §4 ; ADR 0045                     |
+| Email                                     | Brevo (ou un autre, par la passerelle HTTP)                                                                                                                                      | ADR 0045                          |
+| Région des données (Supabase)             | À fixer avec le juriste (transferts hors du Gabon)                                                                                                                               | Revue de sécurité D3              |
+| Durées de conservation complètes          | À fixer avec le juriste, puis à mettre dans `pays.yaml`                                                                                                                          | Revue de sécurité D2, D3          |
+| Budget                                    | Modèles, SMS, hébergement ; plafond journalier `COUT_JOUR_MAX_AGENT_USD`                                                                                                         | Pilote, condition 11              |
 
 ## 2. Supabase (base et authentification)
 
@@ -53,7 +53,7 @@ Ce dossier dit **comment** mettre la plateforme en service ; le [guide de mise e
    - en-têtes de sécurité, politique de contenu à nonce ;
    - limites de connexion et quotas en base ;
    - journaux sans contenu ni identifiant (ADR 0043), toute la console du serveur nettoyée, erreurs de requête suivies (ADR 0056).
-3 bis. **Vérification du site en ligne** (ADR 0073), après chaque déploiement, depuis n'importe quel poste : `pnpm verifier:site https://<adresse>`. Elle est en lecture seule : aucune session, rien n'est créé ni modifié. Elle contrôle :
+     3 bis. **Vérification du site en ligne** (ADR 0073), après chaque déploiement, depuis n'importe quel poste : `pnpm verifier:site https://<adresse>`. Elle est en lecture seule : aucune session, rien n'est créé ni modifié. Elle contrôle :
    - https ;
    - les en-têtes de sécurité et la politique de contenu à nonce (nonce différent à chaque page, pas de `unsafe-eval`) ;
    - la santé, jamais mise en cache ;
@@ -65,6 +65,7 @@ Ce dossier dit **comment** mettre la plateforme en service ; le [guide de mise e
    - le service worker.
 
    Elle doit finir par « Site conforme ». HSTS n'est qu'un avertissement, car l'hébergeur le pose souvent lui-même.
+
 4. **Surveillance** : `GET /api/sante` répond 200 si l'application et la base répondent, 503 sinon. Il ne donne ni détail ni donnée. À brancher sur une surveillance de disponibilité (alerte au propriétaire). Pour recevoir les erreurs ailleurs que dans les journaux de l'hébergeur : `JOURNAL_HTTP_URL` (https) et `JOURNAL_HTTP_JETON` (ADR 0056).
 5. **Tenue en charge** (ADR 0059, 0064) : un processus du serveur tient 200 élèves simultanés au rythme d'une classe (95e centile 67 ms ; environ 115 pages dynamiques par seconde à saturation, sans erreur). Le goulot est le processeur du serveur web, pas la base. Donc :
    - sur un serveur à plusieurs cœurs, lancer **plusieurs processus** derrière le répartiteur de charge (mesuré : 2 processus sur 4 cœurs ≈ 165 pages par seconde) ; avec un hébergement sans serveur, l'hébergeur multiplie les instances lui-même ;
@@ -80,31 +81,41 @@ Ce dossier dit **comment** mettre la plateforme en service ; le [guide de mise e
    - Les vidéos sont lisibles sans adresse signée : ce sont des cours publiés, sans donnée d'élève.
 2. **Fournisseur d'avatar** : avatar et voix **de synthèse** du catalogue, jamais une personne réelle sans autorisation enregistrée. La plateforme lui parle par une **passerelle HTTPS** (`AVATAR_HTTP_URL`, jeton `AVATAR_HTTP_JETON`). Un petit service, chez le fournisseur ou écrit pour lui, doit offrir :
 
-   | Requête | Corps | Réponse |
-   |---|---|---|
-   | `POST /videos` | `{texte, avatar, voix, langue, indications}` | `{id}` |
-   | `GET /videos/{id}` | — | `{statut: en_cours \| pret \| echec, url (https), duree_secondes, cout_usd}` |
-   | `POST /transcriptions` | `{url_video, langue}` | `{texte, cout_usd}` |
-   | `POST /assemblages` | `{videos: [url, …]}` | `{id}` |
-   | `GET /assemblages/{id}` | — | `{statut, url, duree_secondes, cout_usd}` |
+   | Requête                 | Corps                                        | Réponse                                                                      |
+   | ----------------------- | -------------------------------------------- | ---------------------------------------------------------------------------- |
+   | `POST /videos`          | `{texte, avatar, voix, langue, indications}` | `{id}`                                                                       |
+   | `GET /videos/{id}`      | —                                            | `{statut: en_cours \| pret \| echec, url (https), duree_secondes, cout_usd}` |
+   | `POST /transcriptions`  | `{url_video, langue}`                        | `{texte, cout_usd}`                                                          |
+   | `POST /assemblages`     | `{videos: [url, …]}`                         | `{id}`                                                                       |
+   | `GET /assemblages/{id}` | —                                            | `{statut, url, duree_secondes, cout_usd}`                                    |
 
    `AVATAR_COUT_MINUTE_USD` : tarif annoncé, utilisé pour estimer chaque segment **avant** la dépense ; le budget par vidéo arrête la production dès qu'il serait dépassé.
+
 3. `MODE_VIDEO=reel`, puis `pnpm verifier:production`.
 4. Essai : un script de test validé, une vidéo produite « à relire », regardée en entier par le référent, avec la version « économie de données ». Le coût est noté dans le journal de production.
 
 ## 4. Tâches planifiées
 
-| Tâche | Fréquence | Commande |
-|---|---|---|
-| Exécuteur : alerte de veille et relances, file des agents, décrochage, rapports hebdomadaires | **Toutes les 5 minutes** (pilote, condition 8) | `POST /api/orchestrateur/executer` avec l'en-tête `Authorization: Bearer <JETON_EXECUTEUR>` |
+| Tâche                                                                                                                                                  | Fréquence                                                                  | Commande                                                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Exécuteur : alerte de veille et relances, file des agents, décrochage, rapports hebdomadaires                                                          | **Toutes les 5 minutes** (pilote, condition 8)                             | `POST /api/orchestrateur/executer` avec l'en-tête `Authorization: Bearer <JETON_EXECUTEUR>`                          |
 | Purge selon les durées du pack (échanges, comptes ; signalements, tickets, recrutement et rapports dès que leurs durées sont fixées ; sessions closes) | Quotidienne, **seulement après validation des durées par le juriste** (D3) | Une semaine de `pnpm donnees:purger` (simulation, rien n'est effacé), relue ; puis `pnpm donnees:purger --confirmer` |
-| Sauvegarde hors de l'hébergeur | Quotidienne | `pg_dump` chiffré, gardé 30 jours (§5) |
+| Sauvegarde hors de l'hébergeur                                                                                                                         | Quotidienne                                                                | `pg_dump` chiffré, gardé 30 jours (§5)                                                                               |
 
 ## 5. Sauvegardes et restauration
 
 **Deux niveaux** (ADR 0072) :
+
 1. les sauvegardes de l'hébergeur de la base (Supabase : quotidiennes, et restauration à un instant donné si le budget le permet). C'est la voie normale de restauration ;
 2. une **copie de secours indépendante**, faite par la plateforme, pour ne pas dépendre d'un seul fournisseur.
+
+**Chiffrement avec `age`** (décision D12, ADR 0093), une fois pour toutes :
+
+1. sur **votre** poste, jamais sur le serveur : `age-keygen -o cle-sauvegardes.txt`. Ce fichier est la **clé privée** : gardez-le hors du serveur, avec une seconde copie hors ligne (clé USB au coffre, par exemple). Sans lui, aucune sauvegarde ne peut être restaurée ;
+2. la ligne `# public key: age1…` affichée est la **clé publique**. Elle n'est pas secrète : mettez-la dans `SAUVEGARDE_DESTINATAIRE_AGE` sur le serveur. `pnpm verifier:production` vérifie sa présence ;
+3. installez l'outil sur le serveur (`apt install age` sur Debian ou Ubuntu) ; c'est votre décision d'installation, rien n'est souscrit.
+
+La copie est alors chiffrée **au moment où elle est faite** : la base passe directement de `pg_dump` à `age`, sans fichier en clair sur le disque. En production, une sauvegarde sans clé publique est refusée.
 
 **Faire la copie de secours** (quotidienne, depuis le serveur ou un poste du propriétaire) :
 
@@ -114,13 +125,14 @@ URL_BASE_DONNEES_ADMIN=… pnpm base:sauvegarder /chemin/des/sauvegardes
 ```
 
 Elle crée un dossier `sauvegarde-<date>` contenant :
-- la copie complète ;
+
+- la copie complète, chiffrée (`base.dump.age`) ;
 - les rôles, **sans aucun mot de passe** ;
 - le nombre de lignes de chaque table ;
 - les empreintes des fichiers.
 
-La copie contient des **données d'élèves**. Il faut donc :
-- la chiffrer, ou la garder sur un disque chiffré ;
+La copie contient des **données d'élèves**. Elle est chiffrée ; il faut en plus :
+
 - la garder hors du dépôt (`sauvegardes/` et `*.dump` sont ignorés par git) ;
 - en limiter l'accès au propriétaire ;
 - la garder 30 jours au plus.
@@ -128,10 +140,13 @@ La copie contient des **données d'élèves**. Il faut donc :
 **Restaurer** dans une base **vide** (serveur de secours ou base d'essai). La commande refuse une base qui contient déjà des tables, une sauvegarde dont les empreintes ne correspondent plus, et toute exécution sans `--confirmer` :
 
 ```
-URL_BASE_DONNEES_CIBLE=… pnpm base:restaurer /chemin/des/sauvegardes/sauvegarde-<date> --confirmer
+SAUVEGARDE_IDENTITE_AGE=/chemin/vers/cle-sauvegardes.txt URL_BASE_DONNEES_CIBLE=… pnpm base:restaurer /chemin/des/sauvegardes/sauvegarde-<date> --confirmer
 ```
 
+La copie est déchiffrée dans un dossier temporaire privé, effacé à la fin. La clé privée n'est utilisée que le temps de la restauration, depuis votre poste ou un serveur de secours.
+
 Elle recrée les rôles et restaure. Elle vérifie ensuite que chaque table a le même nombre de lignes qu'au moment de la sauvegarde. Il reste ensuite à :
+
 - redonner un mot de passe au rôle `serveur_application` ;
 - pointer `URL_BASE_DONNEES` vers la base restaurée ;
 - lancer `pnpm verifier:production`.
@@ -139,19 +154,23 @@ Elle recrée les rôles et restaure. Elle vérifie ensuite que chaque table a le
 Sur Supabase, préférer la restauration du fournisseur : la copie de secours sert si le fournisseur est indisponible, ou pour une vérification indépendante.
 
 **Essai de restauration**, avant le pilote puis chaque mois :
+
 1. restaurer la dernière copie dans une base jetable ;
 2. ouvrir le site d'essai sur cette base, se connecter, compter les unités, les chapitres et les élèves ;
 3. supprimer la base jetable ;
 4. noter la date, la durée et le résultat ci-dessous.
 
 L'essai automatique `pnpm test:sauvegarde`, lancé à chaque changement de code, fait la même chose sur des données fictives :
+
 - deux Postgres locaux, sauvegarde puis restauration dans un serveur vide ;
 - vérification des nombres de lignes, des règles d'accès, des droits des agents et des rôles ;
-- refus d'une base non vide et d'une sauvegarde altérée.
+- refus d'une base non vide et d'une sauvegarde altérée ;
+- copie chiffrée avec une clé fictive, refusée sans la clé privée, restaurée avec elle ; copie en clair refusée en production.
 
-| Date | Sauvegarde restaurée | Durée | Résultat | Par |
-|---|---|---|---|---|
-| 2026-10-28 | Données fictives (essai automatique) | < 1 min | Réussi | Claude Code |
+| Date       | Sauvegarde restaurée                                          | Durée   | Résultat | Par         |
+| ---------- | ------------------------------------------------------------- | ------- | -------- | ----------- |
+| 2026-10-28 | Données fictives (essai automatique)                          | < 1 min | Réussi   | Claude Code |
+| 2026-10-30 | Données fictives, copie chiffrée avec age (essai automatique) | < 1 min | Réussi   | Claude Code |
 
 **Objectifs proposés** : perte de données de 24 heures au plus, service rétabli en 4 heures au plus. À confirmer selon le budget.
 
@@ -175,12 +194,12 @@ L'essai automatique `pnpm test:sauvegarde`, lancé à chaque changement de code,
 
 ## 7. Retour arrière
 
-| Problème | Action |
-|---|---|
-| Version de l'application défectueuse | Remettre la version précédente chez l'hébergeur (retour immédiat) ; les migrations compatibles restent en place |
-| Migration défectueuse | Nouvelle migration corrective (jamais de modification d'une migration appliquée) ; en dernier recours, restauration de la sauvegarde faite juste avant (§5) |
-| Agent qui se comporte mal ou coûte trop | Suspension de l'agent (automatique au plafond de coût, ou par `/administration`) |
-| Incident grave (fuite, contenu dangereux) | Couper l'accès des élèves (interrupteur, message neutre), puis suivre le §8 |
+| Problème                                  | Action                                                                                                                                                      |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Version de l'application défectueuse      | Remettre la version précédente chez l'hébergeur (retour immédiat) ; les migrations compatibles restent en place                                             |
+| Migration défectueuse                     | Nouvelle migration corrective (jamais de modification d'une migration appliquée) ; en dernier recours, restauration de la sauvegarde faite juste avant (§5) |
+| Agent qui se comporte mal ou coûte trop   | Suspension de l'agent (automatique au plafond de coût, ou par `/administration`)                                                                            |
+| Incident grave (fuite, contenu dangereux) | Couper l'accès des élèves (interrupteur, message neutre), puis suivre le §8                                                                                 |
 
 ## 8. Incident de sécurité ou de données
 
