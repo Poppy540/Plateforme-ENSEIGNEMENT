@@ -1,72 +1,58 @@
-import { expect, test, type Page } from "@playwright/test";
-import { inscrireEleveActif, validerChapitresFictifs } from "./outils";
+import { expect, test } from "@playwright/test";
+import {
+  BUDGETS,
+  RESEAUX,
+  ROUTES,
+  cheminAnonyme,
+  depassements,
+  ko,
+  routeDe,
+  totalOctets,
+  type Public,
+} from "../../src/lib/exploitation/faible-debit";
+import { mesurerPoids, mesurerTemps, parcourirPages } from "../commun/pages-plateforme";
 
-// Connexions lentes (Jalon 5, étape 1 ; ADR 0044) : poids transféré au premier chargement (HTML, scripts,
-// styles, images ; vidéo exclue), comparé à un budget, et chargement sur un réseau lent simulé.
-const ELEVE = "+999 000 001 99";
-// Budget par page au premier chargement, en kilo-octets transférés (compressés).
-const BUDGET_KO = Number(process.env.BUDGET_PAGE_KO ?? 0) || 200;
+// Budgets de poids et de temps de TOUTES les pages (Jalon 18, étape 2 ; ADR 0099, après l'ADR 0044). Chaque
+// page est ouverte sur données fictives ; son poids au premier chargement et rouverte est comparé au budget de
+// son public. Le temps en 2G (processeur ralenti) est vérifié sur la première page de chaque public : il dépend
+// surtout du socle commun. Une page de l'application ni mesurée ni excusée (raison dans ROUTES) fait échouer.
+const DEUX_G = RESEAUX.find((r) => r.code === "2g")!;
 
-async function poidsKo(page: Page): Promise<number> {
-  return page.evaluate(() => {
-    const navigation = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
-    const ressources = performance.getEntriesByType("resource") as PerformanceResourceTiming[];
-    const octets = [...navigation, ...ressources]
-      .filter((r) => !/\.(mp4|webm|m3u8|vtt)(\?|$)/.test(r.name))
-      .reduce((s, r) => s + (r.transferSize || r.encodedBodySize || 0), 0);
-    return Math.round(octets / 1024);
-  });
-}
+test("toutes les pages dans le budget de leur public (poids, et temps en 2G)", async ({
+  browser,
+}) => {
+  test.setTimeout(15 * 60_000);
+  const ecarts: string[] = [];
+  const routesVues = new Set<string>();
+  const publicsChronometres = new Set<Public>();
+  const resume: string[] = [];
 
-async function charger(page: Page, chemin: string): Promise<number> {
-  await page.goto(chemin, { waitUntil: "networkidle" });
-  return poidsKo(page);
-}
-
-test("poids des pages au premier chargement, sous le budget", async ({ browser }) => {
-  await validerChapitresFictifs("ga-3e-mathematiques", 1);
-  const mesures: Record<string, number> = {};
-  for (const chemin of ["/", "/connexion", "/aide"]) {
-    const contexte = await browser.newContext();
-    mesures[chemin] = await charger(await contexte.newPage(), chemin);
-    await contexte.close();
-  }
-  const contexte = await browser.newContext();
-  const page = await contexte.newPage();
-  await inscrireEleveActif(page, ELEVE, "3e");
-  await contexte.clearCookies({ name: "connexion_en_cours" });
-  const eleve = await browser.newContext({ storageState: await contexte.storageState() });
-  const pageEleve = await eleve.newPage();
-  mesures["/catalogue"] = await charger(pageEleve, "/catalogue");
-  await eleve.close();
-  const eleve2 = await browser.newContext({ storageState: await contexte.storageState() });
-  mesures["/catalogue/ga-3e-mathematiques/thales"] = await charger(
-    await eleve2.newPage(),
-    "/catalogue/ga-3e-mathematiques/thales",
-  );
-  await eleve2.close();
-  await contexte.close();
-  console.log(`Poids au premier chargement (Ko) : ${JSON.stringify(mesures)}`);
-  for (const [chemin, ko] of Object.entries(mesures))
-    expect(ko, `${chemin} : ${ko} Ko pour un budget de ${BUDGET_KO} Ko`).toBeLessThanOrEqual(
-      BUDGET_KO,
+  await parcourirPages(browser, async (p) => {
+    const route = routeDe(p.chemin);
+    expect(route, `${p.chemin} : aucune route connue`).not.toBeNull();
+    expect(ROUTES[route!], `${route} : public différent`).toBe(p.public);
+    routesVues.add(route!);
+    const poids = await mesurerPoids(browser, p, 500);
+    let reseaux;
+    if (!publicsChronometres.has(p.public)) {
+      publicsChronometres.add(p.public);
+      reseaux = { "2g": await mesurerTemps(browser, p, DEUX_G) };
+    }
+    const chemin = cheminAnonyme(p.chemin);
+    ecarts.push(...depassements({ public: p.public, chemin, ...poids, reseaux }));
+    resume.push(
+      `${chemin} ${ko(totalOctets(poids.premierChargement))}/${BUDGETS[p.public].premierKo} Ko` +
+        (reseaux ? ` (2G : ${(reseaux["2g"].utilisableMs / 1000).toFixed(1)} s)` : ""),
     );
-});
-
-test("page de connexion utilisable sur un réseau lent (≈ 2G améliorée)", async ({ page }) => {
-  const cdp = await page.context().newCDPSession(page);
-  await cdp.send("Network.enable");
-  // 250 kbit/s descendants, 50 kbit/s montants, 600 ms de latence.
-  await cdp.send("Network.emulateNetworkConditions", {
-    offline: false,
-    latency: 600,
-    downloadThroughput: (250 * 1024) / 8,
-    uploadThroughput: (50 * 1024) / 8,
   });
-  const debut = Date.now();
-  await page.goto("/connexion");
-  await expect(page.getByLabel("Ton numéro de téléphone")).toBeEditable();
-  const secondes = (Date.now() - debut) / 1000;
-  console.log(`Connexion utilisable en ${secondes.toFixed(1)} s sur réseau lent.`);
-  expect(secondes).toBeLessThan(20);
+  console.log(`Poids au premier chargement / budget :\n${resume.join("\n")}`);
+
+  const aMesurer = Object.entries(ROUTES)
+    .filter(([, r]) => typeof r === "string")
+    .map(([route]) => route);
+  expect(
+    aMesurer.filter((r) => !routesVues.has(r)),
+    "pages sans mesure ni raison dans ROUTES",
+  ).toEqual([]);
+  expect(ecarts, ecarts.join("\n")).toEqual([]);
 });
