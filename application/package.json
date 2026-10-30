@@ -29,6 +29,7 @@
     "repetition": "bash scripts/repetition-generale.sh",
     "verifier:site": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verifier-site.mts",
     "controler": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/controler.mts",
+    "controler:installer": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/crochet-avant-envoi.mts",
     "verifier:production": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verifier-production.mts"
   },
   "dependencies": {

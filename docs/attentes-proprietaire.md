@@ -32,7 +32,7 @@ L'ordre conseillé est celui du [guide de mise en route](mise-en-route.md).
 
 ## Hébergement, fournisseurs et déploiement
 
-- [ ] <!-- attente:hebergement --> **Hébergement choisi et déployé**, avec 2 processus par serveur, ainsi que Supabase, les sauvegardes chiffrées avec `age` (clé privée gardée hors du serveur, dossier de production §5) et une restauration essayée. `SEL_OPPOSITION` est fixé une fois pour toutes. Il faut avoir lancé `pnpm repetition` avant (condition 6).
+- [ ] <!-- attente:hebergement --> **Hébergement choisi et déployé**, avec 2 processus par serveur, ainsi que Supabase, les sauvegardes chiffrées avec `age` (clé privée gardée hors du serveur, dossier de production §5) et une restauration essayée. `SEL_OPPOSITION` est fixé une fois pour toutes. Avant de déployer : `pnpm controler` sur une copie propre (il comprend la répétition générale), puis `pnpm paquet` ; le `CONTROLE.md` du paquet déployé doit dire « contrôle complet réussi » (condition 6, décision D13).
 - [ ] <!-- attente:messages --> **SMS ou emails réels** branchés et modèles de messages approuvés (condition 7).
 - [ ] <!-- attente:veille --> **Équipe de veille nommée et alerte de détresse testée** sur un vrai téléphone (conditions 8 et 9).
 - [ ] <!-- attente:repetition --> **Répétition refaite sur le site déployé.** `pnpm verifier:site https://<adresse>` doit finir par « Site conforme » ; noter aussi le premier essai de restauration et l'outil de chiffrement des copies (condition 12).

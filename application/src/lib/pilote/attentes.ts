@@ -153,8 +153,8 @@ export const ATTENTES: readonly Attente[] = [
     code: "hebergement",
     theme: "hebergement",
     titre:
-      "Choisir et déployer l'hébergement (2 processus par serveur), Supabase, sauvegardes chiffrées avec age (clé privée hors du serveur) et restauration essayée ; SEL_OPPOSITION fixé une fois pour toutes",
-    ou: "Guide de mise en route (E1, E2) ; `pnpm repetition` avant ; condition 6",
+      "Choisir et déployer l'hébergement (2 processus par serveur), Supabase, sauvegardes chiffrées avec age (clé privée hors du serveur) et restauration essayée ; SEL_OPPOSITION fixé une fois pour toutes ; déployer un paquet dont le contrôle complet a réussi",
+    ou: "Guide de mise en route (E1, E2) ; `pnpm controler` puis `pnpm paquet` avant ; condition 6",
     debloque: "Le site réel",
     verifier: condition(6),
   },

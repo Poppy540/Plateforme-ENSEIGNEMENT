@@ -4,16 +4,17 @@ Next.js + TypeScript, mobile-first, en français (ADR 0011 et 0012). Données fi
 
 ## Commandes (depuis `application/`)
 
-| Commande                               | Rôle                                                                                                                                          |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm install`                         | Installer les dépendances                                                                                                                     |
-| `pnpm controler [--rapide] [--liste]`  | **Tous les contrôles en une commande** (ADR 0095) : outils vérifiés d'abord ; `--rapide` avant chaque envoi, complet avant chaque déploiement |
-| `pnpm dev`                             | Serveur de développement (http://localhost:3000)                                                                                              |
-| `pnpm lint`                            | Analyse statique (ESLint)                                                                                                                     |
-| `pnpm format` / `pnpm format:verifier` | Formatage (Prettier)                                                                                                                          |
-| `pnpm typecheck`                       | Génération des types de routes puis vérification TypeScript                                                                                   |
-| `pnpm test`                            | Tests unitaires (Vitest, fichiers `src/**/*.test.ts`)                                                                                         |
-| `pnpm test:e2e`                        | Tests de bout en bout sur téléphone simulé (Playwright, `tests/bout-en-bout/`) ; construit et lance l'application sur le port 3100            |
+| Commande                               | Rôle                                                                                                                                                                                       |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `pnpm install`                         | Installer les dépendances                                                                                                                                                                  |
+| `pnpm controler [--rapide] [--liste]`  | **Tous les contrôles en une commande** (ADR 0095) : outils vérifiés d'abord ; `--rapide` avant chaque envoi, complet avant chaque déploiement ; rapport daté dans `.controles/` (ADR 0096) |
+| `pnpm controler:installer [--retirer]` | Facultatif : crochet git qui lance `pnpm controler --rapide` avant chaque `git push` (passer outre : `git push --no-verify` ; ADR 0097)                                                    |
+| `pnpm dev`                             | Serveur de développement (http://localhost:3000)                                                                                                                                           |
+| `pnpm lint`                            | Analyse statique (ESLint)                                                                                                                                                                  |
+| `pnpm format` / `pnpm format:verifier` | Formatage (Prettier)                                                                                                                                                                       |
+| `pnpm typecheck`                       | Génération des types de routes puis vérification TypeScript                                                                                                                                |
+| `pnpm test`                            | Tests unitaires (Vitest, fichiers `src/**/*.test.ts`)                                                                                                                                      |
+| `pnpm test:e2e`                        | Tests de bout en bout sur téléphone simulé (Playwright, `tests/bout-en-bout/`) ; construit et lance l'application sur le port 3100                                                         |
 
 ## Lancer l'application en local
 

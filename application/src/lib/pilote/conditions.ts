@@ -83,7 +83,8 @@ export const CONDITIONS_PILOTE: readonly DefinitionCondition[] = [
   {
     numero: 6,
     titre: "Hébergement choisi et déployé, sauvegardes et test de restauration",
-    preuveAttendue: "Adresse du site et date du test de restauration",
+    preuveAttendue:
+      "Adresse du site, date du test de restauration et CONTROLE.md du paquet déployé : « contrôle complet réussi » (décision D13)",
     nature: "mixte",
     variables: [
       "ENVIRONNEMENT",

@@ -32,9 +32,9 @@ Ce dossier dit **comment** mettre la plateforme en service ; le [guide de mise e
 
 ## 3. Application
 
-0. **Construire et installer** (ADR 0076). Deux voies :
-   - **serveur Linux** : `cd application && pnpm paquet` produit `../paquet/`. Il contient le serveur autonome, les prompts et skills des agents, le pack pilote et les règles communes, **sans aucun secret, fichier de test ni pack fictif**, avec sa version (commit). Le copier sur le serveur, puis suivre `paquet/LISEZ-MOI.md` : un service systemd par processus (`deploiement/plateforme@.service`, deux instances) et un répartiteur https (`deploiement/Caddyfile.exemple`, qui pose aussi HSTS) ;
-   - **hébergement sans serveur** : l'hébergeur construit depuis le dépôt. `agents/`, `referentiels/` et `docs/prompt-claude-code.md` doivent rester lisibles par le serveur (`CHEMIN_DEPOT`).
+0. **Construire et installer** (ADR 0076). D'abord `cd application && pnpm controler` sur une copie sans modification, jusqu'à « CONTRÔLE COMPLET RÉUSSI » (ADR 0095 à 0097). Puis, deux voies :
+   - **serveur Linux** : `cd application && pnpm paquet` produit `../paquet/`. Il contient le serveur autonome, les prompts et skills des agents, le pack pilote et les règles communes, **sans aucun secret, fichier de test ni pack fictif**, avec sa version (commit) et `CONTROLE.md`, qui doit dire « contrôle complet réussi » (condition 6, décision D13). Le copier sur le serveur, puis suivre `paquet/LISEZ-MOI.md` : un service systemd par processus (`deploiement/plateforme@.service`, deux instances) et un répartiteur https (`deploiement/Caddyfile.exemple`, qui pose aussi HSTS) ;
+   - **hébergement sans serveur** : l'hébergeur construit depuis le dépôt. `agents/`, `referentiels/` et `docs/prompt-claude-code.md` doivent rester lisibles par le serveur (`CHEMIN_DEPOT`). Garder le `rapport.md` du contrôle complet du commit construit (`application/.controles/`) comme preuve de la condition 6.
 
 1. **Variables d'environnement** sur l'hébergeur (jamais dans le dépôt). Le modèle est dans `secrets/commun.env.example`, avec en plus `ANTHROPIC_API_KEY`.
 2. **Vérification** avant chaque mise en service : `pnpm verifier:production` sur le serveur. La commande liste ce qui manque **sans jamais afficher une valeur**, et doit se terminer par « Configuration complète ». Elle refuse :
@@ -177,9 +177,7 @@ L'essai automatique `pnpm test:sauvegarde`, lancé à chaque changement de code,
 ## 6. Déploiement d'une nouvelle version
 
 1. Tous les contrôles verts sur la branche :
-   - `pnpm lint`, `pnpm format:verifier`, `pnpm typecheck` ;
-   - `pnpm test`, `pnpm test:base`, `pnpm test:migrations`, `pnpm test:sauvegarde`, `pnpm test:e2e` ;
-   - `pnpm repetition` : répétition générale du déploiement en local, simulation coupée (ADR 0077) ;
+   - `pnpm controler` sur une copie sans modification : format, lint, types, tests unitaires, base, migrations, sauvegarde, répétition générale et bout en bout, en une commande ; rapport dans `application/.controles/`, repris par `pnpm paquet` dans `CONTROLE.md` (ADR 0095 à 0097) ;
    - et les batteries réelles des agents dont le prompt ou les skills ont changé.
 2. Relecture du changement et accord du propriétaire.
 3. Sauvegarde juste avant (`pnpm base:sauvegarder`, §5).

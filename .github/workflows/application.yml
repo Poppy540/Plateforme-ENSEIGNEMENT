@@ -27,19 +27,19 @@ jobs:
           cache: pnpm
           cache-dependency-path: application/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
-      - run: pnpm lint
-      - run: pnpm format:verifier
-      - run: pnpm typecheck
-      - run: pnpm test
-      - name: Migrations et règles d'accès (Postgres local)
-        run: pnpm test:base
-      - name: Outil de chiffrement des sauvegardes (age, décision D12)
-        run: sudo apt-get install -y age
-      - name: Sauvegarde et restauration (deux Postgres locaux)
-        run: pnpm test:sauvegarde
-      - name: Migrations suivies (base neuve, en retard, modifiée, en échec)
-        run: pnpm test:migrations
-      - name: Répétition générale du déploiement (simulation coupée)
-        run: pnpm repetition
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm test:e2e
+      # Mêmes contrôles qu'en local, par la même commande (ADR 0095, 0097). Outils : PostgreSQL (déjà sur la
+      # machine), age (sauvegardes chiffrées, décision D12) et Chromium (Playwright).
+      - name: Outils du contrôle (age, Chromium)
+        run: |
+          sudo apt-get install -y age
+          pnpm exec playwright install --with-deps chromium
+      - name: Contrôle complet
+        run: pnpm controler
+      - name: Rapport du contrôle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: controle
+          path: application/.controles/
+          include-hidden-files: true
+          retention-days: 14
