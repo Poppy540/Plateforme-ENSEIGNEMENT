@@ -192,6 +192,9 @@ for (const c of controles) {
   if (terminal) process.stdout.write("\r\u001b[K");
   console.log(ligneResultat(r));
   if (r.detail) console.log(r.detail.replace(/^/gm, "    │ "));
+  // Sur GitHub, la sortie complète d'un contrôle en échec, dans un bloc repliable du journal.
+  if (r.etat === "echec" && process.env.GITHUB_ACTIONS === "true")
+    console.log(`::group::Sortie complète : ${c.nom}\n${sortieMasquee}\n::endgroup::`);
 }
 
 if (!baseLocaleAvant && resultats.some((r) => r.code === "bout_en_bout" && r.etat !== "non_lance"))
