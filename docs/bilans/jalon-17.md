@@ -48,7 +48,7 @@ Dernier contrôle complet, sur le commit final de l'étape 3, copie propre : **9
 | Répétition générale du déploiement                                                                                       | 12 / 12                                                                                               | `pnpm repetition`     |
 | Essais à la main                                                                                                         | outil manquant, paquet avec et sans contrôle, crochet posé, refusé devant un crochet étranger, retiré | —                     |
 
-L'intégration continue sur GitHub ne démarre toujours pas : le nouveau flux n'a donc pas encore tourné là-bas.
+**Mise à jour du 2026-10-30, après le bilan** : GitHub Actions est débloqué (dépôt public). Le premier passage sur GitHub a trouvé un vrai défaut : la page « Sort des données » (Jalon 14) n'avait jamais été commitée, son dossier `donnees/` étant attrapé par la règle du `.gitignore` qui protège les données réelles. Elle existait sur la machine de développement, donc tous les contrôles locaux passaient. Corrigé, avec un garde-fou : un test échoue si un fichier de code de l'application est ignoré par git. Le passage n° 92 sur GitHub est réussi.
 
 ## 5. Coûts
 
