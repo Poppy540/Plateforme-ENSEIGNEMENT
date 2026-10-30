@@ -84,9 +84,11 @@ E1 à E3 couvrent les conditions 6, 7 et 8.
 ## H. Pendant et après le pilote
 
 - **Chaque jour** : file humaine dans `/administration` (la détresse d'abord), coûts sur `/administration/exploitation`.
-- **Chaque semaine** : indicateurs agrégés, questionnaire activé si vous l'avez validé, point avec le référent.
+- **Chaque semaine** : « Critères de suspension », puis « Semaine du pilote » (indicateurs agrégés), point avec le référent, noté au « Journal du pilote » ; questionnaire activé si vous l'avez validé. Le « Tableau de bord du pilote » donne la prochaine action.
+- **Textes de l'équipe** (preuves, motifs, journal) : pas de nom ni de coordonnées. Les numéros et emails sont masqués automatiquement, les noms ne le sont pas (revue du Jalon 16, S7).
 - **Purge** : quotidienne, seulement après que le juriste a fixé les durées. D'abord une semaine de simulation (`pnpm donnees:purger`), puis `pnpm donnees:purger --confirmer`.
 - **Arrêt** : selon les [critères d'arrêt](pilote/criteres-arret.md) ; en cas d'incident, dossier de production §7 et §8.
+- **Fin** : « Rapport de fin de pilote », puis « Clôture du pilote » jusqu'à 8 / 8 et « Sort des données » avec le juriste.
 - **Bilan** : [protocole de retour d'expérience](pilote/retour-experience.md), puis un rapport dans `docs/bilans/`.
 
 ## Ce que Claude Code peut faire pour vous, à chaque étape

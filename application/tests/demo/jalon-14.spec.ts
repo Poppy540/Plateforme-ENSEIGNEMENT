@@ -116,10 +116,11 @@ test("parcours complet du Jalon 14", async ({ page }) => {
   await page.goto("/administration/fin-pilote?version=etablissement");
   await expect(page.getByText("version pour l'établissement")).toBeVisible();
   await capture(page, "rapport-fin-version-etablissement");
-  // Téléchargement du rapport, noté pour la clôture.
-  expect((await page.request.get("/api/administration/fin-pilote?version=equipe")).status()).toBe(
-    200,
-  );
+  // Téléchargement du rapport depuis la plateforme, noté pour la clôture.
+  const telechargement = await page.request.get("/api/administration/fin-pilote?version=equipe", {
+    headers: { "sec-fetch-site": "same-origin" },
+  });
+  expect(telechargement.status()).toBe(200);
 
   // 3. Clôture : décision d'arrêt ; la mise en veille reste à faire.
   await page.goto("/administration/cloture");

@@ -3,6 +3,7 @@ import { DatabaseError } from "pg";
 import { dossierPack, racineDepot } from "@/lib/agents/chargeur-prompt";
 import { libellesFamilles } from "@/lib/pack-pays/lecture";
 import { avecUtilisateur } from "./base";
+import { MESSAGE_TROP_D_ESSAIS, essaiDeCodeAutorise } from "./limites-connexion";
 
 // Espace enseignant-référent : les règles d'accès ne lui montrent que les chapitres de ses familles de matières.
 
@@ -176,6 +177,7 @@ export async function activerReferent(
   code: string,
   prenom: string,
 ): Promise<string | null> {
+  if (!(await essaiDeCodeAutorise(utilisateur, "code_invitation"))) return MESSAGE_TROP_D_ESSAIS;
   try {
     await avecUtilisateur(utilisateur, (client) =>
       client.query("select activer_referent($1, $2)", [code, prenom]),

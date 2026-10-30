@@ -48,3 +48,19 @@ export function rendreEssai(identifiant: Identifiant): Promise<void> {
     await client.query("select rendre_essai_connexion($1)", [cle(identifiant)]);
   });
 }
+
+/**
+ * Saisie d'un code de classe ou d'invitation (revue du Jalon 16, S1 ; ADR 0092) : 10 essais par compte et par
+ * jour (ESSAIS_CODE_INVITATION). La clé est une empreinte salée du compte, jamais le code saisi.
+ */
+export function essaiDeCodeAutorise(
+  utilisateur: string,
+  nature: "code_classe" | "code_invitation",
+): Promise<boolean> {
+  const cleCompte = createHash("sha256")
+    .update(`${selAudit()}:compte:${utilisateur}`)
+    .digest("hex");
+  return prendre(cleCompte, nature, entier("ESSAIS_CODE_INVITATION", 10), 24 * 60);
+}
+
+export const MESSAGE_TROP_D_ESSAIS = "Trop d'essais de code aujourd'hui. Réessayez demain.";

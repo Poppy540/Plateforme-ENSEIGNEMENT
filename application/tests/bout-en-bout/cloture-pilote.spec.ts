@@ -38,10 +38,18 @@ test("pilote terminé : rapport téléchargé, décision d'arrêt, gestes coché
   await expect(geste(page, "rapport_fin")).toContainText("Pas encore téléchargé");
   await auditer(page, "clôture, au départ");
 
-  // Le téléchargement du rapport de fin est noté.
-  expect(
-    (await page.request.get("/api/administration/fin-pilote?version=etablissement")).status(),
-  ).toBe(200);
+  // Un lien suivi depuis un autre site sert le fichier mais ne coche rien (revue du Jalon 16, S4).
+  const ailleurs = await page.request.get("/api/administration/fin-pilote?version=etablissement", {
+    headers: { "sec-fetch-site": "cross-site" },
+  });
+  expect(ailleurs.status()).toBe(200);
+  await page.reload();
+  await expect(geste(page, "rapport_fin")).toContainText("Pas encore téléchargé");
+  // Depuis la plateforme elle-même, le téléchargement est noté.
+  const ici = await page.request.get("/api/administration/fin-pilote?version=etablissement", {
+    headers: { "sec-fetch-site": "same-origin" },
+  });
+  expect(ici.status()).toBe(200);
 
   await geste(page, "decision_finale").getByText("Noter la décision finale").click();
   await page.getByLabel("Décision").selectOption("arreter");

@@ -1,6 +1,7 @@
 import "server-only";
 import { DatabaseError } from "pg";
 import { avecUtilisateur } from "./base";
+import { MESSAGE_TROP_D_ESSAIS, essaiDeCodeAutorise } from "./limites-connexion";
 
 // Classes du pilote (ADR 0063). L'élève rejoint sa classe avec le code de classe ; l'enseignant ne reçoit qu'un
 // tableau agrégé, calculé et masqué par la base (aucun nombre de 1 à 4 élèves, aucune donnée d'élève).
@@ -16,11 +17,12 @@ async function avecErreurMetier(traitement: () => Promise<unknown>): Promise<str
   }
 }
 
-export function activerEnseignant(
+export async function activerEnseignant(
   utilisateur: string,
   code: string,
   prenom: string,
 ): Promise<string | null> {
+  if (!(await essaiDeCodeAutorise(utilisateur, "code_invitation"))) return MESSAGE_TROP_D_ESSAIS;
   return avecErreurMetier(() =>
     avecUtilisateur(utilisateur, (client) =>
       client.query("select activer_enseignant($1, $2)", [code, prenom]),
@@ -28,7 +30,8 @@ export function activerEnseignant(
   );
 }
 
-export function rejoindreClasse(utilisateur: string, code: string): Promise<string | null> {
+export async function rejoindreClasse(utilisateur: string, code: string): Promise<string | null> {
+  if (!(await essaiDeCodeAutorise(utilisateur, "code_classe"))) return MESSAGE_TROP_D_ESSAIS;
   return avecErreurMetier(() =>
     avecUtilisateur(utilisateur, (client) => client.query("select rejoindre_classe($1)", [code])),
   );

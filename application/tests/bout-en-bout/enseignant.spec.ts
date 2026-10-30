@@ -111,3 +111,27 @@ test("à partir de 5 élèves, l'enseignant voit l'avancement agrégé, sans auc
   await expect(page.locator("main")).not.toContainText("+999");
   await auditer(page, "enseignant, tableau de la classe");
 });
+
+test("au-delà de 10 essais de code de classe dans la journée, la saisie est refusée (revue du Jalon 16, S1)", async ({
+  page,
+}) => {
+  await inscrireEleveActif(page, "+999 000 015 09", "3e");
+  await page.goto("/espace");
+  for (let i = 0; i < 10; i++) {
+    await page.getByLabel(/Code de ta classe/).fill(`FAUX-CODE-${String(i).padStart(4, "0")}`);
+    // Attendre la réponse du serveur à chaque essai : chacun doit être compté.
+    await Promise.all([
+      page.waitForResponse((r) => r.request().method() === "POST"),
+      page.getByRole("button", { name: "Rejoindre ma classe" }).click(),
+    ]);
+    await expect(page.locator(".erreur")).toContainText("Code de classe inconnu");
+  }
+  // Même le bon code est refusé jusqu'au lendemain ; le code saisi n'est gardé nulle part.
+  await page.getByLabel(/Code de ta classe/).fill(CODE_CLASSE);
+  await page.getByRole("button", { name: "Rejoindre ma classe" }).click();
+  await expect(page.locator(".erreur")).toContainText("Trop d'essais de code aujourd'hui");
+  const traces = await executerSql(
+    "select count(*)::int as n from limites_connexion where cle like '%FAUX%' or cle like '%TEST-CLAS%'",
+  );
+  expect(traces[0].n).toBe(0);
+});
