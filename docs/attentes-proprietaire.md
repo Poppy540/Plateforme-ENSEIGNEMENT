@@ -15,7 +15,7 @@ L'ordre conseillé est celui du [guide de mise en route](mise-en-route.md).
 - [ ] <!-- attente:etablissement --> **Accord écrit de l'établissement** (condition 2).
 - [ ] <!-- attente:dates --> **Dates du pilote et format du rapport de fin**, fixés avec l'établissement. Saisie : « Rapport de fin de pilote ».
 - [ ] <!-- attente:chapitres --> **Chapitres du pilote** désignés : « Chapitres du pilote ».
-- [ ] <!-- attente:classe --> **Classe pilote créée et enseignant invité**, après la réponse du juriste à Q19 : « Classes du pilote ».
+- [ ] <!-- attente:classe --> **Classe pilote créée et enseignant invité**, après la réponse du juriste à Q19 : « Classes du pilote ». Saisir comme capacité l'effectif annoncé par l'établissement (décision D10).
 
 ## Référents et contenus
 
