@@ -4,7 +4,7 @@
 // La sortie de chaque contrôle est gardée dans .controles/<horodatage>/ (ignoré par git) ; à l'écran, seules les
 // dernières lignes d'un contrôle en échec. N'affiche aucune variable d'environnement.
 import { spawn, spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { createConnection } from "node:net";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -152,6 +152,15 @@ const sensibles = valeursSensibles(process.env);
 // tournait pas avant.
 const baseLocaleAvant = await portOccupe(Number(process.env.PG_PORT_LOCAL ?? 54330));
 
+/** Instantanés des pages en échec, écrits par Playwright dans tests/resultats/. */
+function instantanesEnEchec(): string[] {
+  const dossier = join(application, "tests/resultats");
+  if (!existsSync(dossier)) return [];
+  return readdirSync(dossier, { recursive: true, encoding: "utf8" })
+    .filter((f) => f.endsWith("error-context.md"))
+    .map((f) => join(dossier, f));
+}
+
 function lancer(commande: string[]): Promise<{ code: number; sortie: string }> {
   return new Promise((resoudre) => {
     const env: NodeJS.ProcessEnv = { ...process.env, FORCE_COLOR: "0" };
@@ -193,8 +202,16 @@ for (const c of controles) {
   console.log(ligneResultat(r));
   if (r.detail) console.log(r.detail.replace(/^/gm, "    │ "));
   // Sur GitHub, la sortie complète d'un contrôle en échec, dans un bloc repliable du journal.
-  if (r.etat === "echec" && process.env.GITHUB_ACTIONS === "true")
+  if (r.etat === "echec" && process.env.GITHUB_ACTIONS === "true") {
     console.log(`::group::Sortie complète : ${c.nom}\n${sortieMasquee}\n::endgroup::`);
+    // Tests de bout en bout : l'instantané de chaque page en échec (texte et rôles, sans image), car les
+    // fichiers de résultats ne sont pas gardés.
+    if (c.code === "bout_en_bout")
+      for (const fichier of instantanesEnEchec())
+        console.log(
+          `::group::Page en échec : ${fichier.slice(application.length + 1)}\n${masquer(readFileSync(fichier, "utf8"), sensibles)}\n::endgroup::`,
+        );
+  }
 }
 
 if (!baseLocaleAvant && resultats.some((r) => r.code === "bout_en_bout" && r.etat !== "non_lance"))
