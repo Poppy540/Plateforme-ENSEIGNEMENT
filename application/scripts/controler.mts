@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url";
 import {
   OUTILS,
   controlesDuNiveau,
-  dernieresLignes,
+  lignesUtiles,
   empechement,
   ligneResultat,
   outilsDuNiveau,
@@ -138,7 +138,7 @@ const baseLocaleAvant = await portOccupe(Number(process.env.PG_PORT_LOCAL ?? 543
 
 function lancer(commande: string[]): Promise<{ code: number; sortie: string }> {
   return new Promise((resoudre) => {
-    const env = { ...process.env, FORCE_COLOR: "0" };
+    const env: NodeJS.ProcessEnv = { ...process.env, FORCE_COLOR: "0" };
     if (chromium) env.CHEMIN_CHROMIUM = chromium;
     const enfant = spawn("pnpm", ["run", "--silent", ...commande], { cwd: application, env });
     let sortie = "";
@@ -169,7 +169,7 @@ for (const c of controles) {
     nom: c.nom,
     etat: code === 0 ? "reussi" : "echec",
     dureeMs: performance.now() - debut,
-    detail: code === 0 ? null : dernieresLignes(sortie),
+    detail: code === 0 ? null : lignesUtiles(sortie),
   };
   resultats.push(r);
   if (terminal) process.stdout.write("\r\u001b[K");
