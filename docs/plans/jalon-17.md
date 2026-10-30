@@ -1,6 +1,6 @@
 # Plan du Jalon 17 — contrôle local unique
 
-**Statut** : validé par le propriétaire le 2026-10-30 (piste choisie, ADR 0094). Étape 1 faite (`pnpm controler`, ADR 0095).
+**Statut** : validé par le propriétaire le 2026-10-30 (piste choisie, ADR 0094). Étape 1 faite (`pnpm controler`, ADR 0095). Étape 2 faite (rapport daté, `CONTROLE.md` dans le paquet, ADR 0096).
 
 **Objectif** : depuis le 19 octobre, GitHub Actions ne démarre plus (aucune machine attribuée). Plus rien ne vérifie automatiquement chaque envoi. Aujourd'hui, les contrôles existent, mais en neuf commandes séparées, avec une base locale à démarrer et un navigateur à indiquer :
 

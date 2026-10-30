@@ -4,14 +4,15 @@ Produit par `cd application && pnpm paquet` (ADR 0076). **Aucun secret** dedans 
 
 ## Contenu
 
-| Dossier                      | Rôle                                                                   |
-| ---------------------------- | ---------------------------------------------------------------------- |
-| `application/`               | Serveur Next.js autonome : `node server.js`, avec ses dépendances.     |
-| `agents/`                    | Prompts et skills des agents, lus par le serveur.                      |
-| `referentiels/`              | Packs pays (pilote : `gabon/`).                                        |
-| `docs/prompt-claude-code.md` | Règles communes des agents (§5.1), lues par le serveur.                |
-| `deploiement/`               | Exemples : service systemd (`plateforme@.service`), répartiteur Caddy. |
-| `VERSION`                    | Version (commit) et date de construction.                              |
+| Dossier                      | Rôle                                                                                        |
+| ---------------------------- | ------------------------------------------------------------------------------------------- |
+| `application/`               | Serveur Next.js autonome : `node server.js`, avec ses dépendances.                          |
+| `agents/`                    | Prompts et skills des agents, lus par le serveur.                                           |
+| `referentiels/`              | Packs pays (pilote : `gabon/`).                                                             |
+| `docs/prompt-claude-code.md` | Règles communes des agents (§5.1), lues par le serveur.                                     |
+| `deploiement/`               | Exemples : service systemd (`plateforme@.service`), répartiteur Caddy.                      |
+| `VERSION`                    | Version (commit), date de construction et contrôle local du commit.                         |
+| `CONTROLE.md`                | Rapport du dernier contrôle complet réussi pour ce commit (`pnpm controler`), ou « aucun ». |
 
 Les commandes d'exploitation (`base:migrer`, `base:sauvegarder`, `verifier:production`, `donnees:purger`…) se lancent depuis une copie du dépôt (`cd application && pnpm install`), avec les mêmes variables que le serveur. Les sauvegardes sont chiffrées avec `age` : l'outil doit être installé et `SAUVEGARDE_DESTINATAIRE_AGE` (clé publique) renseignée ; la clé privée reste hors du serveur (dossier de production §5).
 

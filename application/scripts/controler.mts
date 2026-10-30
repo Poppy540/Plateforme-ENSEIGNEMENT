@@ -12,6 +12,9 @@ import {
   OUTILS,
   controlesDuNiveau,
   lignesUtiles,
+  masquer,
+  rapportMarkdown,
+  valeursSensibles,
   empechement,
   ligneResultat,
   outilsDuNiveau,
@@ -128,9 +131,22 @@ if (args.includes("--liste")) {
 
 // --- Lancement ------------------------------------------------------------------------------------------------
 
-const horodatage = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+const debutControle = new Date().toISOString();
+const horodatage = debutControle.replace(/[:.]/g, "-").slice(0, 19);
 const dossierSorties = join(application, ".controles", horodatage);
 mkdirSync(dossierSorties, { recursive: true });
+
+// État git au début : un contrôle ne vaut pour un commit que si la copie de travail était propre.
+const git = (...a: string[]) => {
+  const r = spawnSync("git", a, { cwd: application, encoding: "utf8" });
+  return r.status === 0 ? r.stdout.trim() : null;
+};
+const commit = git("rev-parse", "HEAD");
+const branche = git("rev-parse", "--abbrev-ref", "HEAD");
+const copiePropre = commit !== null && git("status", "--porcelain") === "";
+
+// Aucune valeur de variable sensible dans les sorties gardées, à l'écran ni dans le rapport.
+const sensibles = valeursSensibles(process.env);
 
 // La base locale de développement est réinitialisée par les tests de bout en bout : arrêtée à la fin si elle ne
 // tournait pas avant.
@@ -163,13 +179,14 @@ for (const c of controles) {
   if (terminal) process.stdout.write(`…        ${c.nom}`);
   const debut = performance.now();
   const { code, sortie } = await lancer(c.commande);
-  writeFileSync(join(dossierSorties, `${c.code}.log`), sortie);
+  const sortieMasquee = masquer(sortie, sensibles);
+  writeFileSync(join(dossierSorties, `${c.code}.log`), sortieMasquee);
   const r: Resultat = {
     code: c.code,
     nom: c.nom,
     etat: code === 0 ? "reussi" : "echec",
     dureeMs: performance.now() - debut,
-    detail: code === 0 ? null : lignesUtiles(sortie),
+    detail: code === 0 ? null : lignesUtiles(sortieMasquee),
   };
   resultats.push(r);
   if (terminal) process.stdout.write("\r\u001b[K");
@@ -181,5 +198,15 @@ if (!baseLocaleAvant && resultats.some((r) => r.code === "bout_en_bout" && r.eta
   spawnSync("bash", ["scripts/base-locale.sh", "arreter"], { cwd: application, stdio: "ignore" });
 
 const bilan = resume(resultats, niveau);
+const rapport = rapportMarkdown(
+  { date: debutControle, niveau, commit, branche, copiePropre },
+  resultats,
+);
+writeFileSync(join(dossierSorties, "rapport.md"), rapport);
 console.log(`\n${bilan.texte}`);
+console.log(`Rapport : .controles/${horodatage}/rapport.md`);
+if (!copiePropre)
+  console.log(
+    "Copie de travail modifiée : ce contrôle ne vaut pas pour le commit (le paquet ne le retiendra pas).",
+  );
 process.exit(bilan.codeSortie);

@@ -45,9 +45,13 @@ done
 cp "$depot/docs/prompt-claude-code.md" "$sortie/docs/"
 cp deploiement/plateforme@.service deploiement/Caddyfile.exemple "$sortie/deploiement/"
 cp deploiement/LISEZ-MOI.md "$sortie/LISEZ-MOI.md"
+# Contrôle local (ADR 0096) : le dernier contrôle complet réussi pour ce commit, sur une copie propre ; sinon « aucun ».
+commit_complet=""
+[ -z "$(git -C "$depot" status --porcelain 2>/dev/null)" ] && commit_complet="$(git -C "$depot" rev-parse HEAD 2>/dev/null || true)"
 {
   echo "commit $(git -C "$depot" rev-parse --short HEAD 2>/dev/null || echo inconnu)$(git -C "$depot" diff --quiet 2>/dev/null || echo ' (modifications non commitées)')"
   echo "construit le $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/controle-du-commit.mts "$commit_complet" "$sortie"
 } > "$sortie/VERSION"
 
 # Contrôles : aucun fichier d'environnement, de sauvegarde, de test ou de données fictives.
@@ -59,4 +63,4 @@ if [ -n "$interdits" ]; then
   rm -rf "${sortie:?}"
   exit 1
 fi
-echo "Paquet prêt : $sortie ($(du -sh "$sortie" | cut -f1)) — $(head -1 "$sortie/VERSION")"
+echo "Paquet prêt : $sortie ($(du -sh "$sortie" | cut -f1)) — $(head -1 "$sortie/VERSION") ; $(tail -1 "$sortie/VERSION")"
