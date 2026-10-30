@@ -1,6 +1,6 @@
 # Plan du Jalon 18 — faible débit
 
-**Statut** : validé par le propriétaire le 2026-10-30 (piste choisie, ADR 0098). Étape 1 faite : [mesures](../performance/mesures-jalon-18.md), 41 pages entre 146 et 158 Ko, utilisables en 6,3 s en 2G. Étape 2 faite : budgets par public sur toutes les pages, vérifiés par `pnpm controler` (ADR 0099).
+**Statut** : validé par le propriétaire le 2026-10-30 (piste choisie, ADR 0098). Étape 1 faite : [mesures](../performance/mesures-jalon-18.md), 41 pages entre 146 et 158 Ko, utilisables en 6,3 s en 2G. Étape 2 faite : budgets par public sur toutes les pages, vérifiés par `pnpm controler` (ADR 0099). Étape 3 faite : le code propre aux pages ne pèse que 4 à 8 Ko ; le socle commun (135 Ko) part désormais en brotli, préparé par le paquet et servi par le répartiteur (−18 Ko par page, ADR 0100).
 
 **Objectif** : au Gabon, la plupart des élèves se connecteront depuis un téléphone d'entrée de gamme, avec une connexion lente, chère et coupée par moments. Ce qui existe déjà (ADR 0044) :
 

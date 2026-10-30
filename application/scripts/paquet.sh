@@ -24,6 +24,8 @@ mkdir -p "$sortie/application/.next" "$sortie/docs" "$sortie/deploiement"
 cp -a .next/standalone/. "$sortie/application/"
 rm -rf "${sortie:?}/application/src" "${sortie:?}/application/tests"
 cp -a .next/static "$sortie/application/.next/static"
+# Copies brotli des scripts et styles, servies par le répartiteur (ADR 0100).
+precompression="$(node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/precompresser.mts "$sortie/application/.next/static")"
 cp -a public "$sortie/application/public"
 rm -rf "${sortie:?}/application/public/simulation"
 
@@ -63,4 +65,5 @@ if [ -n "$interdits" ]; then
   rm -rf "${sortie:?}"
   exit 1
 fi
+echo "$precompression"
 echo "Paquet prêt : $sortie ($(du -sh "$sortie" | cut -f1)) — $(head -1 "$sortie/VERSION") ; $(tail -1 "$sortie/VERSION")"

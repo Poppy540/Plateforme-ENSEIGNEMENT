@@ -62,8 +62,14 @@ Tirée des mesures, avec une marge d'environ 10 % :
 
 C'est plus strict que les 200 Ko actuels, pour qu'une page qui grossit se voie tout de suite. Chaque page aura son budget, vérifié par les tests de bout en bout et donc par `pnpm controler` ; une page nouvelle sans budget fera échouer les tests.
 
-## 6. Pistes pour l'étape 3 (allègement)
+## 6. Étape 3 (allègement) : ce que le diagnostic a montré
 
-- Le composant de lecture hors ligne (5 Ko) est chargé sur toutes les pages, y compris l'administration, où il ne sert pas.
-- Les pages les plus lourdes sont l'espace du référent (158 Ko, document de 12 Ko) et le tableau de l'administration (155 Ko) : des listes longues à paginer ou à replier.
-- Le préchargement automatique des pages liées ne coûte que 0 à 6 Ko : il est gardé, car il rend la page suivante instantanée.
+Un diagnostic page par page (scripts chargés par chaque page) a corrigé les pistes de l'étape 1 :
+
+- **socle commun** à toutes les pages : 7 fichiers, 135 Ko ;
+- **code propre à une page** : 4 à 8 Ko ;
+- **la page elle-même** : 3 à 11 Ko.
+
+Le composant de lecture hors ligne n'est chargé que sur les pages qui s'en servent : la piste était fausse. Alléger notre code ne gagnerait que quelques Ko par page.
+
+Le levier retenu est la **compression** : brotli fait 113 Ko sur le socle, contre 131 Ko en gzip, le seul codage que Next.js sait envoyer. Les scripts sont désormais précompressés dans le paquet et servis par le répartiteur (ADR 0100). Gain : environ 18 Ko et 0,6 s en 2G sur chaque premier chargement.

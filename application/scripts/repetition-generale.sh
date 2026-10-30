@@ -81,7 +81,8 @@ etape "Configuration de production complète (hors API Supabase, injoignable en 
 # 5. Paquet, puis serveur du paquet (un processus), simulation coupée.
 etape "Paquet de déploiement" bash "$racine/scripts/paquet.sh" "$dossier/paquet"
 if [ -f "$dossier/paquet/application/server.js" ]; then
-  (cd "$dossier/paquet/application" && PORT="$port_site" HOSTNAME=127.0.0.1 node server.js > "$journal" 2>&1) &
+  # « exec » : le serveur remplace le sous-shell, pour que « kill » l'arrête bien (sinon il restait sur le port).
+  (cd "$dossier/paquet/application" && PORT="$port_site" HOSTNAME=127.0.0.1 exec node server.js > "$journal" 2>&1) &
   pid_serveur=$!
   for _ in $(seq 1 40); do curl -s -o /dev/null "http://127.0.0.1:$port_site/api/sante" && break; sleep 1; done
   etape "Serveur du paquet : santé" bash -c "curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:$port_site/api/sante | grep -q 200"

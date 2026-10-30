@@ -1,11 +1,24 @@
-# Exemple de répartiteur de charge Caddy (ADR 0076) : https automatique, compression, deux instances.
-# Remplacer <adresse> par le nom de domaine du site.
+# Exemple de répartiteur de charge Caddy (ADR 0076, 0100) : https automatique, compression, deux instances.
+# Remplacer <adresse> par le nom de domaine du site, et /opt/plateforme par le dossier du paquet.
 <adresse> {
 	encode zstd gzip
 	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
-	reverse_proxy 127.0.0.1:3001 127.0.0.1:3002 {
-		lb_policy round_robin
-		health_uri /api/sante
-		health_interval 30s
+
+	# Fichiers statiques (noms à empreinte, immuables) servis directement, dans leur copie brotli préparée par
+	# « pnpm paquet » (environ 14 % de moins que gzip sur le socle commun de toutes les pages ; ADR 0100).
+	handle_path /_next/static/* {
+		root * /opt/plateforme/application/.next/static
+		header Cache-Control "public, max-age=31536000, immutable"
+		file_server {
+			precompressed br
+		}
+	}
+
+	handle {
+		reverse_proxy 127.0.0.1:3001 127.0.0.1:3002 {
+			lb_policy round_robin
+			health_uri /api/sante
+			health_interval 30s
+		}
 	}
 }
