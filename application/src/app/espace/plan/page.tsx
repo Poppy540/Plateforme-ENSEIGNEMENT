@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BandeauHorsLigne } from "@/app/composants/hors-ligne";
 import { exigerEleveActif } from "@/lib/serveur/acces-eleve";
 import { etatAccordRapports } from "@/lib/serveur/rapports-parents";
 import { planDeLEleve } from "@/lib/serveur/tuteur";
@@ -17,6 +18,7 @@ export default async function PagePlan() {
       <p>
         <Link href="/espace">← Mon espace</Link>
       </p>
+      <BandeauHorsLigne />
       <h1>Mon plan de révision</h1>
       <p className="note">
         Ton tuteur est une intelligence artificielle. Il regarde tes résultats et les chapitres à

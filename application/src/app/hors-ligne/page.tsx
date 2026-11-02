@@ -6,8 +6,9 @@ export default function PageHorsLigne() {
     <main className="conteneur">
       <h1>Pas de connexion</h1>
       <p>
-        Cette page n&apos;est pas enregistrée sur ton appareil. Tu peux relire les chapitres déjà
-        ouverts :
+        Cette page n&apos;est pas enregistrée sur ton appareil. Tu peux relire les pages déjà
+        ouvertes ces 7 derniers jours (chapitres, mes cours, plan de révision, corrections de quiz)
+        :
       </p>
       <ChapitresGardes />
       <p className="note">Dès que le réseau revient, recharge la page.</p>

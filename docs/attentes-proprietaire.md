@@ -8,7 +8,7 @@ L'ordre conseillé est celui du [guide de mise en route](mise-en-route.md).
 
 ## Juriste
 
-- [ ] <!-- attente:juriste --> **Avis écrit du juriste.** Il porte sur le dossier, la question Q19 (l'enseignant de la classe), les durées de conservation, la fiche « Après l'essai » et la version établissement des rapports. Où agir : [dossier pour le juriste](juridique/dossier-juriste.md), puis la condition 1. Débloque : la classe pilote, les durées, la décision de démarrer.
+- [ ] <!-- attente:juriste --> **Avis écrit du juriste.** Il porte sur le dossier, la question Q19 (l'enseignant de la classe), la question Q20 (copies gardées 7 jours sur le téléphone), les durées de conservation, la fiche « Après l'essai » et la version établissement des rapports. Où agir : [dossier pour le juriste](juridique/dossier-juriste.md), puis la condition 1. Débloque : la classe pilote, les durées, la décision de démarrer.
 
 ## Cadre du pilote, avec l'établissement
 

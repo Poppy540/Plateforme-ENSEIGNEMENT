@@ -75,13 +75,26 @@ export function usePageInteractive(): boolean {
   );
 }
 
+/** Date de la copie lue hors ligne (attribut posé par le service worker), ou null pour une page en ligne. */
+function useCopieDu(): string | null {
+  return useSyncExternalStore(
+    rien,
+    () => document.documentElement.dataset.copieDu ?? null,
+    () => null,
+  );
+}
+
+const formatCopie = new Intl.DateTimeFormat("fr", { dateStyle: "long", timeStyle: "short" });
+
 export function BandeauHorsLigne() {
   const enLigne = useEnLigne();
-  if (enLigne) return null;
+  const copieDu = useCopieDu();
+  if (enLigne && !copieDu) return null;
+  const date = copieDu && !Number.isNaN(Date.parse(copieDu)) ? new Date(copieDu) : null;
   return (
     <p role="status" className="bandeau-hors-ligne">
-      Tu es hors connexion : tu lis la dernière version enregistrée. Tes questions partiront au
-      retour du réseau.
+      Tu es hors connexion : tu lis la copie enregistrée
+      {date ? ` le ${formatCopie.format(date)}` : ""}. Tes questions partiront au retour du réseau.
     </p>
   );
 }
@@ -121,8 +134,8 @@ export function ChapitresGardes() {
       controleur.postMessage({ type: "chapitres" }, [canal.port2]);
     })();
   }, []);
-  if (liste === null) return <p>Recherche des chapitres enregistrés…</p>;
-  if (liste.length === 0) return <p>Aucun chapitre enregistré sur cet appareil pour le moment.</p>;
+  if (liste === null) return <p>Recherche des pages enregistrées…</p>;
+  if (liste.length === 0) return <p>Aucune page enregistrée sur cet appareil pour le moment.</p>;
   const format = new Intl.DateTimeFormat("fr", { dateStyle: "short", timeStyle: "short" });
   return (
     <ul className="chapitres-gardes">

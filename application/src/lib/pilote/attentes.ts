@@ -54,7 +54,7 @@ export const ATTENTES: readonly Attente[] = [
     code: "juriste",
     theme: "juriste",
     titre:
-      "Obtenir l'avis écrit du juriste (dossier, question Q19, durées de conservation, fiche « Après l'essai », version établissement des rapports)",
+      "Obtenir l'avis écrit du juriste (dossier, questions Q19 et Q20, durées de conservation, fiche « Après l'essai », version établissement des rapports)",
     ou: "docs/juridique/dossier-juriste.md, puis condition 1 dans « Conditions du pilote »",
     debloque: "La classe pilote, les durées de conservation, la décision de démarrer",
     verifier: condition(1),

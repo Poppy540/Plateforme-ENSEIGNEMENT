@@ -1,16 +1,33 @@
 // Service worker de la plateforme (Jalon 5, étape 1 ; ADR 0044) : connexions lentes et coupures.
 // - Fichiers statiques de Next.js (noms à empreinte, immuables) : servis depuis le cache.
-// - Pages de chapitre déjà ouvertes : réseau d'abord, copie gardée pour la lecture hors ligne.
+// - Pages déjà ouvertes, réseau d'abord, copie gardée pour la lecture hors ligne (décision D14, ADR 0101) :
+//   chapitres, « Mes cours », chapitres d'une matière, plan de révision, et correction d'un quiz déjà fait
+//   (la page le signale par <meta name="garder-hors-ligne"> ; un quiz à faire n'est jamais gardé).
+// - Toute copie de plus de 7 jours est effacée et n'est plus servie.
 // - Copies propres à la session : elles portent la clé de session (pseudonyme calculé par le serveur) ; une
 //   autre clé, ou la déconnexion, efface tout. Aucune page d'un autre élève n'est jamais servie.
-// - Rien d'autre n'est gardé : ni vidéos, ni quiz, ni réponses du professeur à venir, ni données d'API.
+// - Rien d'autre n'est gardé : ni vidéos, ni quiz à faire, ni réponses du professeur à venir, ni données d'API.
 const VERSION = "v1";
 const STATIQUE = `statique-${VERSION}`;
 const META = `meta-${VERSION}`;
 const PREFIXE_CHAPITRES = "chapitres-";
 const PAGE_HORS_LIGNE = "/hors-ligne";
-// /catalogue/<unité>/<chapitre> (pas le quiz) : seules pages lisibles hors ligne.
 const CHAPITRE = /^\/catalogue\/[a-z0-9-]+\/[a-z0-9-]+\/?$/;
+const QUIZ = /^\/catalogue\/[a-z0-9-]+\/[a-z0-9-]+\/quiz\/?$/;
+// Pages lisibles hors ligne (D14). Le quiz seulement corrigé : marque posée par la page.
+const PAGES_GARDEES = [
+  CHAPITRE,
+  /^\/catalogue\/?$/,
+  /^\/catalogue\/[a-z0-9-]+\/?$/,
+  /^\/espace\/plan\/?$/,
+  QUIZ,
+];
+const MARQUE_GARDER = /<meta[^>]+name="garder-hors-ligne"/i;
+const DUREE_COPIE_MS = 7 * 24 * 60 * 60 * 1000;
+const aGarder = (chemin) => PAGES_GARDEES.some((r) => r.test(chemin));
+const perimee = (reponse) =>
+  Date.now() - Date.parse(reponse.headers.get("x-garde-le") || "") > DUREE_COPIE_MS ||
+  !reponse.headers.get("x-garde-le");
 
 self.addEventListener("install", (evenement) => {
   evenement.waitUntil(
@@ -32,6 +49,7 @@ self.addEventListener("activate", (evenement) => {
             .map((n) => caches.delete(n)),
         ),
       )
+      .then(() => effacerPerimees())
       .then(() => self.clients.claim()),
   );
 });
@@ -54,9 +72,22 @@ async function changerSession(cle) {
   else await meta.delete("/__session");
 }
 
+/** Copies de plus de 7 jours effacées (D14), quelle que soit la personne. */
+async function effacerPerimees() {
+  const noms = (await caches.keys()).filter((n) => n.startsWith(PREFIXE_CHAPITRES));
+  for (const nom of noms) {
+    const cache = await caches.open(nom);
+    for (const requete of await cache.keys()) {
+      const reponse = await cache.match(requete);
+      if (!reponse || perimee(reponse)) await cache.delete(requete);
+    }
+  }
+}
+
 async function chapitresGardes() {
   const cle = await cleCourante();
   if (!cle) return [];
+  await effacerPerimees();
   const cache = await caches.open(PREFIXE_CHAPITRES + cle);
   const liste = [];
   for (const requete of await cache.keys()) {
@@ -79,13 +110,18 @@ self.addEventListener("message", (evenement) => {
   }
 });
 
-/** Copie d'une page de chapitre, avec son titre et sa date (lus dans la page, rien d'autre). */
+/** Copie d'une page gardée, avec son titre et sa date (lus dans la page, rien d'autre). */
 async function garderChapitre(requete, reponse, demandeLe) {
   const cle = await cleCourante();
   if (!cle) return;
   const texte = await reponse.text();
-  const cache = await caches.open(PREFIXE_CHAPITRES + cle);
   const chemin = new URL(requete.url).pathname;
+  // Quiz : gardé seulement corrigé ; sinon, une ancienne copie corrigée ne doit pas rester.
+  if (QUIZ.test(chemin) && !MARQUE_GARDER.test(texte)) {
+    await (await caches.open(PREFIXE_CHAPITRES + cle)).delete(chemin);
+    return;
+  }
+  const cache = await caches.open(PREFIXE_CHAPITRES + cle);
   // Deux chargements peuvent finir dans le désordre (réseau lent) : une copie plus ancienne ne remplace
   // jamais une copie plus récente.
   const existante = await cache.match(chemin);
@@ -114,12 +150,17 @@ async function pageDeChapitre(evenement) {
     return reponse;
   } catch {
     const cle = await cleCourante();
-    const copie = cle
-      ? await (
-          await caches.open(PREFIXE_CHAPITRES + cle)
-        ).match(new URL(evenement.request.url).pathname)
-      : undefined;
-    return copie || (await caches.match(PAGE_HORS_LIGNE)) || Response.error();
+    const chemin = new URL(evenement.request.url).pathname;
+    const cache = cle ? await caches.open(PREFIXE_CHAPITRES + cle) : null;
+    const copie = cache ? await cache.match(chemin) : undefined;
+    if (copie && !perimee(copie)) {
+      // Date de la copie sur la page (attribut lu par le bandeau « hors ligne »), rien d'autre de modifié.
+      const garde = copie.headers.get("x-garde-le");
+      const texte = (await copie.text()).replace(/<html/i, `<html data-copie-du="${garde}"`);
+      return new Response(texte, { headers: { "content-type": "text/html; charset=utf-8" } });
+    }
+    if (copie && cache) await cache.delete(chemin);
+    return (await caches.match(PAGE_HORS_LIGNE)) || Response.error();
   }
 }
 
@@ -147,7 +188,7 @@ self.addEventListener("fetch", (evenement) => {
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith("/_next/static/")) {
     evenement.respondWith(fichierStatique(requete));
-  } else if (requete.mode === "navigate" && CHAPITRE.test(url.pathname)) {
+  } else if (requete.mode === "navigate" && aGarder(url.pathname)) {
     evenement.respondWith(pageDeChapitre(evenement));
   } else if (requete.mode === "navigate") {
     evenement.respondWith(autrePage(requete));

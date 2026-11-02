@@ -105,6 +105,6 @@ test("une autre personne sur le même appareil ne voit jamais les copies de la p
   await couperReseau(context, true);
   await page.goto("/catalogue/ga-3e-mathematiques/thales");
   await expect(page.getByRole("heading", { name: "Pas de connexion" })).toBeVisible();
-  await expect(page.getByText("Aucun chapitre enregistré")).toBeVisible();
+  await expect(page.getByText("Aucune page enregistrée")).toBeVisible();
   await couperReseau(context, false);
 });

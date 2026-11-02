@@ -56,6 +56,8 @@ export default async function PageQuiz({
         />
       ) : (
         <>
+          {/* Correction déjà faite : lisible hors ligne (D14, ADR 0101). Un quiz à faire n'est jamais gardé. */}
+          <meta name="garder-hors-ligne" content="correction" />
           <p role="status">
             Ton score : <strong>{t.score} / 100</strong> (enregistré).
           </p>

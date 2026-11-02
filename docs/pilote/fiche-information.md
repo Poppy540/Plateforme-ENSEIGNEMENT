@@ -26,6 +26,8 @@ L'IA ne remplace pas un adulte : si votre enfant exprime une détresse, elle l'e
 | Demandes d'aide et signalements                                         | Permettre à l'équipe de répondre et d'assurer la sécurité                                                                                                                                                                               |
 | Classe du pilote (si l'élève la rejoint avec le code de son enseignant) | Donner à l'enseignant de la classe des **chiffres d'ensemble** (avancement par chapitre, réussite moyenne aux quiz), sans aucun nom ni aucune réponse d'élève, et rien pour un groupe de moins de 5 élèves [à confirmer par le juriste] |
 
+**Sur le téléphone** : pour réviser sans connexion, le téléphone garde une copie des pages déjà ouvertes par l'élève (cours, plan de révision, corrections de quiz). Ces copies disparaissent quand l'élève se déconnecte, quand une autre personne se connecte sur le même téléphone, et dans tous les cas au bout de 7 jours. Sur un téléphone partagé, pensez à vous déconnecter.
+
 Nous ne collectons **jamais** de données sensibles (religion, santé, opinions, origine). Les élèves ne sont **jamais comparés** entre eux. Aucune publicité, aucune revente de données.
 
 Les messages de l'élève au professeur IA sont traités par **un fournisseur d'intelligence artificielle situé hors du Gabon**, qui ne les utilise pas pour d'autres usages [à confirmer dans les conditions du fournisseur retenu et par le juriste]. Les SMS passent par [fournisseur SMS]. Le site est hébergé par [hébergeur, pays].
