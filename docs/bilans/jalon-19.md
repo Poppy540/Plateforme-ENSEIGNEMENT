@@ -29,7 +29,7 @@ Objectif (plan validé, ADR 0102) : préparer l'arrivée des premières personne
 ## 3. Constats
 
 - **L'accord du parent est le point fragile de la journée d'ouverture.** Tant que le parent n'a pas accepté le lien reçu par SMS, l'élève ne peut rien faire. D'où la règle de la liste du jour J : inscriptions et accords **avant** la séance.
-- **« Commencé » reste à 0 dans la vue de l'enseignant** alors que les élèves ont ouvert le chapitre et passé le quiz (capture 02). Seul le professeur IA enregistre la progression, quand l'élève lui pose une question. Un élève qui lit et fait le quiz sans poser de question n'apparaît pas comme ayant commencé. Le chiffre trompe l'enseignant. Changer la règle touche à ce que les agents écrivent : c'est la **décision D15** proposée au §7. Rien n'est modifié en attendant.
+- **« Commencé » reste à 0 dans la vue de l'enseignant** alors que les élèves ont ouvert le chapitre et passé le quiz (capture 02). Seul le professeur IA enregistre la progression, quand l'élève lui pose une question. Un élève qui lit et fait le quiz sans poser de question n'apparaît pas comme ayant commencé. Le chiffre trompe l'enseignant. **Décision D15 a, appliquée le jour même** (ADR 0103, migration 0049) : la plateforme note « commencé » dès que l'élève ouvre la leçon ou passe le quiz ; la vue de l'enseignant affiche maintenant 6 sur 6 (capture 02 refaite) et la répétition de la journée vérifie « Commencé : 30 ».
 - **Un chapitre de test peut en gêner un autre.** Les deux premiers chapitres choisis pour la répétition servaient déjà à d'autres tests (« non validé » pour l'un, cité par son titre pour l'autre) ; trois tests ont échoué. La répétition utilise maintenant un chapitre qu'aucun test ne cite, et la règle est notée pour les prochains tests.
 - **Le dossier en ligne du juriste était resté à la version du Jalon 9**, sans T12, R11 ni Q20 ; il est maintenant à jour.
 
@@ -62,7 +62,7 @@ Dernier contrôle complet (`pnpm controler`) : **9 / 9 réussis**.
 
 ## 7. Décisions et actions attendues du propriétaire
 
-**Nouvelle décision proposée, D15 : quand un chapitre compte-t-il comme « commencé » ?**
+**Décision D15 : quand un chapitre compte-t-il comme « commencé » ?** Choix du propriétaire : **a**, appliqué (ADR 0103).
 
 | Choix                                                               | Effet                                                                                                                                                                                                   |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

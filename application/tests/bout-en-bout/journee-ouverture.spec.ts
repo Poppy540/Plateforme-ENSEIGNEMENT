@@ -164,8 +164,10 @@ test("le soir : l'enseignant voit les chiffres d'ensemble de sa classe, sans auc
     .getByRole("listitem")
     .filter({ hasText: TITRE });
   await expect(carte).toBeVisible();
-  await expect(carte).toContainText("Quiz passé");
-  await expect(carte).toContainText("30");
+  // Décision D15 a : le quiz passé suffit pour que le chapitre compte comme « commencé ».
+  const chiffres = carte.getByRole("definition");
+  await expect(chiffres.nth(0)).toHaveText("30"); // Commencé
+  await expect(chiffres.nth(2)).toHaveText("30"); // Quiz passé
   await expect(page.locator("main")).not.toContainText("Élève fictif");
   await expect(page.locator("main")).not.toContainText("+999");
 });
