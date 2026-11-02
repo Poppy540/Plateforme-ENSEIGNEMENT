@@ -1,10 +1,25 @@
 # Dossier pour le juriste — protection des données et des mineurs
 
 **Pour** : le juriste chargé d'examiner la plateforme avant le pilote au Gabon.
-**De** : le propriétaire de la plateforme. Dossier préparé par Claude Code (Jalon 8, étape 1), à relire par le propriétaire avant transmission.
-**Date** : 2026-10-22 · **État de la plateforme** : construite et testée en simulation, avec des données fictives. **Aucun élève réel**, rien n'est déployé.
+**De** : le propriétaire de la plateforme. Dossier préparé par Claude Code (Jalons 8 à 19), à relire par le propriétaire avant transmission.
+**Version** : 4, du 2026-11-02 (première version : 2026-10-22) · **État de la plateforme** : construite et testée en simulation, avec des données fictives. **Aucun élève réel**, rien n'est déployé.
+**À lire avec** : [`questions-par-priorite.md`](questions-par-priorite.md), qui classe les questions du §8 selon ce qu'elles bloquent.
 
 > Ce document décrit ce que la plateforme fait réellement des données, d'après son code et sa configuration. Ce n'est **pas un avis juridique** : il sert à préparer le vôtre. Les points à trancher sont rassemblés au §8 ; chacun renvoie à l'endroit du dossier où il se pose.
+
+## Ce qui a changé depuis la version précédente
+
+Pour un lecteur de la version du Jalon 15 (2026-10-29) :
+
+- **T11** : chaque classe du pilote a une capacité ; une classe pleine refuse le code et alerte l'équipe (décision D10). Saisie des codes limitée à 10 essais par compte et par jour.
+- **T12**, nouveau : suivi du pilote par l'équipe (critères de suspension, journal, rapports de la semaine et de fin), sans donnée individuelle d'élève.
+- **§4** : l'hébergement peut aussi être un serveur loué, avec le paquet de déploiement de la plateforme.
+- **§6** :
+  - sauvegardes chiffrées dès leur création (décision D12) ;
+  - lecture sans réseau étendue : copies sur le téléphone, 7 jours au plus (décision D14) ;
+  - seconde revue de sécurité (Jalon 16).
+- **§7** : risque **R11** (téléphone partagé).
+- **§8** : question **Q20** (durée des copies sur le téléphone).
 
 ## Sommaire
 
@@ -171,15 +186,15 @@ Pour chaque traitement : les données, la finalité, la durée de conservation, 
 
 **Aucun fournisseur n'est encore choisi ni souscrit.** Le tableau donne les candidats envisagés et les données qui leur seraient confiées.
 
-| Service                               | Candidat envisagé                                              | Données confiées                                                                       | Hors du Gabon                                     |
-| ------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| Base de données et authentification   | Supabase (région à choisir)                                    | Toutes les données du §3 ; numéros et emails de connexion                              | Oui (région à décider avec vous)                  |
-| Hébergement de l'application          | Vercel ou Cloudflare                                           | Requêtes (adresses IP), journaux techniques nettoyés                                   | Oui                                               |
-| Modèle d'IA                           | Anthropic (Claude)                                             | Questions des élèves et historique du chapitre, sans identité (T4) ; textes des agents | Oui (États-Unis)                                  |
-| SMS                                   | Twilio, puis peut-être un agrégateur local                     | Numéros des élèves, des parents et de l'équipe de veille ; textes des messages         | Oui pour Twilio ; à voir pour un agrégateur local |
-| Email                                 | Brevo (ou autre)                                               | Emails et textes des messages                                                          | Oui                                               |
-| Vidéo                                 | Cloudflare Stream ; fournisseur d'avatar synthétique à choisir | Vidéos de cours et scripts validés, **sans donnée d'élève** ; adresses IP des lecteurs | Oui                                               |
-| Surveillance des erreurs (facultatif) | À choisir                                                      | Erreurs déjà nettoyées, sans donnée personnelle                                        | Selon le service                                  |
+| Service                               | Candidat envisagé                                                | Données confiées                                                                       | Hors du Gabon                                     |
+| ------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| Base de données et authentification   | Supabase (région à choisir)                                      | Toutes les données du §3 ; numéros et emails de connexion                              | Oui (région à décider avec vous)                  |
+| Hébergement de l'application          | Vercel ou Cloudflare, ou un serveur loué (paquet de déploiement) | Requêtes (adresses IP), journaux techniques nettoyés                                   | Oui                                               |
+| Modèle d'IA                           | Anthropic (Claude)                                               | Questions des élèves et historique du chapitre, sans identité (T4) ; textes des agents | Oui (États-Unis)                                  |
+| SMS                                   | Twilio, puis peut-être un agrégateur local                       | Numéros des élèves, des parents et de l'équipe de veille ; textes des messages         | Oui pour Twilio ; à voir pour un agrégateur local |
+| Email                                 | Brevo (ou autre)                                                 | Emails et textes des messages                                                          | Oui                                               |
+| Vidéo                                 | Cloudflare Stream ; fournisseur d'avatar synthétique à choisir   | Vidéos de cours et scripts validés, **sans donnée d'élève** ; adresses IP des lecteurs | Oui                                               |
+| Surveillance des erreurs (facultatif) | À choisir                                                        | Erreurs déjà nettoyées, sans donnée personnelle                                        | Selon le service                                  |
 
 ## 5. Droits des personnes
 
@@ -282,6 +297,7 @@ Pour chaque traitement : les données, la finalité, la durée de conservation, 
 | `docs/pilote/procedure-detresse.md` | Procédure de détresse (Q10)                                      |
 | `docs/pilote/criteres-arret.md`     | Quand suspendre ou arrêter le pilote                             |
 | `docs/securite/revue-jalon-5.md`    | Revue de sécurité et ses décisions                               |
+| `docs/securite/revue-jalon-16.md`   | Seconde revue de sécurité (Jalons 9 à 15) et ses décisions       |
 | `docs/production/README.md`         | Hébergement, sauvegardes, incident (§8 du dossier de production) |
 | `docs/fournisseurs-2026-10.md`      | Fournisseurs envisagés et leurs conditions                       |
 | `referentiels/gabon/pays.yaml`      | Durées de conservation proposées (Q7, Q9)                        |
