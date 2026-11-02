@@ -62,6 +62,7 @@ pnpm test:migrations  # migrations suivies : base neuve, en retard, fichier modi
 pnpm base:migrer [--simuler]   # applique les migrations qui manquent, suivies en base (connexion d'administration)
 pnpm base:sauvegarder [dossier] ; pnpm base:restaurer <dossier> --confirmer   # copie de secours (voir docs/production/ §5)
 pnpm pack:sql ../referentiels/<pays>   # contrôle un pack pays et génère son SQL d'import
+pnpm entrainement:referent   # espace d'entraînement du référent sur la base LOCALE seulement (docs/pilote/kit-referent/)
 pnpm referent:invitation <référentiel> <famille[,famille]> [jours] > invitation.sql   # invitation de référent en secours (sinon : /administration/invitations)
 pnpm classe:creer <référentiel> <niveau> "<nom>" "<établissement>" [--serie C] > classe.sql   # classe du pilote en secours (sinon : /administration/classes)
 bash scripts/base-locale.sh demarrer   # base locale (données fictives) pour pnpm dev ; voir application/README.md
