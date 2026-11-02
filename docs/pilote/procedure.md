@@ -32,6 +32,7 @@ Aucun agent IA ne prend de décision dans le pilote : ils proposent, les humains
 
 ## Pendant (4 semaines)
 
+- **Journée d'ouverture** : suivre la [liste du jour J](journee-ouverture.md) ; remettre la [fiche élève](fiche-eleve.md).
 - **Séance de découverte** en classe (ou en salle informatique) : chaque élève s'inscrit avec le numéro de son parent, le parent accepte depuis le lien reçu. L'élève n'entre jamais le numéro d'un autre élève.
 - **Veille** : la file humaine est consultée au moins **matin et soir** les jours scolaires et **une fois par jour** le week-end (fréquence à valider) ; une détresse est traitée selon sa [procédure](procedure-detresse.md), sans attendre.
 - **Point hebdomadaire** (30 minutes) entre l'équipe, le référent et l'enseignant de la classe : indicateurs de la semaine, signalements, tickets, coûts ; décision de continuer, d'ajuster ou de suspendre ([critères d'arrêt](criteres-arret.md)).

@@ -1,6 +1,6 @@
 # Plan du Jalon 19 — accueil des premiers humains
 
-**Statut** : validé par le propriétaire le 2026-11-02 (piste choisie, ADR 0102). Étape 1 faite : dossier version 4 republié (https://claude.ai/artifact/XbZxU3ebnvJKcbyg11uGsD), questions par priorité, lettre d'envoi ; envoi par le propriétaire. Étape 2 faite : [kit du référent](../pilote/kit-referent/README.md) (aide-mémoire, guide avec 10 captures, séance de 45 min sur un espace d'entraînement local `pnpm entrainement:referent`).
+**Statut** : validé par le propriétaire le 2026-11-02 (piste choisie, ADR 0102). Étape 1 faite : dossier version 4 republié (https://claude.ai/artifact/XbZxU3ebnvJKcbyg11uGsD), questions par priorité, lettre d'envoi ; envoi par le propriétaire. Étape 2 faite : [kit du référent](../pilote/kit-referent/README.md) (aide-mémoire, guide avec 10 captures, séance de 45 min sur un espace d'entraînement local `pnpm entrainement:referent`). Étape 3 faite : journée d'ouverture répétée à chaque contrôle (30 élèves fictifs, classe pleine au 31e), [liste du jour J](../pilote/journee-ouverture.md), [fiche élève](../pilote/fiche-eleve.md).
 
 **Objectif** : tout ce qui reste avant le pilote dépend de personnes réelles : le juriste, le premier référent, l'enseignant et l'établissement. Le Jalon 19 prépare leur arrivée, pour que chacune puisse commencer sans attendre ni se perdre. Il s'agit de :
 
