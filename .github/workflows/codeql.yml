@@ -1,0 +1,40 @@
+# Analyse du code par CodeQL (Jalon 20, étape 2 ; ADR 0106) : gratuite pour un dépôt public. Cherche les erreurs
+# de sécurité courantes du code TypeScript et JavaScript (injections, chemins, redirections…), à chaque envoi sur
+# la branche principale, à chaque demande de fusion et une fois par semaine. Résultats : onglet « Security » de
+# GitHub. Aucun secret utilisé.
+name: CodeQL
+
+on:
+  push:
+    branches: [main, "claude/**"]
+    paths: ["application/**", ".github/workflows/codeql.yml"]
+  pull_request:
+    paths: ["application/**", ".github/workflows/codeql.yml"]
+  schedule:
+    - cron: "17 3 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  analyse:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: github/codeql-action/init@4bfa242aa49c5f7c6770b98670d354a7dfac05f8 # v3.39.1
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+          config: |
+            paths:
+              - application/src
+              - application/scripts
+            paths-ignore:
+              - application/tests
+              - application/**/*.test.ts
+      - uses: github/codeql-action/analyze@4bfa242aa49c5f7c6770b98670d354a7dfac05f8 # v3.39.1
+        with:
+          category: "/language:javascript-typescript"

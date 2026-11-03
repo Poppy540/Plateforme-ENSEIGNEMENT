@@ -1,0 +1,29 @@
+# Dependabot (Jalon 20, étape 2 ; ADR 0106) : propose chaque semaine les mises à jour des paquets de l'application
+# et des actions GitHub, regroupées pour limiter le bruit. Chaque proposition passe par le contrôle complet
+# (GitHub Actions) avant toute fusion, décidée par un humain. Les mises à jour majeures arrivent à part : elles
+# demandent l'accord du propriétaire (ADR 0104).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /application
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Africa/Libreville
+    open-pull-requests-limit: 5
+    groups:
+      correctifs-et-mineures:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: "Dépendances"
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Africa/Libreville
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "Actions GitHub"
