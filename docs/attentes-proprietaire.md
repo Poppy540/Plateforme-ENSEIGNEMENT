@@ -36,7 +36,7 @@ L'ordre conseillé est celui du [guide de mise en route](mise-en-route.md).
 - [ ] <!-- attente:messages --> **SMS ou emails réels** branchés et modèles de messages approuvés (condition 7).
 - [ ] <!-- attente:veille --> **Équipe de veille nommée et alerte de détresse testée** sur un vrai téléphone (conditions 8 et 9).
 - [ ] <!-- attente:repetition --> **Répétition refaite sur le site déployé.** `pnpm verifier:site https://<adresse>` doit finir par « Site conforme » ; noter aussi le premier essai de restauration et l'outil de chiffrement des copies (condition 12).
-- [ ] <!-- attente:github --> _(à confirmer)_ **GitHub Actions débloqué** : réglages du dépôt (Settings → Actions) et facturation du compte. Aucune machine n'est attribuée aux tâches depuis au moins le 19 octobre.
+- [ ] <!-- attente:github --> _(à confirmer)_ **Réglages de sécurité de GitHub** : signalement privé des failles, mises à jour de sécurité Dependabot, protection de `main`, adresse email privée ; puis `pnpm verifier:depot` jusqu'à « Dépôt conforme » ([guide](securite/reglages-github.md), bilan du Jalon 20). GitHub Actions fonctionne depuis le Jalon 18.
 
 ## Pendant et après le pilote
 

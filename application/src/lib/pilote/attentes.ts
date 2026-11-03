@@ -186,9 +186,10 @@ export const ATTENTES: readonly Attente[] = [
   {
     code: "github",
     theme: "hebergement",
-    titre: "Débloquer GitHub Actions (réglages du dépôt et facturation du compte)",
-    ou: "GitHub : Settings → Actions, et Billing",
-    debloque: "Les contrôles automatiques à chaque envoi",
+    titre:
+      "Faire les réglages de sécurité de GitHub : signalement privé, Dependabot, protection de main, email privée (GitHub Actions est débloqué depuis le Jalon 18)",
+    ou: "docs/securite/reglages-github.md, puis `pnpm verifier:depot`",
+    debloque: "La sécurité du dépôt public",
   },
   {
     code: "suivi",

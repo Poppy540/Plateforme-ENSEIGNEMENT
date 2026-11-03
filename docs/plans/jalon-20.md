@@ -1,6 +1,6 @@
 # Plan du Jalon 20 — sécurité du dépôt public
 
-**Statut** : validé par le propriétaire le 2026-11-02 (piste choisie, ADR 0104). Étape 1 faite : 12 failles trouvées dont 2 critiques dans Next.js, corrigées (Next.js 16.4.3) ; audit dans `pnpm controler` (ADR 0105). Étape 2 faite : actions épinglées, CodeQL, Dependabot, SECURITY.md (ADR 0106). Étape 3 faite : [guide des réglages](../securite/reglages-github.md) et `pnpm verifier:depot` (ADR 0107).
+**Statut** : validé par le propriétaire le 2026-11-02 (piste choisie, ADR 0104). Étape 1 faite : 12 failles trouvées dont 2 critiques dans Next.js, corrigées (Next.js 16.4.3) ; audit dans `pnpm controler` (ADR 0105). Étape 2 faite : actions épinglées, CodeQL, Dependabot, SECURITY.md (ADR 0106). Étape 3 faite : [guide des réglages](../securite/reglages-github.md) et `pnpm verifier:depot` (ADR 0107). Étape 5 faite : [bilan](../bilans/jalon-20.md). Reste l'étape 4 (passages réels).
 
 **Objectif** : le dépôt est public depuis le Jalon 18. Tout le monde peut lire le code et voir ses dépendances. La revue du Jalon 18 a montré qu'aucun secret n'a jamais été commité. Restent trois risques :
 
