@@ -92,6 +92,21 @@ export interface Chapitre {
   sousThemes: string[];
   volumeHoraire: number | null;
   coefficient: number | null;
+  /** Objectifs (« l'élève sait… »), facultatifs. */
+  objectifs: string[];
+  /** Source de ces données (document, page), facultative ; voir SOURCES.md (ADR 0109). */
+  source: string | null;
+}
+
+/**
+ * Compétence d'un curriculum par compétences (APC ; Jalon 21, décision D16, ADR 0109), facultative : son
+ * intitulé, les chapitres qui la travaillent et sa source. Lue et contrôlée avec le pack ; pas encore en base.
+ */
+export interface Competence {
+  code: string;
+  intitule: string;
+  chapitres: string[];
+  source: string | null;
 }
 
 export interface QuestionQuestionnaire {
@@ -119,6 +134,8 @@ export interface PackPays {
   unites: Unite[];
   /** Chapitres par code d'unité (seulement les unités qui ont un programme). */
   programmes: Record<string, Chapitre[]>;
+  /** Compétences par code d'unité (`competences` d'un programme, facultatif ; ADR 0109). */
+  competences: Record<string, Competence[]>;
   /** Liens de prérequis proposés (`prerequis/*.yaml`), toujours « à valider » à l'import. */
   prerequis: LienPrerequis[];
   /** Questionnaire anonyme du pilote (`questionnaire.yaml`, facultatif ; ADR 0052). */
@@ -359,6 +376,7 @@ export function lirePack(dossier: string): PackPays {
   }
 
   const programmes: Record<string, Chapitre[]> = {};
+  const competences: Record<string, Competence[]> = {};
   const dossierProgrammes = join(dossier, "programmes");
   const codesUnites = new Set(unites.map((u) => u.code));
   if (existsSync(dossierProgrammes)) {
@@ -378,6 +396,8 @@ export function lirePack(dossier: string): PackPays {
         sousThemes: Array.isArray(c.sous_themes) ? (c.sous_themes as unknown[]).map(texte) : [],
         volumeHoraire: nombreOuNul(c.volume_horaire),
         coefficient: nombreOuNul(c.coefficient),
+        objectifs: Array.isArray(c.objectifs) ? (c.objectifs as unknown[]).map(texte) : [],
+        source: texteOuNul(c.source),
       }));
       for (const c of chapitres) {
         if (!c.code || !c.titre || !Number.isInteger(c.ordre)) {
@@ -390,6 +410,28 @@ export function lirePack(dossier: string): PackPays {
         erreurs,
       );
       programmes[codeUnite] = chapitres;
+      const codesChapitres = new Set(chapitres.map((c) => c.code));
+      const liste_ = liste(brut.competences).map((c) => ({
+        code: texte(c.code),
+        intitule: texte(c.intitule),
+        chapitres: Array.isArray(c.chapitres) ? (c.chapitres as unknown[]).map(texte) : [],
+        source: texteOuNul(c.source),
+      }));
+      for (const c of liste_) {
+        if (!c.code || !c.intitule)
+          erreurs.push(`programmes/${fichier} : compétence incomplète « ${c.code || "?"} »`);
+        for (const ch of c.chapitres)
+          if (!codesChapitres.has(ch))
+            erreurs.push(
+              `programmes/${fichier} : compétence « ${c.code} », chapitre inconnu « ${ch} »`,
+            );
+      }
+      verifierUnicite(
+        liste_.map((c) => c.code),
+        `compétence de ${codeUnite}`,
+        erreurs,
+      );
+      if (liste_.length > 0) competences[codeUnite] = liste_;
     }
   }
 
@@ -405,6 +447,7 @@ export function lirePack(dossier: string): PackPays {
     matieres,
     unites,
     programmes,
+    competences,
     prerequis,
     questionnaire,
   };

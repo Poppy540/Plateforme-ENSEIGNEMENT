@@ -240,4 +240,39 @@ describe("aucune donnée de pays dans le code (ADR 0001)", () => {
     });
     expect(trouves).toEqual([]);
   });
+
+  it("curriculum par compétences : compétences, objectifs et sources lus et contrôlés (ADR 0109)", () => {
+    const pack = lirePack(packFictif);
+    expect(pack.competences["yy-g7-algebre"]).toEqual([
+      {
+        code: "C1",
+        intitule: "Résoudre un problème par le calcul",
+        chapitres: ["expressions", "equations"],
+        source: "Curriculum fictif du pays Y, p. 2",
+      },
+    ]);
+    expect(pack.programmes["yy-g7-algebre"][0]).toMatchObject({
+      objectifs: ["Calculer la valeur d'une expression"],
+      source: "Curriculum fictif du pays Y, p. 3",
+    });
+    // Sans compétences (pack pilote aujourd'hui) : rien, et pas d'erreur.
+    expect(lirePack(packGabon).competences).toEqual({});
+
+    const copie = mkdtempSync(join(tmpdir(), "pack-competences-"));
+    cpSync(packFictif, copie, { recursive: true });
+    const fichier = join(copie, "programmes/yy-g7-algebre.yaml");
+    writeFileSync(
+      fichier,
+      readFileSync(fichier, "utf8").replace("[expressions, equations]", "[expressions, inconnu]"),
+    );
+    let erreurs: string[] = [];
+    try {
+      lirePack(copie);
+    } catch (e) {
+      erreurs = (e as ErreurPack).erreurs;
+    }
+    expect(erreurs).toEqual([
+      "programmes/yy-g7-algebre.yaml : compétence « C1 », chapitre inconnu « inconnu »",
+    ]);
+  });
 });

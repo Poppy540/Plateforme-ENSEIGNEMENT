@@ -5,5 +5,15 @@ chapitres:
       code: expressions,
       titre: "Expressions",
       sous_themes: ["Variables", "L'ordre des opérations"],
+      objectifs: ["Calculer la valeur d'une expression"],
+      source: "Curriculum fictif du pays Y, p. 3",
     }
   - { ordre: 2, code: equations, titre: "Équations simples", volume_horaire: 6, coefficient: 2 }
+# Curriculum par compétences (ADR 0109), FICTIF.
+competences:
+  - {
+      code: C1,
+      intitule: "Résoudre un problème par le calcul",
+      chapitres: [expressions, equations],
+      source: "Curriculum fictif du pays Y, p. 2",
+    }

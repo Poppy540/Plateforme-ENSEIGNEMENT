@@ -117,6 +117,14 @@ export const ATTENTES: readonly Attente[] = [
     verifier: condition(10),
   },
   {
+    code: "curriculum",
+    theme: "referents",
+    titre:
+      "Obtenir le curriculum de Mathématiques 3e par compétences (2026-2027), le format de l'examen de fin de 3e et la liste des manuels retenus",
+    ou: "docs/pilote/demande-curriculum.md (IPN ou établissement)",
+    debloque: "Le programme du pilote complet et sourcé (Jalon 21, étapes 2 et 3)",
+  },
+  {
     code: "questionnaire",
     theme: "referents",
     titre: "Valider le questionnaire anonyme (élèves et parents)",

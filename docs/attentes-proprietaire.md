@@ -22,6 +22,7 @@ L'ordre conseillé est celui du [guide de mise en route](mise-en-route.md).
 - [ ] <!-- attente:referents --> **Référents recrutés et invités** : Mathématiques d'abord, puis Sciences et Français (condition 3 ; [guide du référent](pilote/guide-referent.md)). Avec le premier référent, ajuster les temps indicatifs de sa page d'accueil.
 - [ ] <!-- attente:contenus --> **3 à 5 chapitres du pilote validés** par le référent : chapitre, script et quiz (condition 4).
 - [ ] <!-- attente:valeurs --> **Valeurs provisoires du pack validées** (FAQ, délais, fiches des agents, durées), avec le référent et le juriste (condition 10).
+- [ ] <!-- attente:curriculum --> _(à confirmer)_ **Curriculum de Mathématiques 3e obtenu** : le curriculum par compétences 2026-2027, le format du BEPC 2027 et les manuels retenus, auprès de l'IPN ou de l'établissement ([modèle de demande](pilote/demande-curriculum.md) ; décision D16). Le programme officiel est introuvable en ligne ([sources](../referentiels/gabon/sources/mathematiques-3e.md)).
 - [ ] <!-- attente:questionnaire --> **Questionnaire anonyme validé** : passer `statut` à `valide` dans `questionnaire.yaml` du pack.
 
 ## Agents : relecture, clé et essais réels

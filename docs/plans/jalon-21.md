@@ -1,6 +1,6 @@
 # Plan du Jalon 21 — programme du pilote complet
 
-**Statut** : validé par le propriétaire le 2026-11-03 (piste choisie, ADR 0108). Étape 1 faite : [sources](../../referentiels/gabon/sources/mathematiques-3e.md) — programme officiel introuvable en ligne ; réforme APC étendue à la 3e (BEPC 2027) ; l'étape 2 dépend de la décision D16.
+**Statut** : validé par le propriétaire le 2026-11-03 (piste choisie, ADR 0108). Étape 1 faite : [sources](../../referentiels/gabon/sources/mathematiques-3e.md) — programme officiel introuvable en ligne ; réforme APC étendue à la 3e (BEPC 2027) ; **D16 a** (ADR 0109) : demande du curriculum préparée, pack prêt pour les compétences ; les étapes 2 et 3 attendent le curriculum.
 
 **Objectif** : le programme de Mathématiques 3e du pack (`referentiels/gabon/programmes/ga-3e-mathematiques.yaml`) ne contient aujourd'hui que **7 titres de chapitres**. Ils sont repris du cadrage, sur une « base francophone générique ». Il n'y a ni sous-thèmes, ni objectifs, ni volumes horaires, ni liens de prérequis d'un chapitre à l'autre. Le référent devrait tout reconstruire lui-même.
 

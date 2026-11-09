@@ -14,7 +14,7 @@ referentiels/<code-pays>/
   familles.yaml           configuration partagée par famille de matières
   profils-niveau.yaml     adaptation du langage et des formats par niveau
   unites.yaml             unités (niveau, séries, matière)
-  programmes/<unite>.yaml chapitres, sous-thèmes, volumes, coefficients, prérequis, statut de validation
+  programmes/<unite>.yaml chapitres, sous-thèmes, volumes, coefficients, prérequis, statut de validation ; facultatifs : objectifs et source par chapitre, compétences (curriculum par compétences, ADR 0109)
   prerequis/<famille>.yaml     graphe de prérequis proposé (chapitre ← prérequis, strict/souple), validé lien par lien
   contexte-local.yaml     exemples et repères locaux
   agents/<agent>/<unite>.yaml  valeurs injectées dans les prompts des agents (voir _modele/agents/README.md)
