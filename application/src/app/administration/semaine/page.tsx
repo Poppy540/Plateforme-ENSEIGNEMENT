@@ -1,3 +1,4 @@
+import { aujourdhui } from "@/lib/serveur/base";
 import Link from "next/link";
 import { libelleJournal } from "@/lib/pilote/semaine";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
@@ -12,7 +13,7 @@ const jour = (iso: string) => formatJour.format(new Date(`${iso.slice(0, 10)}T00
 export default async function PageSemaine({ searchParams }: PageProps<"/administration/semaine">) {
   const administrateur = await exigerAdministrateur();
   const parametres = await searchParams;
-  const fin = finDeSemaine(parametres.fin);
+  const fin = finDeSemaine(parametres.fin, await aujourdhui());
   const version = versionDemandee(parametres.version);
   const r = await semaineDuPilote(administrateur, fin, version);
   const telechargement = `/api/administration/semaine?${new URLSearchParams({ fin, version })}`;

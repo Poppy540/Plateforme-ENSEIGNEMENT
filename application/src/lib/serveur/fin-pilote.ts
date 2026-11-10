@@ -7,7 +7,7 @@ import {
   type Intervalle,
 } from "@/lib/pilote/fin";
 import type { ChiffresSemaine, Version } from "@/lib/pilote/semaine";
-import { avecUtilisateur } from "./base";
+import { aujourdhui as jourEnBase, avecUtilisateur } from "./base";
 import { decisionsDuJournal } from "./journal-pilote";
 import { resultatsQuestionnaires } from "./mesures";
 import { empreinteActeur } from "./orchestrateur";
@@ -55,13 +55,13 @@ export async function definirPeriode(
   }
 }
 
-/** Rapport de fin sur la période saisie ; un pilote en cours s'arrête à aujourd'hui (UTC). */
+/** Rapport de fin sur la période saisie ; un pilote en cours s'arrête à aujourd'hui (horloge de la base). */
 export async function rapportDeFin(
   administrateur: string,
   periode: PeriodePilote,
   version: Version,
 ) {
-  const aujourdhui = new Date().toISOString().slice(0, 10);
+  const aujourdhui = await jourEnBase();
   const fin = periode.fin && periode.fin < aujourdhui ? periode.fin : aujourdhui;
   const intervalle: Intervalle = {
     debut: periode.debut,

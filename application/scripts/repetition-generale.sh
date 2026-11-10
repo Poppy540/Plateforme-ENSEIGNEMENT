@@ -54,6 +54,10 @@ etape "Second passage : base à jour" bash -c "$(declare -f migrer); admin='$adm
 # 3. Import du pack pilote, puis connexion du rôle de l'application (en production : avec un mot de passe).
 importer() { node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/pack-en-sql.mts" "$racine/../referentiels/gabon" | psql_admin -o /dev/null; }
 etape "Import du pack pilote" importer
+# Un déploiement, un pays (ADR 0114) : la base prend le fuseau du pack, puis le second passage ne change rien.
+fuseau() { URL_BASE_DONNEES_ADMIN="$admin" node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$racine/scripts/regler-fuseau.mts" "$@"; }
+etape "Fuseau de la base réglé sur celui du pays" fuseau
+etape "Second passage : fuseau déjà réglé" bash -c "$(declare -f fuseau); admin='$admin'; racine='$racine'; fuseau | grep -q 'déjà réglé'"
 psql_admin -c "alter role serveur_application login" > /dev/null
 
 # 4. Configuration de répétition, comme en production (valeurs fictives tirées au hasard, jamais affichées).
@@ -79,7 +83,9 @@ verifier_configuration() {
 etape "Configuration de production complète (hors API Supabase, injoignable en local)" verifier_configuration
 
 # 5. Paquet, puis serveur du paquet (un processus), simulation coupée.
-etape "Paquet de déploiement" bash "$racine/scripts/paquet.sh" "$dossier/paquet"
+etape "Paquet : pack de test refusé" bash -c "! bash '$racine/scripts/paquet.sh' '$dossier/refus' --pays zz-fictif"
+etape "Paquet de déploiement (pays du pilote seulement)" bash "$racine/scripts/paquet.sh" "$dossier/paquet" --pays gabon
+etape "Paquet : un seul pays, noté dans VERSION" bash -c "[ \"\$(ls '$dossier/paquet/referentiels')\" = gabon ] && grep -q '^pays gabon$' '$dossier/paquet/VERSION'"
 if [ -f "$dossier/paquet/application/server.js" ]; then
   # « exec » : le serveur remplace le sous-shell, pour que « kill » l'arrête bien (sinon il restait sur le port).
   (cd "$dossier/paquet/application" && PORT="$port_site" HOSTNAME=127.0.0.1 exec node server.js > "$journal" 2>&1) &

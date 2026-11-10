@@ -18,6 +18,7 @@
     "test:migrations": "bash scripts/tester-migrations.sh",
     "base:sauvegarder": "bash scripts/sauvegarde-base.sh sauvegarder",
     "base:restaurer": "bash scripts/sauvegarde-base.sh restaurer",
+    "base:fuseau": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/regler-fuseau.mts",
     "pack:sql": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/pack-en-sql.mts",
     "pack:nouveau": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/pack-nouveau.mts",
     "pack:verifier": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verifier-pack.mts",

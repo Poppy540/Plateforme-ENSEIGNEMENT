@@ -1,12 +1,29 @@
 #!/usr/bin/env bash
 # Paquet de déploiement (Jalon 12, étape 2 ; ADR 0076) : serveur autonome et fichiers lus à l'exécution (prompts,
 # skills, packs pays, règles communes), sans aucun secret, sans fichier de test ni donnée fictive.
-# Usage : pnpm paquet [dossier]   (défaut : ../paquet, ignoré par git)
+# Usage : pnpm paquet [dossier] [--pays <dossier du pack>[,<autre>]]   (défaut : ../paquet, ignoré par git ;
+#         sans --pays, tous les packs réels). Un déploiement sert un pays (ADR 0114) : --pays le choisit.
 set -euo pipefail
 
 racine="$(cd "$(dirname "$0")/.." && pwd)"
 depot="$(cd "$racine/.." && pwd)"
-sortie="${1:-$depot/paquet}"
+sortie=""
+choix=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --pays) choix="${2:-}"; [ -n "$choix" ] || { echo "--pays : indiquer le dossier du pack." >&2; exit 2; }; shift 2 ;;
+    *) sortie="$1"; shift ;;
+  esac
+done
+sortie="${sortie:-$depot/paquet}"
+# Packs demandés : chacun doit exister et ne pas être un pack de test ni le modèle.
+for nom in ${choix//,/ }; do
+  case "$nom" in _*|*/*) echo "Pack refusé : $nom" >&2; exit 2 ;; esac
+  [ -f "$depot/referentiels/$nom/pays.yaml" ] || { echo "Pack introuvable : referentiels/$nom" >&2; exit 2; }
+  if grep -q "^statut_pack: test" "$depot/referentiels/$nom/pays.yaml"; then
+    echo "Pack de test refusé en production : $nom" >&2; exit 2
+  fi
+done
 case "$sortie" in "$depot"|"$racine"|/|"") echo "Dossier de sortie refusé : $sortie" >&2; exit 2 ;; esac
 
 cd "$racine"
@@ -42,8 +59,11 @@ for pack in "$depot"/referentiels/*/; do
   nom="$(basename "$pack")"
   case "$nom" in _*|zz-*) continue ;; esac # modèle et packs de test : jamais en production
   grep -q "^statut_pack: test" "$pack/pays.yaml" 2>/dev/null && continue
+  [ -z "$choix" ] || [[ ",$choix," == *",$nom,"* ]] || continue
   cp -a "$pack" "$sortie/referentiels/$nom"
 done
+embarques="$(ls "$sortie/referentiels" | paste -sd, -)"
+[ -n "$embarques" ] || { echo "Paquet refusé : aucun pack pays." >&2; rm -rf "${sortie:?}"; exit 1; }
 cp "$depot/docs/prompt-claude-code.md" "$sortie/docs/"
 cp deploiement/plateforme@.service deploiement/Caddyfile.exemple "$sortie/deploiement/"
 cp deploiement/LISEZ-MOI.md "$sortie/LISEZ-MOI.md"
@@ -53,6 +73,7 @@ commit_complet=""
 {
   echo "commit $(git -C "$depot" rev-parse --short HEAD 2>/dev/null || echo inconnu)$(git -C "$depot" diff --quiet 2>/dev/null || echo ' (modifications non commitées)')"
   echo "construit le $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  echo "pays $embarques"
   node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/controle-du-commit.mts "$commit_complet" "$sortie"
 } > "$sortie/VERSION"
 

@@ -1,3 +1,4 @@
+import { aujourdhui } from "@/lib/serveur/base";
 import { rapportMarkdown } from "@/lib/pilote/semaine";
 import { roleCompte } from "@/lib/serveur/referent";
 import { finDeSemaine, semaineDuPilote, versionDemandee } from "@/lib/serveur/semaine-pilote";
@@ -10,7 +11,7 @@ export async function GET(requete: Request): Promise<Response> {
   if (!utilisateur || (await roleCompte(utilisateur)) !== "administrateur")
     return Response.json({ erreur: "Administration requise." }, { status: 403 });
   const parametres = new URL(requete.url).searchParams;
-  const fin = finDeSemaine(parametres.get("fin"));
+  const fin = finDeSemaine(parametres.get("fin"), await aujourdhui());
   const version = versionDemandee(parametres.get("version"));
   const texte = rapportMarkdown(await semaineDuPilote(utilisateur, fin, version));
   return new Response(texte, {

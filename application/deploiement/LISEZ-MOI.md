@@ -20,7 +20,7 @@ Les commandes d'exploitation (`base:migrer`, `base:sauvegarder`, `verifier:produ
 
 1. Copier le paquet dans `/opt/plateforme` (utilisateur dédié `plateforme`, Node.js 22 ou plus).
 2. Poser les variables dans `/etc/plateforme/commun.env` (droits 600, propriétaire `plateforme`).
-3. `pnpm base:migrer` (depuis le dépôt), puis l'import du pack, puis `pnpm verifier:production`.
+3. `pnpm base:migrer` (depuis le dépôt), puis l'import du pack, puis `pnpm base:fuseau` (fuseau de la base = fuseau du pays ; ADR 0114), puis `pnpm verifier:production`.
 4. `sudo cp deploiement/plateforme@.service /etc/systemd/system/ && sudo systemctl enable --now plateforme@3001 plateforme@3002`.
 5. Répartiteur https (exemple `deploiement/Caddyfile.exemple`, qui sert les fichiers statiques dans leur copie brotli préparée par le paquet ; ADR 0100), puis `pnpm verifier:site https://<adresse>` depuis un autre poste.
 

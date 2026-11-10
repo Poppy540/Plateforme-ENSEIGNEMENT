@@ -93,6 +93,17 @@ export function avecVisiteur<T>(traitement: (client: PoolClient) => Promise<T>) 
   return enTransaction("anon", null, traitement);
 }
 
+/**
+ * Date du jour (AAAA-MM-JJ) selon l'horloge de la base, seule référence du « jour » : quotas, limites et chiffres
+ * du pilote la suivent aussi. Son fuseau est celui du pays du déploiement (`pnpm base:fuseau`, ADR 0114).
+ */
+export function aujourdhui(): Promise<string> {
+  return avecVisiteur(
+    async (client) =>
+      (await client.query("select to_char(current_date, 'YYYY-MM-DD') as jour")).rows[0].jour,
+  );
+}
+
 /** Requêtes de l'agent Professeur : élève connecté et unité fixés par le serveur, jamais par le modèle. */
 export function avecAgentProfesseur<T>(
   contexte: { eleveId: string; uniteId: string },

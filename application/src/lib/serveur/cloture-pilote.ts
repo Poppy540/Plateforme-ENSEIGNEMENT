@@ -9,7 +9,7 @@ import { empreinteActeur } from "./orchestrateur";
 // Rien ici ne supprime de données.
 
 export async function clotureDuPilote(administrateur: string) {
-  const { faits, coches } = await avecUtilisateur(administrateur, async (client) => {
+  const { faits, coches, jour } = await avecUtilisateur(administrateur, async (client) => {
     const f = await client.query(
       `select to_char(periode_debut, 'YYYY-MM-DD') as periode_debut,
               to_char(periode_fin, 'YYYY-MM-DD') as periode_fin, rapports_telecharges, decision,
@@ -19,9 +19,14 @@ export async function clotureDuPilote(administrateur: string) {
     const c = await client.query(
       `select geste, preuve, to_char(date_preuve, 'YYYY-MM-DD') as date_preuve from gestes_cloture_coches()`,
     );
-    return { faits: f.rows[0] as FaitsCloture, coches: c.rows as CocheGeste[] };
+    const j = await client.query("select to_char(current_date, 'YYYY-MM-DD') as jour");
+    return {
+      faits: f.rows[0] as FaitsCloture,
+      coches: c.rows as CocheGeste[],
+      jour: j.rows[0].jour,
+    };
   });
-  return evaluerCloture(faits, coches, new Date().toISOString().slice(0, 10));
+  return evaluerCloture(faits, coches, jour);
 }
 
 async function appeler(administrateur: string, sql: string, valeurs: unknown[]) {
