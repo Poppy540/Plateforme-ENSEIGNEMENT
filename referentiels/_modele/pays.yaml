@@ -1,2 +1,45 @@
-# Modèle : voir referentiels/gabon/pays.yaml pour un exemple.
-# Toutes les valeurs ici sont à remplir à partir des sources officielles du pays.
+# Fiche pays — {{NOM_PAYS}}. Modèle complet : chaque clé est à remplir à partir des sources officielles du pays,
+# et chaque donnée a sa ligne dans SOURCES.md. Exemples : referentiels/gabon/ (pilote), referentiels/zz-fictif/.
+# Vérifier à tout moment : pnpm pack:verifier ../referentiels/<dossier>
+code: "{{CODE_PAYS}}" # code ISO 3166-1 alpha-2 en minuscules (préfixe des codes d'unité)
+nom: "{{NOM_PAYS}}"
+langue_enseignement: fr # code de langue (ISO 639-1)
+langues_vivantes: [] # [en, es…]
+indicatifs_telephone: [] # ["+xxx"] : seuls numéros acceptés pour la connexion par SMS et le contact du parent
+fuseau_horaire: "" # fuseau IANA du pays (par exemple « Africa/Dakar »)
+monnaie: null # code ISO 4217, ou null (pilote gratuit)
+statut_pack: en_preparation # en_preparation | pilote | ouvert
+referentiel:
+  code: "{{CODE_PAYS}}-general"
+  version: "0.1-provisoire"
+  date_validation: null
+  source_officielle: null # ministère, institut chargé des programmes… et documents obtenus
+paiement:
+  moyens: []
+connectivite: "" # par exemple « souvent faible, usage surtout sur smartphone »
+cadre_legal:
+  statut: a_verifier_par_juriste_local
+  age_majorite: null # inconnu = tout élève est traité comme mineur (accord du parent exigé)
+  # Durées de conservation en jours (null = pas de purge), à faire valider par un juriste local.
+  conservation:
+    echanges_jours: null
+    inscription_non_confirmee_jours: null
+    compte_inactif_jours: null
+    signalements_traites_jours: null
+    tickets_resolus_jours: null
+    recrutement_clos_jours: null
+    rapports_parents_jours: null
+    resumes_apres_suppression: null # garder | effacer ; null = garder
+  points: []
+# Seuils du suivi du pilote (ADR 0080) ; null = critère non surveillé.
+pilote:
+  detresse_delai_heures: null
+  detresse_delai_max_heures: null
+  erreur_contenu_delai_jours: null
+  contestations_max_par_question: null
+  depassement_budget_pourcent: null
+  budget_hebdomadaire_usd: null
+calendrier_scolaire: a_definir
+equipe_locale:
+  referents: []
+  contact_institutionnel: null

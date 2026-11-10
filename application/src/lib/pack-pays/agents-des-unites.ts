@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import type { PackPays } from "./lecture";
+import type { PackPays } from "./lecture.ts";
 
 // Une unité qui a un programme doit avoir les réglages de ses agents (Jalon 22, étape 2 ; ADR 0112) : sans eux, le
 // référent qui demande un quiz ou un script tombe sur une erreur du serveur. Contrôlé avant tout import.

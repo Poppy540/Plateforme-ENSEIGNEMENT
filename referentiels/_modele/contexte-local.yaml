@@ -1,2 +1,6 @@
-# Modèle : voir referentiels/gabon/contexte-local.yaml pour un exemple.
-# Toutes les valeurs ici sont à remplir à partir des sources officielles du pays.
+# Contexte local pour l'ancrage des exemples ({{NOM_PAYS}}), à valider avec les référents.
+exemples:
+  lieux: []
+  economie: []
+  nature: []
+consignes: ""

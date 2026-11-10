@@ -1,0 +1,13 @@
+# Valeurs du Scénariste pour une unité. Toute valeur vide bloque l'agent (sauf SERIE).
+unite: <unité>
+variables:
+  MATIERE: ""
+  NIVEAU: ""
+  SERIE: ""
+  PAYS: ""
+  PROFIL_NIVEAU: ""
+  CONTEXTE_LOCAL: ""
+  PERSONA: ""
+  REFERENT: ""
+  DATE: ""
+  VERSION: ""

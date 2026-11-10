@@ -64,6 +64,8 @@ pnpm test:migrations  # migrations suivies : base neuve, en retard, fichier modi
 pnpm base:migrer [--simuler]   # applique les migrations qui manquent, suivies en base (connexion d'administration)
 pnpm base:sauvegarder [dossier] ; pnpm base:restaurer <dossier> --confirmer   # copie de secours (voir docs/production/ §5)
 pnpm pack:sql ../referentiels/<pays>   # contrôle un pack pays et génère son SQL d'import
+pnpm pack:nouveau <dossier> <code> "<nom>"   # nouveau pays depuis referentiels/_modele/ (guide : referentiels/README.md ; ADR 0113)
+pnpm pack:verifier ../referentiels/<pays>   # ce qui est bloquant, à compléter, à valider dans un pack (lecture seule)
 pnpm entrainement:referent   # espace d'entraînement du référent sur la base LOCALE seulement (docs/pilote/kit-referent/)
 pnpm referent:invitation <référentiel> <famille[,famille]> [jours] > invitation.sql   # invitation de référent en secours (sinon : /administration/invitations)
 pnpm classe:creer <référentiel> <niveau> "<nom>" "<établissement>" [--serie C] > classe.sql   # classe du pilote en secours (sinon : /administration/classes)

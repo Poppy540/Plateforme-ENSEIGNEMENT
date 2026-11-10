@@ -1,2 +1,4 @@
-# Modèle : voir referentiels/gabon/matieres.yaml pour un exemple.
-# Toutes les valeurs ici sont à remplir à partir des sources officielles du pays.
+# Matières ({{NOM_PAYS}}). famille = famille de matières (agent Coordinateur, familles.yaml) ;
+# couche = universel | adaptable | local.
+matieres: []
+  # - {code: mathematiques, libelle: "Mathématiques", famille: mathematiques, couche: adaptable}

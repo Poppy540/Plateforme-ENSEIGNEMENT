@@ -1,4 +1,13 @@
-# Modèle : voir referentiels/gabon/structure.yaml pour un exemple.
-# Toutes les valeurs ici sont à remplir à partir des sources officielles du pays.
+# Structure du système éducatif ({{NOM_PAYS}}) : cycles, classes (niveaux), séries et examens, d'après les sources
+# officielles. code_interne = code neutre commun aux pays (voir referentiels/gabon/structure.yaml).
+cycles: []
+  # - {code: <cycle>, libelle: "<libellé>", examen_fin: <code d'examen ou null>}
+niveaux: []
+  # - {code: <niveau>, libelle: "<libellé affiché à l'élève>", cycle: <cycle>, ordre: 1, code_interne: secondaire-1}
+  #   ajouter series_obligatoires: true pour une classe où l'élève choisit une série
 # Mot qui désigne les séries dans ce pays (« série », « option », « filière »…), facultatif ; sans lui, « série ».
 # appellation_series: {singulier: série, pluriel: séries}
+series: []
+  # - {code: <code>, libelle: "<libellé>", type: generale, code_interne: <code neutre>}
+examens: []
+  # - {code: <examen>, libelle: "<libellé>", niveau: <niveau>}

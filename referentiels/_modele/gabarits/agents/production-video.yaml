@@ -1,0 +1,10 @@
+# Fiche d'avatar d'une unité : avatar synthétique ; aucune personne réelle sans autorisation écrite enregistrée.
+unite: <unité>
+fiche_avatar:
+  avatar: ""
+  voix: ""
+  langue: ""
+  description: ""
+  personne_reelle: false
+  autorisation_voix: null
+  autorisation_visage: null

@@ -36,9 +36,53 @@ Le contrôle refuse un pack incohérent (niveau, série ou matière inconnus, do
 
 ## Ajouter un pays
 
-1. Copier `referentiels/_modele/` vers `referentiels/<code-pays>/`.
-2. Suivre le processus du cadrage (« Processus d'ajout d'un nouveau pays ») : sources officielles, équipe locale, structuration (premier jet par l'agent Conformité programme), analyse de réutilisation, validation.
-3. Aucune modification de code n'est nécessaire.
+Aucune modification de code n'est nécessaire (ADR 0041, 0113). Rien n'est inventé : ce qui n'a pas de source officielle reste vide et se lit « manquant » dans `SOURCES.md`.
+
+**Avant de commencer** : suivre le processus du cadrage (« Processus d'ajout d'un nouveau pays »). Il faut rassembler les sources officielles (programmes, structure du système, examens), constituer une équipe locale (au moins un enseignant-référent) et obtenir l'avis d'un juriste local (majorité, données des mineurs, durées de conservation).
+
+1. **Créer le pack** à partir du modèle, avec le code ISO à deux lettres et le nom du pays :
+
+   ```
+   cd application
+   pnpm pack:nouveau <dossier> <code> "<nom du pays>"    # par exemple : pnpm pack:nouveau senegal sn "Sénégal"
+   ```
+
+   Le dossier `referentiels/<dossier>/` est créé avec toutes les clés, vides. La commande refuse d'écraser un dossier existant. Elle affiche aussitôt le rapport de vérification.
+
+2. **Remplir la fiche pays** (`pays.yaml`) : langue, indicatifs téléphoniques, **fuseau horaire**, référentiel et sa source. L'âge de la majorité et les durées de conservation viennent du juriste ; tant qu'ils sont vides, tout élève est traité comme mineur et rien n'est effacé.
+
+3. **Décrire le système éducatif** (`structure.yaml`) :
+   - les cycles et les classes (`niveaux`), dans l'ordre ;
+   - les séries, et le mot du pays pour les désigner (`appellation_series` : « série », « option », « filière »…) ;
+   - les examens.
+
+4. **Matières, familles, unités** (`matieres.yaml`, `familles.yaml`, `unites.yaml`). Code d'unité : `<code>-<niveau>[-<groupe de séries>]-<matière>`.
+
+5. **Programmes**, unité par unité : copier `_modele/gabarits/programme.yaml` vers `programmes/<unité>.yaml`. Chaque chapitre cite sa source. Le statut reste « a_valider » : seul le référent valide. Une unité sans programme s'affiche « Bientôt disponible ».
+
+6. **Réglages des agents**. Copier les gabarits de `_modele/gabarits/agents/` (tableau dans `_modele/gabarits/README.md`) et remplir chaque valeur :
+   - pour chaque unité qui a un programme : Professeur, Scénariste, Évaluateur, Production vidéo — sinon l'import est refusé ;
+   - une fois par pays : Tuteur, Support, Conformité, Recruteur ;
+   - pour chaque famille : Coordinateur.
+
+7. **FAQ, contexte local, profils par niveau, questionnaire, recrutement** : à remplir avec l'équipe locale. Le Support ne répond qu'avec la FAQ. Le questionnaire et le recrutement restent inactifs tant qu'ils sont « a_valider ».
+
+8. **Sources** : une ligne de `SOURCES.md` par donnée, avec son origine et son statut (validé, à valider, manquant).
+
+9. **Vérifier**, à chaque étape :
+
+   ```
+   pnpm pack:verifier ../referentiels/<dossier>
+   ```
+
+   Le rapport classe chaque point en trois niveaux :
+   - **bloquant** : l'import serait refusé ;
+   - **à compléter** : sans cela, la plateforme ne sert pas vraiment ce pays ;
+   - **à valider** : une décision humaine est attendue (référent, juriste, propriétaire).
+
+   La commande sort en erreur tant qu'il reste un point bloquant.
+
+10. **Importer** (voir plus haut) sur la base de développement, puis rejouer le parcours d'un élève de ce pays. En production : seulement avec l'accord du propriétaire, après validation par le référent.
 
 Packs existants :
 
