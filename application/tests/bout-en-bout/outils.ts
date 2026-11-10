@@ -50,10 +50,12 @@ export async function inscrireEleveActif(
   numero: string,
   classe: string,
   serie?: string,
+  referentiel?: string,
 ) {
   await seConnecter(page, numero);
   await expect(page).toHaveURL(/\/inscription$/);
   await page.getByLabel("Ton prénom ou un pseudonyme").fill("Élève fictif");
+  if (referentiel) await page.getByLabel("Pays et programme").selectOption({ value: referentiel });
   await page.getByLabel("Ta classe").selectOption({ label: classe });
   if (serie) await page.getByLabel("Série", { exact: true }).selectOption({ value: serie });
   const contactParent = `+999 111 ${numero.replace(/\D/g, "").slice(-6)}`;
@@ -74,13 +76,17 @@ export async function inscrireEleveActif(
 }
 
 /** Invitation de référent fictive avec un code connu (le script réel génère un code aléatoire). */
-export async function creerInvitationFictive(code: string, familles: string[]) {
+export async function creerInvitationFictive(
+  code: string,
+  familles: string[],
+  referentiel = "ga-general",
+) {
   await executerSql(
     `insert into invitations_referents (empreinte_code, referentiel_id, familles, expire_le)
      select encode(sha256(convert_to($1, 'UTF8')), 'hex'), id, $2::text[], now() + interval '1 day'
-     from referentiels where code = 'ga-general'
+     from referentiels where code = $3
      on conflict (empreinte_code) do nothing`,
-    [code, familles],
+    [code, familles, referentiel],
   );
 }
 

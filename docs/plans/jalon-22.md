@@ -1,6 +1,6 @@
 # Plan du Jalon 22 — exportabilité à jour
 
-**Statut** : validé par le propriétaire le 2026-11-09 (piste choisie, ADR 0110). Étape 1 faite : [inventaire](../portabilite/inventaire-jalon-22.md), ADR 0111 (le mot du pays pour les séries vient du pack).
+**Statut** : validé par le propriétaire le 2026-11-09 (piste choisie, ADR 0110). Étape 1 faite : [inventaire](../portabilite/inventaire-jalon-22.md), ADR 0111 (le mot du pays pour les séries vient du pack). Étape 2 faite : journée d'ouverture du pays Z et étanchéité entre pays (ADR 0112, `journee-pays-z.spec.ts`).
 
 **Objectif** : le pack fictif `zz-fictif` (ADR 0041) a prouvé au Jalon 4 qu'un second pays s'ajoute sans modifier le code. Depuis, dix-sept jalons ont ajouté beaucoup de choses :
 
