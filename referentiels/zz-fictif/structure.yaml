@@ -12,6 +12,7 @@ niveaux:
   - {code: an2, libelle: "Année 2", cycle: inferieur, ordre: 2, code_interne: secondaire-2}
   - {code: an3, libelle: "Année 3", cycle: inferieur, ordre: 3, code_interne: secondaire-3-fin-cycle-1}
   - {code: an4, libelle: "Année 4", cycle: superieur, ordre: 4, code_interne: secondaire-4-fin-cycle-2, series_obligatoires: true}
+appellation_series: {singulier: option, pluriel: options}   # le pays Z parle d'« options »
 series:
   - {code: SCI, libelle: "Option Sciences",  type: option, code_interne: scientifique}
   - {code: HUM, libelle: "Option Humanités", type: option, code_interne: litteraire}

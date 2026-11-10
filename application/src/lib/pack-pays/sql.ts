@@ -33,10 +33,11 @@ on conflict (code) do update set nom = excluded.nom, langue_enseignement = exclu
   fuseau_horaire = excluded.fuseau_horaire, monnaie = excluded.monnaie, statut_pack = excluded.statut_pack,
   age_majorite = excluded.age_majorite, conservation = excluded.conservation,
   indicatifs_telephone = excluded.indicatifs_telephone;`,
-    `insert into referentiels (code, pays_code, version, date_validation, source_officielle)
-values (${texteSql(referentiel.code)}, ${texteSql(pays.code)}, ${texteSql(referentiel.version)}, ${texteSql(referentiel.dateValidation)}, ${texteSql(referentiel.sourceOfficielle)})
+    `insert into referentiels (code, pays_code, version, date_validation, source_officielle, appellation_serie, appellation_series)
+values (${texteSql(referentiel.code)}, ${texteSql(pays.code)}, ${texteSql(referentiel.version)}, ${texteSql(referentiel.dateValidation)}, ${texteSql(referentiel.sourceOfficielle)}, ${texteSql(referentiel.appellationSeries?.singulier ?? null)}, ${texteSql(referentiel.appellationSeries?.pluriel ?? null)})
 on conflict (code) do update set version = excluded.version, date_validation = excluded.date_validation,
-  source_officielle = excluded.source_officielle;`,
+  source_officielle = excluded.source_officielle, appellation_serie = excluded.appellation_serie,
+  appellation_series = excluded.appellation_series;`,
   ];
 
   // Les ordres de niveaux peuvent être permutés : on les décale d'abord pour éviter les conflits d'unicité.

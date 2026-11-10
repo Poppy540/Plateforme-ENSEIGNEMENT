@@ -9,7 +9,7 @@ const dossier = process.argv.slice(2).find((a) => !a.startsWith("--"));
 const accepterTest = process.argv.includes("--test");
 if (!dossier) {
   console.error(
-    "Usage : node scripts/pack-en-sql.mts <dossier du pack, par exemple ../referentiels/gabon>",
+    "Usage : node scripts/pack-en-sql.mts <dossier du pack, par exemple ../referentiels/<pays>>",
   );
   process.exit(2);
 }

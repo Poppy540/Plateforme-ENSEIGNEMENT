@@ -18,17 +18,29 @@ const code = genererCodeInvitation();
 const client = new pg.Client({ connectionString: adresse });
 try {
   await client.connect();
+  // Référentiel du pays du pilote (le seul pack qui n'est pas « test » sur la base locale), sauf choix explicite.
+  const referentiel =
+    process.env.REFERENTIEL ??
+    (
+      await client.query(
+        `select r.code from referentiels r join pays p on p.code = r.pays_code
+         where p.statut_pack <> 'test' order by r.code limit 1`,
+      )
+    ).rows[0]?.code;
+  if (!referentiel) throw new Error("aucun référentiel");
   await client.query(
     invitationEnSql({
-      referentiel: "ga-general",
+      referentiel,
       familles,
       empreinte: empreinteCode(code),
       joursDeValidite: 1,
     }),
   );
-} catch {
+} catch (e) {
   console.error(
-    "Base locale injoignable : lancez d'abord `bash scripts/base-locale.sh demarrer` (voir application/README.md).",
+    (e as Error).message === "aucun référentiel"
+      ? "Aucun pack pays dans la base locale : lancez `bash scripts/base-locale.sh reinitialiser`."
+      : "Base locale injoignable : lancez d'abord `bash scripts/base-locale.sh demarrer` (voir application/README.md).",
   );
   process.exit(1);
 } finally {

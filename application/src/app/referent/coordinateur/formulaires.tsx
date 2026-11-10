@@ -14,7 +14,7 @@ export function FormulaireRevue({ famille, libelle }: { famille: string; libelle
         name="consigne"
         rows={2}
         maxLength={2000}
-        placeholder="Par exemple : vérifie les notations entre la 4e et la 3e."
+        placeholder="Par exemple : vérifie les notations entre deux classes qui se suivent."
       />
       {etat?.erreur && (
         <p role="alert" className="erreur">

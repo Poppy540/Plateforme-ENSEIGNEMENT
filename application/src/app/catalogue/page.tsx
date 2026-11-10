@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { capitale } from "@/lib/pack-pays/appellation";
 import { exigerEleveActif } from "@/lib/serveur/acces-eleve";
 import { catalogue } from "@/lib/serveur/catalogue";
 
@@ -54,15 +55,21 @@ export default async function PageCatalogue({ searchParams }: PageProps<"/catalo
               </option>
             ))}
           </select>
-          <label htmlFor="serie">Série (classes à séries)</label>
-          <select id="serie" name="serie" defaultValue={page.serie ?? ""}>
-            <option value="">Toutes</option>
-            {page.series.map((s) => (
-              <option key={s.code} value={s.code}>
-                {s.code} — {s.libelle}
-              </option>
-            ))}
-          </select>
+          {page.series.length > 0 && (
+            <>
+              <label htmlFor="serie">
+                {capitale(page.appellation.singulier)} (classes à {page.appellation.pluriel})
+              </label>
+              <select id="serie" name="serie" defaultValue={page.serie ?? ""}>
+                <option value="">Toutes</option>
+                {page.series.map((s) => (
+                  <option key={s.code} value={s.code}>
+                    {s.code} — {s.libelle}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
           <button type="submit">Afficher</button>
         </form>
         {!page.estSaClasse && (

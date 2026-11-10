@@ -1,5 +1,6 @@
 import "server-only";
 import { DatabaseError } from "pg";
+import { appellationSeries, type Appellation } from "@/lib/pack-pays/appellation";
 import { avecUtilisateur, avecVisiteur } from "./base";
 
 export interface ProfilEleve {
@@ -7,20 +8,33 @@ export interface ProfilEleve {
   statut: "en_attente_parent" | "actif" | "suspendu";
   niveau: string;
   serie: string | null;
+  /** Mot du pays pour les séries (« série », « option »…). */
+  appellation: Appellation;
 }
 
 export async function profilEleve(utilisateur: string): Promise<ProfilEleve | null> {
   return avecUtilisateur(utilisateur, async (client) => {
     const { rows } = await client.query(
-      `select p.prenom_ou_pseudo as prenom, e.statut, n.libelle as niveau, s.libelle as serie
+      `select p.prenom_ou_pseudo as prenom, e.statut, n.libelle as niveau, s.libelle as serie,
+         r.appellation_serie, r.appellation_series
        from profils p
        join eleves e on e.id = p.id
        join niveaux n on n.id = e.niveau_id
+       join referentiels r on r.id = e.referentiel_id
        left join series s on s.id = e.serie_id
        where p.id = $1`,
       [utilisateur],
     );
-    return (rows[0] as ProfilEleve | undefined) ?? null;
+    const r = rows[0];
+    return r
+      ? {
+          prenom: r.prenom,
+          statut: r.statut,
+          niveau: r.niveau,
+          serie: r.serie,
+          appellation: appellationSeries(r.appellation_serie, r.appellation_series),
+        }
+      : null;
   });
 }
 
@@ -38,6 +52,7 @@ export interface OptionsInscription {
     ageMajorite: number | null;
     niveaux: { code: string; libelle: string; seriesObligatoires: boolean }[];
     series: { code: string; libelle: string }[];
+    appellation: Appellation;
   }[];
 }
 
@@ -45,7 +60,7 @@ export interface OptionsInscription {
 export async function optionsInscription(): Promise<OptionsInscription> {
   return avecVisiteur(async (client) => {
     const { rows } = await client.query(
-      `select r.code, p.nom as pays, p.age_majorite,
+      `select r.code, p.nom as pays, p.age_majorite, r.appellation_serie, r.appellation_series,
          (select coalesce(json_agg(json_build_object('code', n.code, 'libelle', n.libelle,
             'seriesObligatoires', n.series_obligatoires) order by n.ordre), '[]')
           from niveaux n where n.referentiel_id = r.id) as niveaux,
@@ -61,6 +76,7 @@ export async function optionsInscription(): Promise<OptionsInscription> {
         ageMajorite: r.age_majorite,
         niveaux: r.niveaux,
         series: r.series,
+        appellation: appellationSeries(r.appellation_serie, r.appellation_series),
       })),
     };
   });

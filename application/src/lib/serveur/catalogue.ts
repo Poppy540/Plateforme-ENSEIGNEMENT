@@ -1,4 +1,5 @@
 import "server-only";
+import { appellationSeries, type Appellation } from "@/lib/pack-pays/appellation";
 import type { PoolClient } from "pg";
 import { avecUtilisateur } from "./base";
 
@@ -59,6 +60,8 @@ export function contexteEleve(utilisateur: string) {
 export interface PageCatalogue {
   niveaux: NiveauCatalogue[];
   series: { code: string; libelle: string }[];
+  /** Mot du pays pour les séries (« série », « option »…). */
+  appellation: Appellation;
   niveau: NiveauCatalogue;
   serie: string | null;
   estSaClasse: boolean;
@@ -90,6 +93,12 @@ export function catalogue(
         [eleve.referentielId],
       )
     ).rows as { code: string; libelle: string }[];
+    const [ref] = (
+      await client.query(
+        "select appellation_serie, appellation_series from referentiels where id = $1",
+        [eleve.referentielId],
+      )
+    ).rows;
 
     const niveau = niveaux.find((n) => n.code === (choix.niveau ?? eleve.niveauCode));
     if (!niveau) return null;
@@ -124,6 +133,7 @@ export function catalogue(
     return {
       niveaux,
       series,
+      appellation: appellationSeries(ref?.appellation_serie, ref?.appellation_series),
       niveau,
       serie,
       estSaClasse: niveau.code === eleve.niveauCode && serie === eleve.serieCode,

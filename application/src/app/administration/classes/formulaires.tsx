@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { capitale, type Appellation } from "@/lib/pack-pays/appellation";
 import type { OptionClasse, ResultatCodes } from "@/lib/serveur/classes-administration";
 import { codeClasse, creer, invitationEnseignant } from "./actions";
 
@@ -35,7 +36,13 @@ function Codes({ etat }: { etat: ResultatCodes | undefined }) {
   );
 }
 
-export function FormulaireClasse({ option }: { option: OptionClasse }) {
+export function FormulaireClasse({
+  option,
+  appellation,
+}: {
+  option: OptionClasse;
+  appellation: Appellation;
+}) {
   const [etat, action, enCours] = useActionState(creer, undefined);
   const id = (nom: string) => `${option.referentiel}-${nom}`;
   return (
@@ -49,16 +56,22 @@ export function FormulaireClasse({ option }: { option: OptionClasse }) {
           </option>
         ))}
       </select>
-      <label htmlFor={id("serie")}>Série (facultatif)</label>
-      <select id={id("serie")} name="serie" defaultValue="">
-        <option value="">Aucune</option>
-        {option.series.map((s) => (
-          <option key={s.code} value={s.code}>
-            {s.libelle}
-          </option>
-        ))}
-      </select>
-      <label htmlFor={id("nom")}>Nom de la classe (par exemple « 3e A »)</label>
+      {option.series.length > 0 && (
+        <>
+          <label htmlFor={id("serie")}>{capitale(appellation.singulier)} (facultatif)</label>
+          <select id={id("serie")} name="serie" defaultValue="">
+            <option value="">Aucune</option>
+            {option.series.map((s) => (
+              <option key={s.code} value={s.code}>
+                {s.libelle}
+              </option>
+            ))}
+          </select>
+        </>
+      )}
+      <label htmlFor={id("nom")}>
+        Nom de la classe{option.niveaux[0] && ` (par exemple « ${option.niveaux[0].libelle} A »)`}
+      </label>
       <input id={id("nom")} name="nom" maxLength={60} required />
       <label htmlFor={id("etablissement")}>Établissement</label>
       <input id={id("etablissement")} name="etablissement" maxLength={120} required />

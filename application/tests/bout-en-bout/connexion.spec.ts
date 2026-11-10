@@ -64,8 +64,8 @@ test("une classe à séries exige la série", async ({ page }) => {
   await seConnecter(page, "+999 000 000 03");
   await page.getByLabel("Ton prénom ou un pseudonyme").fill("Lycéen fictif");
   await page.getByLabel("Ta classe").selectOption({ label: "Terminale" });
-  await expect(page.getByLabel("Ta série")).toBeVisible();
-  await page.getByLabel("Ta série").selectOption({ index: 4 });
+  await expect(page.getByLabel("Série", { exact: true })).toBeVisible();
+  await page.getByLabel("Série", { exact: true }).selectOption({ index: 4 });
   await page.getByLabel("Numéro ou email d'un parent ou tuteur").fill("parent.fictif@exemple.org");
   await page.getByRole("button", { name: "M'inscrire" }).click();
   await expect(page.locator("main")).toContainText("— série");

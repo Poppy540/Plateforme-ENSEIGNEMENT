@@ -31,6 +31,10 @@ test("élève du pays Z : classes et majorité de son pack, catalogue et profess
   await page.getByLabel("Pays et programme").selectOption({ value: "zz-general" });
   const classes = await page.getByLabel("Ta classe").locator("option").allTextContents();
   expect(classes).toEqual(["Choisir…", "Année 1", "Année 2", "Année 3", "Année 4"]);
+  // Le mot du pays Z pour les séries (« option », ADR 0111), en Année 4 seulement.
+  await page.getByLabel("Ta classe").selectOption({ label: "Année 4" });
+  await expect(page.getByLabel("Option", { exact: true })).toBeVisible();
+  await expect(page.getByLabel(/série/i)).toHaveCount(0);
   await page.getByLabel("Ta classe").selectOption({ label: "Année 3" });
   // Majorité fixée par le pack du pays Z (16 ans) : pas d'accord parental pour un élève majeur.
   await page.getByLabel("J'ai 16 ans ou plus").check();

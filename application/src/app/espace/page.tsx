@@ -37,7 +37,7 @@ export default async function PageEspace() {
         {profil.serie && (
           <>
             {" "}
-            — série <strong>{profil.serie}</strong>
+            — {profil.appellation.singulier} <strong>{profil.serie}</strong>
           </>
         )}
       </p>

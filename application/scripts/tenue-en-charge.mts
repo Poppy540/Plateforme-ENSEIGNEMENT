@@ -25,7 +25,8 @@ const PARCOURS = option("parcours", 3);
 const PAUSE_MS = option("pause", 1000); // temps de lecture moyen entre deux pages (aléatoire autour de cette valeur)
 const SEUIL_P95_MS = option("seuil-p95", 2000);
 const SEUIL_ERREURS = option("seuil-erreurs", 0.01);
-const UNITE = process.env.UNITE_CHARGE ?? "ga-3e-mathematiques";
+// Unité visitée : UNITE_CHARGE, sinon celle des chapitres du pilote, sinon la plus fournie d'un pays réel.
+let UNITE = process.env.UNITE_CHARGE ?? "";
 // Plusieurs adresses séparées par des virgules : un processus du serveur par adresse ; chaque élève reste sur la
 // même (comme derrière un répartiteur de charge).
 const SITES = (process.env.URL_CHARGE ?? "http://localhost:3100").split(",").map((s) => s.trim());
@@ -51,6 +52,18 @@ function identifiant(i: number): string {
 // 1. Préparation en base : chapitres validés, élèves fictifs actifs, une session ouverte chacun.
 const base = new pg.Client({ connectionString: BASE });
 await base.connect();
+if (!UNITE) {
+  const { rows } = await base.query(
+    `select u.code from unites u join referentiels r on r.id = u.referentiel_id join pays p on p.code = r.pays_code
+     where p.statut_pack <> 'test'
+     order by exists (select 1 from chapitres_pilote cp join chapitres c on c.id = cp.chapitre_id
+                      where c.unite_id = u.id) desc,
+              (select count(*) from chapitres c where c.unite_id = u.id) desc, u.code
+     limit 1`,
+  );
+  UNITE = rows[0]?.code ?? "";
+  console.log(`Unité visitée : ${UNITE} (UNITE_CHARGE pour en choisir une autre).`);
+}
 let chapitres: string[];
 const cookies: string[] = [];
 try {

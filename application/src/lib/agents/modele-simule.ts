@@ -333,7 +333,9 @@ function conformiteSimulee(demande: string): BetaMessage {
       })),
   ];
   if (extraction.some((e) => (e.champs_manquants as string[]).length > 0))
-    points.push("Volumes horaires ou coefficients manquants : à demander au référent ou à l'IPN.");
+    points.push(
+      "Volumes horaires ou coefficients manquants : à demander au référent ou à l'institution chargée des programmes.",
+    );
   return message(
     [
       texte(

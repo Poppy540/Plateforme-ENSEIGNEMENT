@@ -42,7 +42,7 @@ export default async function PageConformite({ searchParams }: PageProps<"/refer
         <input id="origine" name="origine" required maxLength={500} />
         <label>
           <input type="checkbox" name="officiel" value="oui" /> Il s&apos;agit d&apos;un document
-          officiel (ministère, IPN…)
+          officiel (ministère, institut chargé des programmes…)
         </label>
         <label htmlFor="texte">Texte du document</label>
         <textarea id="texte" name="texte" rows={6} placeholder="Collez le texte…" />

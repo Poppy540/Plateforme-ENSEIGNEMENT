@@ -220,6 +220,17 @@ describe("aucune donnée de pays dans le code (ADR 0001)", () => {
     /Libreville/i,
     /\+241/,
     /\bXAF\b|franc CFA/i,
+    // Jalon 22 (ADR 0111) : noms de classes et institution du pilote.
+    /\b(6e|5e|4e|3e|2nde|1re|Tle)\b/,
+    /\bTerminale\b/,
+    /\bIPN\b/,
+  ];
+  // Scripts de développement et de test qui importent exprès le pack du pilote sur une base jetable ou locale.
+  const scriptsDuPilote = [
+    "scripts/base-locale.sh",
+    "scripts/tester-base.sh",
+    "scripts/tester-sauvegarde.sh",
+    "scripts/repetition-generale.sh",
   ];
 
   function fichiers(dossier: string): string[] {
@@ -233,6 +244,9 @@ describe("aucune donnée de pays dans le code (ADR 0001)", () => {
     const sources = [
       ...fichiers(join(racine, "src")),
       ...fichiers(join(racine, "supabase/migrations")),
+      ...fichiers(join(racine, "scripts")).filter(
+        (f) => !scriptsDuPilote.some((s) => f.endsWith(s)),
+      ),
     ].filter((f) => !f.endsWith(".test.ts"));
     const trouves = sources.flatMap((f) => {
       const contenu = readFileSync(f, "utf8");

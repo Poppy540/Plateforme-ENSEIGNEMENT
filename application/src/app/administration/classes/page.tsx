@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
+import { APPELLATION_PAR_DEFAUT } from "@/lib/pack-pays/appellation";
 import { classesAdministration, optionsClasse } from "@/lib/serveur/classes-administration";
+import { appellationsParReferentiel } from "@/lib/serveur/referentiels";
 import { annulerInvitations, capacite } from "./actions";
 import { ActionsCode, FormulaireClasse } from "./formulaires";
 
@@ -13,10 +15,12 @@ export default async function PageClasses({ searchParams }: PageProps<"/administ
   const parametres = await searchParams;
   const erreur = typeof parametres.erreur === "string" ? parametres.erreur.slice(0, 200) : null;
   const ok = typeof parametres.ok === "string" ? parametres.ok.slice(0, 100) : null;
-  const [options, classes] = await Promise.all([
+  const [options, classes, appellations] = await Promise.all([
     optionsClasse(administrateur),
     classesAdministration(administrateur),
+    appellationsParReferentiel(),
   ]);
+  const appellation = (referentiel: string) => appellations[referentiel] ?? APPELLATION_PAR_DEFAUT;
 
   return (
     <main className="conteneur">
@@ -32,7 +36,7 @@ export default async function PageClasses({ searchParams }: PageProps<"/administ
       {options.map((o) => (
         <section key={o.referentiel} aria-labelledby={`ref-${o.referentiel}`}>
           <h2 id={`ref-${o.referentiel}`}>Nouvelle classe — référentiel {o.referentiel}</h2>
-          <FormulaireClasse option={o} />
+          <FormulaireClasse option={o} appellation={appellation(o.referentiel)} />
         </section>
       ))}
 
@@ -52,7 +56,7 @@ export default async function PageClasses({ searchParams }: PageProps<"/administ
             </strong>
             <span className="note">
               {c.referentiel}, {c.niveau}
-              {c.serie ? `, série ${c.serie}` : ""}
+              {c.serie ? `, ${appellation(c.referentiel).singulier} ${c.serie}` : ""}
             </span>
             <span>
               Élèves rattachés : <strong>{c.eleves}</strong>

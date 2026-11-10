@@ -99,7 +99,7 @@ export default async function PageEnseignant() {
           </h2>
           <p>
             Niveau : {c.niveau}
-            {c.serie ? `, série ${c.serie}` : ""}
+            {c.serie ? `, ${c.appellation.singulier} ${c.serie}` : ""}
           </p>
           <Tableau t={tableaux[i]} nom={c.nom} />
         </section>

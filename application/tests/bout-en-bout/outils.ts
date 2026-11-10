@@ -55,7 +55,7 @@ export async function inscrireEleveActif(
   await expect(page).toHaveURL(/\/inscription$/);
   await page.getByLabel("Ton prénom ou un pseudonyme").fill("Élève fictif");
   await page.getByLabel("Ta classe").selectOption({ label: classe });
-  if (serie) await page.getByLabel("Ta série").selectOption({ value: serie });
+  if (serie) await page.getByLabel("Série", { exact: true }).selectOption({ value: serie });
   const contactParent = `+999 111 ${numero.replace(/\D/g, "").slice(-6)}`;
   await page.getByLabel("Numéro ou email d'un parent ou tuteur").fill(contactParent);
   await page.getByRole("button", { name: "M'inscrire" }).click();

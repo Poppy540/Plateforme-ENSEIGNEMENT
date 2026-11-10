@@ -52,6 +52,8 @@ export interface Referentiel {
   version: string;
   dateValidation: string | null;
   sourceOfficielle: string | null;
+  /** Mot qui désigne les séries dans ce pays (`appellation_series` de structure.yaml) ; null = mot générique. */
+  appellationSeries: { singulier: string; pluriel: string } | null;
 }
 
 export interface Niveau {
@@ -256,6 +258,16 @@ export function lirePack(dossier: string): PackPays {
     version: texte(brutReferentiel.version),
     dateValidation: texteOuNul(brutReferentiel.date_validation),
     sourceOfficielle: texteOuNul(brutReferentiel.source_officielle),
+    appellationSeries: (() => {
+      const a = brutStructure.appellation_series;
+      if (a === undefined || a === null) return null;
+      const { singulier, pluriel } = a as Brut;
+      if (!texte(singulier) || !texte(pluriel)) {
+        erreurs.push("structure.yaml : appellation_series incomplète (singulier et pluriel)");
+        return null;
+      }
+      return { singulier: texte(singulier), pluriel: texte(pluriel) };
+    })(),
   };
   for (const [cle, valeur] of Object.entries(pays.conservation)) {
     if (valeur !== null && (!Number.isInteger(valeur) || valeur < 1)) {

@@ -15,6 +15,8 @@ niveaux:
   - {code: 2nde, libelle: "Seconde",   cycle: lycee,   ordre: 5, code_interne: secondaire-5}
   - {code: 1re,  libelle: "Première",  cycle: lycee,   ordre: 6, code_interne: secondaire-6, series_obligatoires: true}
   - {code: tle,  libelle: "Terminale", cycle: lycee,   ordre: 7, code_interne: secondaire-7-fin-cycle-2, series_obligatoires: true}
+# Mot qui désigne les séries dans ce pays (affiché aux élèves, enseignants et à l'administration ; ADR 0111).
+appellation_series: {singulier: série, pluriel: séries}
 series:
   - {code: A1, libelle: "Lettres-Langues",                  type: generale, code_interne: litteraire}
   - {code: A2, libelle: "Lettres",                          type: generale, code_interne: litteraire}

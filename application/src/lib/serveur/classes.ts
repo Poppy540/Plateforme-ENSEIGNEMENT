@@ -1,5 +1,6 @@
 import "server-only";
 import { DatabaseError } from "pg";
+import { appellationSeries, type Appellation } from "@/lib/pack-pays/appellation";
 import { avecUtilisateur } from "./base";
 import { MESSAGE_TROP_D_ESSAIS, essaiDeCodeAutorise } from "./limites-connexion";
 
@@ -66,14 +67,19 @@ export interface ClasseEnseignant {
   etablissement: string;
   niveau: string;
   serie: string | null;
+  /** Mot du pays de la classe pour les séries (« série », « option »…). */
+  appellation: Appellation;
 }
 
 export async function mesClasses(utilisateur: string): Promise<ClasseEnseignant[]> {
   return avecUtilisateur(utilisateur, async (client) => {
     const { rows } = await client.query(
-      "select id, nom, etablissement, niveau, serie from mes_classes()",
+      "select id, nom, etablissement, niveau, serie, appellation_serie, appellation_series from mes_classes()",
     );
-    return rows;
+    return rows.map(({ appellation_serie, appellation_series, ...c }) => ({
+      ...c,
+      appellation: appellationSeries(appellation_serie, appellation_series),
+    }));
   });
 }
 

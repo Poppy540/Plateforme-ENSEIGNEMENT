@@ -1,6 +1,7 @@
 // Essai de portabilité (Jalon 4, étape 5 ; ADR 0041) : le pack FICTIF « zz » se charge et configure chaque agent
 // sans modifier le code, et aucune valeur d'un pays n'apparaît dans les prompts de l'autre.
 import { existsSync, readdirSync } from "node:fs";
+import { APPELLATION_PAR_DEFAUT, appellationSeries } from "./appellation";
 import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { composerPrompt, dossierPack } from "../agents/chargeur-prompt";
@@ -86,6 +87,18 @@ describe("pack fictif zz à côté du pilote", () => {
       coefficient: 4,
     });
     expect(lirePack(dossierPack(racine, "ga")).pays.statutPack).not.toBe("test");
+  });
+
+  it("garde le mot de son pays pour les séries (ADR 0111)", () => {
+    expect(lirePack(dossierPack(racine, "zz")).referentiel.appellationSeries).toEqual({
+      singulier: "option",
+      pluriel: "options",
+    });
+    expect(lirePack(dossierPack(racine, "ga")).referentiel.appellationSeries?.singulier).toBe(
+      "série",
+    );
+    // Sans appellation dans le pack : le mot générique.
+    expect(appellationSeries(null, null)).toBe(APPELLATION_PAR_DEFAUT);
   });
 
   it("garde sa FAQ, ses familles et son recrutement", () => {

@@ -1,2 +1,4 @@
 # Modèle : voir referentiels/gabon/structure.yaml pour un exemple.
 # Toutes les valeurs ici sont à remplir à partir des sources officielles du pays.
+# Mot qui désigne les séries dans ce pays (« série », « option », « filière »…), facultatif ; sans lui, « série ».
+# appellation_series: {singulier: série, pluriel: séries}

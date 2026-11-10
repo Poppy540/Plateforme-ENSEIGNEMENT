@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { capitale } from "@/lib/pack-pays/appellation";
 import type { OptionsInscription } from "@/lib/serveur/requetes";
 import { sInscrire } from "./actions";
 
@@ -68,7 +69,7 @@ export function FormulaireInscription({ options }: { options: OptionsInscription
 
       {niveau?.seriesObligatoires && (
         <>
-          <label htmlFor="serie">Ta série</label>
+          <label htmlFor="serie">{capitale(referentiel?.appellation.singulier ?? "")}</label>
           <select id="serie" name="serie" required defaultValue="">
             <option value="">Choisir…</option>
             {referentiel?.series.map((s) => (

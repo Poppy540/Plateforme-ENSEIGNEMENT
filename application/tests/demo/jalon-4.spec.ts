@@ -116,7 +116,7 @@ test("parcours complet du Jalon 4", async ({ page }) => {
   await page.getByLabel("Ton prénom ou un pseudonyme").fill("Élève fictif Z");
   await page.getByLabel("Pays et programme").selectOption({ value: "zz-general" });
   await page.getByLabel("Ta classe").selectOption({ label: "Année 4" });
-  await page.getByLabel("Ta série").selectOption({ value: "SCI" });
+  await page.getByLabel("Option", { exact: true }).selectOption({ value: "SCI" });
   await page.getByLabel("J'ai 16 ans ou plus").check();
   await capture(page, "pays-z-inscription");
   await page.getByLabel("Ta classe").selectOption({ label: "Année 3" });
