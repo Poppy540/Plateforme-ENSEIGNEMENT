@@ -1,6 +1,8 @@
 // Essai de portabilité (Jalon 4, étape 5 ; ADR 0041) : le pack FICTIF « zz » se charge et configure chaque agent
 // sans modifier le code, et aucune valeur d'un pays n'apparaît dans les prompts de l'autre.
-import { existsSync, readdirSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync, readdirSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { reglagesAgentsManquants } from "./agents-des-unites";
 import { APPELLATION_PAR_DEFAUT, appellationSeries } from "./appellation";
 import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -87,6 +89,20 @@ describe("pack fictif zz à côté du pilote", () => {
       coefficient: 4,
     });
     expect(lirePack(dossierPack(racine, "ga")).pays.statutPack).not.toBe("test");
+  });
+
+  it("a les réglages des agents de chaque unité qui a un programme (ADR 0112)", () => {
+    for (const code of ["ga", "zz"]) {
+      const dossier = dossierPack(racine, code);
+      expect(reglagesAgentsManquants(dossier, lirePack(dossier))).toEqual([]);
+    }
+    // Un réglage retiré d'une copie du pack : il est signalé.
+    const copie = mkdtempSync(join(tmpdir(), "pack-agents-"));
+    cpSync(dossierPack(racine, "zz"), copie, { recursive: true });
+    rmSync(join(copie, "agents/evaluateur/zz-an2-mathematiques.yaml"));
+    expect(reglagesAgentsManquants(copie, lirePack(copie))).toEqual([
+      "agents/evaluateur/zz-an2-mathematiques.yaml",
+    ]);
   });
 
   it("garde le mot de son pays pour les séries (ADR 0111)", () => {

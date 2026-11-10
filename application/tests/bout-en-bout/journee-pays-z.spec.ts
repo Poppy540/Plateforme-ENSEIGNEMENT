@@ -11,7 +11,7 @@ import {
 // Journée d'ouverture rejouée pour le pays FICTIF Z (Jalon 22, étape 2 ; ADR 0112) : mêmes gestes que pour le
 // pilote (journee-ouverture.spec.ts), avec la structure du pack zz-fictif (« Années », « options », majorité à
 // 16 ans), sans une ligne de code propre à ce pays. Puis l'étanchéité : un compte du Gabon ne voit rien du pays Z,
-// et l'inverse. Le chapitre « Moyenne et médiane (pays Z) » n'est cité par aucun autre test. Élèves effacés à la fin.
+// et l'inverse. Le chapitre « Proportions et échelles (pays Z) » n'est cité par aucun autre test. Élèves effacés à la fin.
 test.describe.configure({ mode: "serial" });
 
 const ADMIN = "+999 000 040 90";
@@ -19,10 +19,10 @@ const ENSEIGNANT = "+999 000 040 91";
 const REFERENT = "+999 000 040 92";
 const ELEVE_GABON = "+999 000 040 93";
 const REFERENTIEL = "zz-general";
-const NOM = "Année 3 B (pays Z, répétition)";
-const UNITE = "zz-an3-mathematiques";
-const CHAPITRE = "statistique-zz";
-const TITRE = "Moyenne et médiane (pays Z)";
+const NOM = "Année 2 B (pays Z, répétition)";
+const UNITE = "zz-an2-mathematiques";
+const CHAPITRE = "proportions";
+const TITRE = "Proportions et échelles (pays Z)";
 const ELEVES = Array.from(
   { length: 10 },
   (_, i) => `+999 000 040 ${String(i + 1).padStart(2, "0")}`,
@@ -44,7 +44,7 @@ async function couperReseau(context: BrowserContext, coupe: boolean) {
   else await context.unrouteAll();
 }
 
-test("la veille : classe d'« Année 3 » (capacité 10), enseignant, référent du pays Z, chapitre et quiz validés", async ({
+test("la veille : classe d'« Année 2 » (capacité 10), enseignant, référent du pays Z, chapitre et quiz validés", async ({
   page,
 }) => {
   await creerAdministrateurFictif(ADMIN);
@@ -58,7 +58,7 @@ test("la veille : classe d'« Année 3 » (capacité 10), enseignant, référent
   await expect(section.getByLabel(/Nom de la classe/)).toHaveAccessibleName(/« Année 1 A »/);
   const niveaux = await section.getByLabel("Niveau").locator("option").allTextContents();
   expect(niveaux).toEqual(["Année 1", "Année 2", "Année 3", "Année 4"]);
-  await section.getByLabel("Niveau").selectOption({ label: "Année 3" });
+  await section.getByLabel("Niveau").selectOption({ label: "Année 2" });
   await section.getByLabel(/Nom de la classe/).fill(NOM);
   await section.getByLabel("Établissement").fill("École fictive du pays Z");
   await section.getByLabel(/Capacité de la classe/).fill(String(ELEVES.length));
@@ -68,7 +68,7 @@ test("la veille : classe d'« Année 3 » (capacité 10), enseignant, référent
   [codes.classe, codes.enseignant] = (await affiches.allTextContents()).map((t) => t.trim());
   await page.reload();
   await expect(page.locator(".carte").filter({ hasText: NOM })).toContainText(
-    `${REFERENTIEL}, Année 3`,
+    `${REFERENTIEL}, Année 2`,
   );
 
   await page.context().clearCookies();
@@ -78,7 +78,7 @@ test("la veille : classe d'« Année 3 » (capacité 10), enseignant, référent
   await page.getByLabel("Code d'invitation").fill(codes.enseignant!);
   await page.getByRole("button", { name: "Activer mon accès" }).click();
   await expect(page).toHaveURL(/\/enseignant$/);
-  await expect(page.getByText("Niveau : Année 3")).toBeVisible();
+  await expect(page.getByText("Niveau : Année 2")).toBeVisible();
 
   await page.context().clearCookies();
   await creerInvitationFictive("TEST-JOUZ-0001", ["mathematiques"], REFERENTIEL);
@@ -126,9 +126,9 @@ async function parcoursEleve(browser: Browser, numero: string) {
     baseURL: "http://localhost:3100",
   });
   const page = await contexte.newPage();
-  await inscrireEleveActif(page, numero, "Année 3", undefined, REFERENTIEL);
+  await inscrireEleveActif(page, numero, "Année 2", undefined, REFERENTIEL);
   await page.goto("/espace");
-  await expect(page.getByText("Classe : Année 3")).toBeVisible();
+  await expect(page.getByText("Classe : Année 2")).toBeVisible();
   await page.getByLabel(/Code de ta classe/).fill(codes.classe!);
   await page.getByRole("button", { name: "Rejoindre ma classe" }).click();
   await expect(page.getByText(`Tu fais partie de la classe ${NOM}`)).toBeVisible();
@@ -164,7 +164,7 @@ test("le jour J : 10 élèves du pays Z rejoignent la classe et font le quiz, 5 
 test("un 11e élève trouve la classe pleine ; l'administration est alertée et suit le pilote", async ({
   page,
 }) => {
-  await inscrireEleveActif(page, EN_TROP, "Année 3", undefined, REFERENTIEL);
+  await inscrireEleveActif(page, EN_TROP, "Année 2", undefined, REFERENTIEL);
   await page.goto("/espace");
   await page.getByLabel(/Code de ta classe/).fill(codes.classe!);
   await page.getByRole("button", { name: "Rejoindre ma classe" }).click();
@@ -201,7 +201,7 @@ test("un élève du pays Z relit son cours et son plan sans réseau", async ({ p
 
   await couperReseau(context, true);
   for (const [chemin, titre] of [
-    ["/catalogue", "Mes cours — Année 3"],
+    ["/catalogue", "Mes cours — Année 2"],
     [`/catalogue/${UNITE}`, /Mathématiques/],
     ["/espace/plan", "Mon plan de révision"],
   ] as const) {

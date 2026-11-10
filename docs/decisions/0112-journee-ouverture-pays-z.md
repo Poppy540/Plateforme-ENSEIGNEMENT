@@ -8,10 +8,10 @@ La journée d'ouverture du pilote (ADR 0102) n'était répétée que pour le Gab
 
 ## Décision
 
-Le test `tests/bout-en-bout/journee-pays-z.spec.ts` rejoue les mêmes gestes avec le pack `zz-fictif`, sans une ligne de code propre à ce pays :
+Le test `tests/bout-en-bout/journee-pays-z.spec.ts` rejoue les mêmes gestes avec le pack `zz-fictif` (classe d'« Année 2 », chapitre « Proportions et échelles (pays Z) », qu'aucun autre test n'utilise), sans une ligne de code propre à ce pays :
 
 1. **La veille** :
-   - l'administration crée une classe d'« Année 3 » de capacité 10, dans le formulaire du pays Z (« Option », exemple « Année 1 A ») ;
+   - l'administration crée une classe d'« Année 2 » de capacité 10, dans le formulaire du pays Z (« Option », exemple « Année 1 A ») ;
    - l'enseignant active son accès ;
    - un référent invité pour le pays Z valide un chapitre et son quiz.
 2. **Le jour J** : 10 élèves mineurs s'inscrivent (accord du parent), rejoignent la classe, ouvrent le chapitre et font le quiz, 5 à la fois.
@@ -25,7 +25,17 @@ Le test `tests/bout-en-bout/journee-pays-z.spec.ts` rejoue les mêmes gestes ave
 
 Les outils de test `inscrireEleveActif` et `creerInvitationFictive` prennent un référentiel (le Gabon par défaut).
 
+## Écarts révélés et corrigés
+
+1. **Une unité avec un programme mais sans réglages d'agents.** Le pack du pays Z n'avait les réglages des agents (Professeur, Scénariste, Évaluateur, Production vidéo) que pour l'« Année 3 ». Le référent qui demandait un quiz en « Année 2 » tombait sur une erreur du serveur. Corrections :
+   - le pack du pays Z est complété ;
+   - **l'import d'un pack (`pnpm pack:sql`) refuse désormais toute unité qui a un programme sans les réglages de ses quatre agents** (`src/lib/pack-pays/agents-des-unites.ts`), en listant les fichiers manquants ;
+   - le pack de test des tests de base (`tests/packs/yy-fictif`) reçoit des réglages minimaux.
+
+   Le pack du Gabon était déjà complet (12 unités sur 12).
+
+2. **Tests qui se marchent dessus** : une première version utilisait le 3e chapitre de l'« Année 3 » ; le test de portabilité du Jalon 4 compte justement 2 chapitres visibles sur 3. Le contrôle complet l'a vu ; la journée du pays Z utilise désormais l'« Année 2 ».
+
 ## Conséquences
 
-- Aucun écart nouveau n'est apparu : les corrections de l'étape 1 (ADR 0111) suffisent.
 - Le test tourne dans `pnpm controler` et sur GitHub Actions, comme les autres.
