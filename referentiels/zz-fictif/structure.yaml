@@ -14,8 +14,8 @@ niveaux:
   - {code: an4, libelle: "Année 4", cycle: superieur, ordre: 4, code_interne: secondaire-4-fin-cycle-2, series_obligatoires: true}
 appellation_series: {singulier: option, pluriel: options}   # le pays Z parle d'« options »
 series:
-  - {code: SCI, libelle: "Option Sciences",  type: option, code_interne: scientifique}
-  - {code: HUM, libelle: "Option Humanités", type: option, code_interne: litteraire}
+  - {code: SCI, libelle: "Sciences",         type: option, code_interne: scientifique}
+  - {code: HUM, libelle: "Humanités",        type: option, code_interne: litteraire}
 examens:
   - {code: certificat, libelle: "Certificat fictif de fin de cycle", niveau: an3}
   - {code: diplome,    libelle: "Diplôme fictif",                    niveau: an4}

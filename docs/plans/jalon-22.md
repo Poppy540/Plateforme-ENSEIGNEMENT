@@ -1,6 +1,6 @@
 # Plan du Jalon 22 — exportabilité à jour
 
-**Statut** : validé par le propriétaire le 2026-11-09 (piste choisie, ADR 0110). Étape 1 faite : [inventaire](../portabilite/inventaire-jalon-22.md), ADR 0111 (le mot du pays pour les séries vient du pack). Étape 2 faite : journée d'ouverture du pays Z et étanchéité entre pays (ADR 0112, `journee-pays-z.spec.ts`). Étape 3 faite : modèle complet, gabarits, `pnpm pack:nouveau`, `pnpm pack:verifier`, guide pas à pas (ADR 0113). Étape 4 faite : un déploiement, un pays — `pnpm base:fuseau`, la base seule horloge du jour, `pnpm paquet --pays`, contrôles de `verifier:production` (ADR 0114).
+**Statut** : validé par le propriétaire le 2026-11-09 (piste choisie, ADR 0110). Étape 1 faite : [inventaire](../portabilite/inventaire-jalon-22.md), ADR 0111 (le mot du pays pour les séries vient du pack). Étape 2 faite : journée d'ouverture du pays Z et étanchéité entre pays (ADR 0112, `journee-pays-z.spec.ts`). Étape 3 faite : modèle complet, gabarits, `pnpm pack:nouveau`, `pnpm pack:verifier`, guide pas à pas (ADR 0113). Étape 4 faite : un déploiement, un pays — `pnpm base:fuseau`, la base seule horloge du jour, `pnpm paquet --pays`, contrôles de `verifier:production` (ADR 0114). Étape 6 faite : [bilan](../bilans/jalon-22.md) et 7 captures. L'étape 5 attend la clé.
 
 **Objectif** : le pack fictif `zz-fictif` (ADR 0041) a prouvé au Jalon 4 qu'un second pays s'ajoute sans modifier le code. Depuis, dix-sept jalons ont ajouté beaucoup de choses :
 
