@@ -1,6 +1,6 @@
 # Plan du Jalon 23 — remise en ordre
 
-**Statut** : validé par le propriétaire le 2026-11-11 (piste choisie, ADR 0115). Rien n'est commencé.
+**Statut** : validé par le propriétaire le 2026-11-11 (piste choisie, ADR 0115). Étape 1 faite : liste d'attentes par urgence, avec qui et temps indicatif, même ordre dans la plateforme (ADR 0116).
 
 **Objectif** : rien de technique ne bloque plus le pilote ; ce qui reste dépend du propriétaire et de personnes extérieures (curriculum, juriste, clé API, référent, réglages GitHub). Après 22 jalons, les documents se sont empilés :
 

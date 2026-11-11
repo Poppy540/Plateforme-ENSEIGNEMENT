@@ -1,51 +1,47 @@
 # Ce qui vous attend
 
-**À jour au 2026-10-28 (Jalon 15).** C'est la liste unique de ce que les bilans des Jalons 6 à 14 vous demandent. Les nouveaux bilans renvoient ici au lieu de répéter leurs listes.
+**À jour au 2026-11-11 (Jalon 23).** C'est la liste unique de ce que les bilans des Jalons 6 à 22 vous demandent, **par ordre d'urgence** : d'abord ce qui prend le plus de temps ou débloque le reste. Les bilans, la mémoire du projet et les guides renvoient ici au lieu de répéter leurs listes.
 
-Dans la plateforme, la page **« Ce qui vous attend »** (`/administration/attentes`, ADR 0089) montre la même liste. Elle vérifie elle-même les points qu'elle peut voir : conditions du pilote, dates, chapitres, classe, questionnaire, seuils, skills encore « à valider ». Les points marqués _(à confirmer)_ ne sont visibles que de vous : cochez-les ici au fil de l'eau.
+Dans la plateforme, la page **« Ce qui vous attend »** (`/administration/attentes`, ADR 0089 et 0116) montre la même liste, dans le même ordre (un test le vérifie). Elle vérifie elle-même les points qu'elle peut voir : conditions du pilote, dates, chapitres, classe, questionnaire, seuils, skills encore « à valider ». Les points marqués _(à confirmer)_ ne sont visibles que de vous : cochez-les ici au fil de l'eau.
 
-L'ordre conseillé est celui du [guide de mise en route](mise-en-route.md).
+Les temps sont **indicatifs** : votre temps d'abord, puis l'attente éventuelle d'une autre personne. Le [guide de mise en route](mise-en-route.md) détaille chaque geste.
 
-## Juriste
+## 1. Maintenant : ce qui prend le plus de temps
 
-- [ ] <!-- attente:juriste --> **Avis écrit du juriste.** Il porte sur le dossier, la question Q19 (l'enseignant de la classe), la question Q20 (copies gardées 7 jours sur le téléphone), les durées de conservation, la fiche « Après l'essai » et la version établissement des rapports. Où agir : [dossier pour le juriste](juridique/dossier-juriste.md), puis la condition 1. Débloque : la classe pilote, les durées, la décision de démarrer.
+- [ ] <!-- attente:juriste --> **Obtenir l'avis écrit du juriste (dossier, questions Q19 et Q20, durées de conservation, fiche « Après l'essai », version établissement des rapports).** Qui : Vous, avec un juriste local. Temps : Une demi-journée pour trouver le juriste et envoyer le dossier ; puis 2 à 4 semaines de réponse. Débloque : La classe pilote, les durées de conservation, la décision de démarrer. Où : docs/juridique/dossier-juriste.md (lettre à compléter et signer), puis condition 1 dans « Conditions du pilote » ([dossier pour le juriste](juridique/dossier-juriste.md)).
+- [ ] <!-- attente:curriculum --> _(à confirmer)_ **Obtenir le programme officiel de l'unité du pilote (par compétences s'il y en a), le format de son examen et la liste des manuels retenus.** Qui : Vous, avec l'institution chargée des programmes ou l'établissement. Temps : 1 h pour compléter et envoyer la lettre ; puis le délai de réponse. Débloque : Le programme du pilote complet et sourcé (Jalon 21, étapes 2 et 3). Où : docs/pilote/demande-curriculum.md (pour le pilote : Mathématiques 3e par compétences, BEPC 2027, auprès de l'IPN ou de l'établissement ; décision D16 ; [modèle de demande](pilote/demande-curriculum.md) ; [sources consultées](../referentiels/gabon/sources/mathematiques-3e.md) : le programme officiel est introuvable en ligne).
+- [ ] <!-- attente:referents --> **Recruter et inviter les référents : Mathématiques d'abord, puis Sciences et Français ; avec le premier, la séance de prise en main sur l'espace d'entraînement.** Qui : Vous, avec l'établissement ou votre réseau. Temps : Quelques semaines pour trouver ; 15 minutes pour inviter ; 1 h de prise en main. Débloque : La validation des contenus ; la condition 3. Où : « Inviter un référent » ; guide et kit du référent ([guide du référent](pilote/guide-referent.md) ; [kit du référent](pilote/kit-referent/)).
+- [ ] <!-- attente:skills --> **Relire et valider les skills « élèves mineurs » et « files d'approbation ».** Qui : Vous. Temps : 1 h. Débloque : Les essais réels des agents. Où : agents/_commun/skills/eleves-mineurs/SKILL.md, agents/coordinateur/skills/files-d-approbation/SKILL.md.
+- [ ] <!-- attente:cle_api --> **Fournir la clé API (dans l'environnement, jamais dans la conversation) et donner l'accord sur le coût des essais réels (~121 USD).** Qui : Vous. Temps : 30 minutes ; les essais réels prennent ensuite environ une journée. Débloque : Les essais réels des agents, puis la décision de démarrer. Où : Variable ANTHROPIC_API_KEY du serveur ; condition 5.
+- [ ] <!-- attente:github --> **Faire les réglages de sécurité de GitHub (signalement privé, Dependabot, protection de main, email privée), puis demander la fusion de la branche de travail dans main.** Qui : Vous. Temps : 15 minutes. Débloque : La sécurité du dépôt public ; SECURITY.md, Dependabot et CodeQL actifs sur main. Où : docs/securite/reglages-github.md, puis `pnpm verifier:depot` ([guide des réglages](securite/reglages-github.md)).
 
-## Cadre du pilote, avec l'établissement
+## 2. Avant de déployer le site
 
-- [ ] <!-- attente:etablissement --> **Accord écrit de l'établissement** (condition 2).
-- [ ] <!-- attente:dates --> **Dates du pilote et format du rapport de fin**, fixés avec l'établissement. Saisie : « Rapport de fin de pilote ».
-- [ ] <!-- attente:chapitres --> **Chapitres du pilote** désignés : « Chapitres du pilote ».
-- [ ] <!-- attente:classe --> **Classe pilote créée et enseignant invité**, après la réponse du juriste à Q19 : « Classes du pilote ». Saisir comme capacité l'effectif annoncé par l'établissement (décision D10).
+- [ ] <!-- attente:hebergement --> **Choisir et déployer l'hébergement (2 processus par serveur), Supabase, sauvegardes chiffrées avec age (paire de clés générée sur votre ordinateur, clé privée hors du serveur) et restauration essayée ; SEL_OPPOSITION fixé une fois pour toutes ; base réglée sur le fuseau du pays ; déployer un paquet dont le contrôle complet a réussi.** Qui : Vous, avec Claude Code pour les commandes. Temps : 1 à 2 jours. Débloque : Le site réel. Où : Guide de mise en route (E1, E2) ; dossier de production ; `pnpm controler`, `pnpm paquet --pays`, `pnpm base:fuseau` ; condition 6 ([guide de mise en route](mise-en-route.md) (E1, E2) ; [dossier de production](production/README.md)).
+- [ ] <!-- attente:messages --> **Brancher les SMS ou emails réels et approuver les modèles de messages.** Qui : Vous. Temps : Une demi-journée, plus le délai d'ouverture du compte chez le fournisseur. Débloque : Les codes de connexion, les messages aux parents. Où : Dossier de production ; condition 7.
+- [ ] <!-- attente:veille --> **Nommer l'équipe de veille et tester l'alerte de détresse sur un vrai téléphone.** Qui : Vous, avec l'équipe de veille. Temps : 1 h. Débloque : La sécurité des élèves pendant le pilote. Où : Procédure de détresse ; conditions 8 et 9 ([procédure de détresse](pilote/procedure-detresse.md)).
+- [ ] <!-- attente:seuils --> **Valider les seuils du suivi et fixer le budget des agents par semaine.** Qui : Vous. Temps : 30 minutes. Débloque : La surveillance de tous les critères de suspension ; la condition 11. Où : Section « pilote » de pays.yaml ; « Critères de suspension ».
+- [ ] <!-- attente:valeurs --> **Valider les valeurs provisoires du pack (FAQ, délais, fiches des agents, durées), avec le référent et le juriste.** Qui : Vous, avec le référent et le juriste. Temps : 2 h ; `pnpm pack:verifier` liste ce qui reste. Débloque : La décision de démarrer. Où : referentiels/<pays>/ et SOURCES.md ; condition 10.
 
-## Référents et contenus
+## 3. Avant de démarrer le pilote
 
-- [ ] <!-- attente:referents --> **Référents recrutés et invités** : Mathématiques d'abord, puis Sciences et Français (condition 3 ; [guide du référent](pilote/guide-referent.md)). Avec le premier référent, ajuster les temps indicatifs de sa page d'accueil.
-- [ ] <!-- attente:contenus --> **3 à 5 chapitres du pilote validés** par le référent : chapitre, script et quiz (condition 4).
-- [ ] <!-- attente:valeurs --> **Valeurs provisoires du pack validées** (FAQ, délais, fiches des agents, durées), avec le référent et le juriste (condition 10).
-- [ ] <!-- attente:curriculum --> _(à confirmer)_ **Curriculum de Mathématiques 3e obtenu** : le curriculum par compétences 2026-2027, le format du BEPC 2027 et les manuels retenus, auprès de l'IPN ou de l'établissement ([modèle de demande](pilote/demande-curriculum.md) ; décision D16). Le programme officiel est introuvable en ligne ([sources](../referentiels/gabon/sources/mathematiques-3e.md)).
-- [ ] <!-- attente:questionnaire --> **Questionnaire anonyme validé** : passer `statut` à `valide` dans `questionnaire.yaml` du pack.
+- [ ] <!-- attente:etablissement --> **Obtenir l'accord écrit de l'établissement.** Qui : Vous, avec la direction de l'établissement. Temps : Une rencontre ; puis le délai de signature. Débloque : La classe pilote et la décision de démarrer. Où : Condition 2 dans « Conditions du pilote ».
+- [ ] <!-- attente:dates --> **Fixer avec l'établissement les dates du pilote et le format du rapport de fin.** Qui : Vous, avec l'établissement. Temps : 30 minutes. Débloque : Le tableau de bord, le rapport de fin, la clôture. Où : « Rapport de fin de pilote » (période).
+- [ ] <!-- attente:chapitres --> **Désigner les chapitres du pilote.** Qui : Vous, avec le référent. Temps : 15 minutes. Débloque : L'espace du référent (pilote en tête), les critères de suspension. Où : « Chapitres du pilote ».
+- [ ] <!-- attente:contenus --> **Faire valider 3 à 5 chapitres du pilote par le référent (chapitre, script, quiz).** Qui : Le référent. Temps : Environ 2 h par chapitre. Débloque : La décision de démarrer. Où : Espace du référent ; condition 4.
+- [ ] <!-- attente:classe --> **Créer la classe pilote et inviter son enseignant (après la réponse du juriste à Q19), avec l'effectif annoncé comme capacité.** Qui : Vous. Temps : 15 minutes. Débloque : La vue d'ensemble de l'enseignant ; la condition 2. Où : « Classes du pilote ».
+- [ ] <!-- attente:documents_pilote --> _(à confirmer)_ **Compléter les documents du pilote : « Qui appeler » dans l'aide-mémoire du référent, l'adresse du site sur la fiche élève ; relire la liste du jour J avec l'établissement.** Qui : Vous, avec l'établissement. Temps : 1 h. Débloque : Une journée d'ouverture sans surprise. Où : docs/pilote/kit-referent/, docs/pilote/fiche-eleve.md, docs/pilote/journee-ouverture.md ([kit du référent](pilote/kit-referent/), [fiche élève](pilote/fiche-eleve.md), [journée d'ouverture](pilote/journee-ouverture.md)).
+- [ ] <!-- attente:questionnaire --> **Valider le questionnaire anonyme (élèves et parents).** Qui : Vous. Temps : 20 minutes. Débloque : Le questionnaire dans la plateforme et ses résultats aux rapports. Où : questionnaire.yaml du pack (statut « valide »).
+- [ ] <!-- attente:repetition --> **Refaire la répétition sur le site déployé ; `pnpm verifier:site https://<adresse>` doit finir par « Site conforme ».** Qui : Vous, avec Claude Code. Temps : Une demi-journée. Débloque : La décision de démarrer. Où : docs/pilote/repetition.md ; condition 12 ([répétition](pilote/repetition.md)).
 
-## Agents : relecture, clé et essais réels
+## 4. Pendant et après le pilote
 
-- [ ] <!-- attente:skills --> **Skills relues et validées** : « élèves mineurs » (`agents/_commun/skills/eleves-mineurs/SKILL.md`) et « files d'approbation » (`agents/coordinateur/skills/files-d-approbation/SKILL.md`). Une fois validée, remplacer dans le fichier « À valider par le propriétaire » par « Validée par le propriétaire le … ».
-- [ ] <!-- attente:cle_api --> **Clé API et accord sur le coût des essais réels** (~121 USD ; mini-essais d'abord). La clé va dans l'environnement du serveur, jamais dans la conversation (condition 5).
-- [ ] <!-- attente:seuils --> **Seuils du suivi validés et budget des agents par semaine fixé** : section `pilote` de `pays.yaml`, puis `SOURCES.md` (condition 11).
-
-## Hébergement, fournisseurs et déploiement
-
-- [ ] <!-- attente:hebergement --> **Hébergement choisi et déployé**, avec 2 processus par serveur, ainsi que Supabase, les sauvegardes chiffrées avec `age` (clé privée gardée hors du serveur, dossier de production §5) et une restauration essayée. `SEL_OPPOSITION` est fixé une fois pour toutes. Avant de déployer : `pnpm controler` sur une copie propre (il comprend la répétition générale), puis `pnpm paquet` ; le `CONTROLE.md` du paquet déployé doit dire « contrôle complet réussi » (condition 6, décision D13).
-- [ ] <!-- attente:messages --> **SMS ou emails réels** branchés et modèles de messages approuvés (condition 7).
-- [ ] <!-- attente:veille --> **Équipe de veille nommée et alerte de détresse testée** sur un vrai téléphone (conditions 8 et 9).
-- [ ] <!-- attente:repetition --> **Répétition refaite sur le site déployé.** `pnpm verifier:site https://<adresse>` doit finir par « Site conforme » ; noter aussi le premier essai de restauration et l'outil de chiffrement des copies (condition 12).
-- [ ] <!-- attente:github --> _(à confirmer)_ **Réglages de sécurité de GitHub** : signalement privé des failles, mises à jour de sécurité Dependabot, protection de `main`, adresse email privée ; puis `pnpm verifier:depot` jusqu'à « Dépôt conforme » ([guide](securite/reglages-github.md), bilan du Jalon 20). GitHub Actions fonctionne depuis le Jalon 18.
-
-## Pendant et après le pilote
-
-- [ ] <!-- attente:suivi --> _(à confirmer)_ **Chaque semaine** : « Critères de suspension », « Semaine du pilote », puis le point au journal.
-- [ ] <!-- attente:fin --> _(à confirmer)_ **À la fin** : « Clôture du pilote » jusqu'à 8 / 8, puis « Sort des données » avec le juriste.
+- [ ] <!-- attente:suivi --> _(à confirmer)_ **Chaque semaine : « Critères de suspension », « Semaine du pilote », puis le point au journal.** Qui : Vous. Temps : 30 minutes par semaine. Débloque : Le suivi du pilote. Où : Tableau de bord du pilote.
+- [ ] <!-- attente:fin --> _(à confirmer)_ **À la fin : « Clôture du pilote » jusqu'à 8 / 8, puis « Sort des données » avec le juriste.** Qui : Vous, avec le juriste. Temps : Une demi-journée. Débloque : La fin propre du pilote. Où : Tableau de bord du pilote.
 
 ## Facultatif
 
-- [ ] <!-- attente:avatar --> _(à confirmer)_ **Fournisseur d'avatar** et son tarif. Sans lui, le pilote s'appuie sur les leçons écrites.
-- [ ] <!-- attente:surveillance --> _(à confirmer)_ **Service de surveillance des erreurs.**
-- [ ] <!-- attente:lecteur_ecran --> _(à confirmer)_ **Essai avec un lecteur d'écran** (TalkBack) sur un téléphone d'entrée de gamme, avec l'établissement.
+- [ ] <!-- attente:avatar --> _(à confirmer)_ **Choisir un fournisseur d'avatar (sinon, le pilote s'appuie sur les leçons écrites).** Qui : Vous. Temps : Quelques heures de comparaison ; accord sur le tarif. Débloque : Les vidéos des professeurs avatars. Où : Dossier de production §3 bis.
+- [ ] <!-- attente:surveillance --> _(à confirmer)_ **Choisir un service de surveillance des erreurs.** Qui : Vous. Temps : 1 h. Débloque : Les alertes d'erreur hors du serveur. Où : Dossier de production (journal d'erreurs).
+- [ ] <!-- attente:lecteur_ecran --> _(à confirmer)_ **Essayer la plateforme avec un lecteur d'écran sur un téléphone d'entrée de gamme.** Qui : Vous, avec l'établissement. Temps : 1 h, pendant le pilote. Débloque : L'accessibilité vérifiée en conditions réelles. Où : Avec l'établissement, pendant le pilote.
+- [ ] <!-- attente:heures_journal --> _(à confirmer)_ **Décider si les heures du journal de l'administration s'affichent à l'heure du pays (aujourd'hui en UTC ; les dates sont justes).** Qui : Vous. Temps : Une réponse. Débloque : Des heures lisibles sans calcul. Où : Bilan du Jalon 22, § 6.

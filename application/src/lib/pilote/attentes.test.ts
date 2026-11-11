@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   ATTENTES,
-  THEMES,
+  URGENCES,
   decompteAttentes,
   evaluerAttentes,
   type FaitsAttentes,
@@ -31,7 +31,9 @@ const TOUT: FaitsAttentes = {
 describe("ce qui attend le propriétaire (ADR 0089)", () => {
   it("codes uniques, thèmes connus, sans pays en dur", () => {
     expect(new Set(ATTENTES.map((a) => a.code)).size).toBe(ATTENTES.length);
-    expect(ATTENTES.every((a) => a.theme in THEMES)).toBe(true);
+    expect(ATTENTES.every((a) => a.urgence in URGENCES && a.qui !== "" && a.delai !== "")).toBe(
+      true,
+    );
     expect(JSON.stringify(ATTENTES)).not.toMatch(/Gabon|ga-|gabon/);
   });
 
@@ -62,12 +64,13 @@ describe("ce qui attend le propriétaire (ADR 0089)", () => {
     expect(etat({ ...TOUT, questionnaireValide: null }, "questionnaire")).toBe("a_faire");
   });
 
-  it("chaque point figure dans docs/attentes-proprietaire.md, et rien d'autre", () => {
+  it("chaque point figure dans docs/attentes-proprietaire.md, dans le même ordre, et rien d'autre", () => {
     const doc = readFileSync(
       resolve(__dirname, "../../../../docs/attentes-proprietaire.md"),
       "utf8",
     );
     const codes = [...doc.matchAll(/<!-- attente:([a-z_]+) -->/g)].map((m) => m[1]);
-    expect(codes.sort()).toEqual(ATTENTES.map((a) => a.code).sort());
+    // Même liste, dans le même ordre d'urgence (ADR 0116).
+    expect(codes).toEqual(ATTENTES.map((a) => a.code));
   });
 });

@@ -16,8 +16,14 @@ test("la liste unique : points vérifiés par la plateforme et points à confirm
   await encadre.getByRole("link", { name: "Voir la liste complète →" }).click();
 
   await expect(page.getByRole("heading", { name: "Ce qui vous attend", level: 1 })).toBeVisible();
-  for (const theme of ["Juriste", "Cadre du pilote, avec l'établissement", "Facultatif"])
-    await expect(page.getByRole("heading", { name: theme, level: 2 })).toBeVisible();
+  for (const urgence of [
+    "1. Maintenant : ce qui prend le plus de temps",
+    "2. Avant de déployer le site",
+    "3. Avant de démarrer le pilote",
+    "Facultatif",
+  ])
+    await expect(page.getByRole("heading", { name: urgence, level: 2 })).toBeVisible();
+  await expect(page.locator("#attente-juriste")).toContainText("Qui : Vous, avec un juriste local");
   // Les skills du dépôt portent encore « À valider par le propriétaire » : à faire, vérifié par la plateforme.
   await expect(page.locator("#attente-skills")).toContainText(
     "À faire — vérifié par la plateforme",

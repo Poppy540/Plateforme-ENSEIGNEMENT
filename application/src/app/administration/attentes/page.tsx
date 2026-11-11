@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { THEMES, decompteAttentes, type EtatAttente, type Theme } from "@/lib/pilote/attentes";
+import { URGENCES, decompteAttentes, type EtatAttente, type Urgence } from "@/lib/pilote/attentes";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import { attentesDuProprietaire } from "@/lib/serveur/attentes-proprietaire";
 
@@ -24,9 +24,9 @@ export default async function PageAttentes() {
       </p>
       <h1>Ce qui vous attend</h1>
       <p className="note">
-        Tout ce que les bilans des jalons vous demandent, au même endroit. La plateforme vérifie
-        elle-même les points qu&apos;elle peut voir ; les autres sont « à confirmer par vous » et se
-        suivent dans docs/attentes-proprietaire.md.
+        Tout ce que les bilans des jalons vous demandent, au même endroit, par ordre d&apos;urgence.
+        La plateforme vérifie elle-même les points qu&apos;elle peut voir ; les autres sont « à
+        confirmer par vous » et se suivent dans docs/attentes-proprietaire.md.
       </p>
       <p className="decompte">
         <strong>
@@ -34,12 +34,12 @@ export default async function PageAttentes() {
         </strong>
         , {faits} fait{faits > 1 ? "s" : ""}.
       </p>
-      {(Object.keys(THEMES) as Theme[]).map((theme) => (
-        <section key={theme} aria-labelledby={`theme-${theme}`}>
-          <h2 id={`theme-${theme}`}>{THEMES[theme]}</h2>
-          <ul className="liste-cartes" aria-label={THEMES[theme]}>
+      {(Object.keys(URGENCES) as Urgence[]).map((urgence) => (
+        <section key={urgence} aria-labelledby={`urgence-${urgence}`}>
+          <h2 id={`urgence-${urgence}`}>{URGENCES[urgence]}</h2>
+          <ul className="liste-cartes" aria-label={URGENCES[urgence]}>
             {attentes
-              .filter((a) => a.theme === theme)
+              .filter((a) => a.urgence === urgence)
               .map((a) => (
                 <li
                   key={a.code}
@@ -50,6 +50,9 @@ export default async function PageAttentes() {
                   <p>
                     <strong>{ETATS[a.etat]}</strong>
                     {a.etat !== "a_confirmer" && " — vérifié par la plateforme"}
+                  </p>
+                  <p className="note">
+                    Qui : {a.qui} · Temps indicatif : {a.delai}
                   </p>
                   <p className="note">Où : {a.ou}</p>
                   <p className="note">Débloque : {a.debloque}</p>
