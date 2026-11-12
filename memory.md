@@ -75,7 +75,7 @@ Toujours ouvertes au 2026-11-12 (les hypothèses réglées depuis sont dans `doc
 - **Contrôle rapide** : 6 contrôles depuis l'étape 3 du Jalon 23 (format, lint, types, unitaires, liens, audit) ; un lien Markdown cassé le fait échouer.
 - **Prettier** : ne jamais le lancer sur `CLAUDE.md` (il déforme le §5 du propriétaire) ; lancé sur un dossier entier de `referentiels/`, il reformate des fichiers qui ne le sont pas : ne viser que les fichiers modifiés, et ne pas le lancer sur un document hors `application/` qu'on ne fait que corriger d'une ligne (il réaligne des tableaux entiers).
 - **Tests de bout en bout qui partagent la base** :
-  - prendre une tranche de numéros libre (déjà prises jusqu'à `+999 000 041 xx`) et un chapitre qu'aucun autre test ne cite ;
+  - prendre une tranche de numéros libre (déjà prises jusqu'à `+999 000 042 xx`) et un chapitre qu'aucun autre test ne cite ;
   - `zz-an3-mathematiques` : `portabilite.spec.ts` y compte 2 chapitres validés sur 3 ;
   - `zz-an2-mathematiques/proportions` : réservé à `journee-pays-z.spec.ts` ;
   - `ga-5e-mathematiques/statistiques-moyenne` : réservé à `journee-ouverture.spec.ts` ;
@@ -87,13 +87,13 @@ Toujours ouvertes au 2026-11-12 (les hypothèses réglées depuis sont dans `doc
 
 ## État d'avancement
 
-- **Jalons 1 à 22 faits** ; **Jalon 23 (remise en ordre) en cours** : plan [`docs/plans/jalon-23.md`](docs/plans/jalon-23.md). Bilans dans `docs/bilans/`, décisions dans `docs/decisions/` (ADR 0001 à 0118).
+- **Jalons 1 à 23 faits** (passages réels des agents mis à part) ; dernier bilan : [`docs/bilans/jalon-23.md`](docs/bilans/jalon-23.md). Bilans dans `docs/bilans/`, décisions dans `docs/decisions/` (ADR 0001 à 0118).
 - **La plateforme est construite et testée en simulation** : inscription avec accord du parent, catalogue, leçons, quiz, professeur IA, plan de révision, hors ligne, espaces du référent, de l'enseignant et de l'administration, pilotage complet du pilote (conditions, critères, semaine, fin, clôture), dix agents simulés, exploitation (sauvegardes chiffrées, migrations suivies, paquet, répétition générale), deux packs (Gabon, pays fictif Z) et un modèle pour en ajouter.
 - **Rien n'est déployé, rien n'est souscrit, aucun élève réel.** Rien de technique ne bloque le pilote : ce qui reste dépend du propriétaire (liste par urgence).
 - **Jalons suspendus** : Jalon 21, étapes 2 et 3 (programme du pilote complet) attendent le curriculum de Maths 3e ; l'étape « passages réels des agents » des Jalons 13 à 23 attend la clé API, la relecture des deux skills et l'accord sur le coût (~121 USD).
-- **Derniers chiffres** (2026-11-11) : 355 tests unitaires, 150 scénarios de base, 128 de bout en bout ; `pnpm controler` 10 / 10 ; GitHub Actions vert.
+- **Derniers chiffres** (2026-11-12) : 358 tests unitaires, 150 scénarios de base, 128 de bout en bout ; `pnpm controler` 10 / 10 ; GitHub Actions vert.
 - **Journal détaillé** : une ligne par étape faite, en tête de « État d'avancement » dans `docs/historique.md`.
 
 ## Prochaine étape
 
-Jalon 23, étape 5 (bilan) sur « oui, continue avec l'étape 5 » ; l'étape 4 (passages réels) attend la clé. Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.
+Jalon 23 terminé sauf l'étape 4 (passages réels : clé). Plan du Jalon 24 sur « oui, propose le plan de la suite ». Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.
