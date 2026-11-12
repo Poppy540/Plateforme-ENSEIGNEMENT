@@ -81,6 +81,7 @@ Les nouvelles lignes du journal s'ajoutent en tête de « État d'avancement »,
 
 ## État d'avancement
 
+- 2026-11-12 : Jalon 24, étape 0 faite — plan `docs/plans/jalon-24.md` et ADR 0119 validés (piste choisie : revue de sécurité des Jalons 16 à 23 ; écartés : fusion dans main, heure du pays partout, pause). **Rien d'autre n'est commencé.**
 - 2026-11-12 : Jalon 23, étape 5 faite — bilan `docs/bilans/jalon-23.md`, une capture `docs/demo/jalon-23/` (`tests/demo/jalon-23.spec.ts`, compte `+999 000 042 01`). Tests : 358 unitaires ; contrôle rapide 6/6.
 - 2026-11-12 : Jalon 23, étape 3 faite (ADR 0118) — `README.md` du dépôt réécrit en porte d'entrée (par public, carte du dépôt) ; corrigés : README des agents (skills), de l'application (Chromium, renvoi à CLAUDE.md, `verifier:liens`), sommaire du pilote (+ journée d'ouverture, fiche élève, kit du référent, demande de curriculum), carte du dépôt dans CLAUDE.md ; archives datées : `docs/fournisseurs-2026-10.md`, `docs/skills-recherche-2026-10-04.md`. `pnpm verifier:liens` (`src/lib/exploitation/liens.ts`, `scripts/verifier-liens.mts`) : liens relatifs et ancres façon GitHub, fichiers Markdown suivis par git ; contrôle rapide (6 contrôles). Premier passage : 306 fichiers, 370 liens, aucun cassé.
 - 2026-11-12 : Jalon 23, étape 2 faite (ADR 0117) — `memory.md` réécrit en page de travail (~100 lignes : état, méthode, règles, décisions en vigueur D1-D16, environnement et pièges, prochaine étape) ; décisions datées, hypothèses, questions ouvertes et journal (139 entrées) déplacés tels quels ici.
