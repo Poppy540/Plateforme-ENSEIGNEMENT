@@ -10,17 +10,21 @@ Pays pilote : Gabon. Unité pilote : Mathématiques 3e (`ga-3e-mathematiques`).
 
 ## Documents
 
-| Document                                                           | Pour qui                       | Contenu                                                                                        |
-| ------------------------------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------------------------------- |
-| [procedure.md](procedure.md)                                       | Équipe, établissement          | Déroulé du pilote : rôles, calendrier, avant / pendant / après                                 |
-| [fiche-information.md](fiche-information.md)                       | Parents et élèves              | Ce qu'est la plateforme, ce qui est collecté, leurs droits                                     |
-| [consentements.md](consentements.md)                               | Parents, élèves, établissement | Accords demandés, sur papier et dans la plateforme                                             |
-| [procedure-detresse.md](procedure-detresse.md)                     | Équipe de veille               | Que faire quand un élève exprime une détresse                                                  |
-| [retour-experience.md](retour-experience.md)                       | Équipe, établissement          | Ce qu'on mesure, questionnaires, réunion de bilan                                              |
-| [criteres-arret.md](criteres-arret.md)                             | Propriétaire, équipe           | Quand suspendre ou arrêter le pilote                                                           |
-| [repetition.md](repetition.md)                                     | Propriétaire, équipe           | Répétition complète avant le pilote : déroulé, résultats attendus                              |
-| [guide-referent.md](guide-referent.md)                             | Enseignant-référent            | Utiliser l'espace référent : valider, rejeter, publier, signaler                               |
-| [../juridique/dossier-juriste.md](../juridique/dossier-juriste.md) | Juriste                        | Registre des traitements, sous-traitants, risques pour les mineurs, 19 questions (condition 1) |
+| Document                                                           | Pour qui                                                | Contenu                                                                                        |
+| ------------------------------------------------------------------ | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| [procedure.md](procedure.md)                                       | Équipe, établissement                                   | Déroulé du pilote : rôles, calendrier, avant / pendant / après                                 |
+| [fiche-information.md](fiche-information.md)                       | Parents et élèves                                       | Ce qu'est la plateforme, ce qui est collecté, leurs droits                                     |
+| [consentements.md](consentements.md)                               | Parents, élèves, établissement                          | Accords demandés, sur papier et dans la plateforme                                             |
+| [procedure-detresse.md](procedure-detresse.md)                     | Équipe de veille                                        | Que faire quand un élève exprime une détresse                                                  |
+| [retour-experience.md](retour-experience.md)                       | Équipe, établissement                                   | Ce qu'on mesure, questionnaires, réunion de bilan                                              |
+| [criteres-arret.md](criteres-arret.md)                             | Propriétaire, équipe                                    | Quand suspendre ou arrêter le pilote                                                           |
+| [repetition.md](repetition.md)                                     | Propriétaire, équipe                                    | Répétition complète avant le pilote : déroulé, résultats attendus                              |
+| [journee-ouverture.md](journee-ouverture.md)                       | Propriétaire, établissement                             | Liste du jour J : la veille, le matin, la séance, le soir                                      |
+| [fiche-eleve.md](fiche-eleve.md)                                   | Élèves                                                  | « Comment me connecter », à distribuer (adresse du site à compléter)                           |
+| [kit-referent/](kit-referent/README.md)                            | Enseignant-référent                                     | Kit de démarrage : aide-mémoire, séance de prise en main, captures                             |
+| [demande-curriculum.md](demande-curriculum.md)                     | Propriétaire, puis l'institution chargée des programmes | Lettre de demande du curriculum de Mathématiques 3e (décision D16)                             |
+| [guide-referent.md](guide-referent.md)                             | Enseignant-référent                                     | Utiliser l'espace référent : valider, rejeter, publier, signaler                               |
+| [../juridique/dossier-juriste.md](../juridique/dossier-juriste.md) | Juriste                                                 | Registre des traitements, sous-traitants, risques pour les mineurs, 19 questions (condition 1) |
 
 ## Conditions préalables (toutes obligatoires)
 

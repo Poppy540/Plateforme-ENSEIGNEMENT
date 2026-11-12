@@ -24,7 +24,7 @@ Tout ce qui dépend d'un système éducatif vit dans `referentiels/<pays>/`, **j
 ```
 CLAUDE.md, memory.md      résumé du projet / mémoire de travail
 application/              application web Next.js (PWA)
-docs/                     cadrage.md, prompt-claude-code.md, mise-en-route.md (guide du propriétaire), decisions/ (ADR), plans/, bilans/, demo/, pilote/, production/, juridique/, securite/, recrutement/
+docs/                     cadrage.md, prompt-claude-code.md, attentes-proprietaire.md (ce qui attend le propriétaire, par urgence), mise-en-route.md, historique.md (journal des jalons), decisions/ (ADR), plans/, bilans/, demo/, pilote/, production/, juridique/, securite/, performance/, portabilite/, recrutement/
 agents/<agent>/           prompt.md (recopié du cadrage), permissions.md, skills/, tests/*.feature
 referentiels/<pays>/      pack pays (gabon/ = pilote) ; _modele/ pour un nouveau pays
 secrets/                  modèles *.env.example uniquement ; vrais .env ignorés et interdits en lecture
@@ -51,6 +51,7 @@ cd application
 pnpm install          # dépendances
 pnpm controler [--rapide] [--liste]   # TOUS les contrôles en une commande, outils vérifiés d'abord ; --rapide = format, lint, types, unitaires ; rapport daté dans .controles/ (ADR 0095-0096)
 pnpm controler:installer [--retirer]  # facultatif : contrôle rapide avant chaque git push (ADR 0097)
+pnpm verifier:liens   # liens internes de toute la documentation Markdown (dans pnpm controler --rapide ; ADR 0118)
 pnpm audit:dependances   # failles connues des dépendances (dans pnpm controler) ; exceptions écrites dans exceptions-audit.json (ADR 0105)
 pnpm verifier:depot   # réglages de sécurité du dépôt GitHub, lecture seule (guide docs/securite/reglages-github.md ; ADR 0107)
 pnpm mesurer:pages    # poids et temps de toutes les pages en 3G lente et 2G → docs/performance/mesures-pages.md (budgets : ADR 0099, vérifiés par poids-pages.spec.ts)

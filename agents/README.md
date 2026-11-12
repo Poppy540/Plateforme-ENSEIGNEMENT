@@ -19,7 +19,7 @@ Chaque dossier d'agent contient :
 
 - `prompt.md` : recopié **tel quel** du cadrage (extrait automatiquement des blocs de code). Toute modification passe par le propriétaire.
 - `permissions.md` : droits tirés du §5.2 du prompt maître, et clés de l'agent.
-- `skills/` : `SOURCES.md` (aucune skill installée à ce jour).
+- `skills/` : les skills de l'agent (un dossier par skill, avec `SKILL.md`), et `SOURCES.md` pour l'origine et la licence de chacune.
 - `tests/` : scénarios Gherkin tirés des Parties D et E. La batterie commune TC est dans `tests/commun/`.
 
 Les règles communes du §5.1 (`CLAUDE.md`) s'appliquent à tous les agents en plus de leur prompt. Les variables `{{...}}` sont remplies par la configuration de l'unité ou du pays (`referentiels/<pays>/agents/`).

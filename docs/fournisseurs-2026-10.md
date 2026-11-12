@@ -1,5 +1,7 @@
 # Fournisseurs du pilote : comparatif chiffré (octobre 2026)
 
+> **Archive datée (octobre 2026)** : état du marché à cette date, jamais mis à jour depuis. Les fournisseurs ne sont toujours pas choisis ([ce qui vous attend](attentes-proprietaire.md)) : revérifier chaque prix et chaque condition avant de souscrire.
+
 **Statut** : document de travail pour la décision 3 du plan du Jalon 2. **Rien n'est souscrit, aucun compte n'est créé.**
 
 **Fiabilité** : les sites des fournisseurs étaient bloqués par le réseau de l'environnement. Les chiffres viennent de recherches limitées aux domaines officiels (2026-10-04), sous forme d'extraits. **Ils sont à revérifier sur les pages citées avant tout engagement.** La qualité du français (voix, synchronisation des lèvres) n'a pas été écoutée.

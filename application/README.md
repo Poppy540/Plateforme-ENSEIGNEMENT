@@ -4,10 +4,13 @@ Next.js + TypeScript, mobile-first, en français (ADR 0011 et 0012). Données fi
 
 ## Commandes (depuis `application/`)
 
+Les plus courantes ; la liste complète (base, packs pays, déploiement, exploitation) est dans le [`CLAUDE.md` du dépôt](../CLAUDE.md#commandes).
+
 | Commande                               | Rôle                                                                                                                                                                                       |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `pnpm install`                         | Installer les dépendances                                                                                                                                                                  |
 | `pnpm controler [--rapide] [--liste]`  | **Tous les contrôles en une commande** (ADR 0095) : outils vérifiés d'abord ; `--rapide` avant chaque envoi, complet avant chaque déploiement ; rapport daté dans `.controles/` (ADR 0096) |
+| `pnpm verifier:liens`                  | Liens internes de toute la documentation Markdown (fichiers et titres visés) ; lancé par `pnpm controler --rapide` (ADR 0118)                                                              |
 | `pnpm audit:dependances`               | Failles connues des dépendances ; échec sur une faille élevée ou critique sans exception écrite (`exceptions-audit.json`, ADR 0105) ; lancé par `pnpm controler`                           |
 | `pnpm verifier:depot [proprio/dépôt]`  | Réglages de sécurité du dépôt GitHub, en lecture seule par l'API publique (ADR 0107 ; guide `docs/securite/reglages-github.md`)                                                            |
 | `pnpm mesurer:pages`                   | Poids et temps de toutes les pages en 3G lente et 2G, processeur ralenti ; rapport dans `docs/performance/` (ADR 0098, 0099)                                                               |
@@ -32,6 +35,6 @@ Professeur simulé (`MODE_MODELE=simulation`) : réponses scriptées, aucun appe
 
 Connexion simulée : n'importe quel numéro au format international (par exemple `+999 000 000 01`), code `123456`. Les messages qui seraient envoyés (lien de validation du parent) s'affichent sur `/developpement/messages`. `bash scripts/base-locale.sh arreter` arrête la base ; `reinitialiser` la recrée.
 
-Dans l'environnement cloud, Chromium est déjà installé : `CHEMIN_CHROMIUM=/opt/pw-browsers/chromium-1194/chrome-linux/chrome pnpm test:e2e`.
+Dans l'environnement cloud, Chromium est déjà installé : `pnpm test:e2e` le trouve seul. Ailleurs, sans navigateur Playwright, indiquer son chemin avec `CHEMIN_CHROMIUM=<chemin de chrome>`.
 
 `AGENTS.md` et `CLAUDE.md` de ce dossier sont générés par Next.js (consignes pour les agents de code) ; les règles du projet sont dans le `CLAUDE.md` à la racine du dépôt.

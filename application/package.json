@@ -36,6 +36,7 @@
     "controler": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/controler.mts",
     "controler:installer": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/crochet-avant-envoi.mts",
     "verifier:production": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verifier-production.mts",
+    "verifier:liens": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verifier-liens.mts",
     "audit:dependances": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/audit-dependances.mts",
     "verifier:depot": "NODE_USE_ENV_PROXY=1 node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --no-warnings=UNDICI-EHPA scripts/verifier-depot.mts"
   },
