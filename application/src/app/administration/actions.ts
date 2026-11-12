@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { messageSigne } from "@/lib/serveur/message-adresse";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import { supprimerDocumentOfficiel, traiterFileHumaine } from "@/lib/serveur/administration";
 import {
@@ -25,7 +26,7 @@ const reprise = (donnees: FormData): Reprise => ({
 
 function retour(ancre: string, erreur: string | null, message: string): never {
   revalidatePath("/administration");
-  const parametres = new URLSearchParams(erreur ? { erreur } : { ok: message });
+  const parametres = new URLSearchParams(messageSigne(erreur ? { erreur } : { ok: message }));
   redirect(`/administration?${parametres}#${ancre}`);
 }
 

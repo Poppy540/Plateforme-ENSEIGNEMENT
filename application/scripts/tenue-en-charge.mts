@@ -9,6 +9,7 @@
 // Le serveur doit tourner en simulation (MODE_AUTH, MODE_MODELE) avec le secret de développement : les sessions des
 // élèves fictifs sont ouvertes directement en base et leurs cookies signés comme le ferait le serveur.
 // Variables : URL_CHARGE (adresse du site), URL_BASE_DONNEES_ADMIN (défaut : base locale), SECRET_SESSION (facultatif).
+import { estBaseLocale } from "../src/lib/exploitation/entrainement.ts";
 import { createHash } from "node:crypto";
 import pg from "pg";
 import { signerSession } from "../src/lib/session-signee.ts";
@@ -36,7 +37,7 @@ const SECRET =
   process.env.SECRET_SESSION ?? "secret-de-developpement-uniquement-jamais-en-production";
 const REFERENT_FICTIF = "99999999-9999-4999-8999-999999999999";
 
-if (!/@(127\.0\.0\.1|localhost)(:\d+)?\//.test(BASE)) {
+if (process.env.ENVIRONNEMENT === "production" || !estBaseLocale(BASE, process.env.PGHOST)) {
   console.error(
     "Refusé : la tenue en charge ne s'exécute que sur une base locale de données fictives.",
   );

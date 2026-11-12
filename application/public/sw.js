@@ -23,6 +23,15 @@ const PAGES_GARDEES = [
   QUIZ,
 ];
 const MARQUE_GARDER = /<meta[^>]+name="garder-hors-ligne"/i;
+// En-têtes de sécurité de la page d'origine, rendus avec la copie hors ligne (revue du Jalon 24, S21) : la
+// politique de contenu (nonce compris, déjà écrit dans la page) et l'interdiction d'affichage dans un cadre.
+const EN_TETES_SECURITE = [
+  "content-security-policy",
+  "x-frame-options",
+  "x-content-type-options",
+  "referrer-policy",
+  "permissions-policy",
+];
 const DUREE_COPIE_MS = 7 * 24 * 60 * 60 * 1000;
 const aGarder = (chemin) => PAGES_GARDEES.some((r) => r.test(chemin));
 const perimee = (reponse) =>
@@ -133,6 +142,10 @@ async function garderChapitre(requete, reponse, demandeLe) {
   entetes.set("x-titre-chapitre", encodeURIComponent(titre).slice(0, 300));
   entetes.set("x-garde-le", new Date().toISOString());
   entetes.set("x-demande-le", String(demandeLe));
+  for (const nom of EN_TETES_SECURITE) {
+    const valeur = reponse.headers.get(nom);
+    if (valeur) entetes.set(nom, valeur);
+  }
   await cache.put(chemin, new Response(texte, { headers: entetes }));
 }
 
@@ -157,7 +170,12 @@ async function pageDeChapitre(evenement) {
       // Date de la copie sur la page (attribut lu par le bandeau « hors ligne »), rien d'autre de modifié.
       const garde = copie.headers.get("x-garde-le");
       const texte = (await copie.text()).replace(/<html/i, `<html data-copie-du="${garde}"`);
-      return new Response(texte, { headers: { "content-type": "text/html; charset=utf-8" } });
+      const entetes = new Headers({ "content-type": "text/html; charset=utf-8" });
+      for (const nom of EN_TETES_SECURITE) {
+        const valeur = copie.headers.get(nom);
+        if (valeur) entetes.set(nom, valeur);
+      }
+      return new Response(texte, { headers: entetes });
     }
     if (copie && cache) await cache.delete(chemin);
     return (await caches.match(PAGE_HORS_LIGNE)) || Response.error();

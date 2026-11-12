@@ -2,12 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { messageSigne } from "@/lib/serveur/message-adresse";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import { declarerCritere, leverCritere } from "@/lib/serveur/criteres-pilote";
 
 function retour(critere: string, erreur: string | null, message: string): never {
   revalidatePath("/administration/criteres");
-  const parametres = new URLSearchParams(erreur ? { erreur } : { ok: message });
+  const parametres = new URLSearchParams(messageSigne(erreur ? { erreur } : { ok: message }));
   redirect(`/administration/criteres?${parametres}#critere-${critere}`);
 }
 

@@ -1,6 +1,6 @@
 # Revue de sécurité et de confidentialité — Jalons 16 à 23
 
-**Date** : 2026-11-12 · **Jalon 24, étape 1** (ADR 0119) · **Auteur** : Claude Code · **À relire par** : le propriétaire.
+**Date** : 2026-11-12 · **Jalon 24, étape 1** (ADR 0119) · **Corrections** : S10, S11, S13 à S24 appliquées le 2026-11-12 (étape 2, ADR 0120) ; S12 et D18 attendent vos décisions (§5) · **Auteur** : Claude Code · **À relire par** : le propriétaire.
 
 **Périmètre** : tout ce qui a changé depuis la revue du Jalon 16 (commit `c144185`), soit 82 fichiers, plus les migrations 0047 et 0048 arrivées juste après elle :
 
@@ -107,7 +107,7 @@ La revue relève **1 constat moyen, 7 faibles et 7 pour information**. Les corre
 
 - **Où** : commentaire de `application/src/app/api/mesures/visionnage/route.ts` (« rien n'est gardé sur l'élève »), ADR 0103 (« aucune donnée nouvelle »), registre du dossier pour le juriste.
 - **Ce qui se passe** : depuis la décision D15, ouvrir une leçon écrit une ligne de progression nominative. Le traitement est utile et voulu, mais décrit comme inexistant.
-- **Correction (étape 2)** : corriger le commentaire et l'ADR, et ajouter la ligne au registre des traitements du dossier pour le juriste.
+- **Correction (étape 2)** : corriger le commentaire et l'ADR. Vérification faite à l'étape 2 : le registre du dossier pour le juriste (T3) décrivait déjà ce traitement.
 
 ### S15 — Clé API visible de toute la tâche « passage réel » · **faible**
 

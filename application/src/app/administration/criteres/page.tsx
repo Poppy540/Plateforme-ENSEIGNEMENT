@@ -1,3 +1,4 @@
+import { messageDeLAdresse } from "@/lib/serveur/message-adresse";
 import Link from "next/link";
 import { synthese, type CritereEvalue, type EtatCritere, type Niveau } from "@/lib/pilote/criteres";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
@@ -94,8 +95,7 @@ export default async function PageCriteres({
   const parametres = await searchParams;
   const { pays, faits, criteres } = await criteresDuPilote(administrateur);
   const { atteints, aExaminer, nonSurveilles, arret } = synthese(criteres);
-  const erreur = typeof parametres.erreur === "string" ? parametres.erreur.slice(0, 200) : null;
-  const ok = typeof parametres.ok === "string" ? parametres.ok.slice(0, 100) : null;
+  const { erreur, ok } = messageDeLAdresse(parametres);
 
   return (
     <main className="conteneur">

@@ -22,7 +22,7 @@ Trois choix étaient présentés :
   - une fonction interne, `marquer_chapitre_commence`, que personne ne peut appeler directement ;
   - elle est appelée par `noter_visionnage`, le même signal que le compteur agrégé de l'ADR 0052, et par un déclencheur sur `tentatives_quiz`.
 - **Jamais de retour en arrière** : un chapitre terminé reste terminé. Une vidéo terminée seule ne marque rien.
-- **Aucune donnée nouvelle** : la progression existait déjà. Elle est seulement remplie plus tôt. La vue de l'enseignant reste agrégée et masquée sous 5 élèves.
+- **Aucune donnée nouvelle** : la progression existait déjà. Elle est seulement remplie plus tôt. _Précision (revue du Jalon 24, S14) : c'est donc une ligne de progression nominative écrite dès l'ouverture d'une leçon ; elle est décrite au registre du dossier pour le juriste (T3). Depuis la migration 0051, seuls les chapitres du pays de l'élève sont notés._ La vue de l'enseignant reste agrégée et masquée sous 5 élèves.
 
 ## Conséquences
 

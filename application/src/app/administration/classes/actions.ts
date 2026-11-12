@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { messageSigne } from "@/lib/serveur/message-adresse";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import {
   annulerInvitationsEnseignant,
@@ -65,6 +66,8 @@ export async function capacite(d: FormData): Promise<void> {
     Number(texte(d, "capacite")),
   );
   revalidatePath("/administration/classes");
-  const parametres = new URLSearchParams(erreur ? { erreur } : { ok: "Capacité enregistrée." });
+  const parametres = new URLSearchParams(
+    messageSigne(erreur ? { erreur } : { ok: "Capacité enregistrée." }),
+  );
   redirect(`/administration/classes?${parametres}`);
 }

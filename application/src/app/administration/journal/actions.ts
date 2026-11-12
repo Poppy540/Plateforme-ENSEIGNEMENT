@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { messageSigne } from "@/lib/serveur/message-adresse";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import { noterJournal } from "@/lib/serveur/journal-pilote";
 
@@ -15,7 +16,7 @@ export async function noter(donnees: FormData): Promise<void> {
   );
   revalidatePath("/administration/journal");
   const parametres = new URLSearchParams(
-    erreur ? { erreur } : { ok: "Entrée ajoutée au journal." },
+    messageSigne(erreur ? { erreur } : { ok: "Entrée ajoutée au journal." }),
   );
   redirect(`/administration/journal?${parametres}`);
 }

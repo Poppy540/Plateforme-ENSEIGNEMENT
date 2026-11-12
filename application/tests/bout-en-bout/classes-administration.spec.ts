@@ -139,3 +139,14 @@ test("classe pleine : le code est refusé et l'administration alertée ; la capa
   await page.getByRole("button", { name: "Rejoindre ma classe" }).click();
   await expect(page.getByText(`Tu fais partie de la classe ${NOM}`)).toBeVisible();
 });
+
+test("un message fabriqué dans l'adresse ne s'affiche pas (revue du Jalon 24, S22)", async ({
+  page,
+}) => {
+  await seConnecter(page, ADMIN);
+  await page.goto(
+    `/administration/classes?${new URLSearchParams({ erreur: "Appelez le +999 000 000 00", s: "faux" })}`,
+  );
+  await expect(page.getByRole("heading", { name: "Classes du pilote" })).toBeVisible();
+  await expect(page.locator("main")).not.toContainText("Appelez le");
+});

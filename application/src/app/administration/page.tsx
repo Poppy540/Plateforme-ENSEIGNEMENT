@@ -1,3 +1,4 @@
+import { messageDeLAdresse } from "@/lib/serveur/message-adresse";
 import Link from "next/link";
 import { seDeconnecter } from "../connexion/actions";
 import { FormulaireDeconnexion } from "../composants/hors-ligne";
@@ -106,8 +107,7 @@ function ChampsReprise({ id }: { id: string }) {
 export default async function PageAdministration({ searchParams }: PageProps<"/administration">) {
   const administrateur = await exigerAdministrateur();
   const parametres = await searchParams;
-  const erreur = typeof parametres.erreur === "string" ? parametres.erreur.slice(0, 200) : null;
-  const ok = typeof parametres.ok === "string" ? parametres.ok.slice(0, 120) : null;
+  const { erreur, ok } = messageDeLAdresse(parametres);
   const [t, documents, pilote] = await Promise.all([
     tableauAdministration(administrateur),
     documentsOfficiels(administrateur),

@@ -9,8 +9,8 @@ import {
 
 describe("identifiants de connexion", () => {
   it("normalise un numéro international saisi avec espaces, points ou 00", () => {
-    expect(normaliserTelephone("+241 06 12 34 56")).toBe("+24106123456");
-    expect(normaliserTelephone("00241.06.12.34.56")).toBe("+24106123456");
+    expect(normaliserTelephone("+999 06 12 34 56")).toBe("+99906123456");
+    expect(normaliserTelephone("00999.06.12.34.56")).toBe("+99906123456");
   });
 
   it("refuse un numéro sans indicatif ou trop court", () => {
@@ -37,8 +37,8 @@ describe("identifiants de connexion", () => {
   });
 
   it("masque l'identifiant pour l'affichage et les journaux", () => {
-    const masque = masquer({ type: "telephone", valeur: "+24106123456" });
-    expect(masque.startsWith("+241")).toBe(true);
+    const masque = masquer({ type: "telephone", valeur: "+99906123456" });
+    expect(masque.startsWith("+999")).toBe(true);
     expect(masque).not.toContain("061234");
     expect(masquer({ type: "email", valeur: "parent@exemple.org" })).toBe("p•••@exemple.org");
   });
@@ -47,12 +47,12 @@ describe("identifiants de connexion", () => {
 describe("indicatifs autorisés", () => {
   it("accepte un numéro dont l'indicatif est déclaré, refuse les autres", () => {
     expect(telephoneAutorise("+99900000001", ["+999"], false)).toBe(true);
-    expect(telephoneAutorise("+33600000001", ["+999"], false)).toBe(false);
+    expect(telephoneAutorise("+99060000001", ["+999"], false)).toBe(false);
     expect(telephoneAutorise("+99900000001", ["+998", "+999"], false)).toBe(true);
   });
 
   it("sans indicatif déclaré : seulement en simulation", () => {
-    expect(telephoneAutorise("+33600000001", [], true)).toBe(true);
-    expect(telephoneAutorise("+33600000001", [], false)).toBe(false);
+    expect(telephoneAutorise("+99060000001", [], true)).toBe(true);
+    expect(telephoneAutorise("+99060000001", [], false)).toBe(false);
   });
 });

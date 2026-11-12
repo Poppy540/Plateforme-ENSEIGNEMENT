@@ -1,3 +1,4 @@
+import { messageDeLAdresse } from "@/lib/serveur/message-adresse";
 import Link from "next/link";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { espaceConformite } from "@/lib/serveur/conformite";
@@ -9,7 +10,9 @@ const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "medium", timeStyl
 export default async function PageConformite({ searchParams }: PageProps<"/referent/conformite">) {
   const referent = await exigerReferent();
   const { documents, unites, rapports } = await espaceConformite(referent);
-  const { erreur, depot } = await searchParams;
+  const parametres = await searchParams;
+  const { erreur } = messageDeLAdresse(parametres);
+  const depot = parametres.depot;
 
   return (
     <main className="conteneur">
@@ -24,7 +27,7 @@ export default async function PageConformite({ searchParams }: PageProps<"/refer
       </p>
 
       <h2>Déposer un document</h2>
-      {typeof erreur === "string" && (
+      {erreur && (
         <p role="alert" className="erreur">
           {erreur}
         </p>

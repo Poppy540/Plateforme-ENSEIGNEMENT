@@ -1,3 +1,4 @@
+import { messageDeLAdresse } from "@/lib/serveur/message-adresse";
 import Link from "next/link";
 import { decompte, type ConditionEvaluee, type EtatCondition } from "@/lib/pilote/conditions";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
@@ -91,8 +92,7 @@ export default async function PageConditions({
   const parametres = await searchParams;
   const conditions = await conditionsDuPilote(administrateur);
   const { remplies, total, pret } = decompte(conditions);
-  const erreur = typeof parametres.erreur === "string" ? parametres.erreur.slice(0, 200) : null;
-  const ok = typeof parametres.ok === "string" ? parametres.ok.slice(0, 100) : null;
+  const { erreur, ok } = messageDeLAdresse(parametres);
 
   return (
     <main className="conteneur">

@@ -49,6 +49,16 @@ do $$ declare v text; begin
       'pays', 'referentiels', 'niveaux', 'series', 'matieres', 'unites', 'unites_series', 'chapitres',
       'prerequis_chapitres'));
   if v is not null then raise exception 'GF03 : droit du visiteur hors catalogue : %', v; end if;
+
+  -- Revue du Jalon 24 (S19) : les droits accordés colonne par colonne aussi ; seule exception, l'état ouvert ou
+  -- fermé de l'accès des élèves (page « indisponible », ADR 0034).
+  select string_agg(distinct table_name || '.' || column_name || ' (' || privilege_type || ')', ', ') into v
+  from information_schema.column_privileges
+  where grantee = 'anon' and table_schema = 'public'
+    and table_name not in ('pays', 'referentiels', 'niveaux', 'series', 'matieres', 'unites', 'unites_series',
+                           'chapitres', 'prerequis_chapitres')
+    and not (table_name = 'acces_eleves' and column_name = 'ouvert' and privilege_type = 'SELECT');
+  if v is not null then raise exception 'GF03 : droit du visiteur sur une colonne hors catalogue : %', v; end if;
 end $$;
 
 \o

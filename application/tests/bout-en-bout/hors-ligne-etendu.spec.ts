@@ -92,8 +92,10 @@ test("mes cours, plan et correction se relisent hors ligne ; un quiz à faire n'
     ["/espace/plan", "Mon plan de révision"],
     [QUIZ, /^Quiz :/],
   ] as const) {
-    await page.goto(chemin);
+    const reponse = await page.goto(chemin);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(titre);
+    // Revue du Jalon 24, S21 : la copie garde la politique de contenu de la page d'origine.
+    expect(reponse?.headers()["content-security-policy"]).toMatch(/script-src/);
     await expect(page.getByRole("status").filter({ hasText: "hors connexion" })).toContainText(
       /copie enregistrée le \d+/,
     );

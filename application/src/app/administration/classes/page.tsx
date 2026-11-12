@@ -1,3 +1,4 @@
+import { messageDeLAdresse } from "@/lib/serveur/message-adresse";
 import Link from "next/link";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import { APPELLATION_PAR_DEFAUT } from "@/lib/pack-pays/appellation";
@@ -13,8 +14,7 @@ const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "short" });
 export default async function PageClasses({ searchParams }: PageProps<"/administration/classes">) {
   const administrateur = await exigerAdministrateur();
   const parametres = await searchParams;
-  const erreur = typeof parametres.erreur === "string" ? parametres.erreur.slice(0, 200) : null;
-  const ok = typeof parametres.ok === "string" ? parametres.ok.slice(0, 100) : null;
+  const { erreur, ok } = messageDeLAdresse(parametres);
   const [options, classes, appellations] = await Promise.all([
     optionsClasse(administrateur),
     classesAdministration(administrateur),

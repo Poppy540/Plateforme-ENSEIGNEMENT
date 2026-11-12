@@ -1,10 +1,22 @@
 "use client";
 
 import { useActionState } from "react";
-import { supprimerMonCompte } from "./actions";
+import { effacerDonneesLocales } from "../../composants/hors-ligne";
+import { supprimerMonCompte, type EtatSuppression } from "./actions";
+
+// Revue du Jalon 24 (S10) : les copies gardées sur le téléphone (conversations, corrections, plan) sont effacées
+// avant la suppression du compte, comme à la déconnexion ; sinon elles resteraient lisibles hors ligne.
+async function supprimerPartout(etat: EtatSuppression, donnees: FormData) {
+  const confirme =
+    String(donnees.get("confirmation") ?? "")
+      .trim()
+      .toUpperCase() === "SUPPRIMER";
+  if (confirme) await effacerDonneesLocales();
+  return supprimerMonCompte(etat, donnees);
+}
 
 export function FormulaireSuppression() {
-  const [etat, action, enCours] = useActionState(supprimerMonCompte, undefined);
+  const [etat, action, enCours] = useActionState(supprimerPartout, undefined);
   return (
     <form action={action} className="formulaire">
       <label htmlFor="confirmation">Pour confirmer, écris SUPPRIMER</label>

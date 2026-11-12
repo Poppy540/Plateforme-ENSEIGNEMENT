@@ -7,7 +7,7 @@ import { empreinteCode, genererCodeInvitation, invitationEnSql } from "../src/li
 
 const adresse =
   process.env.URL_BASE_DONNEES_ADMIN ?? "postgresql://postgres@127.0.0.1:54330/postgres";
-if (process.env.ENVIRONNEMENT === "production" || !estBaseLocale(adresse)) {
+if (process.env.ENVIRONNEMENT === "production" || !estBaseLocale(adresse, process.env.PGHOST)) {
   console.error(
     "Refusé : l'entraînement se fait seulement sur la base locale de développement (données fictives).",
   );

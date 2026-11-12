@@ -52,6 +52,8 @@ jobs:
         working-directory: application
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false  # revue du Jalon 24, S16 : pas de jeton laissé sur le disque
       - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
         with:
           package_json_file: application/package.json
@@ -72,9 +74,11 @@ jobs:
         working-directory: application
     env:
       MODE_MODELE: anthropic
-      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    # Revue du Jalon 24, S15 : la clé n'est donnée qu'aux deux étapes qui en ont besoin (pas à l'installation).
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false  # revue du Jalon 24, S16 : pas de jeton laissé sur le disque
       - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
         with:
           package_json_file: application/package.json
@@ -85,10 +89,13 @@ jobs:
           cache-dependency-path: application/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - name: Vérifier la présence de la clé (sans l'afficher)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           test -n "$ANTHROPIC_API_KEY" || { echo "Secret ANTHROPIC_API_KEY absent, passage réel impossible."; exit 1; }
       - name: Passage réel
         env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           AGENT: ${{ inputs.agent || 'professeur' }}
           SCENARIOS: ${{ inputs.scenarios }}
           EXECUTIONS: ${{ inputs.executions }}

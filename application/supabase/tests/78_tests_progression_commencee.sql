@@ -59,7 +59,34 @@ do $$ begin
 end $$;
 reset role;
 
+-- PC05 (revue du Jalon 24, S13) Un chapitre validé d'un autre pays n'est ni noté « commencé » ni compté.
+create temp table pc05 as
+  select c.id, c.version, c.empreinte from chapitres c join unites u on u.id = c.unite_id
+  where u.referentiel_id <> (select referentiel_id from eleves where id = '22222222-2222-2222-2222-222222222222')
+    and c.statut <> 'valide'
+  order by c.id limit 1;
+insert into approbations (objet_type, objet_id, version, empreinte, decision, commentaire, valideur_id)
+select 'chapitre', id, version, empreinte, 'valide', 'Test PC05 (fictif)',
+       (select id from profils where role = 'referent' order by id limit 1)
+from pc05;
+update chapitres set statut = 'valide' where id = (select id from pc05);
+grant select on pc05 to authenticated;
+select pg_temp.connecter('22222222-2222-2222-2222-222222222222');
+set role authenticated;
+do $$ begin
+  assert not noter_visionnage((select id from pc05), 'lecon_ouverte', 60), 'PC05 : refusé';
+end $$;
+reset role;
+do $$ begin
+  assert (select count(*) from pc05) = 1, 'PC05 : un chapitre d''un autre pays existe';
+  assert not exists (select 1 from progression where eleve_id = '22222222-2222-2222-2222-222222222222'
+          and chapitre_id = (select id from pc05)), 'PC05 : rien noté';
+  assert not exists (select 1 from visionnages_jour where chapitre_id = (select id from pc05)), 'PC05 : rien compté';
+end $$;
+update chapitres set statut = 'a_valider' where id = (select id from pc05);
+delete from approbations where objet_id = (select id from pc05) and commentaire = 'Test PC05 (fictif)';
+
 delete from quiz where id = '00000000-0000-0000-0000-00000000c0e3';
 delete from progression where eleve_id = '22222222-2222-2222-2222-222222222222';
 \o
-\echo 'Chapitre commencé par la plateforme : PC01-PC04 OK'
+\echo 'Chapitre commencé par la plateforme : PC01-PC05 OK'

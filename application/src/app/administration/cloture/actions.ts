@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { messageSigne } from "@/lib/serveur/message-adresse";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import { cocherGeste, decocherGeste, noterDecisionFinale } from "@/lib/serveur/cloture-pilote";
 
@@ -9,7 +10,7 @@ const champ = (donnees: FormData, nom: string) => String(donnees.get(nom) ?? "")
 
 function retour(ancre: string, erreur: string | null, message: string): never {
   revalidatePath("/administration/cloture");
-  const parametres = new URLSearchParams(erreur ? { erreur } : { ok: message });
+  const parametres = new URLSearchParams(messageSigne(erreur ? { erreur } : { ok: message }));
   redirect(`/administration/cloture?${parametres}#${ancre}`);
 }
 

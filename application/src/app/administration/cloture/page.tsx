@@ -1,3 +1,4 @@
+import { messageDeLAdresse } from "@/lib/serveur/message-adresse";
 import Link from "next/link";
 import { decompteCloture, type EtatGeste, type GesteEvalue } from "@/lib/pilote/cloture";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
@@ -108,8 +109,7 @@ export default async function PageCloture({ searchParams }: PageProps<"/administ
   const parametres = await searchParams;
   const gestes = await clotureDuPilote(administrateur);
   const { faits, total, complete } = decompteCloture(gestes);
-  const erreur = typeof parametres.erreur === "string" ? parametres.erreur.slice(0, 200) : null;
-  const ok = typeof parametres.ok === "string" ? parametres.ok.slice(0, 100) : null;
+  const { erreur, ok } = messageDeLAdresse(parametres);
 
   return (
     <main className="conteneur">

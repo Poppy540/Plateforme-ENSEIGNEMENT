@@ -1,3 +1,4 @@
+import { messageDeLAdresse } from "@/lib/serveur/message-adresse";
 import Link from "next/link";
 import { CRITERES } from "@/lib/pilote/criteres";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
@@ -27,8 +28,7 @@ export default async function PageJournal({ searchParams }: PageProps<"/administ
   const administrateur = await exigerAdministrateur();
   const parametres = await searchParams;
   const entrees = await journalDuPilote(administrateur);
-  const erreur = typeof parametres.erreur === "string" ? parametres.erreur.slice(0, 200) : null;
-  const ok = typeof parametres.ok === "string" ? parametres.ok.slice(0, 100) : null;
+  const { erreur, ok } = messageDeLAdresse(parametres);
 
   return (
     <main className="conteneur">

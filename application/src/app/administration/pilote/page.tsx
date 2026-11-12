@@ -1,3 +1,4 @@
+import { messageDeLAdresse } from "@/lib/serveur/message-adresse";
 import Link from "next/link";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import { chapitresUnitePilote, unitesPourPilote } from "@/lib/serveur/pilote";
@@ -12,7 +13,7 @@ export default async function PagePilote({ searchParams }: PageProps<"/administr
   const unites = await unitesPourPilote(administrateur);
   const unite = unites.find((u) => u.unite === choisie);
   const chapitres = unite ? await chapitresUnitePilote(administrateur, unite.unite) : [];
-  const erreur = typeof parametres.erreur === "string" ? parametres.erreur.slice(0, 200) : null;
+  const { erreur } = messageDeLAdresse(parametres);
 
   return (
     <main className="conteneur">

@@ -1,3 +1,4 @@
+import { messageDeLAdresse } from "@/lib/serveur/message-adresse";
 import Link from "next/link";
 import { libelleJournal } from "@/lib/pilote/semaine";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
@@ -20,8 +21,7 @@ export default async function PageFinPilote({
   const version = versionDemandee(parametres.version);
   const periode = await periodeDuPilote(administrateur);
   const r = periode ? await rapportDeFin(administrateur, periode, version) : null;
-  const erreur = typeof parametres.erreur === "string" ? parametres.erreur.slice(0, 200) : null;
-  const ok = typeof parametres.ok === "string" ? parametres.ok.slice(0, 100) : null;
+  const { erreur, ok } = messageDeLAdresse(parametres);
 
   return (
     <main className="conteneur rapport-semaine">

@@ -2,13 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { messageSigne } from "@/lib/serveur/message-adresse";
 import { exigerAdministrateur } from "@/lib/serveur/acces-administration";
 import { cocherCondition, decocherCondition } from "@/lib/serveur/conditions-pilote";
 
 function retour(numero: number, erreur: string | null, message: string): never {
   revalidatePath("/administration/conditions");
   const parametres = new URLSearchParams(
-    erreur ? { erreur, condition: String(numero) } : { ok: message },
+    erreur
+      ? { ...messageSigne({ erreur }), condition: String(numero) }
+      : messageSigne({ ok: message }),
   );
   redirect(`/administration/conditions?${parametres}#condition-${numero}`);
 }

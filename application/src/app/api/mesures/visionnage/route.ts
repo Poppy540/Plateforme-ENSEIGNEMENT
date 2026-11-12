@@ -3,7 +3,9 @@ import { noterVisionnage } from "@/lib/serveur/mesures";
 import { utilisateurConnecte } from "@/lib/serveur/session";
 
 // Compteur de visionnage agrégé (ADR 0052) : un événement de lecture (vidéo démarrée ou terminée, leçon ouverte)
-// ajouté au total du chapitre et du jour ; rien n'est gardé sur l'élève. Quota par élève et par jour en base.
+// ajouté au total du chapitre et du jour, sans l'élève. En plus, depuis D15 (ADR 0103), une leçon ouverte ou une
+// vidéo démarrée note le chapitre « commencé » dans la progression de l'élève (chapitres de son pays seulement).
+// Quota par élève et par jour en base.
 export async function POST(requete: Request): Promise<Response> {
   const origine = requete.headers.get("origin");
   if (origine && origine !== new URL(requete.url).origin)
