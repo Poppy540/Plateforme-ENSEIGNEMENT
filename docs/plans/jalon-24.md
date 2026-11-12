@@ -1,6 +1,6 @@
 # Plan du Jalon 24 — revue de sécurité des Jalons 16 à 23
 
-**Statut** : validé par le propriétaire le 2026-11-12 (piste choisie, ADR 0119). Rien n'est commencé.
+**Statut** : validé par le propriétaire le 2026-11-12 (piste choisie, ADR 0119). Étape 1 faite : [revue](../securite/revue-jalon-24.md) — 0 critique, 0 élevé, 1 moyen (S10), 7 faibles (S11-S17), 7 informations (S18-S24) ; décisions D17 et D18 proposées.
 
 **Objectif** : la dernière revue de sécurité date du Jalon 16 (`docs/securite/revue-jalon-16.md`, migrations 0034 à 0046). Depuis, les Jalons 16 à 23 ont ajouté :
 

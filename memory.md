@@ -97,4 +97,4 @@ Toujours ouvertes au 2026-11-12 (les hypothèses réglées depuis sont dans `doc
 
 ## Prochaine étape
 
-Jalon 24 (revue de sécurité des Jalons 16 à 23) : étape 1 (revue) sur « oui, commence l'étape 1 ». Jalon 23 terminé sauf les passages réels (clé). Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.
+Jalon 24 : étape 2 (corrections S10, S11, S13-S17 et informations, avec tests) sur « oui, continue avec l'étape 2 » ; décisions D17 (copies d'un appareil révoqué, recommandé a) et D18 (interdire la lecture de la clé `age`, recommandé oui) à présenter à l'étape 3. Jalon 23 terminé sauf les passages réels (clé). Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.
