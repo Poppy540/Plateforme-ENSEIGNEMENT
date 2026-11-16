@@ -40,7 +40,7 @@ const MOTIFS: Record<string, string> = {
   signalement_contenu: "signalement de contenu",
   inscription: "inscription",
   connexion: "connexion",
-  choix_classe_serie: "choix de classe ou de série",
+  choix_classe_serie: "choix de classe (série, option…)",
   utilisation: "utilisation",
   question_cours: "question de cours",
   autre: "autre",

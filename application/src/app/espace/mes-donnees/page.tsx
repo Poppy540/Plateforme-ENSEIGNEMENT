@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { roleCompte } from "@/lib/serveur/referent";
+import { profilEleve } from "@/lib/serveur/requetes";
 import { utilisateurConnecte } from "@/lib/serveur/session";
 import { deconnecterMesAppareils } from "./actions";
 import { FormulaireSuppression } from "./formulaire-suppression";
@@ -17,6 +18,11 @@ export default async function PageMesDonnees() {
   const role = await roleCompte(utilisateur);
   const equipe = role === "referent" || role === "enseignant" || role === "administrateur";
   const [retour, libelleRetour] = RETOUR[role ?? ""] ?? ["/espace", "Mon espace"];
+  // La classe de l'élève avec le mot de son pays pour les séries (bilan du Jalon 24 ; ADR 0111).
+  const profil = equipe ? null : await profilEleve(utilisateur);
+  const classe = profil
+    ? `ta classe (${profil.niveau}${profil.serie ? ` — ${profil.appellation.singulier} ${profil.serie}` : ""})`
+    : "ta classe";
   return (
     <main className="conteneur">
       <p>
@@ -31,9 +37,9 @@ export default async function PageMesDonnees() {
         </p>
       ) : (
         <p>
-          Nous gardons le minimum : ton prénom ou pseudonyme, ta classe, ta série, ton établissement
-          si tu l&apos;as donné, ta classe du pilote si tu l&apos;as rejointe, le contact de ton
-          parent pour son accord, ta progression et tes échanges avec le professeur.
+          Nous gardons le minimum : ton prénom ou pseudonyme, {classe}, ton établissement si tu
+          l&apos;as donné, ta classe du pilote si tu l&apos;as rejointe, le contact de ton parent
+          pour son accord, ta progression et tes échanges avec le professeur.
         </p>
       )}
       <h2>Télécharger mes données</h2>

@@ -23,7 +23,7 @@ export function FormulaireAide({
           rows={3}
           maxLength={longueurMax}
           required
-          placeholder="Par exemple : je ne reçois pas le code, comment choisir ma série…"
+          placeholder="Par exemple : je ne reçois pas le code, comment choisir ma classe…"
         />
         <p className="note">
           Ne donne jamais ton code de connexion ni un mot de passe : personne ne te les demandera.

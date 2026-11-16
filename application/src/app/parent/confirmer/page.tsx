@@ -33,8 +33,9 @@ export default async function PageConfirmationParent({
         relus par des enseignants.
       </p>
       <p>
-        Nous enregistrons seulement : son prénom ou pseudonyme, sa classe, sa série, son
-        établissement s&apos;il l&apos;a indiqué, sa progression, et votre contact pour cet accord.
+        Nous enregistrons seulement : son prénom ou pseudonyme, sa classe (avec sa série ou son
+        option, s&apos;il y en a), son établissement s&apos;il l&apos;a indiqué, sa progression, et
+        votre contact pour cet accord.
       </p>
       <form action={accepterInscription}>
         <input type="hidden" name="jeton" value={jeton} />
