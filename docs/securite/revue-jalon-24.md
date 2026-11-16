@@ -1,6 +1,6 @@
 # Revue de sécurité et de confidentialité — Jalons 16 à 23
 
-**Date** : 2026-11-12 · **Jalon 24, étape 1** (ADR 0119) · **Corrections** : S10, S11, S13 à S24 appliquées le 2026-11-12 (étape 2, ADR 0120) ; S12 et D18 attendent vos décisions (§5) · **Auteur** : Claude Code · **À relire par** : le propriétaire.
+**Date** : 2026-11-12 · **Jalon 24, étape 1** (ADR 0119) · **Corrections** : S10, S11, S13 à S24 appliquées le 2026-11-12 (étape 2, ADR 0120) ; D17 a et D18 (oui) décidés le 2026-11-16 et appliqués (étape 3, ADR 0121) · **Auteur** : Claude Code · **À relire par** : le propriétaire.
 
 **Périmètre** : tout ce qui a changé depuis la revue du Jalon 16 (commit `c144185`), soit 82 fichiers, plus les migrations 0047 et 0048 arrivées juste après elle :
 

@@ -47,6 +47,8 @@ test("la déconnexion révoque la session : le cookie copié ne sert plus", asyn
   await expect(autre).toHaveURL(/\/inscription$/);
   // … plus après la déconnexion (révoquée en base).
   await page.goto("/espace/mes-donnees");
+  // Décision D17 : la limite d'un appareil resté sans réseau est dite.
+  await expect(page.getByText(/au plus 7\s+jours/)).toBeVisible();
   await page.getByRole("button", { name: "Me déconnecter de tous mes appareils" }).click();
   await expect(page).toHaveURL(/\/connexion$/);
   await autre.goto("/inscription");

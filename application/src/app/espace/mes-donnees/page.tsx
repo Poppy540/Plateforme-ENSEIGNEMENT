@@ -48,6 +48,14 @@ export default async function PageMesDonnees() {
           ? "Un téléphone perdu ou un ordinateur partagé ? Fermez toutes vos connexions, celle-ci comprise."
           : "Un téléphone perdu ou prêté ? Ferme toutes tes connexions, celle-ci comprise."}
       </p>
+      {!equipe && (
+        // Décision D17 (revue du Jalon 24, S12) : ce qu'un appareil sans réseau garde, et jusqu'à quand.
+        <p className="note">
+          Ce que ton téléphone a gardé pour réviser sans connexion s&apos;efface dès qu&apos;il
+          retrouve le réseau. S&apos;il reste sans réseau, ces pages y restent lisibles au plus 7
+          jours.
+        </p>
+      )}
       <form action={deconnecterMesAppareils}>
         <button type="submit" className="secondaire">
           Me déconnecter de tous mes appareils

@@ -30,7 +30,7 @@ Principes en vigueur (toutes les décisions datées : `docs/historique.md`, « D
 | 2026-10-26 | L'enseignant de la classe ne voit que des chiffres d'ensemble, jamais rien sous 5 élèves (ADR 0063)                          |
 | 2026-11-10 | Un déploiement sert un pays : paquet par pays, fuseau de la base = fuseau du pays (ADR 0114)                                 |
 
-Décisions du propriétaire (D1 à D16) :
+Décisions du propriétaire (D1 à D18) :
 
 | Date       | Décision | Contenu                                                                                                                                                                                            | ADR  |
 | ---------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
@@ -42,6 +42,8 @@ Décisions du propriétaire (D1 à D16) :
 | 2026-11-02 | D14 b    | Hors ligne étendu : Mes cours, matière, plan, corrections ; jamais un quiz à faire ; copies effacées après 7 jours                                                                                 | 0101 |
 | 2026-11-02 | D15 a    | « Commencé » noté par la plateforme à l'ouverture de la leçon ou au quiz                                                                                                                           | 0103 |
 | 2026-11-09 | D16 a    | Obtenir le curriculum de Maths 3e ; pack prêt pour des compétences, rien ajouté en attendant                                                                                                       | 0109 |
+| 2026-11-16 | D17 a    | Appareil perdu resté sans réseau : la limite (copies lisibles au plus 7 jours) est dite à l'élève et aux familles ; lecture hors ligne inchangée                                                   | 0121 |
+| 2026-11-16 | D18      | Claude Code n'a pas le droit de lire la clé privée `age` ni les sauvegardes (`.claude/settings.json`)                                                                                              | 0121 |
 | 2026-11-12 | Jalon 24 | Revue de sécurité des Jalons 16 à 23 (plan en cours)                                                                                                                                               | 0119 |
 | 2026-11-11 | Jalon 23 | Remise en ordre (plan en cours)                                                                                                                                                                    | 0115 |
 
@@ -89,7 +91,7 @@ Toujours ouvertes au 2026-11-12 (les hypothèses réglées depuis sont dans `doc
 
 ## État d'avancement
 
-- **Jalons 1 à 23 faits** (passages réels des agents mis à part) ; dernier bilan : [`docs/bilans/jalon-23.md`](docs/bilans/jalon-23.md). Bilans dans `docs/bilans/`, décisions dans `docs/decisions/` (ADR 0001 à 0120).
+- **Jalons 1 à 23 faits** (passages réels des agents mis à part) ; dernier bilan : [`docs/bilans/jalon-23.md`](docs/bilans/jalon-23.md). Bilans dans `docs/bilans/`, décisions dans `docs/decisions/` (ADR 0001 à 0121).
 - **La plateforme est construite et testée en simulation** : inscription avec accord du parent, catalogue, leçons, quiz, professeur IA, plan de révision, hors ligne, espaces du référent, de l'enseignant et de l'administration, pilotage complet du pilote (conditions, critères, semaine, fin, clôture), dix agents simulés, exploitation (sauvegardes chiffrées, migrations suivies, paquet, répétition générale), deux packs (Gabon, pays fictif Z) et un modèle pour en ajouter.
 - **Rien n'est déployé, rien n'est souscrit, aucun élève réel.** Rien de technique ne bloque le pilote : ce qui reste dépend du propriétaire (liste par urgence).
 - **Jalons suspendus** : Jalon 21, étapes 2 et 3 (programme du pilote complet) attendent le curriculum de Maths 3e ; l'étape « passages réels des agents » des Jalons 13 à 23 attend la clé API, la relecture des deux skills et l'accord sur le coût (~121 USD).
@@ -98,4 +100,4 @@ Toujours ouvertes au 2026-11-12 (les hypothèses réglées depuis sont dans `doc
 
 ## Prochaine étape
 
-Jalon 24 : étape 3, décisions D17 (copies d'un appareil révoqué resté hors ligne, recommandé a : le dire) et D18 (interdire à Claude Code la lecture de la clé `age`, recommandé oui), sur « oui, continue avec l'étape 3 ». Jalon 23 terminé sauf les passages réels (clé). Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.
+Jalon 24 : étape 5 (bilan) sur « oui, continue avec l'étape 5 » ; l'étape 4 (passages réels) attend la clé. Jalon 23 terminé sauf les passages réels (clé). Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.

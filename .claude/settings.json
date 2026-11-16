@@ -13,7 +13,13 @@
       "Read(*.p12)",
       "Read(*.pfx)",
       "Read(id_rsa*)",
-      "Read(id_ed25519*)"
+      "Read(id_ed25519*)",
+      "Read(cle-sauvegardes*)",
+      "Read(**/cle-sauvegardes*)",
+      "Read(*.age)",
+      "Read(**/*.age)",
+      "Read(./sauvegardes/**)",
+      "Read(./application/sauvegardes/**)"
     ]
   }
 }
