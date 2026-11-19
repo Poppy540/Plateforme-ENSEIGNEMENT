@@ -3,6 +3,7 @@
 // « equipe » (complète) et « etablissement » (sans coûts, sans détail des agents, sans charge de l'équipe, sans
 // critères ni journal). Seuil de diffusion : aucun effectif de personnes de 1 à 4 (« <5 »), pas de moyenne sous 5
 // quiz, pas de coût par élève sous 5 élèves actifs. Fonctions pures : la page, l'export et les tests s'en servent.
+import { celluleMarkdown } from "@/lib/format";
 import { SEUIL_DIFFUSION, effectif } from "@/lib/exploitation/indicateurs";
 import type { CritereEvalue } from "./criteres";
 
@@ -217,7 +218,7 @@ const date = (iso: string) => {
   const [a, m, j] = iso.slice(0, 10).split("-");
   return `${j}/${m}/${a}`;
 };
-const cellule = (t: string) => t.replace(/\|/g, "\\|").replace(/\s+/g, " ");
+const cellule = celluleMarkdown;
 
 /** Version texte (Markdown) pour le point hebdomadaire ou pour l'établissement. */
 export function rapportMarkdown(r: RapportSemaine): string {

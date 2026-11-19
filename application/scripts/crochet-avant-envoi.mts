@@ -2,7 +2,17 @@
 // Pose (ou retire) un crochet git local « pre-push » qui lance `pnpm controler --rapide` avant chaque envoi.
 // Un crochet « pre-push » qui ne vient pas de cette commande n'est jamais remplacé ni effacé.
 import { spawnSync } from "node:child_process";
-import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  closeSync,
+  fchmodSync,
+  ftruncateSync,
+  mkdirSync,
+  openSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+  writeSync,
+} from "node:fs";
 import { dirname, resolve } from "node:path";
 import { contenuCrochet, estNotreCrochet } from "../src/lib/exploitation/controle.ts";
 
@@ -13,7 +23,15 @@ if (r.status !== 0) {
   process.exit(2);
 }
 const chemin = resolve(r.stdout.trim());
-const existant = existsSync(chemin) ? readFileSync(chemin, "utf8") : null;
+// Le crochet existant est lu et, s'il est le nôtre, réécrit par le même descripteur : aucun fichier glissé entre
+// la vérification et l'écriture ne peut être remplacé (alerte CodeQL du Jalon 25).
+let descripteur: number | null = null;
+try {
+  descripteur = openSync(chemin, "r+");
+} catch (e) {
+  if ((e as NodeJS.ErrnoException).code !== "ENOENT") throw e;
+}
+const existant = descripteur === null ? null : readFileSync(descripteur, "utf8");
 
 if (existant !== null && !estNotreCrochet(existant)) {
   console.error(
@@ -27,10 +45,20 @@ if (retirer) {
     rmSync(chemin);
     console.log("Crochet avant envoi retiré.");
   }
-} else {
+} else if (descripteur === null) {
   mkdirSync(dirname(chemin), { recursive: true });
-  writeFileSync(chemin, contenuCrochet());
-  chmodSync(chemin, 0o755);
+  // « wx » : création seulement ; échoue si un fichier est apparu entre-temps.
+  writeFileSync(chemin, contenuCrochet(), { flag: "wx", mode: 0o755 });
+  annoncer();
+} else {
+  ftruncateSync(descripteur, 0);
+  writeSync(descripteur, contenuCrochet(), 0);
+  fchmodSync(descripteur, 0o755);
+  annoncer();
+}
+if (descripteur !== null) closeSync(descripteur);
+
+function annoncer() {
   console.log(
     "Crochet avant envoi posé : `pnpm controler --rapide` avant chaque `git push`.\n" +
       "Passer outre une fois : git push --no-verify. Retirer : pnpm controler:installer --retirer",

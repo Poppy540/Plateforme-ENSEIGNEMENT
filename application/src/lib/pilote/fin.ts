@@ -3,6 +3,7 @@
 // le rapport de la semaine (ADR 0082). Version équipe : critères atteints pendant le pilote et décisions du journal ;
 // version établissement : ni coûts, ni détail des agents, ni critères, ni journal. Le questionnaire anonyme figure
 // dans les deux, groupe par groupe, dès 5 réponses. Fonctions pures : la page, l'export et les tests s'en servent.
+import { celluleMarkdown } from "@/lib/format";
 import { resultatsDiffusables, type LigneResultat } from "@/lib/exploitation/mesures";
 import {
   indicateurs,
@@ -104,7 +105,7 @@ const date = (iso: string) => {
   const [a, m, j] = iso.slice(0, 10).split("-");
   return `${j}/${m}/${a}`;
 };
-const cellule = (t: string) => t.replace(/\|/g, "\\|").replace(/\s+/g, " ");
+const cellule = celluleMarkdown;
 const PUBLICS: Record<string, string> = { eleve: "élèves", parent: "parents" };
 
 /** Version texte (Markdown) : base du rapport de pilote de docs/bilans/ et de la réunion de bilan. */

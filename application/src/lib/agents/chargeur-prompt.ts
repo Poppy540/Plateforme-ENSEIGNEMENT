@@ -2,7 +2,7 @@
 //   prompt recopié du cadrage (agents/<agent>/prompt.md, sans la section des valeurs pilote)
 //   + valeurs de l'unité tirées du pack pays + règles communes (§5.1) + skills de l'agent.
 // Aucune valeur propre à un pays dans ce code : tout vient des fichiers.
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { closeSync, existsSync, fstatSync, openSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { parse } from "yaml";
 
@@ -14,12 +14,18 @@ export class ErreurConfigurationAgent extends Error {}
 const fichiersLus = new Map<string, { date: number; valeur: unknown }>();
 
 function lireEnCache<T>(chemin: string, transformer: (texte: string) => T): T {
-  const date = statSync(chemin).mtimeMs;
-  const connu = fichiersLus.get(chemin);
-  if (connu && connu.date === date) return connu.valeur as T;
-  const valeur = Object.freeze(transformer(readFileSync(chemin, "utf8")));
-  fichiersLus.set(chemin, { date, valeur });
-  return valeur;
+  // Date et contenu lus sur le même descripteur : ils viennent du même fichier (alerte CodeQL du Jalon 25).
+  const descripteur = openSync(chemin, "r");
+  try {
+    const date = fstatSync(descripteur).mtimeMs;
+    const connu = fichiersLus.get(chemin);
+    if (connu && connu.date === date) return connu.valeur as T;
+    const valeur = Object.freeze(transformer(readFileSync(descripteur, "utf8")));
+    fichiersLus.set(chemin, { date, valeur });
+    return valeur;
+  } finally {
+    closeSync(descripteur);
+  }
 }
 
 const lireTexte = (chemin: string) => lireEnCache(chemin, (texte) => texte);

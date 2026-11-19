@@ -13,3 +13,11 @@ const usd = new Intl.NumberFormat("fr", { minimumFractionDigits: 2, maximumFract
 export function formaterUSD(montant: number): string {
   return `${usd.format(montant)} USD`;
 }
+
+/**
+ * Cellule de tableau Markdown : barres obliques inverses puis barres verticales échappées, espaces ramenés à un
+ * seul (alerte CodeQL du Jalon 25 : une « \\ » écrite devant une « | » refermait la cellule).
+ */
+export function celluleMarkdown(texte: string): string {
+  return texte.replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/\s+/g, " ");
+}
