@@ -1,6 +1,6 @@
 # Plan du Jalon 25 — fusion de la branche de travail dans `main`
 
-**Statut** : validé par le propriétaire le 2026-11-19 (piste choisie, ADR 0122). Étape 1 faite : Next.js 16.4.6 (le paquet refusait de se construire en 16.4.3, deux failles modérées), contrôle complet 11 / 11 sur copie propre, demande de fusion [Poppy540/Plateforme-ENSEIGNEMENT#2](https://github.com/Poppy540/Plateforme-ENSEIGNEMENT/pull/2) ouverte et suivie.
+**Statut** : validé par le propriétaire le 2026-11-19 (piste choisie, ADR 0122). Étape 1 faite : Next.js 16.4.6 (le paquet refusait de se construire en 16.4.3, deux failles modérées), contrôle complet 11 / 11 sur copie propre, demande de fusion [Poppy540/Plateforme-ENSEIGNEMENT#2](https://github.com/Poppy540/Plateforme-ENSEIGNEMENT/pull/2) ouverte et suivie. Étape 2 faite de mon côté : CodeQL relevait 5 alertes élevées anciennes (jamais analysées sur `main`) puis 1 sur la première correction ; toutes corrigées ; contrôles verts, aucun conflit, aucun fil ouvert. **Elle attend la relecture et la fusion du propriétaire.**
 
 **Objectif** : tout le travail des Jalons 1 à 24 est sur la branche `claude/gabon-education-platform-ldrr4p`. La branche principale `main` est restée au début du projet : 179 commits de retard, aucun commit qu'elle serait seule à avoir, donc aucun conflit attendu. Tant que la fusion n'est pas faite :
 
