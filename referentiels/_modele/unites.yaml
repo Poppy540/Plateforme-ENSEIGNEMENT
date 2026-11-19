@@ -1,2 +1,6 @@
-# Modèle : voir referentiels/gabon/unites.yaml pour un exemple.
-# Toutes les valeurs ici sont à remplir à partir des sources officielles du pays.
+# Unités pédagogiques ({{NOM_PAYS}}) : (niveau, ensemble de séries, matière).
+# Code : <pays>-<niveau>[-<groupe de séries>]-<matière>, par exemple {{CODE_PAYS}}-<niveau>-mathematiques.
+# Une unité qui a un programme (programmes/<unité>.yaml) doit avoir les réglages de ses 4 agents
+# (gabarits : referentiels/_modele/gabarits/).
+unites: []
+  # - {code: {{CODE_PAYS}}-<niveau>-mathematiques, niveau: <niveau>, series: [], matiere: mathematiques, statut: a_valider}

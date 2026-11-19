@@ -1,0 +1,17 @@
+# Valeurs du Professeur pour une unité. Toute valeur vide bloque l'agent (sauf SERIE).
+unite: <unité>
+variables:
+  MATIERE: ""
+  NIVEAU: ""
+  SERIE: ""
+  PAYS: ""
+  EXAMEN: ""
+  PREREQUIS: ""
+  PROFIL_NIVEAU: ""
+  METHODE_MATIERE: ""
+  CONTEXTE_LOCAL: ""
+  NOM_AVATAR: ""
+  PERSONA: ""
+  REFERENT: ""
+  DATE: ""
+  VERSION: ""

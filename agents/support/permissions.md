@@ -20,6 +20,9 @@ Variables : `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `SMS_PROVIDER_A
 
 Aucune clé de paiement ni de signature électronique. La clé de la base est propre à cet agent et limitée à son rôle.
 
-## Mise en œuvre (à faire)
+## Mise en œuvre (ADR 0028, 0032)
 
-Ces droits seront appliqués techniquement (rôle de base de données dédié, politiques d'accès au niveau des lignes, outils exposés à l'agent), pas seulement par le prompt.
+- Rôle de base `agent_support` : lit le statut d'inscription **de la seule personne qui écrit** (fixée par le serveur) ; écrit des tickets de support pour elle (ou sans demandeur pendant l'inscription) et des signalements de détresse ; aucun droit sur les paiements, les comptes, les consentements ni les messages.
+- Réponses limitées à la FAQ validée du pack pays (`referentiels/<pays>/faq.yaml`) ; entrées citées contrôlées par le serveur ; sortie imposée (action, catégorie, priorité).
+- Codes et numéros de carte masqués avant tout enregistrement ; conversation non conservée.
+- Canal : le site (`/aide`) ; WhatsApp Business plus tard.

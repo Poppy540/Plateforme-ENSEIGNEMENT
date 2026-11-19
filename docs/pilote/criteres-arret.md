@@ -1,0 +1,42 @@
+# Critères de suspension et d'arrêt
+
+**Statut** : proposition de Claude Code, à valider par le propriétaire. Toute personne de l'équipe peut **demander** une suspension ; le propriétaire décide.
+
+**Suivi dans la plateforme** (ADR 0080) : la page « Critères de suspension » de l'administration (`/administration/criteres`) montre l'état de chaque critère ci-dessous. Elle calcule ceux que la base permet de voir (détresse hors délai, erreur de contenu non traitée, contestations répétées, coût au-delà du budget) avec les seuils du pack pays (`pilote` dans `pays.yaml`), et vous y déclarez les autres. Une alerte rejoint la file des signalements quand un critère calculé bouge ; la décision reste la vôtre.
+
+**Moyens de suspension** (ADR 0034), dans `/administration` :
+
+- **Suspendre un agent** (volet « Suspendre … » de la section Agents, avec un motif et le critère en cause ; l'Orchestrateur le fait aussi seul en cas de coût anormal) : il ne répond plus à personne, avec un message neutre ; « Réactiver … (reprise) » le remet en service, avec les 4 points de la reprise ci-dessous.
+- **Fermer l'accès des élèves** : espace élève, cours, quiz, plan, aide et inscriptions affichent « La plateforme est momentanément indisponible » ; « Mes données » reste accessible. Le motif saisi reste interne. Pour arrêter aussi les rapports aux parents, suspendre le Tuteur.
+
+## Suspension immédiate (avant toute analyse)
+
+| Situation                                                                                                                       | Action                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Une détresse **non traitée dans le délai** de la [procédure](procedure-detresse.md), ou une alerte de détresse qui n'arrive pas | Suspendre l'accès des élèves jusqu'à correction                                                                         |
+| Un agent produit un **contenu dangereux, sexuel, violent ou haineux**, ou se fait passer pour un humain                         | Suspendre l'agent ; analyse avec le référent                                                                            |
+| **Fuite ou exposition de données** (donnée d'un élève visible par un autre, secret affiché, envoi au mauvais parent)            | Suspendre la plateforme ; informer le propriétaire et le juriste, appliquer les obligations de notification éventuelles |
+| Un contenu **non validé** est montré à un élève                                                                                 | Suspendre la publication ; vérifier les règles de validation                                                            |
+| Demande de l'**établissement** ou de l'autorité académique                                                                      | Suspendre et rencontrer l'établissement                                                                                 |
+
+## Suspension après examen au point hebdomadaire
+
+- Une **erreur de contenu** confirmée par le référent sur un contenu publié, non corrigée dans la semaine.
+- **Plus de 2** contestations justifiées de corrections de quiz sur une même question.
+- Une sortie de périmètre d'un agent (cours hors programme, rapport sans accord) même sans conséquence.
+- Coût réel dépassant **de plus de 50 %** le budget hebdomadaire approuvé.
+- Équipe de veille ou référent **indisponibles** plus de deux jours sans remplaçant.
+
+## Arrêt du pilote
+
+- Retrait de l'accord de l'établissement, ou avis défavorable du juriste.
+- Deux suspensions immédiates pour la même cause.
+- Fin de la période prévue (arrêt normal, suivi du bilan).
+
+## Reprise
+
+Une reprise après suspension exige : cause identifiée, correction faite **et testée** (test ajouté à la batterie de l'agent ou aux tests de bout en bout), accord écrit du propriétaire, information de l'établissement. La plateforme refuse la reprise (agent réactivé, accès rouvert) tant que ces 4 points ne sont pas remplis, et la note seule au **journal du pilote** (`/administration/journal`, ADR 0081), comme chaque suspension ; les points hebdomadaires s'y ajoutent à la main.
+
+## Garder les élèves informés
+
+À chaque suspension, le message court et neutre de la plateforme s'affiche (« La plateforme est momentanément indisponible ») ; l'établissement est prévenu. Aucune information sur un élève n'est communiquée à d'autres.

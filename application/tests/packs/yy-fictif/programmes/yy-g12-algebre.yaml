@@ -1,0 +1,3 @@
+unite: yy-g12-algebre
+chapitres:
+  - { ordre: 1, code: fonctions, titre: "Fonctions" }

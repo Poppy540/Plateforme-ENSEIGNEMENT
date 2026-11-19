@@ -7,14 +7,15 @@ variables:
   SERIE: ""
   PAYS: "Gabon"
   EXAMEN: "le BEPC"
-  LISTE_CHAPITRES: "depuis programmes/ga-3e-mathematiques.yaml (chapitres validés uniquement)"
+  # LISTE_CHAPITRES : calculée à l'exécution (chapitres validés de l'unité en base).
   PREREQUIS: "fractions, proportionnalité, théorème de Pythagore, calcul littéral, équations du premier degré"
   PROFIL_NIVEAU: "langage plus structuré qu'en 6e-5e, vocabulaire technique introduit progressivement, ton motivant, vidéos de 8 à 12 minutes, méthode d'examen type BEPC"
   METHODE_MATIERE: "partir d'un problème concret ; faire écrire chaque étape ; vérifier chaque ligne ; demander « pourquoi cette étape ? » ; ne jamais donner un résultat sans la méthode ; recalculer systématiquement et signaler toute incertitude de calcul"
   CONTEXTE_LOCAL: "exemples du quotidien gabonais à choisir avec le prof-référent (par exemple des prix en francs CFA ou des distances entre villes)"
-  CHAPITRE_EN_COURS: "fourni par la session (décision 0006)"
-  NOM_AVATAR: null    # à définir
-  PERSONA: null       # à définir
-  REFERENT: null      # à définir
-  DATE: null
-  VERSION: "0.1"
+  # CHAPITRE_EN_COURS : fourni par la session (ADR 0006).
+  # Valeurs PROVISOIRES proposées par Claude Code, à valider par le propriétaire (aucune personne réelle).
+  NOM_AVATAR: "Professeur IA de mathématiques"
+  PERSONA: "Calme, patient et méthodique."
+  REFERENT: "enseignant-référent en cours de désignation"
+  DATE: "non relu"
+  VERSION: "0.1-provisoire"

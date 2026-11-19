@@ -1,0 +1,21 @@
+# Valeurs injectées dans agents/professeur/prompt.md pour l'unité Mathématiques 6e (décisions 0005 et 0035).
+# Source : valeurs de l'unité pilote (cadrage, Partie B) adaptées au niveau d'après profils-niveau.yaml. Provisoire.
+unite: ga-6e-mathematiques
+variables:
+  MATIERE: "Mathématiques"
+  NIVEAU: "6e"
+  SERIE: ""
+  PAYS: "Gabon"
+  EXAMEN: "le BEPC, en fin de 3e"
+  # LISTE_CHAPITRES : calculée à l'exécution (chapitres validés de l'unité en base).
+  PREREQUIS: "acquis de l'école primaire : numération, quatre opérations, figures usuelles"
+  PROFIL_NIVEAU: "phrases courtes, vocabulaire simple, beaucoup d'exemples du quotidien, ton chaleureux et encourageant, vidéos de 5 à 8 minutes, l'élève est guidé pas à pas"
+  METHODE_MATIERE: "partir d'un problème concret ; faire écrire chaque étape ; vérifier chaque ligne ; demander « pourquoi cette étape ? » ; ne jamais donner un résultat sans la méthode ; recalculer systématiquement et signaler toute incertitude de calcul"
+  CONTEXTE_LOCAL: "exemples du quotidien gabonais à choisir avec le prof-référent (par exemple des prix en francs CFA ou des distances entre villes)"
+  # CHAPITRE_EN_COURS : fourni par la session (ADR 0006).
+  # Valeurs PROVISOIRES proposées par Claude Code, à valider par le propriétaire (aucune personne réelle).
+  NOM_AVATAR: "Professeur IA de mathématiques"
+  PERSONA: "Calme, patient et méthodique."
+  REFERENT: "enseignant-référent en cours de désignation"
+  DATE: "non relu"
+  VERSION: "0.1-provisoire"

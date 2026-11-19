@@ -1,0 +1,4 @@
+# Pays fictif : graphe de prérequis entre deux classes (test de portabilité).
+liens:
+  - { chapitre: yy-g12-algebre/fonctions, prerequis: yy-g7-algebre/equations, nature: strict }
+  - { chapitre: yy-g7-algebre/equations, prerequis: yy-g7-algebre/expressions, nature: souple }

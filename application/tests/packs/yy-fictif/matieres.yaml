@@ -1,0 +1,3 @@
+matieres:
+  - { code: algebre, libelle: "Algèbre", famille: mathematiques, couche: adaptable }
+  - { code: civisme, libelle: "Civisme", famille: histoire-geo-ses, couche: local }

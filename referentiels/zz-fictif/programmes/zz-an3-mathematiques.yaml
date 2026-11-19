@@ -1,0 +1,8 @@
+# Programme FICTIF — Mathématiques, Année 3 (pays Z). Volumes et coefficients renseignés (contrairement au pilote).
+unite: zz-an3-mathematiques
+statut: a_valider
+examen: certificat
+chapitres:
+  - {ordre: 1, code: equations-zz,   titre: "Équations du premier degré (pays Z)", volume_horaire: 10, coefficient: 4, statut: a_valider}
+  - {ordre: 2, code: geometrie-zz,   titre: "Triangles semblables (pays Z)",       volume_horaire: 8,  coefficient: 4, statut: a_valider}
+  - {ordre: 3, code: statistique-zz, titre: "Moyenne et médiane (pays Z)",         volume_horaire: 6,  coefficient: 4, statut: a_valider}

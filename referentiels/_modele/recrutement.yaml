@@ -1,0 +1,9 @@
+# Modèle : recrutement des enseignants-référents (agent Recruteur ; ADR 0040). Voir referentiels/gabon/recrutement.yaml.
+# Aucun usage réel avant l'avis d'un juriste local.
+statut: a_valider
+sources_autorisees: []        # [{id, libelle}] : seules sources possibles d'une fiche candidat
+canaux_approuves: []
+delai_relance_jours: 7        # une seule relance, après ce délai
+conditions_validees: null     # null = aucune contrepartie présentée
+modeles_messages: {}          # premier_contact, relance, reponse, invitation_entretien
+faq: []

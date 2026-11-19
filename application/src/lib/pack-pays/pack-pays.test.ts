@@ -1,0 +1,292 @@
+import { cpSync, mkdtempSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
+import { describe, expect, it } from "vitest";
+import { ErreurPack, lirePack } from "./lecture";
+import { packEnSql } from "./sql";
+
+const racine = resolve(__dirname, "../../..");
+const packGabon = resolve(racine, "../referentiels/gabon");
+const packFictif = resolve(racine, "tests/packs/yy-fictif");
+const packInvalide = resolve(racine, "tests/packs/invalide");
+
+describe("lecture d'un pack pays", () => {
+  it("lit le pack pilote sans erreur (valeurs attendues = données du pack, pas du code)", () => {
+    const pack = lirePack(packGabon);
+    expect(pack.pays.code).toBe("ga");
+    expect(pack.unites).toHaveLength(67);
+    expect(pack.niveaux).toHaveLength(7);
+    expect(pack.series).toHaveLength(5);
+    expect(pack.programmes["ga-3e-mathematiques"]).toHaveLength(7);
+    // Famille Mathématiques, collège et lycée (séries C et D), programmes provisoires, et son graphe proposé.
+    expect(Object.keys(pack.programmes).filter((u) => u.endsWith("-mathematiques"))).toHaveLength(
+      9,
+    );
+    expect(pack.programmes["ga-tle-c-mathematiques"].map((c) => c.code)).toContain(
+      "nombres-complexes",
+    );
+    expect(pack.programmes["ga-tle-d-mathematiques"].map((c) => c.code)).not.toContain(
+      "nombres-complexes",
+    );
+    expect(pack.prerequis.length).toBeGreaterThan(0);
+    expect(pack.prerequis).toContainEqual({
+      chapitre: { unite: "ga-3e-mathematiques", code: "thales" },
+      prerequis: { unite: "ga-4e-mathematiques", code: "triangles-semblables" },
+      nature: "strict",
+    });
+    expect(pack.prerequis).toContainEqual({
+      chapitre: { unite: "ga-tle-c-mathematiques", code: "logarithme-exponentielle" },
+      prerequis: { unite: "ga-1re-c-mathematiques", code: "derivation" },
+      nature: "strict",
+    });
+  });
+
+  it("refuse un prérequis propre à une autre série", () => {
+    const dossier = mkdtempSync(join(tmpdir(), "pack-"));
+    cpSync(packFictif, dossier, { recursive: true });
+    writeFileSync(
+      join(dossier, "programmes", "yy-g12-civisme.yaml"),
+      'unite: yy-g12-civisme\nchapitres:\n  - { ordre: 1, code: debat, titre: "Débattre" }\n',
+    );
+    writeFileSync(
+      join(dossier, "prerequis", "algebre.yaml"),
+      `liens:
+  - { chapitre: yy-g12-algebre/fonctions, prerequis: yy-g12-civisme/debat, nature: souple }
+`,
+    );
+    let erreurs: string[] = [];
+    try {
+      lirePack(dossier);
+    } catch (e) {
+      erreurs = (e as ErreurPack).erreurs;
+    }
+    expect(erreurs).toEqual([
+      "prerequis/algebre.yaml : prérequis d'une autre série dans yy-g12-algebre/fonctions ← yy-g12-civisme/debat",
+    ]);
+  });
+
+  it("refuse un graphe de prérequis incohérent (chapitre inconnu, classe supérieure, cycle)", () => {
+    const dossier = mkdtempSync(join(tmpdir(), "pack-"));
+    cpSync(packFictif, dossier, { recursive: true });
+    writeFileSync(
+      join(dossier, "prerequis", "algebre.yaml"),
+      `liens:
+  - { chapitre: yy-g7-algebre/equations, prerequis: yy-g7-algebre/inconnu, nature: strict }
+  - { chapitre: yy-g7-algebre/equations, prerequis: yy-g12-algebre/fonctions, nature: strict }
+  - { chapitre: yy-g7-algebre/expressions, prerequis: yy-g7-algebre/equations, nature: souple }
+  - { chapitre: yy-g7-algebre/equations, prerequis: yy-g7-algebre/expressions, nature: strict }
+`,
+    );
+    let erreurs: string[] = [];
+    try {
+      lirePack(dossier);
+    } catch (e) {
+      erreurs = (e as ErreurPack).erreurs;
+    }
+    expect(erreurs).toEqual(
+      expect.arrayContaining([
+        "prerequis/algebre.yaml : chapitre inconnu dans yy-g7-algebre/equations ← yy-g7-algebre/inconnu",
+        "prerequis/algebre.yaml : prérequis d'une classe supérieure dans yy-g7-algebre/equations ← yy-g12-algebre/fonctions",
+        "graphe de prérequis : cycle détecté",
+      ]),
+    );
+  });
+
+  it("charge un pays fictif à la structure différente sans modifier le code", () => {
+    const pack = lirePack(packFictif);
+    expect(pack.referentiel.code).toBe("yy-general");
+    expect(pack.unites.map((u) => u.code)).toEqual([
+      "yy-g7-algebre",
+      "yy-g12-algebre",
+      "yy-g12-civisme",
+    ]);
+    expect(pack.unites[1].series).toEqual(["SCI", "LIT"]);
+    expect(pack.programmes["yy-g7-algebre"][1]).toMatchObject({ volumeHoraire: 6, coefficient: 2 });
+    expect(pack.prerequis).toHaveLength(2);
+  });
+
+  it("lit les durées de conservation du cadre légal (provisoires pour le pilote)", () => {
+    expect(lirePack(packGabon).pays.conservation).toEqual({
+      echanges_jours: 365,
+      inscription_non_confirmee_jours: 30,
+      compte_inactif_jours: 730,
+      signalements_traites_jours: null,
+      tickets_resolus_jours: null,
+      recrutement_clos_jours: null,
+      rapports_parents_jours: null,
+    });
+    expect(lirePack(packGabon).pays.resumesApresSuppression).toBeNull();
+    expect(lirePack(packFictif).pays.conservation.inscription_non_confirmee_jours).toBe(7);
+  });
+
+  it("lit les seuils du suivi du pilote (provisoires) ; absents = non surveillés", () => {
+    expect(lirePack(packGabon).pays.pilote).toEqual({
+      detresse_delai_heures: 2,
+      detresse_delai_max_heures: 12,
+      erreur_contenu_delai_jours: 7,
+      contestations_max_par_question: 2,
+      depassement_budget_pourcent: 50,
+      budget_hebdomadaire_usd: null,
+    });
+    expect(Object.values(lirePack(packFictif).pays.pilote).every((v) => v === null)).toBe(true);
+  });
+
+  it("refuse des seuils du pilote incohérents", () => {
+    const dossier = mkdtempSync(join(tmpdir(), "pack-"));
+    cpSync(packFictif, dossier, { recursive: true });
+    const pays = readFileSync(join(dossier, "pays.yaml"), "utf8");
+    writeFileSync(
+      join(dossier, "pays.yaml"),
+      `${pays}\npilote:\n  detresse_delai_heures: 6\n  detresse_delai_max_heures: 3\n  contestations_max_par_question: 1.5\n  budget_hebdomadaire_usd: -1\n`,
+    );
+    let erreurs: string[] = [];
+    try {
+      lirePack(dossier);
+    } catch (e) {
+      erreurs = (e as ErreurPack).erreurs;
+    }
+    expect(erreurs).toEqual([
+      "pays.yaml : seuil du pilote invalide (contestations_max_par_question)",
+      "pays.yaml : seuil du pilote invalide (budget_hebdomadaire_usd)",
+      "pays.yaml : detresse_delai_max_heures doit être au moins detresse_delai_heures",
+    ]);
+  });
+
+  it("lit le questionnaire anonyme : fermé, à valider pour le pilote, validé pour le pays fictif", () => {
+    const q = lirePack(packGabon).questionnaire!;
+    expect(q.statut).toBe("a_valider");
+    expect(q.questions.filter((x) => x.public === "eleve")).toHaveLength(5);
+    expect(q.questions.filter((x) => x.public === "parent")).toHaveLength(4);
+    expect(q.questions.every((x) => x.options.length >= 2)).toBe(true);
+    expect(lirePack(resolve(racine, "../referentiels/zz-fictif")).questionnaire?.statut).toBe(
+      "valide",
+    );
+    expect(lirePack(packFictif).questionnaire).toBeNull();
+  });
+
+  it("lit les indicatifs téléphoniques autorisés du pack", () => {
+    expect(lirePack(packGabon).pays.indicatifsTelephone).toHaveLength(1);
+    expect(lirePack(packGabon).pays.indicatifsTelephone[0]).toMatch(/^\+\d{1,4}$/);
+    expect(lirePack(packFictif).pays.indicatifsTelephone).toEqual([]);
+  });
+
+  it("refuse un pack incohérent en listant toutes les erreurs", () => {
+    let erreurs: string[] = [];
+    try {
+      lirePack(packInvalide);
+    } catch (e) {
+      expect(e).toBeInstanceOf(ErreurPack);
+      erreurs = (e as ErreurPack).erreurs;
+    }
+    expect(erreurs).toEqual(
+      expect.arrayContaining([
+        "niveau en double : « n1 »",
+        "matieres.yaml : couche inconnue pour « m1 »",
+        "unites.yaml : niveau inconnu « inexistant » pour u1",
+        "unites.yaml : matière inconnue « absente » pour u2",
+        "unites.yaml : série inconnue « X » pour u2",
+        "pays.yaml : indicatif téléphonique invalide « 241 »",
+      ]),
+    );
+  });
+});
+
+describe("génération du SQL d'import", () => {
+  const sql = packEnSql(lirePack(packFictif));
+
+  it("échappe les apostrophes", () => {
+    expect(sql).toContain("'Civisme d''aujourd''hui'");
+    expect(sql).toContain("'L''ordre des opérations'");
+  });
+
+  it("ne valide jamais rien : aucun statut « valide » n'est écrit", () => {
+    expect(sql).not.toMatch(/'valide'/);
+    expect(sql).not.toMatch(/statut\s*=/);
+  });
+
+  it("est encadré par une transaction", () => {
+    expect(sql.trimEnd().endsWith("commit;")).toBe(true);
+    expect(sql).toContain("begin;");
+  });
+});
+
+describe("aucune donnée de pays dans le code (ADR 0001)", () => {
+  // Noms propres à des packs : ils ne doivent apparaître que dans referentiels/ et les tests.
+  const interdits = [
+    /gabon/i,
+    /\bBEPC\b/,
+    /\bga-[a-z0-9]/,
+    /\bA1\b|\bA2\b/,
+    /Libreville/i,
+    /\+241/,
+    /\bXAF\b|franc CFA/i,
+    // Jalon 22 (ADR 0111) : noms de classes et institution du pilote.
+    /\b(6e|5e|4e|3e|2nde|1re|Tle)\b/,
+    /\bTerminale\b/,
+    /\bIPN\b/,
+  ];
+  // Scripts de développement et de test qui importent exprès le pack du pilote sur une base jetable ou locale.
+  const scriptsDuPilote = [
+    "scripts/base-locale.sh",
+    "scripts/tester-base.sh",
+    "scripts/tester-sauvegarde.sh",
+    "scripts/repetition-generale.sh",
+  ];
+
+  function fichiers(dossier: string): string[] {
+    return readdirSync(dossier).flatMap((nom) => {
+      const chemin = join(dossier, nom);
+      return statSync(chemin).isDirectory() ? fichiers(chemin) : [chemin];
+    });
+  }
+
+  it("le code applicatif ne contient aucun nom de pays, de série ni d'examen", () => {
+    const sources = [
+      ...fichiers(join(racine, "src")),
+      ...fichiers(join(racine, "supabase/migrations")),
+      ...fichiers(join(racine, "scripts")).filter(
+        (f) => !scriptsDuPilote.some((s) => f.endsWith(s)),
+      ),
+    ].filter((f) => !f.endsWith(".test.ts"));
+    const trouves = sources.flatMap((f) => {
+      const contenu = readFileSync(f, "utf8");
+      return interdits.filter((motif) => motif.test(contenu)).map((motif) => `${f} : ${motif}`);
+    });
+    expect(trouves).toEqual([]);
+  });
+
+  it("curriculum par compétences : compétences, objectifs et sources lus et contrôlés (ADR 0109)", () => {
+    const pack = lirePack(packFictif);
+    expect(pack.competences["yy-g7-algebre"]).toEqual([
+      {
+        code: "C1",
+        intitule: "Résoudre un problème par le calcul",
+        chapitres: ["expressions", "equations"],
+        source: "Curriculum fictif du pays Y, p. 2",
+      },
+    ]);
+    expect(pack.programmes["yy-g7-algebre"][0]).toMatchObject({
+      objectifs: ["Calculer la valeur d'une expression"],
+      source: "Curriculum fictif du pays Y, p. 3",
+    });
+    // Sans compétences (pack pilote aujourd'hui) : rien, et pas d'erreur.
+    expect(lirePack(packGabon).competences).toEqual({});
+
+    const copie = mkdtempSync(join(tmpdir(), "pack-competences-"));
+    cpSync(packFictif, copie, { recursive: true });
+    const fichier = join(copie, "programmes/yy-g7-algebre.yaml");
+    writeFileSync(
+      fichier,
+      readFileSync(fichier, "utf8").replace("[expressions, equations]", "[expressions, inconnu]"),
+    );
+    let erreurs: string[] = [];
+    try {
+      lirePack(copie);
+    } catch (e) {
+      erreurs = (e as ErreurPack).erreurs;
+    }
+    expect(erreurs).toEqual([
+      "programmes/yy-g7-algebre.yaml : compétence « C1 », chapitre inconnu « inconnu »",
+    ]);
+  });
+});

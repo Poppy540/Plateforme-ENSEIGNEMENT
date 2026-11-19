@@ -1,0 +1,13 @@
+niveaux:
+  - { code: grade-7, libelle: "Grade 7", cycle: middle, ordre: 1, code_interne: secondaire-1 }
+  - {
+      code: grade-12,
+      libelle: "Grade 12",
+      cycle: high,
+      ordre: 2,
+      code_interne: secondaire-6,
+      series_obligatoires: true,
+    }
+series:
+  - { code: SCI, libelle: "Spécialité scientifique", type: specialite, code_interne: scientifique }
+  - { code: LIT, libelle: "Spécialité littéraire", type: specialite, code_interne: litteraire }

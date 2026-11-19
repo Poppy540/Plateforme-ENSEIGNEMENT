@@ -1,0 +1,31 @@
+# Programme provisoire — Mathématiques 6e (Gabon).
+# Source : docs/cadrage.md (« Découpage des cours — Classe de 6e », Mathématiques). PROVISOIRE : base francophone
+# générique, à valider par un enseignant-référent gabonais à partir du programme officiel IPN (ADR 0035).
+unite: ga-6e-mathematiques
+statut: a_valider
+valide_par: null
+date_validation: null
+examen: null   # le BEPC se passe en fin de 3e
+chapitres:
+  # Nombres et calculs
+  - {ordre: 1, code: entiers,                        titre: "Nombres entiers : lecture, comparaison, repérage", statut: a_valider}
+  - {ordre: 2, code: decimaux,                       titre: "Nombres décimaux : addition, soustraction, multiplication", statut: a_valider}
+  - {ordre: 3, code: division-euclidienne,           titre: "Division euclidienne et divisibilité", statut: a_valider}
+  - {ordre: 4, code: division-decimale,              titre: "Division décimale", statut: a_valider}
+  - {ordre: 5, code: fractions-definition,           titre: "Fractions : définition, comparaison, encadrement", statut: a_valider}
+  - {ordre: 6, code: fractions-calculs,              titre: "Fractions : simplification et calculs", statut: a_valider}
+  - {ordre: 7, code: proportionnalite-pourcentages,  titre: "Proportionnalité et pourcentages", statut: a_valider}
+  - {ordre: 8, code: statistiques-tableaux,          titre: "Statistiques : tableaux et diagrammes", statut: a_valider}
+  # Grandeurs et mesures
+  - {ordre: 9, code: grandeurs-conversions,          titre: "Longueurs, masses, durées : calculs et conversions", statut: a_valider}
+  - {ordre: 10, code: perimetres,                     titre: "Périmètres", statut: a_valider}
+  - {ordre: 11, code: aires,                          titre: "Aires : rectangle, carré, triangle, cercle", statut: a_valider}
+  - {ordre: 12, code: volumes,                        titre: "Volumes : conversions et calculs", statut: a_valider}
+  - {ordre: 13, code: angles,                         titre: "Utilisation du rapporteur, mesure d'angles", statut: a_valider}
+  # Espace et géométrie
+  - {ordre: 14, code: droites-segments,               titre: "Droites, segments, milieux", statut: a_valider}
+  - {ordre: 15, code: symetrie-axiale,                titre: "Symétrie axiale", statut: a_valider}
+  - {ordre: 16, code: triangles-quadrilateres,        titre: "Triangles et quadrilatères : constructions", statut: a_valider}
+  - {ordre: 17, code: cercle,                         titre: "Le cercle : propriétés et constructions", statut: a_valider}
+# Prérequis : acquis de l'école primaire (aucune unité source sur la plateforme).
+# Volumes horaires et coefficients : manquants (à demander au référent / IPN).

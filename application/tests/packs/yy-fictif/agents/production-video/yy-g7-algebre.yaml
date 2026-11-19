@@ -1,0 +1,10 @@
+# Pack de TEST : fiche d'avatar fictive.
+unite: yy-g7-algebre
+fiche_avatar:
+  avatar: "avatar-fictif-y"
+  voix: "voix-de-synthese-fictive"
+  langue: "fr"
+  description: "Avatar synthétique fictif (pack de test)."
+  personne_reelle: false
+  autorisation_voix: null
+  autorisation_visage: null

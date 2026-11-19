@@ -1,0 +1,7 @@
+# Valeurs de la Conformité programme pour le pays. Toute valeur vide bloque l'agent.
+unite: pays
+variables:
+  PAYS: ""
+  REFERENT: ""
+  DATE: ""
+  VERSION: ""

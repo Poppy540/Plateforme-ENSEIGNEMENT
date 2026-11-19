@@ -6,13 +6,13 @@ Plateforme d'enseignement en ligne du collège au lycée : cours vidéo présent
 
 **Au début de chaque session : lire `memory.md`. À la fin : le mettre à jour.**
 
-## Architecture (cible, stack non figée)
+## Architecture (stack validée, ADR 0011)
 
-- Application web mobile-first (PWA), conçue pour les connexions lentes et les smartphones.
-- Base de données relationnelle avec recherche vectorielle et un rôle restreint par agent (Supabase pressenti, à confirmer).
-- Vidéo adaptative faible débit (Cloudflare Stream pressenti), service d'avatar, service de voix, WhatsApp Business, SMS (OTP), Mobile Money côté backend uniquement.
+- Application web mobile-first en PWA : Next.js + TypeScript, conçue pour les connexions lentes et les smartphones.
+- Supabase : authentification (téléphone + code SMS, lien magique email), Postgres, pgvector, sécurité au niveau des lignes, un rôle restreint par agent.
+- Cloudflare Stream (vidéo adaptative faible débit). Avatar, voix, SMS, WhatsApp Business, hébergement : fournisseurs à choisir. Pilote gratuit : pas de paiement (ADR 0013).
 - **Unité pédagogique** = (référentiel, niveau, ensemble de séries, matière). Une unité = programme validé + avatar + configuration de l'agent Professeur.
-- **Dix agents** : Professeur (un modèle, instancié par unité), Scénariste, Production vidéo, Évaluateur, Tuteur, Conformité programme, Support/inscription, Orchestrateur, Recruteur, Coordinateur (par famille de matières).
+- **Dix agents** : Professeur (un modèle, instancié par unité), Scénariste, Production vidéo, Évaluateur, Tuteur, Conformité programme, Support/inscription, Orchestrateur, Recruteur, Coordinateur de famille de matières (un modèle, instancié par famille ; ne parle jamais aux élèves).
 - Un humain (enseignant-référent) valide programmes, scripts, quiz et vidéos avant toute publication.
 
 ## Principe du pack pays
@@ -23,7 +23,8 @@ Tout ce qui dépend d'un système éducatif vit dans `referentiels/<pays>/`, **j
 
 ```
 CLAUDE.md, memory.md      résumé du projet / mémoire de travail
-docs/                     cadrage.md, prompt-claude-code.md, decisions/ (ADR), recrutement/
+application/              application web Next.js (PWA)
+docs/                     cadrage.md, prompt-claude-code.md, attentes-proprietaire.md (ce qui attend le propriétaire, par urgence), mise-en-route.md, historique.md (journal des jalons), decisions/ (ADR), plans/, bilans/, demo/, pilote/, production/, juridique/, securite/, performance/, portabilite/, recrutement/
 agents/<agent>/           prompt.md (recopié du cadrage), permissions.md, skills/, tests/*.feature
 referentiels/<pays>/      pack pays (gabon/ = pilote) ; _modele/ pour un nouveau pays
 secrets/                  modèles *.env.example uniquement ; vrais .env ignorés et interdits en lecture
@@ -33,7 +34,7 @@ tests/                    batterie commune TC, config.yaml du lanceur, README
 
 ## Conventions
 
-- Français pour la documentation, les données et les noms du domaine (`unites`, `chapitres`, `progression`). Langue du code : à confirmer (proposition : anglais).
+- **Tout en français** (ADR 0012) : documentation, données, tables, identifiants, fichiers, commentaires, interface. Identifiants sans accents (`chapitreEnCours`). Seules exceptions : mots-clés du langage, API des bibliothèques, noms imposés par les outils (`page.tsx`, `package.json`).
 - Codes d'unité : `<pays>-<niveau>[-<groupe de séries>]-<matière>`, par exemple `ga-3e-mathematiques`, `ga-tle-c-physique-chimie`, `ga-1re-a-francais`.
 - Les prompts d'agents ne sont jamais réécrits sans accord du propriétaire. Les valeurs propres à une unité ou un pays vont dans le pack pays (ADR 0005).
 - Chaque donnée d'un pack a une origine et un statut dans `SOURCES.md`.
@@ -43,7 +44,42 @@ tests/                    batterie commune TC, config.yaml du lanceur, README
 
 ## Commandes
 
-À compléter quand la stack sera validée (build, lint, tests unitaires, lanceur de tests des agents).
+Application dans `application/` (voir `application/README.md`) :
+
+```
+cd application
+pnpm install          # dépendances
+pnpm controler [--rapide] [--liste]   # TOUS les contrôles en une commande, outils vérifiés d'abord ; --rapide = format, lint, types, unitaires ; rapport daté dans .controles/ (ADR 0095-0096)
+pnpm controler:installer [--retirer]  # facultatif : contrôle rapide avant chaque git push (ADR 0097)
+pnpm verifier:liens   # liens internes de toute la documentation Markdown (dans pnpm controler --rapide ; ADR 0118)
+pnpm audit:dependances   # failles connues des dépendances (dans pnpm controler) ; exceptions écrites dans exceptions-audit.json (ADR 0105)
+pnpm verifier:depot   # réglages de sécurité du dépôt GitHub, lecture seule (guide docs/securite/reglages-github.md ; ADR 0107)
+pnpm mesurer:pages    # poids et temps de toutes les pages en 3G lente et 2G → docs/performance/mesures-pages.md (budgets : ADR 0099, vérifiés par poids-pages.spec.ts)
+pnpm lint             # ESLint
+pnpm format:verifier  # Prettier
+pnpm typecheck        # types Next.js + TypeScript
+pnpm test             # tests unitaires (Vitest)
+pnpm test:base        # migrations Supabase, règles d'accès et import des packs sur un Postgres local jetable
+pnpm test:sauvegarde  # sauvegarde puis restauration sur deux Postgres locaux jetables (ADR 0072)
+pnpm test:migrations  # migrations suivies : base neuve, en retard, fichier modifié, migration en échec (ADR 0075)
+pnpm base:migrer [--simuler]   # applique les migrations qui manquent, suivies en base (connexion d'administration)
+pnpm base:sauvegarder [dossier] ; pnpm base:restaurer <dossier> --confirmer   # copie de secours (voir docs/production/ §5)
+pnpm pack:sql ../referentiels/<pays>   # contrôle un pack pays et génère son SQL d'import
+pnpm pack:nouveau <dossier> <code> "<nom>"   # nouveau pays depuis referentiels/_modele/ (guide : referentiels/README.md ; ADR 0113)
+pnpm pack:verifier ../referentiels/<pays>   # ce qui est bloquant, à compléter, à valider dans un pack (lecture seule)
+pnpm entrainement:referent   # espace d'entraînement du référent sur la base LOCALE seulement (docs/pilote/kit-referent/)
+pnpm referent:invitation <référentiel> <famille[,famille]> [jours] > invitation.sql   # invitation de référent en secours (sinon : /administration/invitations)
+pnpm classe:creer <référentiel> <niveau> "<nom>" "<établissement>" [--serie C] > classe.sql   # classe du pilote en secours (sinon : /administration/classes)
+bash scripts/base-locale.sh demarrer   # base locale (données fictives) pour pnpm dev ; voir application/README.md
+pnpm verifier:production   # sur le serveur : configuration de production complète ? (n'affiche aucune valeur ; voir docs/production/)
+pnpm verifier:site https://<adresse>   # site en ligne : en-têtes, simulation fermée, accès refusés sans session (lecture seule ; ADR 0073)
+pnpm paquet [dossier] [--pays <pack>]   # paquet de déploiement autonome dans ../paquet (sans secret, test ni pack fictif ; un pays par déploiement ; ADR 0076, 0114)
+pnpm base:fuseau [--simuler]   # fuseau de la base = fuseau du pays du déploiement, après l'import du pack (ADR 0114)
+pnpm repetition   # répétition générale du déploiement en local, simulation coupée : base neuve → migrations → pack → configuration → paquet → site → sauvegarde (ADR 0077)
+pnpm test:e2e   # bout en bout (navigateur préinstallé ; sinon CHEMIN_CHROMIUM=<chemin de chrome>) (Playwright, base locale réinitialisée)
+pnpm charge [--eleves 200]   # tenue en charge, base LOCALE seulement, serveur lancé en simulation sur le port 3100 (ADR 0059)
+pnpm test:agents [--agent scenariste|evaluateur|tuteur|support|coordinateur|conformite|recruteur]   # tests des agents, simulés (sans coût) ; passage réel : voir tests/README.md (payant, accord du propriétaire)
+```
 
 # 5. DROITS ET INTERDICTIONS
 
@@ -82,10 +118,9 @@ INTERDIT :
 | Conformité programme | Référentiel pays, contenus existants | Rapports d'écart | Modifier le référentiel validé, déclarer une conformité définitive |
 | Support/inscription | FAQ, statut d'inscription | Tickets de support | Paiements, remboursements, suppression de compte, demander un code SMS ou un mot de passe |
 | Orchestrateur | État des agents, files de tâches, approbations enregistrées | Routage, escalade, suspension d'une tâche ou d'un agent | Contourner une validation humaine, élargir les droits d'un agent, se substituer à un agent |
+| Coordinateur de famille | Référentiel, contenus de sa famille (tous niveaux et séries), graphe de prérequis, statistiques d'erreurs anonymisées et agrégées | Propositions de graphe, glossaire, charte et plans de production au statut brouillon, rapports de cohérence | Valider ou publier, modifier le référentiel validé, lire des données individuelles d'élèves, modifier prompts ou droits d'un agent, contacter élèves, parents ou candidats |
 | Recruteur | Sources autorisées, fiches candidats, FAQ de recrutement, conditions validées, liste d'opposition | Fiches candidats minimales, brouillons de messages et d'accords, statuts du pipeline, liste d'opposition | Envoyer un premier message sans approbation, signer ou promettre, fixer une rémunération, contacter après un refus, collecter hors sources autorisées, créer un compte sans approbation |
 
 ## 5.3 Droits de Claude Code (toi, pendant la construction)
 AUTORISÉ : créer et modifier les fichiers du dépôt, installer des dépendances vérifiées, lancer les tests, proposer des skills et des services.
 INTERDIT SANS MON ACCORD EXPLICITE : lire, afficher ou commiter une valeur de secret ; déployer en production ; supprimer des données ; installer une skill ou un paquet tiers non vérifié ; souscrire un service payant ; réécrire un prompt d'agent ; affaiblir les règles de permission de .claude/settings.json ; utiliser des données réelles d'élèves, de parents ou de candidats.
-
-> Ajout hors §5 (ADR 0008, validé le 2026-10-04) : les droits de l'agent Coordinateur sont dans `agents/coordinateur/permissions.md`.

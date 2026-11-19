@@ -1,0 +1,44 @@
+import { messageSigne } from "@/lib/serveur/message-adresse";
+import { roleCompte } from "@/lib/serveur/referent";
+import { deposerDocument, TAILLE_PDF_MAX } from "@/lib/serveur/conformite";
+import { utilisateurConnecte } from "@/lib/serveur/session";
+
+// Dépôt d'un document officiel (ADR 0039) : route dédiée, pour accepter un PDF de 10 Mo sans relever la limite
+// de toutes les actions serveur. La taille annoncée est vérifiée avant de lire le corps.
+// Message d'erreur signé (revue du Jalon 24, S22) : la page n'affiche que ce que le serveur a écrit.
+const erreurSignee = (erreur: string) => new URLSearchParams(messageSigne({ erreur })).toString();
+
+export async function POST(requete: Request): Promise<Response> {
+  const retour = (parametres: string) =>
+    Response.redirect(new URL(`/referent/conformite?${parametres}`, requete.url), 303);
+  // Défense en profondeur (le cookie de session est déjà SameSite=Lax) : même origine exigée.
+  const origine = requete.headers.get("origin");
+  if (origine && origine !== new URL(requete.url).origin)
+    return Response.json({ erreur: "Origine refusée." }, { status: 403 });
+  const utilisateur = await utilisateurConnecte();
+  if (!utilisateur || (await roleCompte(utilisateur)) !== "referent")
+    return Response.json({ erreur: "Référent requis." }, { status: 403 });
+  // Taille annoncée obligatoire : un envoi « chunked » sans Content-Length serait lu en entier en mémoire.
+  const taille = Number(requete.headers.get("content-length"));
+  if (!Number.isFinite(taille) || taille <= 0)
+    return Response.json({ erreur: "Taille de l'envoi requise." }, { status: 411 });
+  if (taille > TAILLE_PDF_MAX + 100_000)
+    return retour(erreurSignee("Fichier trop lourd (10 Mo au plus)."));
+  let donnees: FormData;
+  try {
+    donnees = await requete.formData();
+  } catch {
+    return retour(erreurSignee("Envoi illisible."));
+  }
+  const fichier = donnees.get("pdf");
+  const pdf =
+    fichier instanceof File && fichier.size > 0 ? Buffer.from(await fichier.arrayBuffer()) : null;
+  const erreur = await deposerDocument(utilisateur, {
+    titre: String(donnees.get("titre") ?? ""),
+    origine: String(donnees.get("origine") ?? ""),
+    declareOfficiel: donnees.get("officiel") === "oui",
+    texte: pdf ? null : String(donnees.get("texte") ?? "") || null,
+    pdf,
+  });
+  return retour(erreur ? erreurSignee(erreur) : "depot=ok");
+}

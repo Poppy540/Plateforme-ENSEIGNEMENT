@@ -1,0 +1,17 @@
+# Programme provisoire — Français 3e (Gabon).
+# Source : docs/cadrage.md (« Découpage des cours — Classe de 3e », Français), intitulés repris mot pour mot. PROVISOIRE :
+# base francophone générique, à valider par un enseignant-référent gabonais à partir du programme officiel IPN (œuvres
+# et auteurs au programme, dont les auteurs gabonais et africains, à fixer avec lui).
+unite: ga-3e-francais
+statut: a_valider
+valide_par: null
+date_validation: null
+examen: bepc
+chapitres:
+  - {ordre: 1, code: nouvelle-realiste-fantastique, titre: "La nouvelle réaliste et fantastique",              statut: a_valider}
+  - {ordre: 2, code: dialogue-argumentatif,         titre: "L'argumentation : le dialogue argumentatif",       statut: a_valider}
+  - {ordre: 3, code: poesie-engagee,                titre: "La poésie engagée du XXe siècle",                  statut: a_valider}
+  - {ordre: 4, code: theatre-classique,             titre: "Le théâtre classique",                             statut: a_valider}
+  - {ordre: 5, code: autobiographie,                titre: "L'autobiographie",                                 statut: a_valider}
+  - {ordre: 6, code: preparation-bepc,              titre: "Préparation BEPC : résumé, questions, rédaction",  statut: a_valider}
+# Volumes horaires et coefficients : manquants (à demander au référent / IPN).

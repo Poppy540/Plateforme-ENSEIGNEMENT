@@ -1,6 +1,6 @@
 # Skills — agent recruteur
 
-Statut : **aucune skill installée.** Recherche à faire, puis liste présentée au propriétaire avant toute adoption.
+Statut : skills tierces adaptées après validation du propriétaire (ADR 0009) ; voir le tableau « Skills retenues ». Aucun plugin ni script installé.
 
 Pistes : sourcing éthique et qualification, messages de prise de contact transparents, préparation et synthèse d'entretien, dossier d'accord, protection des données personnelles.
 
@@ -17,3 +17,4 @@ Chaque skill retenue aura son sous-dossier `skills/<nom>/SKILL.md` (en-tête `na
 
 | Skill | Source (URL, commit) | Licence | Adaptations | Validée par le propriétaire |
 |---|---|---|---|---|
+| `preselection-equitable` | https://github.com/anthropics/knowledge-work-plugins, `small-business/skills/hiring-screener/` (SKILL.md et `reference/*`) et `small-business/shared/personal-data.md`, commit `8444efcd48f7012f09797778a36a33e73d0861f4` | Apache 2.0 (`LICENSE` copié) | Français ; grille uniquement pédagogique et professionnelle définie par {{RESPONSABLE}} ; critères interdits explicites (religion, opinions, santé, origine, situation familiale, sexe, âge, tout critère non pédagogique) ; catégorie « impossible à évaluer » ; aucun envoi sans approbation ; aucune pièce d'identité conservée ; liste d'opposition ; retirés : WebFetch, Gmail, agenda, Gusto, DocuSign, Drive/M365, Trello, Zapier, paie, offre, rémunération, checklist d'intégration | Validée par le propriétaire (liste validée le 2026-10-04) |

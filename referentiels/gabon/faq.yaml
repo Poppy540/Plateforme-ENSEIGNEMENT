@@ -1,0 +1,35 @@
+# FAQ de l'agent Support/inscription pour le pack Gabon (prompt du Support : « FAQ validée »).
+# PROVISOIRE : rédigée par Claude Code d'après le fonctionnement réel de la plateforme ; à valider par le
+# propriétaire avant toute ouverture à des élèves. Le Support ne répond qu'avec ces entrées, sinon il ouvre un ticket.
+statut: a_valider
+# Délai de réponse annoncé pour un ticket : règle à fixer par le propriétaire. Tant qu'elle est null, le Support
+# n'annonce aucun délai chiffré.
+delai_reponse_tickets: null
+entrees:
+  - id: inscription
+    question: "Comment m'inscrire ?"
+    reponse: "Sur la page de connexion, saisis ton numéro de téléphone (ou ton email), puis le code reçu. Indique ensuite ton prénom ou un pseudonyme, ta classe et, au lycée, ta série."
+  - id: accord-parent
+    question: "Pourquoi faut-il l'accord d'un parent ?"
+    reponse: "Un élève mineur doit avoir l'accord d'un parent ou tuteur. À l'inscription, tu indiques son numéro ou son email : il reçoit un lien, et ton compte s'active dès qu'il accepte."
+  - id: code-non-recu
+    question: "Je ne reçois pas le code de connexion."
+    reponse: "Vérifie le numéro saisi (avec l'indicatif du pays), attends une minute, puis redemande un code. Tu peux aussi te connecter avec ton email. Ne donne jamais ton code à personne, même à l'équipe de la plateforme."
+  - id: classe-serie
+    question: "Comment choisir ma classe et ma série ?"
+    reponse: "Choisis la classe que tu suis cette année. Au lycée, choisis la série de ta classe (elle figure sur tes documents scolaires). En cas de doute, demande à ton professeur principal."
+  - id: gratuit
+    question: "Est-ce payant ?"
+    reponse: "Non : pendant la phase pilote, la plateforme est gratuite. Aucun paiement n'est demandé."
+  - id: mes-donnees
+    question: "Comment télécharger ou supprimer mes données ?"
+    reponse: "Depuis ton espace, ouvre « Mes données » : tu peux télécharger toutes tes données ou supprimer ton compte (toutes tes données sont alors effacées)."
+  - id: rapports-parents
+    question: "Mes parents peuvent-ils suivre ma progression ?"
+    reponse: "Oui, si tu le proposes et qu'ils l'acceptent : depuis « Mon plan de révision », propose les rapports à ton parent. Il reçoit un lien pour accepter ; toi comme lui pouvez arrêter à tout moment."
+  - id: professeur-ia
+    question: "Qui sont les professeurs ?"
+    reponse: "Les professeurs de la plateforme sont des intelligences artificielles. Les cours, les quiz et les vidéos sont relus et validés par des enseignants avant d'être publiés."
+  - id: question-de-cours
+    question: "J'ai une question sur un cours."
+    reponse: "Ouvre le chapitre concerné dans « Mes cours » et pose ta question au professeur de la matière : c'est lui qui t'aide sur le contenu."

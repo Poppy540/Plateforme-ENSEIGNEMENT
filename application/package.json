@@ -1,0 +1,73 @@
+{
+  "name": "plateforme-enseignement",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "format": "prettier --write .",
+    "format:verifier": "prettier --check .",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:base": "bash scripts/tester-base.sh",
+    "base:migrer": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/migrer.mts",
+    "test:sauvegarde": "bash scripts/tester-sauvegarde.sh",
+    "test:migrations": "bash scripts/tester-migrations.sh",
+    "base:sauvegarder": "bash scripts/sauvegarde-base.sh sauvegarder",
+    "base:restaurer": "bash scripts/sauvegarde-base.sh restaurer",
+    "base:fuseau": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/regler-fuseau.mts",
+    "pack:sql": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/pack-en-sql.mts",
+    "pack:nouveau": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/pack-nouveau.mts",
+    "pack:verifier": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verifier-pack.mts",
+    "entrainement:referent": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/entrainement-referent.mts",
+    "referent:invitation": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/invitation-referent.mts",
+    "test:agents": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/lancer-tests-agents.mts",
+    "demo:captures": "playwright test --config playwright.demo.config.ts",
+    "mesurer:pages": "playwright test --config playwright.mesures.config.ts",
+    "charge": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/tenue-en-charge.mts",
+    "classe:creer": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/classe-creer.mts",
+    "donnees:purger": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/purger-donnees.mts",
+    "paquet": "bash scripts/paquet.sh",
+    "repetition": "bash scripts/repetition-generale.sh",
+    "verifier:site": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verifier-site.mts",
+    "controler": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/controler.mts",
+    "controler:installer": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/crochet-avant-envoi.mts",
+    "verifier:production": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verifier-production.mts",
+    "verifier:liens": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verifier-liens.mts",
+    "audit:dependances": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/audit-dependances.mts",
+    "verifier:depot": "NODE_USE_ENV_PROXY=1 node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --no-warnings=UNDICI-EHPA scripts/verifier-depot.mts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.131.0",
+    "@supabase/supabase-js": "^2.117.2",
+    "next": "16.4.6",
+    "pg": "^8.23.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "server-only": "^0.0.1",
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^20",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.6",
+    "prettier": "^3.9.9",
+    "typescript": "^5",
+    "vite": "8.3.5",
+    "vitest": "~5.0.5"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "pnpm": {
+    "overrides": {
+      "zod@<4.6.6": "4.6.7"
+    }
+  }
+}

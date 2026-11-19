@@ -9,8 +9,16 @@ secrets/*.env
 id_rsa*
 id_ed25519*
 
+# --- Sauvegardes et clé privée age (revue du Jalon 24, S17) : jamais dans git, où qu'elles soient ---
+sauvegardes/
+*.dump
+*.age
+cle-sauvegardes*
+
 # --- Données réelles : élèves, parents, candidats (jamais dans git) ---
 donnees/
+# … sauf le code de l'application (page « Sort des données », ADR 0086) : un dossier de code n'est jamais une donnée.
+!application/src/**/donnees/
 data/
 exports/
 **/eleves*.csv
@@ -31,3 +39,6 @@ build/
 coverage/
 .DS_Store
 .claude/settings.local.json
+
+# Paquet de déploiement (ADR 0076)
+/paquet/

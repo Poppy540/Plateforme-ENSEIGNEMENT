@@ -1,0 +1,25 @@
+# Programme provisoire — Mathématiques 4e (Gabon).
+# Source : docs/cadrage.md (« Découpage des cours — Classe de 4e », Mathématiques). PROVISOIRE : base francophone
+# générique, à valider par un enseignant-référent gabonais à partir du programme officiel IPN (ADR 0035).
+unite: ga-4e-mathematiques
+statut: a_valider
+valide_par: null
+date_validation: null
+examen: null   # le BEPC se passe en fin de 3e
+chapitres:
+  - {ordre: 1, code: puissances,                 titre: "Puissances", statut: a_valider}
+  - {ordre: 2, code: calcul-litteral,            titre: "Calcul littéral : développement et factorisation simple", statut: a_valider}
+  - {ordre: 3, code: equations-premier-degre,    titre: "Équations du premier degré", statut: a_valider}
+  - {ordre: 4, code: pythagore,                  titre: "Théorème de Pythagore", statut: a_valider}
+  - {ordre: 5, code: triangles-semblables,       titre: "Triangles semblables (initiation)", statut: a_valider}
+  - {ordre: 6, code: fonction-lineaire,          titre: "Notion de fonction et fonction linéaire", statut: a_valider}
+  - {ordre: 7, code: statistiques-probabilites,  titre: "Statistiques et probabilités simples", statut: a_valider}
+  - {ordre: 8, code: translations,               titre: "Translations", statut: a_valider}
+# Prérequis de l'unité. Les liens chapitre par chapitre sont dans prerequis/mathematiques.yaml.
+prerequis:
+  - {notion: "Nombres relatifs", unite_source: ga-5e-mathematiques}
+  - {notion: "Calcul littéral (initiation)", unite_source: ga-5e-mathematiques}
+  - {notion: "Fractions", unite_source: ga-5e-mathematiques}
+  - {notion: "Proportionnalité", unite_source: ga-5e-mathematiques}
+  - {notion: "Triangles", unite_source: ga-5e-mathematiques}
+# Volumes horaires et coefficients : manquants (à demander au référent / IPN).

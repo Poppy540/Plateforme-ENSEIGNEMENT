@@ -1,0 +1,50 @@
+# Recrutement des enseignants-référents pour le pack Gabon (agent Recruteur ; ADR 0010, 0040).
+# PROVISOIRE : proposé par Claude Code d'après le cadrage (Partie E, Partie F), à valider par le propriétaire.
+# AUCUN USAGE RÉEL avant l'avis du juriste (prospection, données des candidats) : données fictives seulement.
+statut: a_valider
+
+# Sources autorisées : la fiche d'un candidat ne peut citer qu'une de ces sources. Jamais de liste achetée ni de
+# collecte automatisée.
+sources_autorisees:
+  - id: recommandation
+    libelle: "Recommandation (cooptation) par un enseignant ou un chef d'établissement, avec l'accord de la personne"
+  - id: candidature_spontanee
+    libelle: "Candidature spontanée reçue par le formulaire ou l'adresse du projet"
+  - id: annuaire_professionnel_public
+    libelle: "Coordonnées professionnelles publiées par la personne elle-même pour être contactée (page publique d'un établissement ou d'une association)"
+
+# Canaux approuvés pour contacter un candidat. Envoi simulé tant que le fournisseur d'email n'est pas choisi.
+canaux_approuves:
+  - email professionnel
+
+# Une seule relance, après ce délai sans réponse, puis arrêt.
+delai_relance_jours: 7
+
+# Conditions validées (mission, volume, contrepartie, durée). null tant que le propriétaire ne les a pas fixées :
+# le Recruteur ne présente alors AUCUNE contrepartie et transmet toute question à ce sujet.
+conditions_validees: null
+
+# Modèles de messages (structure imposée ; le texte est rédigé par l'agent puis approuvé par le propriétaire).
+modeles_messages:
+  premier_contact: "Se présenter comme une intelligence artificielle qui écrit pour le responsable du projet ; dire comment la personne a été trouvée (source) ; présenter le projet et le rôle d'enseignant-référent (relire et valider programmes, scripts et quiz) ; dire qu'il n'y a aucun engagement à ce stade ; donner un moyen simple de refuser (répondre « STOP ») ; aucune pression ni urgence."
+  relance: "Rappel bref et unique du premier message ; rappeler le moyen de refuser ; annoncer qu'il n'y aura pas d'autre relance."
+  reponse: "Répondre seulement avec la FAQ et les conditions validées ; sinon dire que la question est transmise au responsable."
+  invitation_entretien: "Proposer un entretien mené par un humain, à un moment choisi par la personne ; rappeler qu'il n'y a aucun engagement à ce stade."
+
+# FAQ de recrutement : le Recruteur ne répond qu'avec ces entrées et les conditions validées.
+faq:
+  - id: role
+    question: "Que ferait un enseignant-référent ?"
+    reponse: "Il relit et valide le programme de sa matière, les scripts des cours, les quiz et les vidéos avant leur publication. Il n'est pas remplacé : les professeurs de la plateforme sont des intelligences artificielles dont il contrôle le contenu."
+  - id: engagement
+    question: "Est-ce que je m'engage en répondant ?"
+    reponse: "Non. Le projet est en phase pilote : aucun engagement n'existe avant un accord écrit, relu par un juriste et signé par le responsable du projet et par vous."
+  - id: voix-image
+    question: "Mon nom, ma voix ou mon image seront-ils utilisés ?"
+    reponse: "Jamais sans un consentement séparé, écrit, spécifique et révocable à tout moment. Ce consentement ne fait pas partie de l'accord d'enseignant-référent."
+  - id: donnees
+    question: "Quelles données gardez-vous sur moi ?"
+    reponse: "Une fiche minimale : nom, matière, niveau, établissement ou structure, contact professionnel et la source par laquelle nous vous avons connu. Vous pouvez demander sa suppression à tout moment."
+  - id: refuser
+    question: "Comment ne plus être contacté ?"
+    reponse: "Répondez « STOP » ou dites simplement que vous ne souhaitez plus être contacté : nous ne vous écrirons plus."

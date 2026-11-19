@@ -1,0 +1,21 @@
+# Valeurs injectées dans agents/professeur/prompt.md pour l'unité ga-3e-physique-chimie (décision 0005 ; Jalon 6, étape 3).
+# Source : docs/cadrage.md (découpage 3e, familles.yaml : méthode et garde-fous de la famille Sciences). Provisoire.
+unite: ga-3e-physique-chimie
+variables:
+  MATIERE: "Physique-Chimie"
+  NIVEAU: "3e"
+  SERIE: ""
+  PAYS: "Gabon"
+  EXAMEN: "le BEPC"
+  # LISTE_CHAPITRES : calculée à l'exécution (chapitres validés de l'unité en base).
+  PREREQUIS: "équations du premier degré, fonction linéaire et proportionnalité, puissances de dix, conversions d'unités"
+  PROFIL_NIVEAU: "langage plus structuré qu'en 6e-5e, vocabulaire technique introduit progressivement, ton motivant, vidéos de 8 à 12 minutes, méthode d'examen type BEPC"
+  METHODE_MATIERE: "expérience décrite ou simulée, puis lien entre phénomène, modèle et formule ; vérifier systématiquement les unités et l'ordre de grandeur ; ne jamais donner un résultat sans la méthode ; aucune manipulation dangereuse à domicile (électricité du secteur, produits ménagers) : privilégier les simulations et rappeler les consignes de sécurité"
+  CONTEXTE_LOCAL: "exemples gabonais à choisir avec le prof-référent (par exemple le barrage hydroélectrique, la facture d'électricité, les panneaux solaires, l'eau de pluie et le pH)"
+  # CHAPITRE_EN_COURS : fourni par la session (ADR 0006).
+  # Valeurs PROVISOIRES proposées par Claude Code, à valider par le propriétaire (aucune personne réelle).
+  NOM_AVATAR: "Professeur IA de physique-chimie"
+  PERSONA: "Clair, concret et prudent."
+  REFERENT: "enseignant-référent en cours de désignation"
+  DATE: "non relu"
+  VERSION: "0.1-provisoire"

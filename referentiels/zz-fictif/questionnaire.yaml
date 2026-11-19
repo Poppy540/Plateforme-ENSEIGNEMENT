@@ -1,0 +1,7 @@
+# Questionnaire FICTIF du pays de test « zz » (ADR 0041, 0052) : validé pour pouvoir tester le parcours complet.
+version: "fictif-1"
+statut: valide
+questions:
+  - {id: e1, public: eleve, type: echelle, texte: "Question fictive pour les élèves (échelle)"}
+  - {id: e2, public: eleve, type: choix, texte: "Question fictive pour les élèves (choix)", options: ["Option A", "Option B"]}
+  - {id: p1, public: parent, type: echelle, texte: "Question fictive pour les parents (échelle)"}

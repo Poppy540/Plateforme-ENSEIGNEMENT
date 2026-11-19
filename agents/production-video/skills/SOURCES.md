@@ -1,6 +1,6 @@
 # Skills — agent production-video
 
-Statut : **aucune skill installée.** Recherche à faire, puis liste présentée au propriétaire avant toute adoption.
+Statut : aucune skill adoptée. Recherche du 2026-10-04 : candidats retenus seulement comme inspiration (voir `docs/skills-recherche-2026-10-04.md`) ; skills à écrire pour le projet.
 
 Pistes : pipeline script, voix, avatar, sous-titres, compression faible débit.
 

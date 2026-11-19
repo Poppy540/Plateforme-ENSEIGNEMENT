@@ -1,0 +1,8 @@
+[
+  {
+    "id": "GHSA-g3hv-75wg-m249",
+    "paquet": "minimatch",
+    "raison": "Outil de développement seulement (ESLint et son analyseur TypeScript), jamais dans le paquet ni sur le serveur ; les motifs traités sont ceux du dépôt. La correction (minimatch 11) casse ESLint 9 : attendre une version d'ESLint qui l'adopte.",
+    "jusqu_au": "2027-01-31"
+  }
+]

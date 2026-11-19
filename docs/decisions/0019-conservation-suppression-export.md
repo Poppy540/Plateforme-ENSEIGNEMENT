@@ -1,0 +1,9 @@
+# 0019 — Conservation, suppression et export des données
+
+- **Date** : 2026-10-04 · **Statut** : appliquée ; durées à faire valider par un juriste local
+- **Export (droit d'accès)** : l'élève télécharge toutes ses données (profil, consentements, progression, échanges avec le professeur) depuis « Mes données » (`/api/mes-donnees`, fichier JSON). Les données liées à un chapitre repassé « à valider » y figurent aussi. Les signalements faits à l'équipe n'y sont pas : ils se demandent à l'équipe (point à confirmer avec le juriste).
+- **Suppression par l'élève** : confirmation en écrivant « SUPPRIMER ». Le compte d'authentification est supprimé (Supabase, clé de service côté serveur ; base locale en simulation) et **toutes** les données de l'élève sont effacées en cascade (profil, élève, consentements, contact du parent, progression, échanges). Les signalements le concernant sont conservés **anonymisés** (lien vers l'élève retiré) pour le suivi de sécurité. Les comptes d'enseignants-référents ne se suppriment pas eux-mêmes (leurs validations sont tracées) : passage par l'équipe.
+- **Conservation** : durées en jours dans le pack pays (`cadre_legal.conservation`), car elles dépendent du droit local. Pilote (provisoire) : échanges 365 jours, inscription jamais acceptée par un parent 30 jours, compte inactif 730 jours. `null` = pas de purge.
+- **Purge** : `purger_donnees_expirees(pays)` en base, réservée à l'administration (testé : ni les agents, ni le serveur, ni les utilisateurs ne peuvent l'appeler). Script `pnpm donnees:purger` : simulation par défaut (tout est annulé), effacement réel avec `--confirmer`. À planifier (tâche quotidienne) au moment de l'hébergement.
+- **Activité** : la dernière activité d'un compte est notée au plus une fois par jour.
+- **Clés** : `CLE_SERVICE_SUPABASE` et `URL_BASE_DONNEES_ADMIN` sont des clés d'administration, réservées au serveur et à la tâche de purge ; jamais transmises à un agent.

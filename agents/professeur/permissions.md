@@ -20,6 +20,10 @@ Variables : `DATABASE_URL`, `DATABASE_AGENT_KEY`.
 
 Aucune clé de paiement ni de signature électronique. La clé de la base est propre à cet agent et limitée à son rôle.
 
-## Mise en œuvre (à faire)
+## Mise en œuvre (ADR 0014, 0017)
+
+Le serveur prend le rôle de base de données `agent_professeur` pour chaque requête de l'agent, avec l'élève connecté et l'unité fixés par le serveur : lecture des chapitres validés de l'unité et de leurs prérequis validés, lecture et écriture de la progression et des échanges de cet élève, création de signalements. Aucun droit de validation, de publication ni de lecture des autres élèves. Testé dans `application/supabase/tests/`.
+
+## Mise en œuvre (suite, à faire)
 
 Ces droits seront appliqués techniquement (rôle de base de données dédié, politiques d'accès au niveau des lignes, outils exposés à l'agent), pas seulement par le prompt.

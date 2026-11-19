@@ -1,0 +1,6 @@
+# Contexte local FICTIF (aucun lieu réel).
+exemples:
+  lieux: ["la ville fictive de Zédie", "le fleuve fictif Zor"]
+  economie: ["le marché de Zédie"]
+  nature: ["la plaine", "le fleuve"]
+consignes: "Exemples inventés pour les tests ; ne jamais les présenter comme réels."

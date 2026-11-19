@@ -1,0 +1,185 @@
+// Vérification de la configuration de production (Jalon 5, étape 2 ; ADR 0045), avant toute mise en service.
+// Ne renvoie JAMAIS une valeur : seulement le nom de la variable et ce qui manque. Lancée par le propriétaire
+// sur le serveur (`pnpm verifier:production`) ; aucune variable n'est lue par Claude Code.
+
+export interface Constat {
+  ok: boolean;
+  /** Nom de la variable ou du point vérifié, jamais sa valeur. */
+  point: string;
+  message: string;
+}
+
+type Env = Record<string, string | undefined>;
+
+const valeur = (env: Env, nom: string) => env[nom]?.trim() ?? "";
+const deModele = (v: string) =>
+  /remplacer-moi|secret-de-developpement|sel-d-audit-de-developpement/i.test(v);
+
+export function verifierConfiguration(env: Env): Constat[] {
+  const constats: Constat[] = [];
+  const exiger = (point: string, ok: boolean, message: string) =>
+    constats.push({ ok, point, message });
+  const present = (nom: string, message = "à renseigner") => {
+    const v = valeur(env, nom);
+    exiger(nom, v !== "" && !deModele(v), v === "" ? message : "valeur recopiée du modèle");
+  };
+
+  exiger(
+    "ENVIRONNEMENT",
+    valeur(env, "ENVIRONNEMENT") === "production",
+    "doit valoir « production »",
+  );
+  const url = valeur(env, "URL_PUBLIQUE");
+  let urlOk = false;
+  try {
+    const u = new URL(url);
+    urlOk = u.protocol === "https:" && !["localhost", "127.0.0.1", "[::1]"].includes(u.hostname);
+  } catch {
+    urlOk = false;
+  }
+  exiger("URL_PUBLIQUE", urlOk, "adresse publique en https requise");
+
+  const secret = valeur(env, "SECRET_SESSION");
+  exiger(
+    "SECRET_SESSION",
+    secret.length >= 32 && !deModele(secret) && new Set(secret).size >= 10,
+    "32 caractères aléatoires au moins, propres à ce serveur",
+  );
+  present("SEL_AUDIT");
+  exiger(
+    "SEL_OPPOSITION",
+    valeur(env, "SEL_OPPOSITION").length >= 32 && !deModele(valeur(env, "SEL_OPPOSITION")),
+    "32 caractères aléatoires au moins ; ne plus jamais le changer ensuite",
+  );
+  present("URL_BASE_DONNEES", "connexion du rôle serveur_application");
+  exiger(
+    "MODE_AUTH",
+    (valeur(env, "MODE_AUTH") || "supabase") === "supabase",
+    "doit valoir « supabase »",
+  );
+  present("URL_SUPABASE");
+  present("CLE_PUBLIQUE_SUPABASE");
+  present("CLE_SERVICE_SUPABASE", "nécessaire à la suppression des comptes");
+
+  exiger(
+    "MODE_MODELE",
+    (valeur(env, "MODE_MODELE") || "anthropic") === "anthropic",
+    "doit valoir « anthropic »",
+  );
+  present("ANTHROPIC_API_KEY", "clé de l'API Claude, dans l'environnement du serveur seulement");
+  exiger("MODE_FILE", (valeur(env, "MODE_FILE") || "file") === "file", "doit valoir « file »");
+  exiger(
+    "JETON_EXECUTEUR",
+    valeur(env, "JETON_EXECUTEUR").length >= 32 && !deModele(valeur(env, "JETON_EXECUTEUR")),
+    "32 caractères au moins (sinon l'exécuteur planifié est désactivé)",
+  );
+  present("CONTACTS_VEILLE", "contacts de l'équipe de veille (alerte de détresse)");
+  // Décision D12 (ADR 0093) : sauvegardes chiffrées avec age ; seule la clé PUBLIQUE est sur le serveur.
+  exiger(
+    "SAUVEGARDE_DESTINATAIRE_AGE",
+    /^age1[02-9ac-hj-np-z]{58}$/.test(valeur(env, "SAUVEGARDE_DESTINATAIRE_AGE")),
+    "clé publique age (« age1… ») pour chiffrer les sauvegardes ; la clé privée reste hors du serveur",
+  );
+
+  const sms = valeur(env, "FOURNISSEUR_SMS");
+  exiger("FOURNISSEUR_SMS", ["twilio", "http"].includes(sms), "twilio ou http (jamais simulation)");
+  if (sms === "twilio")
+    ["TWILIO_COMPTE", "TWILIO_JETON", "SMS_EXPEDITEUR"].forEach((n) => present(n));
+  const email = valeur(env, "FOURNISSEUR_EMAIL");
+  exiger(
+    "FOURNISSEUR_EMAIL",
+    ["brevo", "http"].includes(email),
+    "brevo ou http (jamais simulation)",
+  );
+  if (email === "brevo") ["BREVO_CLE", "EMAIL_EXPEDITEUR"].forEach((n) => present(n));
+  if (sms === "http" || email === "http") {
+    present("MESSAGERIE_HTTP_JETON");
+    exiger(
+      "MESSAGERIE_HTTP_URL",
+      valeur(env, "MESSAGERIE_HTTP_URL").startsWith("https://"),
+      "adresse https de la passerelle",
+    );
+  }
+
+  // Journal des erreurs (ADR 0056) : service de surveillance facultatif, mais complet s'il est déclaré.
+  if (valeur(env, "JOURNAL_HTTP_URL")) {
+    exiger(
+      "JOURNAL_HTTP_URL",
+      valeur(env, "JOURNAL_HTTP_URL").startsWith("https://"),
+      "adresse https du service de surveillance",
+    );
+    present("JOURNAL_HTTP_JETON", "jeton du service de surveillance");
+  }
+
+  const video = valeur(env, "MODE_VIDEO") || "aucun";
+  exiger(
+    "MODE_VIDEO",
+    ["aucun", "reel"].includes(video),
+    "« aucun » ou « reel » (jamais « simulation » en production)",
+  );
+  if (video === "reel") {
+    // Vidéo réelle (ADR 0055) : passerelle d'avatar et Cloudflare Stream.
+    ["AVATAR_HTTP_JETON", "CLOUDFLARE_COMPTE", "CLOUDFLARE_JETON_STREAM"].forEach((n) =>
+      present(n),
+    );
+    exiger(
+      "AVATAR_HTTP_URL",
+      valeur(env, "AVATAR_HTTP_URL").startsWith("https://"),
+      "adresse https de la passerelle d'avatar",
+    );
+    const tarif = Number(valeur(env, "AVATAR_COUT_MINUTE_USD"));
+    exiger(
+      "AVATAR_COUT_MINUTE_USD",
+      Number.isFinite(tarif) && tarif > 0,
+      "tarif par minute annoncé par le fournisseur d'avatar",
+    );
+    exiger(
+      "STREAM_SOUS_DOMAINE",
+      /^customer-[a-z0-9]+\.cloudflarestream\.com$/.test(valeur(env, "STREAM_SOUS_DOMAINE")),
+      "sous-domaine de lecture « customer-<code>.cloudflarestream.com »",
+    );
+  }
+  if (video !== "aucun") {
+    const budget = Number(valeur(env, "BUDGET_VIDEO_USD"));
+    exiger(
+      "BUDGET_VIDEO_USD",
+      Number.isFinite(budget) && budget > 0,
+      "budget par vidéo, décidé par le propriétaire",
+    );
+  }
+  return constats;
+}
+
+/**
+ * API de données de Supabase fermée (revue de sécurité D1) : l'application n'en a pas besoin (accès direct à
+ * Postgres). Si la racine de l'API répond avec la description des tables et fonctions, le schéma est exposé.
+ * Un seul appel, avec la clé publique (déjà publique) ; aucune valeur n'est affichée.
+ */
+export async function verifierApiDeDonnees(
+  env: Env,
+  appeler: typeof fetch = fetch,
+): Promise<Constat> {
+  const point = "API de données Supabase";
+  const url = valeur(env, "URL_SUPABASE");
+  const cle = valeur(env, "CLE_PUBLIQUE_SUPABASE");
+  if (!url || !cle || deModele(url) || deModele(cle))
+    return { ok: false, point, message: "non vérifiée (URL_SUPABASE ou clé publique absente)" };
+  try {
+    const reponse = await appeler(`${url.replace(/\/$/, "")}/rest/v1/`, {
+      headers: { apikey: cle, authorization: `Bearer ${cle}` },
+      signal: AbortSignal.timeout(10_000),
+    });
+    const corps = reponse.ok
+      ? ((await reponse.json().catch(() => null)) as { paths?: object } | null)
+      : null;
+    return corps?.paths
+      ? {
+          ok: false,
+          point,
+          message: "ouverte : retirer « public » des schémas exposés (dossier de production §2.2)",
+        }
+      : { ok: true, point, message: "fermée" };
+  } catch {
+    return { ok: false, point, message: "non vérifiée (Supabase injoignable)" };
+  }
+}

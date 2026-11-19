@@ -1,0 +1,12 @@
+# Fiche de l'avatar de l'unité pilote pour la chaîne de production vidéo (ADR 0020, 0025).
+# PROVISOIRE : fournisseurs non choisis (docs/fournisseurs-2026-10.md). Décision du propriétaire attendue :
+# avatar SYNTHÉTIQUE du catalogue du fournisseur, aucune personne réelle, aucun clonage de voix ou de visage.
+unite: ga-3e-mathematiques
+fiche_avatar:
+  avatar: "a-choisir-dans-le-catalogue"
+  voix: "a-choisir-voix-de-synthese-francaise"
+  langue: "fr"
+  description: "Professeur IA de mathématiques : avatar synthétique, tenue sobre, ton calme et patient (à choisir avec le référent)."
+  personne_reelle: false
+  autorisation_voix: null
+  autorisation_visage: null

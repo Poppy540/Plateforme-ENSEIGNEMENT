@@ -1,0 +1,15 @@
+# Programme provisoire — Physique-Chimie 3e (Gabon).
+# Source : docs/cadrage.md (« Découpage des cours — Classe de 3e », Physique-Chimie), intitulés repris mot pour mot.
+# PROVISOIRE : base francophone générique, à valider par un enseignant-référent gabonais à partir du programme
+# officiel IPN. Expériences décrites ou simulées ; consignes de sécurité explicites pour tout geste à domicile.
+unite: ga-3e-physique-chimie
+statut: a_valider
+valide_par: null
+date_validation: null
+examen: bepc
+chapitres:
+  - {ordre: 1, code: energie-transformations, titre: "L'énergie et ses transformations",          statut: a_valider}
+  - {ordre: 2, code: electricite,             titre: "L'électricité : loi d'Ohm, puissance",       statut: a_valider}
+  - {ordre: 3, code: chimie-solutions,        titre: "La chimie des solutions (acides/bases)",     statut: a_valider}
+  - {ordre: 4, code: revisions-bepc,          titre: "Révisions BEPC",                             statut: a_valider}
+# Volumes horaires et coefficients : manquants (à demander au référent / IPN).

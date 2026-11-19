@@ -1,0 +1,14 @@
+# Valeurs injectées dans agents/evaluateur/prompt.md pour l'unité ga-3e-svt (décision 0005 ; Jalon 6, étape 3).
+# Source : docs/cadrage.md et profils-niveau.yaml. Provisoire.
+unite: ga-3e-svt
+variables:
+  MATIERE: "Sciences de la Vie et de la Terre"
+  NIVEAU: "3e"
+  SERIE: ""
+  PAYS: "Gabon"
+  EXAMEN: "le BEPC"
+  PROFIL_NIVEAU: "fin de collège : vocabulaire technique introduit progressivement, autonomie moyenne (l'élève commence à chercher seul), méthode d'examen et annales type BEPC"
+  # Valeurs PROVISOIRES identiques à celles des autres agents de l'unité, à valider par le propriétaire.
+  REFERENT: "enseignant-référent en cours de désignation"
+  DATE: "non relu"
+  VERSION: "0.1-provisoire"

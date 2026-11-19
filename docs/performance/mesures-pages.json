@@ -1,0 +1,1063 @@
+{
+  "date": "2026-11-02T09:41:25.686Z",
+  "commit": "c727a48280d4f2f6a6e03dcbc7fe62ec08c2905b",
+  "mesures": [
+    {
+      "public": "referent",
+      "nom": "Espace du référent",
+      "chemin": "/referent",
+      "premierChargement": {
+        "document": 12094,
+        "script": 144639,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 13924,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 972,
+          "utilisableMs": 4025.800000000003
+        },
+        "2g": {
+          "affichageMs": 1568,
+          "utilisableMs": 6249.199999999997
+        }
+      }
+    },
+    {
+      "public": "referent",
+      "nom": "Accueil du référent",
+      "chemin": "/referent/accueil",
+      "premierChargement": {
+        "document": 5199,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 5582,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 956,
+          "utilisableMs": 4042
+        },
+        "2g": {
+          "affichageMs": 1408,
+          "utilisableMs": 6168.5
+        }
+      }
+    },
+    {
+      "public": "referent",
+      "nom": "Chapitre à relire",
+      "chemin": "/referent/chapitres/…",
+      "premierChargement": {
+        "document": 5787,
+        "script": 144140,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 6924,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 1000,
+          "utilisableMs": 4042.8000000000175
+        },
+        "2g": {
+          "affichageMs": 1440,
+          "utilisableMs": 6253.799999999988
+        }
+      }
+    },
+    {
+      "public": "referent",
+      "nom": "Quiz à relire",
+      "chemin": "/referent/quiz/…",
+      "premierChargement": {
+        "document": 5944,
+        "script": 143538,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 743,
+        "autre": 0
+      },
+      "navigation": 6331,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 984,
+          "utilisableMs": 4020
+        },
+        "2g": {
+          "affichageMs": 1412,
+          "utilisableMs": 6214.6999999999825
+        }
+      }
+    },
+    {
+      "public": "referent",
+      "nom": "Script à relire",
+      "chemin": "/referent/scripts/…",
+      "premierChargement": {
+        "document": 5727,
+        "script": 143971,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 2183,
+        "autre": 0
+      },
+      "navigation": 8296,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 972,
+          "utilisableMs": 3988.0999999999767
+        },
+        "2g": {
+          "affichageMs": 1408,
+          "utilisableMs": 6194.200000000012
+        }
+      }
+    },
+    {
+      "public": "referent",
+      "nom": "Liens de prérequis",
+      "chemin": "/referent/prerequis",
+      "premierChargement": {
+        "document": 8905,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 12177,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 940,
+          "utilisableMs": 3970
+        },
+        "2g": {
+          "affichageMs": 1452,
+          "utilisableMs": 6180
+        }
+      }
+    },
+    {
+      "public": "referent",
+      "nom": "Conformité",
+      "chemin": "/referent/conformite",
+      "premierChargement": {
+        "document": 4330,
+        "script": 143339,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 4713,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 976,
+          "utilisableMs": 4070.7999999999884
+        },
+        "2g": {
+          "affichageMs": 1400,
+          "utilisableMs": 6232
+        }
+      }
+    },
+    {
+      "public": "visiteur",
+      "nom": "Accueil",
+      "chemin": "/",
+      "premierChargement": {
+        "document": 3162,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 4938,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 1080,
+          "utilisableMs": 3986.2999999999884
+        },
+        "2g": {
+          "affichageMs": 1388,
+          "utilisableMs": 6149.899999999994
+        }
+      }
+    },
+    {
+      "public": "visiteur",
+      "nom": "Connexion",
+      "chemin": "/connexion",
+      "premierChargement": {
+        "document": 3550,
+        "script": 144237,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 1080,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 932,
+          "utilisableMs": 4011.899999999994
+        },
+        "2g": {
+          "affichageMs": 1432,
+          "utilisableMs": 6258.700000000012
+        }
+      }
+    },
+    {
+      "public": "visiteur",
+      "nom": "Aide",
+      "chemin": "/aide",
+      "premierChargement": {
+        "document": 5453,
+        "script": 143607,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 2808,
+        "autre": 0
+      },
+      "navigation": 7217,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 972,
+          "utilisableMs": 4148.600000000006
+        },
+        "2g": {
+          "affichageMs": 1404,
+          "utilisableMs": 6214
+        }
+      }
+    },
+    {
+      "public": "visiteur",
+      "nom": "Pas de connexion",
+      "chemin": "/hors-ligne",
+      "premierChargement": {
+        "document": 3360,
+        "script": 144625,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 3747,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 964,
+          "utilisableMs": 4096.3000000000175
+        },
+        "2g": {
+          "affichageMs": 1436,
+          "utilisableMs": 6293
+        }
+      }
+    },
+    {
+      "public": "eleve",
+      "nom": "Espace de l'élève",
+      "chemin": "/espace",
+      "premierChargement": {
+        "document": 4366,
+        "script": 144209,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 1080,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 980,
+          "utilisableMs": 4108.200000000012
+        },
+        "2g": {
+          "affichageMs": 1396,
+          "utilisableMs": 6280
+        }
+      }
+    },
+    {
+      "public": "eleve",
+      "nom": "Mes cours",
+      "chemin": "/catalogue",
+      "premierChargement": {
+        "document": 4490,
+        "script": 144625,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 1803,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 916,
+          "utilisableMs": 4108.199999999953
+        },
+        "2g": {
+          "affichageMs": 1444,
+          "utilisableMs": 6327.100000000035
+        }
+      }
+    },
+    {
+      "public": "eleve",
+      "nom": "Chapitres d'une matière",
+      "chemin": "/catalogue/ga-5e-mathematiques",
+      "premierChargement": {
+        "document": 3561,
+        "script": 144625,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 695,
+        "autre": 0
+      },
+      "navigation": 389,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 936,
+          "utilisableMs": 4056.5
+        },
+        "2g": {
+          "affichageMs": 1444,
+          "utilisableMs": 6352.200000000012
+        }
+      }
+    },
+    {
+      "public": "eleve",
+      "nom": "Chapitre",
+      "chemin": "/catalogue/ga-5e-mathematiques/fractions-operations",
+      "premierChargement": {
+        "document": 3931,
+        "script": 147054,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 1474,
+        "autre": 0
+      },
+      "navigation": 2561,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 948,
+          "utilisableMs": 4140.399999999965
+        },
+        "2g": {
+          "affichageMs": 1432,
+          "utilisableMs": 6401.299999999988
+        }
+      }
+    },
+    {
+      "public": "eleve",
+      "nom": "Quiz",
+      "chemin": "/catalogue/ga-5e-mathematiques/fractions-operations/quiz",
+      "premierChargement": {
+        "document": 4428,
+        "script": 145589,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 747,
+        "autre": 0
+      },
+      "navigation": 1136,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 916,
+          "utilisableMs": 4104.900000000023
+        },
+        "2g": {
+          "affichageMs": 1592,
+          "utilisableMs": 6376.199999999953
+        }
+      }
+    },
+    {
+      "public": "eleve",
+      "nom": "Plan de révision",
+      "chemin": "/espace/plan",
+      "premierChargement": {
+        "document": 4818,
+        "script": 144921,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 693,
+        "autre": 0
+      },
+      "navigation": 5201,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 976,
+          "utilisableMs": 4070.2999999999884
+        },
+        "2g": {
+          "affichageMs": 1412,
+          "utilisableMs": 6305.599999999977
+        }
+      }
+    },
+    {
+      "public": "eleve",
+      "nom": "Mes données",
+      "chemin": "/espace/mes-donnees",
+      "premierChargement": {
+        "document": 4443,
+        "script": 143208,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 693,
+        "autre": 0
+      },
+      "navigation": 6907,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 948,
+          "utilisableMs": 4066.4000000000233
+        },
+        "2g": {
+          "affichageMs": 1456,
+          "utilisableMs": 6284.799999999988
+        }
+      }
+    },
+    {
+      "public": "eleve",
+      "nom": "Questionnaire",
+      "chemin": "/espace/questionnaire",
+      "premierChargement": {
+        "document": 3456,
+        "script": 143233,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 2078,
+        "autre": 0
+      },
+      "navigation": 4532,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 956,
+          "utilisableMs": 4042.4000000000233
+        },
+        "2g": {
+          "affichageMs": 1388,
+          "utilisableMs": 6198
+        }
+      }
+    },
+    {
+      "public": "parent",
+      "nom": "Accord pour les rapports",
+      "chemin": "/parent/rapports/accord?jeton=…",
+      "premierChargement": {
+        "document": 3920,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 4304,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 948,
+          "utilisableMs": 3999.0999999999767
+        },
+        "2g": {
+          "affichageMs": 1628,
+          "utilisableMs": 6218.599999999977
+        }
+      }
+    },
+    {
+      "public": "parent",
+      "nom": "Rapport hebdomadaire",
+      "chemin": "/parent/rapport?jeton=…",
+      "premierChargement": {
+        "document": 4328,
+        "script": 144593,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 4718,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 968,
+          "utilisableMs": 4120.599999999977
+        },
+        "2g": {
+          "affichageMs": 1456,
+          "utilisableMs": 6364.100000000035
+        }
+      }
+    },
+    {
+      "public": "visiteur",
+      "nom": "Saisie du code",
+      "chemin": "/connexion/code",
+      "premierChargement": {
+        "document": 3717,
+        "script": 143226,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 1387,
+        "autre": 0
+      },
+      "navigation": 4111,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 952,
+          "utilisableMs": 4027.0999999999767
+        },
+        "2g": {
+          "affichageMs": 1444,
+          "utilisableMs": 6293.199999999953
+        }
+      }
+    },
+    {
+      "public": "eleve",
+      "nom": "Inscription",
+      "chemin": "/inscription",
+      "premierChargement": {
+        "document": 4395,
+        "script": 143861,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 6173,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 952,
+          "utilisableMs": 4022.1999999999534
+        },
+        "2g": {
+          "affichageMs": 1448,
+          "utilisableMs": 6281.700000000012
+        }
+      }
+    },
+    {
+      "public": "parent",
+      "nom": "Accord d'inscription",
+      "chemin": "/parent/confirmer?jeton=…",
+      "premierChargement": {
+        "document": 3889,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 4274,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 1152,
+          "utilisableMs": 4099.399999999965
+        },
+        "2g": {
+          "affichageMs": 1632,
+          "utilisableMs": 6265.5
+        }
+      }
+    },
+    {
+      "public": "enseignant",
+      "nom": "Activation",
+      "chemin": "/enseignant/activer",
+      "premierChargement": {
+        "document": 3725,
+        "script": 144043,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 4122,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 944,
+          "utilisableMs": 4033.3000000000466
+        },
+        "2g": {
+          "affichageMs": 1436,
+          "utilisableMs": 6314.600000000035
+        }
+      }
+    },
+    {
+      "public": "enseignant",
+      "nom": "Vue de la classe",
+      "chemin": "/enseignant",
+      "premierChargement": {
+        "document": 4274,
+        "script": 143841,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 691,
+        "autre": 0
+      },
+      "navigation": 5357,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 940,
+          "utilisableMs": 4099.5
+        },
+        "2g": {
+          "affichageMs": 1448,
+          "utilisableMs": 6257.899999999965
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Tableau de l'administration",
+      "chemin": "/administration",
+      "premierChargement": {
+        "document": 8691,
+        "script": 143841,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 10481,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 976,
+          "utilisableMs": 4078.5999999999767
+        },
+        "2g": {
+          "affichageMs": 1456,
+          "utilisableMs": 6396.300000000047
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Tableau de bord du pilote",
+      "chemin": "/administration/tableau-de-bord",
+      "premierChargement": {
+        "document": 4455,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 2799,
+        "autre": 0
+      },
+      "navigation": 4841,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 920,
+          "utilisableMs": 4093.100000000035
+        },
+        "2g": {
+          "affichageMs": 1408,
+          "utilisableMs": 6135.400000000023
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Ce qui vous attend",
+      "chemin": "/administration/attentes",
+      "premierChargement": {
+        "document": 8417,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 2090,
+        "autre": 0
+      },
+      "navigation": 8799,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 972,
+          "utilisableMs": 4044.3000000000466
+        },
+        "2g": {
+          "affichageMs": 1436,
+          "utilisableMs": 6252.699999999953
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Conditions du pilote",
+      "chemin": "/administration/conditions",
+      "premierChargement": {
+        "document": 7687,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 698,
+        "autre": 0
+      },
+      "navigation": 8777,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 936,
+          "utilisableMs": 4005.4000000000233
+        },
+        "2g": {
+          "affichageMs": 1460,
+          "utilisableMs": 6229.5
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Chapitres du pilote",
+      "chemin": "/administration/pilote",
+      "premierChargement": {
+        "document": 5665,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 698,
+        "autre": 0
+      },
+      "navigation": 6750,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 948,
+          "utilisableMs": 4060.0999999999767
+        },
+        "2g": {
+          "affichageMs": 1388,
+          "utilisableMs": 6188.5
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Classes du pilote",
+      "chemin": "/administration/classes",
+      "premierChargement": {
+        "document": 5816,
+        "script": 144060,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 698,
+        "autre": 0
+      },
+      "navigation": 6206,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 948,
+          "utilisableMs": 4035
+        },
+        "2g": {
+          "affichageMs": 1416,
+          "utilisableMs": 6235.099999999977
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Inviter un référent",
+      "chemin": "/administration/invitations",
+      "premierChargement": {
+        "document": 4741,
+        "script": 143579,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 2090,
+        "autre": 0
+      },
+      "navigation": 6520,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 932,
+          "utilisableMs": 4101.099999999977
+        },
+        "2g": {
+          "affichageMs": 1460,
+          "utilisableMs": 6270.400000000023
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Critères de suspension",
+      "chemin": "/administration/criteres",
+      "premierChargement": {
+        "document": 6874,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 1400,
+        "autre": 0
+      },
+      "navigation": 7262,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 1052,
+          "utilisableMs": 4062.1999999999534
+        },
+        "2g": {
+          "affichageMs": 1428,
+          "utilisableMs": 6219
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Semaine du pilote",
+      "chemin": "/administration/semaine",
+      "premierChargement": {
+        "document": 6562,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 698,
+        "autre": 0
+      },
+      "navigation": 6947,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 968,
+          "utilisableMs": 4052.6999999999534
+        },
+        "2g": {
+          "affichageMs": 1440,
+          "utilisableMs": 6179.5
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Journal du pilote",
+      "chemin": "/administration/journal",
+      "premierChargement": {
+        "document": 5500,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 698,
+        "autre": 0
+      },
+      "navigation": 6588,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 948,
+          "utilisableMs": 4029.8000000000466
+        },
+        "2g": {
+          "affichageMs": 1432,
+          "utilisableMs": 6213.599999999977
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Rapport de fin",
+      "chemin": "/administration/fin-pilote",
+      "premierChargement": {
+        "document": 3797,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 698,
+        "autre": 0
+      },
+      "navigation": 4187,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 972,
+          "utilisableMs": 4027.5999999999767
+        },
+        "2g": {
+          "affichageMs": 1404,
+          "utilisableMs": 6201.70000000007
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Clôture",
+      "chemin": "/administration/cloture",
+      "premierChargement": {
+        "document": 6307,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 7404,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 956,
+          "utilisableMs": 4098.199999999953
+        },
+        "2g": {
+          "affichageMs": 1444,
+          "utilisableMs": 6233
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Sort des données",
+      "chemin": "/administration/donnees",
+      "premierChargement": {
+        "document": 4167,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 2094,
+        "autre": 0
+      },
+      "navigation": 5262,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 936,
+          "utilisableMs": 4152.599999999977
+        },
+        "2g": {
+          "affichageMs": 1428,
+          "utilisableMs": 6230.900000000023
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Pilotage",
+      "chemin": "/administration/exploitation",
+      "premierChargement": {
+        "document": 5864,
+        "script": 142757,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 6252,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 976,
+          "utilisableMs": 3997.4000000000233
+        },
+        "2g": {
+          "affichageMs": 1592,
+          "utilisableMs": 6285.70000000007
+        }
+      }
+    },
+    {
+      "public": "administration",
+      "nom": "Recrutement",
+      "chemin": "/administration/recrutement",
+      "premierChargement": {
+        "document": 5292,
+        "script": 144167,
+        "style": 2298,
+        "police": 0,
+        "image": 695,
+        "donnees": 0,
+        "autre": 0
+      },
+      "navigation": 8510,
+      "reseaux": {
+        "3g_lente": {
+          "affichageMs": 944,
+          "utilisableMs": 4026.8000000000466
+        },
+        "2g": {
+          "affichageMs": 1400,
+          "utilisableMs": 6259.600000000093
+        }
+      }
+    }
+  ],
+  "nonMesurees": [
+    {
+      "public": "visiteur",
+      "chemin": "/indisponible",
+      "raison": "affichée seulement quand l'accès des élèves est fermé ; même gabarit que « Pas de connexion »"
+    },
+    {
+      "public": "referent",
+      "chemin": "/referent/activer",
+      "raison": "même gabarit que l'activation de l'enseignant"
+    },
+    {
+      "public": "referent",
+      "chemin": "/referent/videos/[id]",
+      "raison": "aucune vidéo fictive (fournisseur vidéo non choisi)"
+    },
+    {
+      "public": "referent",
+      "chemin": "/referent/conformite/[id]",
+      "raison": "demande un document officiel déposé"
+    },
+    {
+      "public": "referent",
+      "chemin": "/referent/coordinateur/[id]",
+      "raison": "demande un rapport du Coordinateur"
+    },
+    {
+      "public": "administration",
+      "chemin": "/administration/recrutement/[id]",
+      "raison": "demande une fiche candidat"
+    }
+  ]
+}

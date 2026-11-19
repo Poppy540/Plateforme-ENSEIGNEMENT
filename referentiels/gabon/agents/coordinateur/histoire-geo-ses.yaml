@@ -1,0 +1,14 @@
+# Valeurs injectées dans agents/coordinateur/prompt.md pour la famille Histoire-Géographie, Éducation civique, SES (décisions 0005, 0008, 0038).
+# Le fichier est nommé d'après la famille : le Coordinateur est instancié une fois par famille, pas par unité.
+# Valeurs PROVISOIRES proposées par Claude Code, à valider par le propriétaire (aucune personne réelle).
+unite: histoire-geo-ses
+# Skill propre à la famille, chargée en plus des skills communes du Coordinateur.
+skill_famille: coordination-histoire-geo-ses
+variables:
+  FAMILLE: "Histoire-Géographie, Éducation civique, SES"
+  MATIERES_FAMILLE: "Histoire-Géographie, Sciences Économiques et Sociales"
+  PAYS: "Gabon"
+  REFERENTIEL: "ga-general"
+  REFERENT: "l'enseignant-référent de la famille Histoire-Géographie, Éducation civique, SES (en cours de désignation)"
+  DATE: "non relu"
+  VERSION: "0.1-provisoire"

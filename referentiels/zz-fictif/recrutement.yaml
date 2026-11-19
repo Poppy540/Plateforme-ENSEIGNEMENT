@@ -1,0 +1,20 @@
+# Recrutement FICTIF du pays Z (ADR 0040, 0041). Différent du pilote : autres sources, délai, conditions validées.
+statut: a_valider
+sources_autorisees:
+  - id: association_fictive
+    libelle: "Association fictive des enseignants du pays Z (liste publiée avec l'accord de ses membres)"
+  - id: candidature_spontanee
+    libelle: "Candidature spontanée (pays Z)"
+canaux_approuves:
+  - email professionnel
+delai_relance_jours: 10
+conditions_validees: "Mission fictive de relecture, environ deux heures par mois pendant le pilote du pays Z, sans engagement de durée."
+modeles_messages:
+  premier_contact: "Se présenter comme une IA écrivant pour le responsable ; citer la source ; présenter la mission ; dire comment refuser (STOP)."
+  relance: "Un seul rappel bref avec le moyen de refuser."
+  reponse: "Répondre avec la FAQ et les conditions validées, sinon transmettre."
+  invitation_entretien: "Proposer un entretien mené par un humain."
+faq:
+  - id: mission-zz
+    question: "Quelle est la mission ?"
+    reponse: "Relire les contenus de sa matière pour le pays Z (fictif)."

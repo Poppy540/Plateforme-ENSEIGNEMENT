@@ -1,0 +1,17 @@
+# Questionnaire de satisfaction ANONYME du pilote (Jalon 6, étape 5 ; ADR 0052).
+# PROPOSITION de Claude Code, à valider par le propriétaire : tant que le statut n'est pas « valide », le questionnaire
+# n'est montré à personne. Réponses fermées uniquement (aucun texte libre : aucune donnée personnelle ne peut y entrer).
+# Les réponses ne sont jamais rattachées à un compte ; les résultats ne s'affichent qu'à partir de 5 réponses.
+# Types : echelle (1 à 5, de « pas du tout » à « tout à fait »), choix (une option).
+version: "2026-10-pilote"
+statut: a_valider
+questions:
+  - {id: e1, public: eleve, type: echelle, texte: "La plateforme t'aide-t-elle à comprendre tes cours ?"}
+  - {id: e2, public: eleve, type: echelle, texte: "Les explications du professeur (une intelligence artificielle) sont-elles claires ?"}
+  - {id: e3, public: eleve, type: choix, texte: "Comment suis-tu surtout les cours ?", options: ["La vidéo", "La leçon écrite", "Les deux", "Ni l'une ni l'autre"]}
+  - {id: e4, public: eleve, type: choix, texte: "La connexion internet t'a-t-elle gêné ?", options: ["Jamais", "Parfois", "Souvent"]}
+  - {id: e5, public: eleve, type: choix, texte: "Conseillerais-tu la plateforme à un camarade ?", options: ["Oui", "Non", "Je ne sais pas"]}
+  - {id: p1, public: parent, type: echelle, texte: "Les rapports sur la progression de votre enfant vous sont-ils utiles ?"}
+  - {id: p2, public: parent, type: choix, texte: "Votre enfant utilise-t-il la plateforme régulièrement ?", options: ["Oui", "Non", "Je ne sais pas"]}
+  - {id: p3, public: parent, type: choix, texte: "Le coût des données mobiles est-il un frein ?", options: ["Oui", "Un peu", "Non"]}
+  - {id: p4, public: parent, type: echelle, texte: "Faites-vous confiance à la plateforme pour accompagner votre enfant ?"}

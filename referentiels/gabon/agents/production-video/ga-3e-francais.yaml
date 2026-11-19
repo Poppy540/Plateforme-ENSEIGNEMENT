@@ -1,0 +1,12 @@
+# Fiche de l'avatar de l'unité ga-3e-francais pour la chaîne de production vidéo (ADR 0020, 0025 ; Jalon 7, étape 4).
+# PROVISOIRE : fournisseur d'avatar non choisi. Décision du propriétaire attendue : avatar SYNTHÉTIQUE du catalogue du
+# fournisseur, aucune personne réelle, aucun clonage de voix ou de visage.
+unite: ga-3e-francais
+fiche_avatar:
+  avatar: "a-choisir-dans-le-catalogue"
+  voix: "a-choisir-voix-de-synthese-francaise"
+  langue: "fr"
+  description: "Professeur IA de français : avatar synthétique, tenue sobre, diction claire, ton encourageant (à choisir avec le référent)."
+  personne_reelle: false
+  autorisation_voix: null
+  autorisation_visage: null

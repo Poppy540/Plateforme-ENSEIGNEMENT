@@ -1,5 +1,7 @@
 # Recherche de skills — 2026-10-04
 
+> **Archive datée (2026-10-04)** : la liste a été validée par le propriétaire le jour même ; les skills adoptées et leur licence sont dans les `SOURCES.md` de chaque `agents/<agent>/skills/`.
+
 Recherche en lecture seule : dépôts clonés dans un dossier temporaire, **rien installé ni exécuté**. Aucune skill n'est adoptée tant que le propriétaire n'a pas validé cette liste.
 
 ## Sources examinées (licence vérifiée sur le fichier LICENSE)

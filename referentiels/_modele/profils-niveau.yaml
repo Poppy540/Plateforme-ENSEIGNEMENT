@@ -1,2 +1,8 @@
-# Modèle : voir referentiels/gabon/profils-niveau.yaml pour un exemple.
-# Toutes les valeurs ici sont à remplir à partir des sources officielles du pays.
+# Profils d'adaptation par niveau ({{NOM_PAYS}}) : langage, durée des vidéos, autonomie, évaluation.
+profils: []
+  # - code: debut-secondaire
+  #   niveaux: [<niveau>, <niveau>]
+  #   langage: "<phrases courtes…>"
+  #   duree_video_min: [5, 8]
+  #   autonomie: "<…>"
+  #   evaluation: "<…>"

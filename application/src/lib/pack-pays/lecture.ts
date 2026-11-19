@@ -1,0 +1,614 @@
+// Lecture et contrôle d'un pack pays (referentiels/<pays>/). Aucune valeur propre à un pays ici :
+// tout vient des fichiers du pack (ADR 0001).
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
+import { parse } from "yaml";
+
+export type Couche = "universel" | "adaptable" | "local";
+
+export interface Pays {
+  code: string;
+  nom: string;
+  langueEnseignement: string;
+  fuseauHoraire: string;
+  monnaie: string | null;
+  /** « test » : pack fictif d'essai, importé seulement avec l'option --test (ADR 0041). */
+  statutPack: "en_preparation" | "pilote" | "ouvert" | "test";
+  /** Âge de la majorité ; null = inconnu, tout élève est alors traité comme mineur. */
+  ageMajorite: number | null;
+  /** Indicatifs téléphoniques autorisés (« +XXX ») pour la connexion par SMS et le contact du parent. */
+  indicatifsTelephone: string[];
+  /** Durées de conservation en jours (cadre légal du pays) ; null = pas de purge. */
+  conservation: {
+    echanges_jours: number | null;
+    inscription_non_confirmee_jours: number | null;
+    compte_inactif_jours: number | null;
+    /** Purge étendue (revue de sécurité D3) : null tant que le juriste n'a pas fixé la durée. */
+    signalements_traites_jours: number | null;
+    tickets_resolus_jours: number | null;
+    recrutement_clos_jours: number | null;
+    rapports_parents_jours: number | null;
+  };
+  /**
+   * Résumés des signalements et des tickets à la suppression d'un compte (revue de sécurité D2) : « garder »
+   * (le compte n'y est plus rattaché) ou « effacer » ; null = garder, en attendant le juriste.
+   */
+  resumesApresSuppression: "garder" | "effacer" | null;
+  /** Seuils du suivi du pilote (critères de suspension, ADR 0080) ; null = critère non surveillé. */
+  pilote: SeuilsPilote;
+}
+
+export interface SeuilsPilote {
+  detresse_delai_heures: number | null;
+  detresse_delai_max_heures: number | null;
+  erreur_contenu_delai_jours: number | null;
+  contestations_max_par_question: number | null;
+  depassement_budget_pourcent: number | null;
+  budget_hebdomadaire_usd: number | null;
+}
+
+export interface Referentiel {
+  code: string;
+  version: string;
+  dateValidation: string | null;
+  sourceOfficielle: string | null;
+  /** Mot qui désigne les séries dans ce pays (`appellation_series` de structure.yaml) ; null = mot générique. */
+  appellationSeries: { singulier: string; pluriel: string } | null;
+}
+
+export interface Niveau {
+  code: string;
+  libelle: string;
+  cycle: string;
+  ordre: number;
+  codeInterne: string;
+  seriesObligatoires: boolean;
+}
+
+export interface Serie {
+  code: string;
+  libelle: string;
+  type: string;
+  codeInterne: string;
+}
+
+export interface Matiere {
+  code: string;
+  libelle: string;
+  famille: string;
+  couche: Couche;
+}
+
+export interface Unite {
+  code: string;
+  niveau: string;
+  series: string[];
+  matiere: string;
+  libelleLocal: string | null;
+}
+
+export interface Chapitre {
+  code: string;
+  ordre: number;
+  titre: string;
+  sousThemes: string[];
+  volumeHoraire: number | null;
+  coefficient: number | null;
+  /** Objectifs (« l'élève sait… »), facultatifs. */
+  objectifs: string[];
+  /** Source de ces données (document, page), facultative ; voir SOURCES.md (ADR 0109). */
+  source: string | null;
+}
+
+/**
+ * Compétence d'un curriculum par compétences (APC ; Jalon 21, décision D16, ADR 0109), facultative : son
+ * intitulé, les chapitres qui la travaillent et sa source. Lue et contrôlée avec le pack ; pas encore en base.
+ */
+export interface Competence {
+  code: string;
+  intitule: string;
+  chapitres: string[];
+  source: string | null;
+}
+
+export interface QuestionQuestionnaire {
+  id: string;
+  public: "eleve" | "parent";
+  type: "echelle" | "choix";
+  texte: string;
+  /** Choix possibles (type « choix ») ; « 1 » à « 5 » pour une échelle. */
+  options: string[];
+}
+
+export interface Questionnaire {
+  version: string;
+  /** Montré seulement une fois « valide » (relu par le propriétaire). */
+  statut: "a_valider" | "valide";
+  questions: QuestionQuestionnaire[];
+}
+
+export interface PackPays {
+  pays: Pays;
+  referentiel: Referentiel;
+  niveaux: Niveau[];
+  series: Serie[];
+  matieres: Matiere[];
+  unites: Unite[];
+  /** Chapitres par code d'unité (seulement les unités qui ont un programme). */
+  programmes: Record<string, Chapitre[]>;
+  /** Compétences par code d'unité (`competences` d'un programme, facultatif ; ADR 0109). */
+  competences: Record<string, Competence[]>;
+  /** Liens de prérequis proposés (`prerequis/*.yaml`), toujours « à valider » à l'import. */
+  prerequis: LienPrerequis[];
+  /** Questionnaire anonyme du pilote (`questionnaire.yaml`, facultatif ; ADR 0052). */
+  questionnaire: Questionnaire | null;
+}
+
+export interface LienPrerequis {
+  chapitre: { unite: string; code: string };
+  prerequis: { unite: string; code: string };
+  nature: "strict" | "souple";
+}
+
+export class ErreurPack extends Error {
+  readonly erreurs: string[];
+  constructor(erreurs: string[]) {
+    super(`Pack pays invalide :\n- ${erreurs.join("\n- ")}`);
+    this.erreurs = erreurs;
+  }
+}
+
+type Brut = Record<string, unknown>;
+
+function lireYaml(chemin: string): Brut {
+  const contenu: unknown = parse(readFileSync(chemin, "utf8"));
+  return contenu && typeof contenu === "object" ? (contenu as Brut) : {};
+}
+
+function texte(valeur: unknown): string {
+  return valeur === null || valeur === undefined ? "" : String(valeur).trim();
+}
+
+function texteOuNul(valeur: unknown): string | null {
+  const t = texte(valeur);
+  return t === "" ? null : t;
+}
+
+function nombreOuNul(valeur: unknown): number | null {
+  if (valeur === null || valeur === undefined || valeur === "") return null;
+  const n = Number(valeur);
+  return Number.isFinite(n) ? n : null;
+}
+
+function liste(valeur: unknown): Brut[] {
+  return Array.isArray(valeur) ? (valeur as Brut[]) : [];
+}
+
+const COUCHES: Couche[] = ["universel", "adaptable", "local"];
+const STATUTS_PACK = ["en_preparation", "pilote", "ouvert", "test"] as const;
+
+/** Lit un pack pays et vérifie sa cohérence. Lève ErreurPack avec la liste de toutes les erreurs. */
+export function lirePack(dossier: string): PackPays {
+  const erreurs: string[] = [];
+  const exiger = (fichier: string) => {
+    const chemin = join(dossier, fichier);
+    if (!existsSync(chemin)) {
+      erreurs.push(`fichier manquant : ${fichier}`);
+      return {};
+    }
+    return lireYaml(chemin);
+  };
+
+  const brutPays = exiger("pays.yaml");
+  const brutStructure = exiger("structure.yaml");
+  const brutMatieres = exiger("matieres.yaml");
+  const brutUnites = exiger("unites.yaml");
+
+  const brutReferentiel = (brutPays.referentiel ?? {}) as Brut;
+  const statutPack = texte(brutPays.statut_pack) || "en_preparation";
+  const pays: Pays = {
+    code: texte(brutPays.code),
+    nom: texte(brutPays.nom),
+    langueEnseignement: texte(brutPays.langue_enseignement),
+    fuseauHoraire: texte(brutPays.fuseau_horaire),
+    monnaie: texteOuNul(brutPays.monnaie),
+    statutPack: statutPack as Pays["statutPack"],
+    ageMajorite: nombreOuNul(((brutPays.cadre_legal ?? {}) as Brut).age_majorite),
+    conservation: (() => {
+      const c = (((brutPays.cadre_legal ?? {}) as Brut).conservation ?? {}) as Brut;
+      return {
+        echanges_jours: nombreOuNul(c.echanges_jours),
+        inscription_non_confirmee_jours: nombreOuNul(c.inscription_non_confirmee_jours),
+        compte_inactif_jours: nombreOuNul(c.compte_inactif_jours),
+        signalements_traites_jours: nombreOuNul(c.signalements_traites_jours),
+        tickets_resolus_jours: nombreOuNul(c.tickets_resolus_jours),
+        recrutement_clos_jours: nombreOuNul(c.recrutement_clos_jours),
+        rapports_parents_jours: nombreOuNul(c.rapports_parents_jours),
+      };
+    })(),
+    resumesApresSuppression: (() => {
+      const c = (((brutPays.cadre_legal ?? {}) as Brut).conservation ?? {}) as Brut;
+      return texteOuNul(c.resumes_apres_suppression) as Pays["resumesApresSuppression"];
+    })(),
+    pilote: (() => {
+      const p = (brutPays.pilote ?? {}) as Brut;
+      return {
+        detresse_delai_heures: nombreOuNul(p.detresse_delai_heures),
+        detresse_delai_max_heures: nombreOuNul(p.detresse_delai_max_heures),
+        erreur_contenu_delai_jours: nombreOuNul(p.erreur_contenu_delai_jours),
+        contestations_max_par_question: nombreOuNul(p.contestations_max_par_question),
+        depassement_budget_pourcent: nombreOuNul(p.depassement_budget_pourcent),
+        budget_hebdomadaire_usd: nombreOuNul(p.budget_hebdomadaire_usd),
+      };
+    })(),
+    indicatifsTelephone: Array.isArray(brutPays.indicatifs_telephone)
+      ? (brutPays.indicatifs_telephone as unknown[]).map((i) => String(i).trim())
+      : [],
+  };
+  if (!pays.code) erreurs.push("pays.yaml : code du pays manquant");
+  if (!pays.nom) erreurs.push("pays.yaml : nom du pays manquant");
+  if (!pays.langueEnseignement) erreurs.push("pays.yaml : langue d'enseignement manquante");
+  if (!pays.fuseauHoraire) erreurs.push("pays.yaml : fuseau horaire manquant");
+  if (!(STATUTS_PACK as readonly string[]).includes(statutPack)) {
+    erreurs.push(`pays.yaml : statut du pack inconnu « ${statutPack} »`);
+  }
+
+  const referentiel: Referentiel = {
+    code: texte(brutReferentiel.code),
+    version: texte(brutReferentiel.version),
+    dateValidation: texteOuNul(brutReferentiel.date_validation),
+    sourceOfficielle: texteOuNul(brutReferentiel.source_officielle),
+    appellationSeries: (() => {
+      const a = brutStructure.appellation_series;
+      if (a === undefined || a === null) return null;
+      const { singulier, pluriel } = a as Brut;
+      if (!texte(singulier) || !texte(pluriel)) {
+        erreurs.push("structure.yaml : appellation_series incomplète (singulier et pluriel)");
+        return null;
+      }
+      return { singulier: texte(singulier), pluriel: texte(pluriel) };
+    })(),
+  };
+  for (const [cle, valeur] of Object.entries(pays.conservation)) {
+    if (valeur !== null && (!Number.isInteger(valeur) || valeur < 1)) {
+      erreurs.push(`pays.yaml : durée de conservation invalide (${cle})`);
+    }
+  }
+  for (const [cle, valeur] of Object.entries(pays.pilote)) {
+    const entier = cle !== "budget_hebdomadaire_usd";
+    if (valeur !== null && (valeur < 0 || (entier && !Number.isInteger(valeur))))
+      erreurs.push(`pays.yaml : seuil du pilote invalide (${cle})`);
+  }
+  if (
+    pays.pilote.detresse_delai_heures !== null &&
+    pays.pilote.detresse_delai_max_heures !== null &&
+    pays.pilote.detresse_delai_max_heures < pays.pilote.detresse_delai_heures
+  )
+    erreurs.push("pays.yaml : detresse_delai_max_heures doit être au moins detresse_delai_heures");
+  if (
+    pays.resumesApresSuppression !== null &&
+    !["garder", "effacer"].includes(pays.resumesApresSuppression)
+  ) {
+    erreurs.push("pays.yaml : resumes_apres_suppression vaut « garder » ou « effacer »");
+  }
+  for (const indicatif of pays.indicatifsTelephone) {
+    if (!/^\+[1-9]\d{0,3}$/.test(indicatif))
+      erreurs.push(`pays.yaml : indicatif téléphonique invalide « ${indicatif} »`);
+  }
+  if (!referentiel.code) erreurs.push("pays.yaml : code du référentiel manquant");
+  if (!referentiel.version) erreurs.push("pays.yaml : version du référentiel manquante");
+
+  const niveaux: Niveau[] = liste(brutStructure.niveaux).map((n) => ({
+    code: texte(n.code),
+    libelle: texte(n.libelle),
+    cycle: texte(n.cycle),
+    ordre: Number(n.ordre),
+    codeInterne: texte(n.code_interne),
+    seriesObligatoires: n.series_obligatoires === true,
+  }));
+  const series: Serie[] = liste(brutStructure.series).map((s) => ({
+    code: texte(s.code),
+    libelle: texte(s.libelle),
+    type: texte(s.type),
+    codeInterne: texte(s.code_interne),
+  }));
+  const matieres: Matiere[] = liste(brutMatieres.matieres).map((m) => ({
+    code: texte(m.code),
+    libelle: texte(m.libelle),
+    famille: texte(m.famille),
+    couche: texte(m.couche) as Couche,
+  }));
+  const unites: Unite[] = liste(brutUnites.unites).map((u) => ({
+    code: texte(u.code),
+    niveau: texte(u.niveau),
+    series: Array.isArray(u.series) ? (u.series as unknown[]).map(texte) : [],
+    matiere: texte(u.matiere),
+    libelleLocal: texteOuNul(u.libelle_local),
+  }));
+
+  if (niveaux.length === 0) erreurs.push("structure.yaml : aucun niveau");
+  verifierUnicite(
+    niveaux.map((n) => n.code),
+    "niveau",
+    erreurs,
+  );
+  verifierUnicite(
+    niveaux.map((n) => String(n.ordre)),
+    "ordre de niveau",
+    erreurs,
+  );
+  verifierUnicite(
+    series.map((s) => s.code),
+    "série",
+    erreurs,
+  );
+  verifierUnicite(
+    matieres.map((m) => m.code),
+    "matière",
+    erreurs,
+  );
+  verifierUnicite(
+    unites.map((u) => u.code),
+    "unité",
+    erreurs,
+  );
+
+  for (const n of niveaux) {
+    if (!n.code || !n.libelle || !n.cycle || !n.codeInterne || !Number.isInteger(n.ordre)) {
+      erreurs.push(`structure.yaml : niveau incomplet « ${n.code || "?"} »`);
+    }
+  }
+  for (const m of matieres) {
+    if (!m.code || !m.libelle || !m.famille)
+      erreurs.push(`matieres.yaml : matière incomplète « ${m.code || "?"} »`);
+    if (!COUCHES.includes(m.couche))
+      erreurs.push(`matieres.yaml : couche inconnue pour « ${m.code} »`);
+  }
+
+  const niveauxParCode = new Map(niveaux.map((n) => [n.code, n]));
+  const codesSeries = new Set(series.map((s) => s.code));
+  const codesMatieres = new Set(matieres.map((m) => m.code));
+  for (const u of unites) {
+    const niveau = niveauxParCode.get(u.niveau);
+    if (!u.code) erreurs.push("unites.yaml : unité sans code");
+    if (!niveau) erreurs.push(`unites.yaml : niveau inconnu « ${u.niveau} » pour ${u.code}`);
+    if (!codesMatieres.has(u.matiere))
+      erreurs.push(`unites.yaml : matière inconnue « ${u.matiere} » pour ${u.code}`);
+    for (const s of u.series) {
+      if (!codesSeries.has(s)) erreurs.push(`unites.yaml : série inconnue « ${s} » pour ${u.code}`);
+    }
+    if (niveau?.seriesObligatoires && u.series.length === 0) {
+      erreurs.push(
+        `unites.yaml : ${u.code} doit indiquer ses séries (classe à séries obligatoires)`,
+      );
+    }
+    if (niveau && !niveau.seriesObligatoires && u.series.length > 0) {
+      erreurs.push(`unites.yaml : ${u.code} indique des séries pour une classe sans série`);
+    }
+  }
+
+  const programmes: Record<string, Chapitre[]> = {};
+  const competences: Record<string, Competence[]> = {};
+  const dossierProgrammes = join(dossier, "programmes");
+  const codesUnites = new Set(unites.map((u) => u.code));
+  if (existsSync(dossierProgrammes)) {
+    for (const fichier of readdirSync(dossierProgrammes)
+      .filter((f) => f.endsWith(".yaml"))
+      .sort()) {
+      const brut = lireYaml(join(dossierProgrammes, fichier));
+      const codeUnite = texte(brut.unite);
+      if (!codesUnites.has(codeUnite)) {
+        erreurs.push(`programmes/${fichier} : unité inconnue « ${codeUnite} »`);
+        continue;
+      }
+      const chapitres = liste(brut.chapitres).map((c) => ({
+        code: texte(c.code),
+        ordre: Number(c.ordre),
+        titre: texte(c.titre),
+        sousThemes: Array.isArray(c.sous_themes) ? (c.sous_themes as unknown[]).map(texte) : [],
+        volumeHoraire: nombreOuNul(c.volume_horaire),
+        coefficient: nombreOuNul(c.coefficient),
+        objectifs: Array.isArray(c.objectifs) ? (c.objectifs as unknown[]).map(texte) : [],
+        source: texteOuNul(c.source),
+      }));
+      for (const c of chapitres) {
+        if (!c.code || !c.titre || !Number.isInteger(c.ordre)) {
+          erreurs.push(`programmes/${fichier} : chapitre incomplet « ${c.code || "?"} »`);
+        }
+      }
+      verifierUnicite(
+        chapitres.map((c) => c.code),
+        `chapitre de ${codeUnite}`,
+        erreurs,
+      );
+      programmes[codeUnite] = chapitres;
+      const codesChapitres = new Set(chapitres.map((c) => c.code));
+      const liste_ = liste(brut.competences).map((c) => ({
+        code: texte(c.code),
+        intitule: texte(c.intitule),
+        chapitres: Array.isArray(c.chapitres) ? (c.chapitres as unknown[]).map(texte) : [],
+        source: texteOuNul(c.source),
+      }));
+      for (const c of liste_) {
+        if (!c.code || !c.intitule)
+          erreurs.push(`programmes/${fichier} : compétence incomplète « ${c.code || "?"} »`);
+        for (const ch of c.chapitres)
+          if (!codesChapitres.has(ch))
+            erreurs.push(
+              `programmes/${fichier} : compétence « ${c.code} », chapitre inconnu « ${ch} »`,
+            );
+      }
+      verifierUnicite(
+        liste_.map((c) => c.code),
+        `compétence de ${codeUnite}`,
+        erreurs,
+      );
+      if (liste_.length > 0) competences[codeUnite] = liste_;
+    }
+  }
+
+  const prerequis = lirePrerequis(dossier, programmes, unites, niveaux, erreurs);
+  const questionnaire = lireQuestionnaire(dossier, erreurs);
+
+  if (erreurs.length > 0) throw new ErreurPack(erreurs);
+  return {
+    pays,
+    referentiel,
+    niveaux,
+    series,
+    matieres,
+    unites,
+    programmes,
+    competences,
+    prerequis,
+    questionnaire,
+  };
+}
+
+/**
+ * Graphe de prérequis proposé (`prerequis/*.yaml`) : chaque extrémité existe dans un programme du pack, un
+ * prérequis appartient à la même classe ou à une classe inférieure, pas de doublon ni de cycle.
+ */
+function lirePrerequis(
+  dossier: string,
+  programmes: Record<string, Chapitre[]>,
+  unites: Unite[],
+  niveaux: Niveau[],
+  erreurs: string[],
+): LienPrerequis[] {
+  const dossierPrerequis = join(dossier, "prerequis");
+  if (!existsSync(dossierPrerequis)) return [];
+  const ordreNiveau = new Map(niveaux.map((n) => [n.code, n.ordre]));
+  const niveauUnite = new Map(unites.map((u) => [u.code, ordreNiveau.get(u.niveau) ?? 0]));
+  const seriesUnite = new Map(unites.map((u) => [u.code, u.series]));
+  /**
+   * Un prérequis propre à des séries ne vaut que pour un chapitre de ces mêmes séries : un élève de série D
+   * n'a pas les chapitres de série C (ADR 0047).
+   */
+  const seriesCompatibles = (chapitre: string, prerequis: string) => {
+    const sp = seriesUnite.get(prerequis) ?? [];
+    const sc = seriesUnite.get(chapitre) ?? [];
+    return sp.length === 0 || (sc.length > 0 && sc.every((s) => sp.includes(s)));
+  };
+  const existe = (r: { unite: string; code: string }) =>
+    (programmes[r.unite] ?? []).some((c) => c.code === r.code);
+  const reference = (valeur: unknown) => {
+    const [unite, code] = texte(valeur).split("/");
+    return { unite: unite ?? "", code: code ?? "" };
+  };
+  const liens: LienPrerequis[] = [];
+  for (const fichier of readdirSync(dossierPrerequis)
+    .filter((f) => f.endsWith(".yaml"))
+    .sort()) {
+    for (const brut of liste(lireYaml(join(dossierPrerequis, fichier)).liens)) {
+      const lien: LienPrerequis = {
+        chapitre: reference(brut.chapitre),
+        prerequis: reference(brut.prerequis),
+        nature: brut.nature === "souple" ? "souple" : "strict",
+      };
+      const nom = `${texte(brut.chapitre)} ← ${texte(brut.prerequis)}`;
+      if (brut.nature !== "strict" && brut.nature !== "souple")
+        erreurs.push(`prerequis/${fichier} : nature inconnue pour ${nom}`);
+      if (!existe(lien.chapitre) || !existe(lien.prerequis)) {
+        erreurs.push(`prerequis/${fichier} : chapitre inconnu dans ${nom}`);
+        continue;
+      }
+      if (
+        (niveauUnite.get(lien.prerequis.unite) ?? 0) > (niveauUnite.get(lien.chapitre.unite) ?? 0)
+      )
+        erreurs.push(`prerequis/${fichier} : prérequis d'une classe supérieure dans ${nom}`);
+      if (!seriesCompatibles(lien.chapitre.unite, lien.prerequis.unite))
+        erreurs.push(`prerequis/${fichier} : prérequis d'une autre série dans ${nom}`);
+      liens.push(lien);
+    }
+  }
+  const cle = (r: { unite: string; code: string }) => `${r.unite}/${r.code}`;
+  verifierUnicite(
+    liens.map((l) => `${cle(l.chapitre)} ← ${cle(l.prerequis)}`),
+    "lien de prérequis",
+    erreurs,
+  );
+  for (const l of liens)
+    if (cle(l.chapitre) === cle(l.prerequis))
+      erreurs.push(`lien de prérequis sur lui-même : ${cle(l.chapitre)}`);
+  // Détection de cycle (parcours en profondeur).
+  const suivants = new Map<string, string[]>();
+  for (const l of liens)
+    suivants.set(cle(l.chapitre), [...(suivants.get(cle(l.chapitre)) ?? []), cle(l.prerequis)]);
+  const etat = new Map<string, "en_cours" | "fini">();
+  const visiter = (n: string): boolean => {
+    if (etat.get(n) === "en_cours") return true;
+    if (etat.get(n) === "fini") return false;
+    etat.set(n, "en_cours");
+    const cycle = (suivants.get(n) ?? []).some(visiter);
+    etat.set(n, "fini");
+    return cycle;
+  };
+  if ([...suivants.keys()].some(visiter)) erreurs.push("graphe de prérequis : cycle détecté");
+  return liens;
+}
+
+function verifierUnicite(codes: string[], nature: string, erreurs: string[]) {
+  const vus = new Set<string>();
+  for (const code of codes) {
+    if (vus.has(code)) erreurs.push(`${nature} en double : « ${code} »`);
+    vus.add(code);
+  }
+}
+
+/** Libellés des familles de matières du pack (`familles.yaml`), par code ; vide si le fichier manque. */
+export function libellesFamilles(dossier: string): Record<string, string> {
+  const chemin = join(dossier, "familles.yaml");
+  if (!existsSync(chemin)) return {};
+  const brut = parse(readFileSync(chemin, "utf8")) as { familles?: unknown };
+  return Object.fromEntries(
+    liste(brut?.familles)
+      .filter((f) => typeof f.code === "string" && typeof f.libelle === "string")
+      .map((f) => [f.code as string, f.libelle as string]),
+  );
+}
+
+/**
+ * Questionnaire anonyme (`questionnaire.yaml`, facultatif) : réponses fermées seulement, identifiants uniques,
+ * un public (élève ou parent) par question.
+ */
+function lireQuestionnaire(dossier: string, erreurs: string[]): Questionnaire | null {
+  const chemin = join(dossier, "questionnaire.yaml");
+  if (!existsSync(chemin)) return null;
+  const brut = lireYaml(chemin);
+  const version = texte(brut.version);
+  const statut = texte(brut.statut) === "valide" ? "valide" : "a_valider";
+  if (!version) erreurs.push("questionnaire.yaml : version manquante");
+  if (!["valide", "a_valider"].includes(texte(brut.statut)))
+    erreurs.push("questionnaire.yaml : statut « valide » ou « a_valider »");
+  const questions: QuestionQuestionnaire[] = liste(brut.questions).map((q) => {
+    const type = texte(q.type) === "choix" ? "choix" : "echelle";
+    const id = texte(q.id);
+    if (!/^[a-z][a-z0-9_]{0,19}$/.test(id))
+      erreurs.push(`questionnaire.yaml : identifiant invalide « ${id} »`);
+    if (!["eleve", "parent"].includes(texte(q.public)))
+      erreurs.push(`questionnaire.yaml : public inconnu pour ${id}`);
+    if (!["echelle", "choix"].includes(texte(q.type)))
+      erreurs.push(
+        `questionnaire.yaml : type inconnu pour ${id} (echelle ou choix, jamais de texte libre)`,
+      );
+    const options =
+      type === "echelle" ? ["1", "2", "3", "4", "5"] : liste(q.options).map((o) => texte(o));
+    if (type === "choix" && (options.length < 2 || options.some((o) => !o)))
+      erreurs.push(`questionnaire.yaml : au moins deux options pour ${id}`);
+    if (!texte(q.texte)) erreurs.push(`questionnaire.yaml : texte manquant pour ${id}`);
+    return {
+      id,
+      public: texte(q.public) === "parent" ? "parent" : "eleve",
+      type,
+      texte: texte(q.texte),
+      options,
+    };
+  });
+  verifierUnicite(
+    questions.map((q) => q.id),
+    "question",
+    erreurs,
+  );
+  return { version, statut, questions };
+}

@@ -1,0 +1,16 @@
+# Valeurs injectées dans agents/scenariste/prompt.md pour l'unité Mathématiques 4e (décisions 0005 et 0035).
+# Source : valeurs de l'unité pilote (cadrage, Partie B) adaptées au niveau d'après profils-niveau.yaml. Provisoire.
+unite: ga-4e-mathematiques
+variables:
+  MATIERE: "Mathématiques"
+  NIVEAU: "4e"
+  SERIE: ""
+  PAYS: "Gabon"
+  # DUREE : choisie par l'enseignant-référent à chaque demande (repère du profil : 8 à 12 minutes).
+  PROFIL_NIVEAU: "langage plus structuré qu'en 6e-5e, vocabulaire technique introduit progressivement, ton motivant, vidéos de 8 à 12 minutes, préparation progressive au BEPC"
+  CONTEXTE_LOCAL: "exemples du quotidien gabonais à choisir avec le prof-référent (par exemple des prix en francs CFA ou des distances entre villes)"
+  # Valeurs PROVISOIRES identiques à celles du Professeur de l'unité, à valider par le propriétaire.
+  PERSONA: "Calme, patient et méthodique."
+  REFERENT: "enseignant-référent en cours de désignation"
+  DATE: "non relu"
+  VERSION: "0.1-provisoire"

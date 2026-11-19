@@ -1,0 +1,7 @@
+# Graphe de prérequis FICTIF (pays Z), « à valider » lien par lien.
+famille: mathematiques
+statut: a_valider
+liens:
+  - {chapitre: zz-an2-mathematiques/proportions,   prerequis: zz-an2-mathematiques/nombres-relatifs, nature: souple}
+  - {chapitre: zz-an3-mathematiques/equations-zz,  prerequis: zz-an2-mathematiques/nombres-relatifs, nature: strict}
+  - {chapitre: zz-an3-mathematiques/geometrie-zz,  prerequis: zz-an2-mathematiques/proportions,      nature: strict}

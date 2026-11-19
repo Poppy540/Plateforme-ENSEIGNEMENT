@@ -1,0 +1,16 @@
+# Programme provisoire — Mathématiques Seconde (Gabon).
+# Source : docs/cadrage.md (« Découpage des cours — Seconde (tronc commun) », Mathématiques), intitulés repris mot pour mot. PROVISOIRE : base
+# francophone générique, à valider par un enseignant-référent gabonais à partir du programme officiel IPN.
+unite: ga-2nde-mathematiques
+statut: a_valider
+valide_par: null
+date_validation: null
+examen: null   # pas d'examen national en fin de Seconde
+chapitres:
+  - {ordre: 1, code: ensembles-nombres, titre: "Ensembles de nombres", statut: a_valider}
+  - {ordre: 2, code: calcul-algebrique, titre: "Calcul algébrique", statut: a_valider}
+  - {ordre: 3, code: fonctions-generalites, titre: "Fonctions : généralités et variations", statut: a_valider}
+  - {ordre: 4, code: fonctions-affines-second-degre, titre: "Fonctions affines et second degré (initiation)", statut: a_valider}
+  - {ordre: 5, code: geometrie-reperee, titre: "Géométrie repérée : vecteurs et droites", statut: a_valider}
+  - {ordre: 6, code: statistiques-probabilites, titre: "Statistiques et probabilités", statut: a_valider}
+# Volumes horaires et coefficients : manquants (à demander au référent / IPN).

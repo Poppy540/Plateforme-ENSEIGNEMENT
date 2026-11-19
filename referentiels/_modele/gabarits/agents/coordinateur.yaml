@@ -1,0 +1,11 @@
+# Valeurs du Coordinateur pour une famille de matières. Toute valeur vide bloque l'agent.
+unite: <famille>
+# skill_famille: <skill de la famille>   # facultatif
+variables:
+  FAMILLE: ""
+  MATIERES_FAMILLE: ""
+  PAYS: ""
+  REFERENTIEL: ""
+  REFERENT: ""
+  DATE: ""
+  VERSION: ""

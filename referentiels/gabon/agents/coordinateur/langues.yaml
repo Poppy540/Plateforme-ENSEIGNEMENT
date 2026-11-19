@@ -1,0 +1,14 @@
+# Valeurs injectées dans agents/coordinateur/prompt.md pour la famille Langues vivantes (décisions 0005, 0008, 0038).
+# Le fichier est nommé d'après la famille : le Coordinateur est instancié une fois par famille, pas par unité.
+# Valeurs PROVISOIRES proposées par Claude Code, à valider par le propriétaire (aucune personne réelle).
+unite: langues
+# Skill propre à la famille, chargée en plus des skills communes du Coordinateur.
+skill_famille: coordination-langues
+variables:
+  FAMILLE: "Langues vivantes"
+  MATIERES_FAMILLE: "Anglais (LV1), Espagnol (LV2), Langues vivantes (Anglais / Espagnol)"
+  PAYS: "Gabon"
+  REFERENTIEL: "ga-general"
+  REFERENT: "l'enseignant-référent de la famille Langues vivantes (en cours de désignation)"
+  DATE: "non relu"
+  VERSION: "0.1-provisoire"

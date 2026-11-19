@@ -1,0 +1,13 @@
+# FAQ FICTIVE du Support pour le pays Z (tests de portabilité : jamais mélangée avec celle du pilote).
+statut: a_valider
+delai_reponse_tickets: "sous trois jours ouvrés (fictif)"
+entrees:
+  - id: inscription-zz
+    question: "Comment m'inscrire dans le pays Z ?"
+    reponse: "Choisis « Pays fictif Z », puis ton année (Année 1 à Année 4) et, en Année 4, ton option."
+  - id: option-zz
+    question: "Quelle option choisir en Année 4 ?"
+    reponse: "Choisis l'option de ta classe : Sciences ou Humanités (pays fictif Z)."
+  - id: professeur-ia-zz
+    question: "Qui sont les professeurs ?"
+    reponse: "Des intelligences artificielles ; les contenus sont relus par des enseignants du pays Z (fictif)."

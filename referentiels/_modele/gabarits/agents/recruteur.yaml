@@ -1,0 +1,10 @@
+# Valeurs du Recruteur pour le pays (le reste vient de recrutement.yaml). Toute valeur vide bloque l'agent.
+unite: pays
+variables:
+  PROJET: ""
+  PAYS: ""
+  RESPONSABLE: ""
+  MATIERES_CIBLES: ""
+  PROFIL_RECHERCHE: ""
+  DATE: ""
+  VERSION: ""

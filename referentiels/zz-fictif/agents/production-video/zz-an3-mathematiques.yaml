@@ -1,0 +1,10 @@
+# Fiche d'avatar FICTIVE (pays Z) : avatar synthétique, aucune personne réelle.
+unite: zz-an3-mathematiques
+fiche_avatar:
+  avatar: "avatar-fictif-z"
+  voix: "voix-de-synthese-fictive"
+  langue: "fr"
+  description: "Avatar synthétique fictif pour les tests du pays Z."
+  personne_reelle: false
+  autorisation_voix: null
+  autorisation_visage: null

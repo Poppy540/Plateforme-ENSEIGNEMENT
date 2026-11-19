@@ -1,0 +1,12 @@
+# Programme — <matière>, <classe> (<pays>). Source : <document officiel, page>. Statut : à valider par le référent.
+unite: <unité>
+statut: a_valider
+valide_par: null
+date_validation: null
+examen: null # code d'examen de structure.yaml, ou null
+chapitres: []
+  # - {ordre: 1, code: <chapitre>, titre: "<titre>", statut: a_valider}
+  #   facultatif : sous_themes: [], objectifs: [], volume_horaire, coefficient, source: "<document, page>"
+# Facultatif : compétences (curriculum par compétences, ADR 0109).
+# competences:
+#   - {code: C1, intitule: "<compétence>", chapitres: [<chapitre>], source: "<document, page>"}
