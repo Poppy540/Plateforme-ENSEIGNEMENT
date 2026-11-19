@@ -42,6 +42,7 @@ Décisions du propriétaire (D1 à D18) :
 | 2026-11-02 | D14 b    | Hors ligne étendu : Mes cours, matière, plan, corrections ; jamais un quiz à faire ; copies effacées après 7 jours                                                                                 | 0101 |
 | 2026-11-02 | D15 a    | « Commencé » noté par la plateforme à l'ouverture de la leçon ou au quiz                                                                                                                           | 0103 |
 | 2026-11-09 | D16 a    | Obtenir le curriculum de Maths 3e ; pack prêt pour des compétences, rien ajouté en attendant                                                                                                       | 0109 |
+| 2026-11-19 | Jalon 26 | Mises à jour proposées par Dependabot (plan en cours ; aucun budget relevé sans décision)                                                                                                          | 0123 |
 | 2026-11-19 | Jalon 25 | Fusion de la branche de travail dans `main` (plan en cours ; seul le propriétaire fusionne)                                                                                                        | 0122 |
 | 2026-11-16 | D17 a    | Appareil perdu resté sans réseau : la limite (copies lisibles au plus 7 jours) est dite à l'élève et aux familles ; lecture hors ligne inchangée                                                   | 0121 |
 | 2026-11-16 | D18      | Claude Code n'a pas le droit de lire la clé privée `age` ni les sauvegardes (`.claude/settings.json`)                                                                                              | 0121 |
@@ -93,7 +94,7 @@ Toujours ouvertes au 2026-11-12 (les hypothèses réglées depuis sont dans `doc
 
 ## État d'avancement
 
-- **Jalons 1 à 25 faits** (passages réels des agents mis à part) ; dernier bilan : [`docs/bilans/jalon-25.md`](docs/bilans/jalon-25.md). **`main` contient tout** depuis la fusion de la demande n° 2 (2026-11-19). Bilans dans `docs/bilans/`, décisions dans `docs/decisions/` (ADR 0001 à 0122).
+- **Jalons 1 à 25 faits** (passages réels des agents mis à part) ; dernier bilan : [`docs/bilans/jalon-25.md`](docs/bilans/jalon-25.md). **`main` contient tout** depuis la fusion de la demande n° 2 (2026-11-19). Bilans dans `docs/bilans/`, décisions dans `docs/decisions/` (ADR 0001 à 0123).
 - **La plateforme est construite et testée en simulation** : inscription avec accord du parent, catalogue, leçons, quiz, professeur IA, plan de révision, hors ligne, espaces du référent, de l'enseignant et de l'administration, pilotage complet du pilote (conditions, critères, semaine, fin, clôture), dix agents simulés, exploitation (sauvegardes chiffrées, migrations suivies, paquet, répétition générale), deux packs (Gabon, pays fictif Z) et un modèle pour en ajouter.
 - **Rien n'est déployé, rien n'est souscrit, aucun élève réel.** Rien de technique ne bloque le pilote : ce qui reste dépend du propriétaire (liste par urgence).
 - **Jalons suspendus** : Jalon 21, étapes 2 et 3 (programme du pilote complet) attendent le curriculum de Maths 3e ; l'étape « passages réels des agents » des Jalons 13 à 23 attend la clé API, la relecture des deux skills et l'accord sur le coût (~121 USD).
@@ -102,4 +103,4 @@ Toujours ouvertes au 2026-11-12 (les hypothèses réglées depuis sont dans `doc
 
 ## Prochaine étape
 
-Jalon 25 terminé sauf les passages réels (clé) ; `main` à jour, branche de travail repartie de `main`. Plan du Jalon 26 sur « oui, propose le plan de la suite ». Piste évidente : les demandes de Dependabot (#4 rouge sur le budget de poids de `/referent/prerequis` ; #5, #6, #7 majeures). Dependabot ouvre désormais des demandes de mise à jour sur `main` : le propriétaire décide de chacune, rien n'est fusionné par Claude Code. Jalon 24 terminé sauf les passages réels (clé). Jalon 23 terminé sauf les passages réels (clé). Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.
+Jalon 25 terminé sauf les passages réels (clé) ; `main` à jour, branche de travail repartie de `main`. Jalon 26 (mises à jour Dependabot) : étape 1 (mineures et actions, page `/referent/prerequis` allégée sous 175 Ko) sur « oui, commence l'étape 1 ». Dependabot ouvre désormais des demandes de mise à jour sur `main` : le propriétaire décide de chacune, rien n'est fusionné par Claude Code. Jalon 24 terminé sauf les passages réels (clé). Jalon 23 terminé sauf les passages réels (clé). Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.

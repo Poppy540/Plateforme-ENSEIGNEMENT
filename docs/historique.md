@@ -81,6 +81,7 @@ Les nouvelles lignes du journal s'ajoutent en tête de « État d'avancement »,
 
 ## État d'avancement
 
+- 2026-11-19 : Jalon 26, étape 0 faite — plan `docs/plans/jalon-26.md` et ADR 0123 validés (piste choisie : mises à jour Dependabot n° 3 à 7 ; écartés : textes et heures du pays, accessibilité revue, pause). **Rien d'autre n'est commencé.**
 - 2026-11-19 : Jalon 25, étape 5 faite — bilan `docs/bilans/jalon-25.md`. Sur `main` après fusion : contrôle et CodeQL verts. Dependabot : #3 (actions) vert ; #4 (8 mineures) rouge, la page `/referent/prerequis` fait 176 Ko pour un budget de 175 Ko avec React 19.3.1 ; #5 (SDK Anthropic 1.x), #6 (TypeScript 6), #7 (types Node 26) verts mais majeures, à examiner.
 - 2026-11-19 : Jalon 25, étape 3 — demande n° 2 fusionnée par le propriétaire (`91c1835`) ; désabonnement ; branche de travail repartie de `main` (aucun commit non fusionné) ; sur `main` : 4 recherches Dependabot lancées, tests des agents verts, contrôle et CodeQL en cours ; `pnpm verifier:depot` : restent signalement privé, mises à jour de sécurité Dependabot, protection de `main`, email privée (1 commit sur 30) ; liste d'attentes (point « github ») mise à jour.
 - 2026-11-19 : Jalon 25, étape 2 faite de mon côté — demande de fusion n° 2 verte sur `e11780f` (CodeQL : aucune alerte ; vérifications ; analyses), fusionnable sans conflit, 6 fils CodeQL résolus automatiquement. Crochet avant envoi réécrit autour d'un seul descripteur (création `wx`, sinon `r+`). Attend la fusion par le propriétaire.
