@@ -102,4 +102,4 @@ Toujours ouvertes au 2026-11-12 (les hypothèses réglées depuis sont dans `doc
 
 ## Prochaine étape
 
-Jalon 25 (fusion dans `main`) : étape 1 (ouvrir la demande de fusion) sur « oui, commence l'étape 1 ». Jalon 24 terminé sauf les passages réels (clé). Jalon 23 terminé sauf les passages réels (clé). Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.
+Jalon 25 (fusion dans `main`) : étape 2 en cours — suivre la demande de fusion https://github.com/Poppy540/Plateforme-ENSEIGNEMENT/pull/2 jusqu'au vert (abonnement aux événements) ; le propriétaire la relit et la fusionne lui-même ; puis étape 3 (vérifications sur `main`). Jalon 24 terminé sauf les passages réels (clé). Jalon 23 terminé sauf les passages réels (clé). Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.
