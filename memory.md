@@ -75,7 +75,8 @@ Toujours ouvertes au 2026-11-12 (les hypothèses réglées depuis sont dans `doc
 ## Environnement et pièges connus
 
 - **Environnement cloud « Poppy »** (personnel) : hôtes ajoutés avec accord (www.fomesoutra.com, info241.com, gabonmediatime.com, www.gabonreview.com, lunion-archives.org, www.lunion-archives.org) ; script de démarrage `pnpm install --frozen-lockfile` dans `Plateforme-ENSEIGNEMENT/application`. WebFetch ne passe pas par le proxy : utiliser `curl` ; `fetch` de Node demande `NODE_USE_ENV_PROXY=1`.
-- **Navigateur** : Chromium préinstallé ; `pnpm test:e2e` le trouve sans `CHEMIN_CHROMIUM`.
+- **Navigateur** : depuis Playwright 1.65 (Jalon 26), lancer les tests de bout en bout avec `CHEMIN_CHROMIUM=/opt/pw-browsers/chromium` (navigateur préinstallé de cet environnement, plus ancien) ; GitHub installe le sien.
+- **Poids des pages** : le préchargement des liens visibles compte dans les « données » et varie selon la machine ; une page chargée de liens les met en `prefetch={false}` (ADR 0124). Le message d'échec du test de poids donne le détail par type.
 - **Imports** : dans `src/lib/pack-pays/` et `src/lib/production/`, les imports locaux portent l'extension `.ts` (scripts lancés par `node`).
 - **Contrôle rapide** : 6 contrôles depuis l'étape 3 du Jalon 23 (format, lint, types, unitaires, liens, audit) ; un lien Markdown cassé le fait échouer.
 - **Prettier** : ne jamais le lancer sur `CLAUDE.md` (il déforme le §5 du propriétaire) ; lancé sur un dossier entier de `referentiels/`, il reformate des fichiers qui ne le sont pas : ne viser que les fichiers modifiés, et ne pas le lancer sur un document hors `application/` qu'on ne fait que corriger d'une ligne (il réaligne des tableaux entiers).
@@ -94,7 +95,7 @@ Toujours ouvertes au 2026-11-12 (les hypothèses réglées depuis sont dans `doc
 
 ## État d'avancement
 
-- **Jalons 1 à 25 faits** (passages réels des agents mis à part) ; dernier bilan : [`docs/bilans/jalon-25.md`](docs/bilans/jalon-25.md). **`main` contient tout** depuis la fusion de la demande n° 2 (2026-11-19). Bilans dans `docs/bilans/`, décisions dans `docs/decisions/` (ADR 0001 à 0123).
+- **Jalons 1 à 25 faits** (passages réels des agents mis à part) ; dernier bilan : [`docs/bilans/jalon-25.md`](docs/bilans/jalon-25.md). **`main` contient tout** depuis la fusion de la demande n° 2 (2026-11-19). Bilans dans `docs/bilans/`, décisions dans `docs/decisions/` (ADR 0001 à 0124).
 - **La plateforme est construite et testée en simulation** : inscription avec accord du parent, catalogue, leçons, quiz, professeur IA, plan de révision, hors ligne, espaces du référent, de l'enseignant et de l'administration, pilotage complet du pilote (conditions, critères, semaine, fin, clôture), dix agents simulés, exploitation (sauvegardes chiffrées, migrations suivies, paquet, répétition générale), deux packs (Gabon, pays fictif Z) et un modèle pour en ajouter.
 - **Rien n'est déployé, rien n'est souscrit, aucun élève réel.** Rien de technique ne bloque le pilote : ce qui reste dépend du propriétaire (liste par urgence).
 - **Jalons suspendus** : Jalon 21, étapes 2 et 3 (programme du pilote complet) attendent le curriculum de Maths 3e ; l'étape « passages réels des agents » des Jalons 13 à 23 attend la clé API, la relecture des deux skills et l'accord sur le coût (~121 USD).
@@ -103,4 +104,4 @@ Toujours ouvertes au 2026-11-12 (les hypothèses réglées depuis sont dans `doc
 
 ## Prochaine étape
 
-Jalon 25 terminé sauf les passages réels (clé) ; `main` à jour, branche de travail repartie de `main`. Jalon 26 (mises à jour Dependabot) : étape 1 (mineures et actions, page `/referent/prerequis` allégée sous 175 Ko) sur « oui, commence l'étape 1 ». Dependabot ouvre désormais des demandes de mise à jour sur `main` : le propriétaire décide de chacune, rien n'est fusionné par Claude Code. Jalon 24 terminé sauf les passages réels (clé). Jalon 23 terminé sauf les passages réels (clé). Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.
+Jalon 25 terminé sauf les passages réels (clé) ; `main` à jour, branche de travail repartie de `main`. Jalon 26 (mises à jour Dependabot) : étape 2 (TypeScript 6, types de Node alignés sur Node 22, règle Dependabot) sur « oui, continue avec l'étape 2 ». Dependabot ouvre désormais des demandes de mise à jour sur `main` : le propriétaire décide de chacune, rien n'est fusionné par Claude Code. Jalon 24 terminé sauf les passages réels (clé). Jalon 23 terminé sauf les passages réels (clé). Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.

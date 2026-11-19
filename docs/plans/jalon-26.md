@@ -1,6 +1,6 @@
 # Plan du Jalon 26 — mises à jour proposées par Dependabot
 
-**Statut** : validé par le propriétaire le 2026-11-19 (piste choisie, ADR 0123). Rien n'est commencé.
+**Statut** : validé par le propriétaire le 2026-11-19 (piste choisie, ADR 0123). Étape 1 faite (ADR 0124) : actions et 8 mises à jour mineures appliquées (Playwright 1.65.0) ; dépassements de poids sur GitHub dus au préchargement des pages liées, coupé sur les trois pages chargées de liens (aucun budget relevé) ; défaut d'accessibilité corrigé ; contrôle 11 / 11, GitHub vert.
 
 **Objectif** : depuis la fusion dans `main` (Jalon 25), Dependabot propose cinq demandes de mise à jour. Aucune n'est fusionnée.
 
