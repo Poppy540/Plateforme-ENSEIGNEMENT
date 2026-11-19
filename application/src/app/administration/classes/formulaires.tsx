@@ -124,7 +124,7 @@ export function ActionsCode({ classe, nom }: { classe: string; nom: string }) {
           type="submit"
           className="secondaire"
           disabled={enCoursClasse}
-          aria-label={`Nouveau code pour la classe ${nom}`}
+          aria-label={`Nouveau code de classe — ${nom}`}
         >
           Nouveau code de classe
         </button>
@@ -136,7 +136,7 @@ export function ActionsCode({ classe, nom }: { classe: string; nom: string }) {
           type="submit"
           className="secondaire"
           disabled={enCoursInvitation}
-          aria-label={`Nouvelle invitation d'enseignant pour la classe ${nom}`}
+          aria-label={`Nouvelle invitation d'enseignant — ${nom}`}
         >
           Nouvelle invitation d&apos;enseignant
         </button>

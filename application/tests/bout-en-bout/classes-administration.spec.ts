@@ -79,7 +79,7 @@ test("nouveau code de classe (l'ancien ne marche plus), nouvelle invitation puis
   await seConnecter(page, ADMIN);
   await page.goto("/administration/classes");
   await carte(page)
-    .getByRole("button", { name: /Nouveau code pour la classe/ })
+    .getByRole("button", { name: /Nouveau code de classe/ })
     .click();
   await expect(carte(page).locator(".code")).toHaveCount(1);
   const nouveau = (await carte(page).locator(".code").textContent())!.trim();
