@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import {
   BUDGETS,
+  NATURES,
   RESEAUX,
   ROUTES,
   cheminAnonyme,
@@ -39,7 +40,13 @@ test("toutes les pages dans le budget de leur public (poids, et temps en 2G)", a
       reseaux = { "2g": await mesurerTemps(browser, p, DEUX_G) };
     }
     const chemin = cheminAnonyme(p.chemin);
-    ecarts.push(...depassements({ public: p.public, chemin, ...poids, reseaux }));
+    const depasse = depassements({ public: p.public, chemin, ...poids, reseaux });
+    // Détail pour comprendre un dépassement (mesures de l'intégration continue, Jalon 26).
+    if (depasse.length > 0)
+      depasse.push(
+        `  ↳ ${chemin} : ${NATURES.map((n) => `${n} ${ko(poids.premierChargement[n])}`).join(", ")} ; rouverte ${ko(poids.navigation)} Ko`,
+      );
+    ecarts.push(...depasse);
     resume.push(
       `${chemin} ${ko(totalOctets(poids.premierChargement))}/${BUDGETS[p.public].premierKo} Ko` +
         (reseaux ? ` (2G : ${(reseaux["2g"].utilisableMs / 1000).toFixed(1)} s)` : ""),
