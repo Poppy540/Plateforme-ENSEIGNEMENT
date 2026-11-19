@@ -10,7 +10,6 @@ import {
   openSync,
   readFileSync,
   rmSync,
-  writeFileSync,
   writeSync,
 } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -23,15 +22,33 @@ if (r.status !== 0) {
   process.exit(2);
 }
 const chemin = resolve(r.stdout.trim());
-// Le crochet existant est lu et, s'il est le nôtre, réécrit par le même descripteur : aucun fichier glissé entre
-// la vérification et l'écriture ne peut être remplacé (alerte CodeQL du Jalon 25).
-let descripteur: number | null = null;
-try {
-  descripteur = openSync(chemin, "r+");
-} catch (e) {
-  if ((e as NodeJS.ErrnoException).code !== "ENOENT") throw e;
+// Un seul descripteur pour tout (alerte CodeQL du Jalon 25) : pour poser, le fichier est créé en exclusif
+// (« wx »), ou, s'il existe déjà, ouvert puis lu, vérifié et réécrit par ce même descripteur. Aucun fichier glissé
+// entre la vérification et l'écriture ne peut être remplacé.
+const code = (e: unknown) => (e as NodeJS.ErrnoException).code;
+/** Ouvre le crochet existant pour le lire et le réécrire ; null s'il n'existe pas. */
+function ouvrirExistant(): number | null {
+  try {
+    return openSync(chemin, "r+");
+  } catch (e) {
+    if (code(e) === "ENOENT") return null;
+    throw e;
+  }
 }
-const existant = descripteur === null ? null : readFileSync(descripteur, "utf8");
+let descripteur: number | null = null;
+let cree = false;
+if (retirer) descripteur = ouvrirExistant();
+else {
+  mkdirSync(dirname(chemin), { recursive: true });
+  try {
+    descripteur = openSync(chemin, "wx", 0o755);
+    cree = true;
+  } catch (e) {
+    if (code(e) !== "EEXIST") throw e;
+    descripteur = ouvrirExistant();
+  }
+}
+const existant = cree || descripteur === null ? null : readFileSync(descripteur, "utf8");
 
 if (existant !== null && !estNotreCrochet(existant)) {
   console.error(
@@ -45,12 +62,7 @@ if (retirer) {
     rmSync(chemin);
     console.log("Crochet avant envoi retiré.");
   }
-} else if (descripteur === null) {
-  mkdirSync(dirname(chemin), { recursive: true });
-  // « wx » : création seulement ; échoue si un fichier est apparu entre-temps.
-  writeFileSync(chemin, contenuCrochet(), { flag: "wx", mode: 0o755 });
-  annoncer();
-} else {
+} else if (descripteur !== null) {
   ftruncateSync(descripteur, 0);
   writeSync(descripteur, contenuCrochet(), 0);
   fchmodSync(descripteur, 0o755);
