@@ -18,6 +18,9 @@ import {
   traiter,
 } from "./actions";
 
+// Liens sans préchargement (Jalon 26) : une page qui aligne beaucoup de liens ne fait pas télécharger d'avance
+// toutes les pages liées ; celle qu'on ouvre se charge au clic (données comptées en 2G, ADR 0124).
+
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "short", timeStyle: "short" });
 const STATUTS: Record<string, string> = {
   en_attente: "en attente",
@@ -121,8 +124,13 @@ export default async function PageAdministration({ searchParams }: PageProps<"/a
         <h2 id="pilote-en-bref">Pilote : {LIBELLES_PHASE[pilote.phase]}</h2>
         <p>{pilote.action.texte}</p>
         <p>
-          <Link href={pilote.action.lien}>Faire maintenant →</Link> ({pilote.action.libelleLien}) ·{" "}
-          <Link href="/administration/tableau-de-bord">Voir le tableau de bord</Link>
+          <Link prefetch={false} href={pilote.action.lien}>
+            Faire maintenant →
+          </Link>{" "}
+          ({pilote.action.libelleLien}) ·{" "}
+          <Link prefetch={false} href="/administration/tableau-de-bord">
+            Voir le tableau de bord
+          </Link>
         </p>
       </section>
       <p className="note">
@@ -133,21 +141,65 @@ export default async function PageAdministration({ searchParams }: PageProps<"/a
       </p>
 
       <p>
-        <Link href="/administration/tableau-de-bord">Tableau de bord du pilote</Link> ·{" "}
-        <Link href="/administration/attentes">Ce qui vous attend</Link> ·{" "}
-        <Link href="/administration/exploitation">Pilotage de l&apos;exploitation</Link> ·{" "}
-        <Link href="/administration/recrutement">Recrutement des enseignants-référents</Link> ·{" "}
-        <Link href="/administration/invitations">Inviter un référent</Link> ·{" "}
-        <Link href="/administration/classes">Classes du pilote</Link> ·{" "}
-        <Link href="/administration/pilote">Chapitres du pilote</Link> ·{" "}
-        <Link href="/administration/conditions">Conditions du pilote</Link> ·{" "}
-        <Link href="/administration/criteres">Critères de suspension</Link> ·{" "}
-        <Link href="/administration/journal">Journal du pilote</Link> ·{" "}
-        <Link href="/administration/semaine">Semaine du pilote</Link> ·{" "}
-        <Link href="/administration/fin-pilote">Rapport de fin de pilote</Link> ·{" "}
-        <Link href="/administration/cloture">Clôture du pilote</Link> ·{" "}
-        <Link href="/administration/donnees">Sort des données</Link> ·{" "}
-        <Link href="/espace/mes-donnees">Mes données</Link>
+        <Link prefetch={false} href="/administration/tableau-de-bord">
+          Tableau de bord du pilote
+        </Link>{" "}
+        ·{" "}
+        <Link prefetch={false} href="/administration/attentes">
+          Ce qui vous attend
+        </Link>{" "}
+        ·{" "}
+        <Link prefetch={false} href="/administration/exploitation">
+          Pilotage de l&apos;exploitation
+        </Link>{" "}
+        ·{" "}
+        <Link prefetch={false} href="/administration/recrutement">
+          Recrutement des enseignants-référents
+        </Link>{" "}
+        ·{" "}
+        <Link prefetch={false} href="/administration/invitations">
+          Inviter un référent
+        </Link>{" "}
+        ·{" "}
+        <Link prefetch={false} href="/administration/classes">
+          Classes du pilote
+        </Link>{" "}
+        ·{" "}
+        <Link prefetch={false} href="/administration/pilote">
+          Chapitres du pilote
+        </Link>{" "}
+        ·{" "}
+        <Link prefetch={false} href="/administration/conditions">
+          Conditions du pilote
+        </Link>{" "}
+        ·{" "}
+        <Link prefetch={false} href="/administration/criteres">
+          Critères de suspension
+        </Link>{" "}
+        ·{" "}
+        <Link prefetch={false} href="/administration/journal">
+          Journal du pilote
+        </Link>{" "}
+        ·{" "}
+        <Link prefetch={false} href="/administration/semaine">
+          Semaine du pilote
+        </Link>{" "}
+        ·{" "}
+        <Link prefetch={false} href="/administration/fin-pilote">
+          Rapport de fin de pilote
+        </Link>{" "}
+        ·{" "}
+        <Link prefetch={false} href="/administration/cloture">
+          Clôture du pilote
+        </Link>{" "}
+        ·{" "}
+        <Link prefetch={false} href="/administration/donnees">
+          Sort des données
+        </Link>{" "}
+        ·{" "}
+        <Link prefetch={false} href="/espace/mes-donnees">
+          Mes données
+        </Link>
       </p>
 
       {ok && <p role="status">{ok}</p>}

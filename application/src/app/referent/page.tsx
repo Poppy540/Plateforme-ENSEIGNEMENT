@@ -11,6 +11,8 @@ import { videosPourTableau } from "@/lib/serveur/videos";
 import { accueilVu, chapitresPiloteDuReferent } from "@/lib/serveur/pilote";
 import { commencer } from "./accueil/actions";
 
+// Liens sans préchargement (Jalon 26, ADR 0124) : la page liée se charge au clic, rien d'avance.
+
 const formatDate = new Intl.DateTimeFormat("fr", { dateStyle: "medium", timeStyle: "short" });
 
 export default async function PageReferent() {
@@ -46,7 +48,9 @@ export default async function PageReferent() {
             prérequis, script, quiz, vidéo) et le temps à prévoir.
           </p>
           <p>
-            <Link href="/referent/accueil">Lire l&apos;accueil (2 minutes)</Link>
+            <Link prefetch={false} href="/referent/accueil">
+              Lire l&apos;accueil (2 minutes)
+            </Link>
           </p>
           <form action={commencer}>
             <button type="submit" className="secondaire">
@@ -56,7 +60,7 @@ export default async function PageReferent() {
         </section>
       ) : (
         <p>
-          <Link href="/referent/accueil">
+          <Link prefetch={false} href="/referent/accueil">
             Revoir l&apos;accueil : par où commencer, dans quel ordre
           </Link>
         </p>
@@ -74,7 +78,9 @@ export default async function PageReferent() {
                 {c.unite} — {c.action.faites} étape{c.action.faites > 1 ? "s" : ""} sur 4 faites
               </span>
               {c.action.lien ? (
-                <Link href={c.action.lien}>Prochaine action : {c.action.libelle}</Link>
+                <Link prefetch={false} href={c.action.lien}>
+                  Prochaine action : {c.action.libelle}
+                </Link>
               ) : (
                 <span>
                   <strong>{c.action.libelle}</strong>
@@ -90,7 +96,7 @@ export default async function PageReferent() {
       <ul className="liste-cartes">
         {tableau.aValider.map((c) => (
           <li key={c.id}>
-            <Link href={`/referent/chapitres/${c.id}`} className="carte">
+            <Link prefetch={false} href={`/referent/chapitres/${c.id}`} className="carte">
               <span className="note">
                 {c.matiere} — {c.niveau}
                 {c.series.length > 0 && ` ${c.series.join("/")}`} · chapitre {c.ordre} · version{" "}
@@ -107,16 +113,22 @@ export default async function PageReferent() {
       {liens.length === 0 && <p>Aucun lien en attente.</p>}
       {liens.length > 0 && (
         <p>
-          <Link href="/referent/prerequis">Voir les liens à valider</Link>
+          <Link prefetch={false} href="/referent/prerequis">
+            Voir les liens à valider
+          </Link>
         </p>
       )}
 
       <p>
-        <Link href="/referent/conformite">Conformité au programme officiel</Link>{" "}
+        <Link prefetch={false} href="/referent/conformite">
+          Conformité au programme officiel
+        </Link>{" "}
         <span className="note">(documents officiels et rapports d&apos;écart)</span>
       </p>
       <p>
-        <Link href="/espace/mes-donnees">Mes données</Link>
+        <Link prefetch={false} href="/espace/mes-donnees">
+          Mes données
+        </Link>
       </p>
 
       <h2>Coordinateur de famille</h2>
@@ -136,7 +148,7 @@ export default async function PageReferent() {
         <ul>
           {rapports.map((r) => (
             <li key={r.id}>
-              <Link href={`/referent/coordinateur/${r.id}`}>
+              <Link prefetch={false} href={`/referent/coordinateur/${r.id}`}>
                 Revue {r.famille} version {r.version}
               </Link>{" "}
               — {r.statut === "brouillon" ? "à traiter" : "traitée"},{" "}
@@ -151,7 +163,7 @@ export default async function PageReferent() {
       <ul className="liste-cartes">
         {scripts.map((s) => (
           <li key={s.id}>
-            <Link href={`/referent/scripts/${s.id}`} className="carte">
+            <Link prefetch={false} href={`/referent/scripts/${s.id}`} className="carte">
               <span className="note">
                 {s.unite} · version {s.version}
                 {s.aRelireEnPriorite && " · à relire en priorité"}
@@ -168,7 +180,7 @@ export default async function PageReferent() {
       <ul className="liste-cartes">
         {videos.map((v) => (
           <li key={v.id}>
-            <Link href={`/referent/videos/${v.id}`} className="carte">
+            <Link prefetch={false} href={`/referent/videos/${v.id}`} className="carte">
               <span className="note">
                 {v.unite} · script version {v.scriptVersion} ·{" "}
                 {v.statut === "a_relire" ? "à relire" : "validée, à publier"}
@@ -185,7 +197,7 @@ export default async function PageReferent() {
       <ul className="liste-cartes">
         {quiz.map((q) => (
           <li key={q.id}>
-            <Link href={`/referent/quiz/${q.id}`} className="carte">
+            <Link prefetch={false} href={`/referent/quiz/${q.id}`} className="carte">
               <span className="note">
                 {q.unite} · version {q.version}
                 {q.questionsSignalees > 0 && ` · ${q.questionsSignalees} question(s) signalée(s)`}

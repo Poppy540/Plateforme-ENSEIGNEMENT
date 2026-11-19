@@ -2,6 +2,8 @@ import Link from "next/link";
 import { exigerReferent } from "@/lib/serveur/acces-referent";
 import { liensAValider } from "@/lib/serveur/referent";
 
+// Liens sans préchargement (Jalon 26, ADR 0124) : un lien par chapitre, la page liée se charge au clic.
+
 // Liens de prérequis proposés, encore à valider dans les familles du référent (ADR 0037), groupés par chapitre.
 export default async function PagePrerequis() {
   const utilisateur = await exigerReferent();
@@ -16,7 +18,9 @@ export default async function PagePrerequis() {
   return (
     <main className="conteneur">
       <p>
-        <Link href="/referent">← Espace référent</Link>
+        <Link prefetch={false} href="/referent">
+          ← Espace référent
+        </Link>
       </p>
       <h1>Liens de prérequis à valider</h1>
       <p className="note">
@@ -27,7 +31,10 @@ export default async function PagePrerequis() {
       <ul>
         {[...parChapitre].map(([id, groupe]) => (
           <li key={id}>
-            <Link href={`/referent/chapitres/${id}`}>{groupe.titre}</Link> :{" "}
+            <Link prefetch={false} href={`/referent/chapitres/${id}`}>
+              {groupe.titre}
+            </Link>{" "}
+            :{" "}
             {groupe.prerequis
               .map(
                 (p) =>
