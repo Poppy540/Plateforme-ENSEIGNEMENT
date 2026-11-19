@@ -93,7 +93,7 @@ Toujours ouvertes au 2026-11-12 (les hypothèses réglées depuis sont dans `doc
 
 ## État d'avancement
 
-- **Jalons 1 à 24 faits** (passages réels des agents mis à part) ; dernier bilan : [`docs/bilans/jalon-24.md`](docs/bilans/jalon-24.md). Bilans dans `docs/bilans/`, décisions dans `docs/decisions/` (ADR 0001 à 0122).
+- **Jalons 1 à 25 faits** (passages réels des agents mis à part) ; dernier bilan : [`docs/bilans/jalon-25.md`](docs/bilans/jalon-25.md). **`main` contient tout** depuis la fusion de la demande n° 2 (2026-11-19). Bilans dans `docs/bilans/`, décisions dans `docs/decisions/` (ADR 0001 à 0122).
 - **La plateforme est construite et testée en simulation** : inscription avec accord du parent, catalogue, leçons, quiz, professeur IA, plan de révision, hors ligne, espaces du référent, de l'enseignant et de l'administration, pilotage complet du pilote (conditions, critères, semaine, fin, clôture), dix agents simulés, exploitation (sauvegardes chiffrées, migrations suivies, paquet, répétition générale), deux packs (Gabon, pays fictif Z) et un modèle pour en ajouter.
 - **Rien n'est déployé, rien n'est souscrit, aucun élève réel.** Rien de technique ne bloque le pilote : ce qui reste dépend du propriétaire (liste par urgence).
 - **Jalons suspendus** : Jalon 21, étapes 2 et 3 (programme du pilote complet) attendent le curriculum de Maths 3e ; l'étape « passages réels des agents » des Jalons 13 à 23 attend la clé API, la relecture des deux skills et l'accord sur le coût (~121 USD).
@@ -102,4 +102,4 @@ Toujours ouvertes au 2026-11-12 (les hypothèses réglées depuis sont dans `doc
 
 ## Prochaine étape
 
-Jalon 25 : fusion faite par le propriétaire (`91c1835`) ; branche de travail repartie de `main`. Étape 5 (bilan) sur « oui, continue avec l'étape 5 » ; l'étape 4 (passages réels) attend la clé. Dependabot ouvre désormais des demandes de mise à jour sur `main` : le propriétaire décide de chacune, rien n'est fusionné par Claude Code. Jalon 24 terminé sauf les passages réels (clé). Jalon 23 terminé sauf les passages réels (clé). Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.
+Jalon 25 terminé sauf les passages réels (clé) ; `main` à jour, branche de travail repartie de `main`. Plan du Jalon 26 sur « oui, propose le plan de la suite ». Piste évidente : les demandes de Dependabot (#4 rouge sur le budget de poids de `/referent/prerequis` ; #5, #6, #7 majeures). Dependabot ouvre désormais des demandes de mise à jour sur `main` : le propriétaire décide de chacune, rien n'est fusionné par Claude Code. Jalon 24 terminé sauf les passages réels (clé). Jalon 23 terminé sauf les passages réels (clé). Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.
