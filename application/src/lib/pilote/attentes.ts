@@ -111,11 +111,12 @@ export const ATTENTES: readonly Attente[] = [
     code: "github",
     urgence: "maintenant",
     titre:
-      "Faire les réglages de sécurité de GitHub (signalement privé, Dependabot, protection de main, email privée), puis demander la fusion de la branche de travail dans main",
+      "Faire les trois réglages de sécurité de GitHub qui restent : signalement privé des failles, mises à jour de sécurité Dependabot, protection de main (et l'adresse email privée) ; relire les demandes de mise à jour que Dependabot ouvre désormais",
     qui: "Vous",
     delai: "15 minutes",
     ou: "docs/securite/reglages-github.md, puis `pnpm verifier:depot`",
-    debloque: "La sécurité du dépôt public ; SECURITY.md, Dependabot et CodeQL actifs sur main",
+    debloque:
+      "La sécurité du dépôt public : failles signalées en privé, correctifs proposés automatiquement, main protégée",
   },
   {
     code: "hebergement",

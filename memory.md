@@ -102,4 +102,4 @@ Toujours ouvertes au 2026-11-12 (les hypothèses réglées depuis sont dans `doc
 
 ## Prochaine étape
 
-Jalon 25 (fusion dans `main`) : la demande de fusion https://github.com/Poppy540/Plateforme-ENSEIGNEMENT/pull/2 est verte et sans conflit ; elle attend la fusion **par le propriétaire** (abonnement aux événements maintenu). Ensuite : étape 3 (vérifications sur `main` : CodeQL, Dependabot, SECURITY.md, `pnpm verifier:depot`) et repartir la branche de travail de `main`. Jalon 24 terminé sauf les passages réels (clé). Jalon 23 terminé sauf les passages réels (clé). Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.
+Jalon 25 : fusion faite par le propriétaire (`91c1835`) ; branche de travail repartie de `main`. Étape 5 (bilan) sur « oui, continue avec l'étape 5 » ; l'étape 4 (passages réels) attend la clé. Dependabot ouvre désormais des demandes de mise à jour sur `main` : le propriétaire décide de chacune, rien n'est fusionné par Claude Code. Jalon 24 terminé sauf les passages réels (clé). Jalon 23 terminé sauf les passages réels (clé). Reprise du Jalon 21 dès que le curriculum arrive ; passages réels dès la clé.
